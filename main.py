@@ -95,7 +95,7 @@ class Ashley(commands.AutoShardedBot):
 
         # info bot
         self.server_ = "HEROKU"
-        self.github = "https://github.com/Ashley-Lab/Ashley"
+        self.github = "https://github.com/Ashley-Lab/ashley_home"
         self.progress = "V.1 -> Stable"
         self.python_version = "3.9.5"
         self.version_str = f"1.0.0"

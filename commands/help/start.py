@@ -52,7 +52,7 @@ class Helper(commands.Cog):
                             inline=False)
 
             embed.add_field(name="**Acesso nosso Artigo de Ajuda**",
-                            value="[Clique Aqui](https://github.com/Ashley-Lab/Ashley/blob/master/README.md)",
+                            value="[Clique Aqui](https://github.com/Ashley-Lab/ashley_home/blob/master/README.md)",
                             inline=False)
 
             embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
