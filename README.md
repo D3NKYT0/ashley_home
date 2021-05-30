@@ -19,6 +19,7 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 - Denky#5960 (Daniel Amaral)
 - Patchouli Knowledge#9732 (Olivia Martins)
+- Eduardo Rodrigues#9999 (Eduardo Rodrigues)
 
 **Designers e Ilustradores**
 
