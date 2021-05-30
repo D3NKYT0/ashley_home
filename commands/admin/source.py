@@ -19,7 +19,7 @@ class SourceGit(commands.Cog):
     async def source(self, ctx, command: str = None):
         """Usado pra enviar codigos da ashley
         Use ash source <comando desejado>"""
-        source_url = "https://github.com/Ashley-Lab/Ashley"
+        source_url = self.bot.github
         if command is None:
             await ctx.send(source_url)
             return
