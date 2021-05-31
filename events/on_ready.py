@@ -106,6 +106,7 @@ class OnReady(commands.Cog):
                         _bet = ' '.join('%02d' % n for n in bet)
                         msg += f"<:confirmed:721581574461587496>│`{_bet}`\n"
 
+                    ashley_guild = self.bot.get_guild(519894833783898112)
                     lovers = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
                     embed = discord.Embed(color=self.bot.color, description=msg)
                     await CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
