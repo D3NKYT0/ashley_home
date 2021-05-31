@@ -101,12 +101,14 @@ class OnReady(commands.Cog):
                 if not self.bot.lt_per_day[str(DATE[3])]:
                     amount, numbers, msg = 2 if DATE[2] != DN.day else 10, 6, "**NUMEROS SORTEADOS**\n"
                     bets = create(Lottery("megasena"), amount, numbers)
+
                     for bet in bets:
                         _bet = ' '.join('%02d' % n for n in bet)
                         msg += f"<:confirmed:721581574461587496>│`{_bet}`\n"
 
+                    lovers = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
                     embed = discord.Embed(color=self.bot.color, description=msg)
-                    await CHANNEL.send(embed=embed)
+                    await CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
                     self.bot.lt_per_day[str(DATE[3])] = True
                     USERS = await self.verify_winner(RAW, bets)
                     SENA = [U for U in USERS if U["ACC"] == 6]

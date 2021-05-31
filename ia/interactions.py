@@ -179,9 +179,10 @@ class IaInteractions(commands.Cog):
                             return await self.send_message(message)
 
                 if message.reference is not None:
-                    if message.reference.resolved.content is not None:
-                        if message.reference.resolved.content == "⠀⠀⠀⠀⠀⠀⠀⠀":
-                            return await self.send_message(message)
+                    if message.reference.resolved is not None:
+                        if message.reference.resolved.content is not None:
+                            if message.reference.resolved.content == "⠀⠀⠀⠀⠀⠀⠀⠀":
+                                return await self.send_message(message)
 
 
 def setup(bot):

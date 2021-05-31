@@ -221,7 +221,7 @@ class Entity(object):
                     description += skillcombo
 
                 if self.soulshot[0]:
-                    soulshot = f"\n\nSoulshot: {self.soulshot[1]}"
+                    soulshot = f"\n\n`Soulshot:` **{self.soulshot[1]}**"
                     description += soulshot
 
                 embed = discord.Embed(
