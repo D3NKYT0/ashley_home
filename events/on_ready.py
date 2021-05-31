@@ -110,6 +110,10 @@ class OnReady(commands.Cog):
                     lovers = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
                     embed = discord.Embed(color=self.bot.color, description=msg)
                     await CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
+
+                    _espera = await CHANNEL.send("<a:loading:520418506567843860>│ `AGUARDEM, ESTOU PROCESSANDO O(S) "
+                                                 "VENCERDOR(ES)...`")
+
                     self.bot.lt_per_day[str(DATE[3])] = True
                     USERS = await self.verify_winner(RAW, bets)
                     SENA = [U for U in USERS if U["ACC"] == 6]
@@ -138,19 +142,23 @@ class OnReady(commands.Cog):
                                 await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
                                 msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
 
+                            await _espera.delete()
                             await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` **{winner}** `ganhou na loteria com:`"
                                                f" **{USER['ACC']}** `acertos` **{ACC}** `no concurso:` "
                                                f"**{USER['CONCURSO']}**\n{msg}")
 
                     elif DATE[2] == DN.day:
-                        BET, query = choice([d async for d in RAW if d['date'].month == DATE[1]])
-                        query = {"$set": {"accumulated": 0}}
+                        _RAW = (await self.bot.db.cd("lottery")).find()
+                        _BETS = [d async for d in _RAW if d['date'].month == DATE[1]]
+                        BET, query = choice(_BETS), {"$set": {"accumulated": 0}}
                         winner, reward = self.bot.get_user(BET["user_id"]), cl["accumulated"]
                         msg = await self.bot.db.give_money(None, reward, BET["user_id"], 519894833783898112)
                         await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
+                        await _espera.delete()
                         await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` **{winner}** `ganhou na loteria!`\n{msg}")
 
                     else:
+                        await _espera.delete()
                         await CHANNEL.send("**NINGUEM GANHOU!**")
 
             await asyncio.sleep(60)
