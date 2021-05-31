@@ -26,6 +26,7 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 * 👩 [Comandos Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-ashley)
 * ❇️ [Comandos Funny](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)
 * 🕹️ [Comandos Mini-Games](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)
+* 🖼️ [Comandos Image](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)
 * 👥 [Comandos Guild](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-guild)
 * 👤 [Comandos Member](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-member)
 * 💰 [Comandos Economy](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-economy)
