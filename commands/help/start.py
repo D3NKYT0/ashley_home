@@ -32,18 +32,18 @@ class Helper(commands.Cog):
                             inline=False)
 
             embed.add_field(name="**Inteligência Artificial**",
-                            value=f"Inteligência Artificial, mais conhecida como IA, é uma inteligência "
-                                  f"semelhante à humana, pertencente a sistemas tecnológicos. Por palavras"
-                                  f" mais simples, é como se as \"máquinas\" tivessem mente própria.\nEu "
-                                  f"proporciono um sistema de IA que, atualmente, responde a mensagens dos"
-                                  f" membros, desde bons-dias e boas-noites até várias perguntas ou até "
-                                  f"mesmo brincar consigo, e pode ser ativado/desativado utilizando o "
-                                  f"comando abaixo.\n\n_Note que, para usufruir deste sistema de IA "
-                                  f"totalmente, terá que ativar o meu Serviço de Interação com Membros "
-                                  f"(SIM) através do comando `ash config guild`.\nNote também que existe "
-                                  f"uma diferença entre o SIM e o comando `ash ia`. O SIM ativa a IA em si"
-                                  f" e o comando ativa as respostas automáticas, ou seja, eu irei responder"
-                                  f" a você mesmo quando você não fale comigo diretamente!_",
+                            value="Inteligência Artificial, mais conhecida como IA, é uma inteligência "
+                                  "semelhante à humana, pertencente a sistemas tecnológicos. Por palavras"
+                                  " mais simples, é como se as \"máquinas\" tivessem mente própria.\nEu "
+                                  "proporciono um sistema de IA que, atualmente, responde a mensagens dos"
+                                  " membros, desde bons-dias e boas-noites até várias perguntas ou até "
+                                  "mesmo brincar consigo, e pode ser ativado/desativado utilizando o "
+                                  "comando abaixo.\n\n_Note que, para usufruir deste sistema de IA "
+                                  "totalmente, terá que ativar o meu Serviço de Interação com Membros "
+                                  "(SIM) através do comando `ash config interaction`.\nNote também que existe "
+                                  "uma diferença entre o SIM e o comando `ash ia`. O SIM ativa a IA em si"
+                                  " e o comando ativa as respostas automáticas, ou seja, eu irei responder"
+                                  " a você mesmo quando você não fale comigo diretamente!_",
                             inline=False)
 
             embed.add_field(name="**Entretenimento**",
