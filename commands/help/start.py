@@ -51,8 +51,8 @@ class Helper(commands.Cog):
                                   "Se você é um colecionador, irá adorar o meu sistema de coleção de artefactos.",
                             inline=False)
 
-            embed.add_field(name="**Acesso nosso Artigo de Ajuda**",
-                            value="[Clique Aqui](https://github.com/Ashley-Lab/ashley_home/blob/master/README.md)",
+            embed.add_field(name="**Acesso nossa WIKI de Ajuda**",
+                            value="[Clique Aqui](https://github.com/Ashley-Lab/ashley_home/wiki)",
                             inline=False)
 
             embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)

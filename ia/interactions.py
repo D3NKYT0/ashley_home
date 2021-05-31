@@ -29,7 +29,7 @@ class IaInteractions(commands.Cog):
         link = [emo for emo in guild.emojis if str(emo) == emoji][0].url
         embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_thumbnail(url=link)
-        return await ctx.reply(embed=embed)
+        return await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -177,6 +177,10 @@ class IaInteractions(commands.Cog):
                             return await self.send_message(message, response)
                         else:
                             return await self.send_message(message)
+
+                if message.reference:
+                    if message.reference.resolved.content == "⠀⠀⠀⠀⠀⠀⠀⠀":
+                        return await self.send_message(message)
 
 
 def setup(bot):
