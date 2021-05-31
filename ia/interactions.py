@@ -42,7 +42,7 @@ class IaInteractions(commands.Cog):
                     msg = "Eu vi você viu, excluiu né espertindo..."
                     if randint(1, 100) <= 50:
                         msg += f"\n{message.content[:999]}"
-                    return await self.send_message(after, msg)
+                    return await self.send_message(message, msg)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -178,9 +178,10 @@ class IaInteractions(commands.Cog):
                         else:
                             return await self.send_message(message)
 
-                if message.reference:
-                    if message.reference.resolved.content == "⠀⠀⠀⠀⠀⠀⠀⠀":
-                        return await self.send_message(message)
+                if message.reference is not None:
+                    if message.reference.resolved.content is not None:
+                        if message.reference.resolved.content == "⠀⠀⠀⠀⠀⠀⠀⠀":
+                            return await self.send_message(message)
 
 
 def setup(bot):

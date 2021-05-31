@@ -220,6 +220,10 @@ class Entity(object):
                 if self.is_combo:
                     description += skillcombo
 
+                if self.soulshot[0]:
+                    soulshot = f"\n\nSoulshot: {self.soulshot[1]}"
+                    description += soulshot
+
                 embed = discord.Embed(
                     title=title,
                     description=description,
