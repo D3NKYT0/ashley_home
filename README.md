@@ -13,20 +13,35 @@ Adicione ela em seu servidor [clicando aqui](https://discordapp.com/oauth2/autho
 
 Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
+## [Ashley Wiki](https://github.com/Ashley-Lab/ashley_home/wiki)  
+ℹ [Sobre a Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Sobre)  
+📓 [Iniciando na Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Iniciando-na-Ashley)  
+📜 [Comandos da Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos)  
+* 🔧 [Comandos Admin](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-admin)
+* 👩 [Comandos Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-ashley)
+* ❇️ [Comandos Funny](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)
+* 🕹️ [Comandos Mini-Games](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)
+* 👥 [Comandos Guild](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-guild)
+* 👤 [Comandos Member](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-member)
+* 💰 [Comandos Economy](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-economy)
+* ⚔️ [Comandos RPG](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-rpg)
+* ℹ️ [Comandos Utility](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%E2%84%B9%EF%B8%8F-comandos-utility)
+* 👑 [Comandos VIP](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-vip)
+
+
 ## Grupo de Staffs:
 
 **Núcleo de Programação**
 
 - Denky#5960 (Daniel Amaral)
 - Patchouli Knowledge#9732 (Olivia Martins)
+- Eduardo Rodrigues#9999 (Eduardo Rodrigues)
 
 **Designers e Ilustradores**
 
 - Patchouli Knowledge#9732 (Olivia Martins)
 - zNunshei#8659 (Matheus Vilares)
 - 餅(Mochi)#1030 (Momochi)
-
-## Roteiristas
 
 **Scripts da IA**
 
