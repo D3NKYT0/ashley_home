@@ -143,7 +143,8 @@ class OnReady(commands.Cog):
                                 msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
 
                             await _espera.delete()
-                            await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` **{winner}** `ganhou na loteria com:`"
+                            _winner = f"{winner.mention}" if winner in ashley_guild.members else f"**{winner}**"
+                            await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria com:`"
                                                f" **{USER['ACC']}** `acertos` **{ACC}** `no concurso:` "
                                                f"**{USER['CONCURSO']}**\n{msg}")
 
@@ -155,7 +156,12 @@ class OnReady(commands.Cog):
                         msg = await self.bot.db.give_money(None, reward, BET["user_id"], 519894833783898112)
                         await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
                         await _espera.delete()
-                        await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` **{winner}** `ganhou na loteria!`\n{msg}")
+                        _winner = f"{winner.mention}" if winner in ashley_guild.members else f"**{winner}**"
+                        _txt = f"`Como ninguem ganhou no sorteio da sena e esse é o ultimo dia do mês, foi sorteado" \
+                               f" um dos bilhetes comprados nesse mês para que o total acumulado seja esvaziado!`\n" \
+                               f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria, com o " \
+                               f"bilhete:` **{BET['bet']}**\n{msg}"
+                        await CHANNEL.send(_txt)
 
                     else:
                         await _espera.delete()

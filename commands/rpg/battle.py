@@ -102,14 +102,13 @@ class Battle(commands.Cog):
         db_player["xp"] = _db_class["xp"]
         db_player["level"] = _db_class["level"]
 
-        try:
-            soul = True if 'soushot' in data['rpg']["equipped_items"]['consumable'] else False
-        except TypeError:
-            soul = False
-        if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items']:
-            amount = data['rpg']['items'][data['rpg']["equipped_items"]['consumable']] + 1
-        else:
-            amount = 1 if soul else 0
+        soul, amount = False, 0
+        if data['rpg']["equipped_items"]['consumable'] is not None:
+            if 'soushot' in data['rpg']["equipped_items"]['consumable']:
+                soul = True
+                amount += 1
+                if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items'].keys():
+                    amount += data['rpg']['items'][data['rpg']["equipped_items"]['consumable']]
         db_player["soulshot"] = [soul, amount]
 
         set_e = list()
@@ -524,23 +523,18 @@ class Battle(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
 
         if player[ctx.author.id].soulshot[0]:
-            query = {"_id": 0, "user_id": 1, "rpg": 1}
+            query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
             data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
-            query_user = {"$set": {}}
-            cc = str(data_user['rpg']["equipped_items"]['consumable'])
-            if cc is not None:
-                if cc in data_user['rpg']['items'].keys():
-                    if data_user['rpg']['items'][cc] - (player[ctx.author.id].soulshot[1] - 1) < 1:
-                        query_user["$unset"] = dict()
-                        query_user["$unset"][f"rpg.items.{cc}"] = ""
-                        query_user["$set"]["rpg.equipped_items.consumable"] = None
-                    else:
-                        _amount = player[ctx.author.id].soulshot[1]
-                        query_user["$set"][f"rpg.items.{cc}"] = _amount if _amount == 0 else _amount - 1
-                else:
+            cc = data_user['rpg']["equipped_items"]['consumable']
+            if cc in data_user['rpg']['items'].keys():
+                if (player[ctx.author.id].soulshot[1] - 1) < 1:
+                    query_user["$unset"] = {f"rpg.items.{cc}": ""}
                     query_user["$set"]["rpg.equipped_items.consumable"] = None
-                cl = await self.bot.db.cd("users")
-                await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
+                else:
+                    query_user["$set"][f"rpg.items.{cc}"] = player[ctx.author.id].soulshot[1] - 1
+            else:
+                query_user["$set"]["rpg.equipped_items.consumable"] = None
+            await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]

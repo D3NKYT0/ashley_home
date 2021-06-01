@@ -31,14 +31,13 @@ class PVP(commands.Cog):
         db_player["xp"] = _db_class["xp"]
         db_player["level"] = _db_class["level"]
 
-        try:
-            soul = True if 'soushot' in data['rpg']["equipped_items"]['consumable'] else False
-        except TypeError:
-            soul = False
-        if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items']:
-            amount = data['rpg']['items'][data['rpg']["equipped_items"]['consumable']] + 1
-        else:
-            amount = 1 if soul else 0
+        soul, amount = False, 0
+        if data['rpg']["equipped_items"]['consumable'] is not None:
+            if 'soushot' in data['rpg']["equipped_items"]['consumable']:
+                soul = True
+                amount += 1
+                if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items'].keys():
+                    amount += data['rpg']['items'][data['rpg']["equipped_items"]['consumable']]
         db_player["soulshot"] = [soul, amount]
 
         db_player["lower_net"] = lower_net
@@ -363,7 +362,7 @@ class PVP(commands.Cog):
             cc = str(data_user['rpg']["equipped_items"]['consumable'])
             if cc is not None:
                 if cc in data_user['rpg']['items'].keys():
-                    if data_user['rpg']['items'][cc] - (player_1[_idp1].soulshot[1] - 1) < 1:
+                    if (player_1[_idp1].soulshot[1] - 1) < 1:
                         query_user["$unset"] = dict()
                         query_user["$unset"][f"rpg.items.{cc}"] = ""
                         query_user["$set"]["rpg.equipped_items.consumable"] = None
@@ -382,7 +381,7 @@ class PVP(commands.Cog):
             cc = str(data_user['rpg']["equipped_items"]['consumable'])
             if cc is not None:
                 if cc in data_user['rpg']['items'].keys():
-                    if data_user['rpg']['items'][cc] - (player_2[_idp2].soulshot[1] - 1) < 1:
+                    if (player_2[_idp2].soulshot[1] - 1) < 1:
                         query_user["$unset"] = dict()
                         query_user["$unset"][f"rpg.items.{cc}"] = ""
                         query_user["$set"]["rpg.equipped_items.consumable"] = None

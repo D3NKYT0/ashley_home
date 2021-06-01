@@ -137,14 +137,13 @@ class Raid(commands.Cog):
         self.db_player[ctx.author.id]["xp"] = _db_class["xp"]
         self.db_player[ctx.author.id]["level"] = _db_class["level"]
 
-        try:
-            soul = True if 'soushot' in data['rpg']["equipped_items"]['consumable'] else False
-        except TypeError:
-            soul = False
-        if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items']:
-            amount = data['rpg']['items'][data['rpg']["equipped_items"]['consumable']] + 1
-        else:
-            amount = 1 if soul else 0
+        soul, amount = False, 0
+        if data['rpg']["equipped_items"]['consumable'] is not None:
+            if 'soushot' in data['rpg']["equipped_items"]['consumable']:
+                soul = True
+                amount += 1
+                if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items'].keys():
+                    amount += data['rpg']['items'][data['rpg']["equipped_items"]['consumable']]
         self.db_player[ctx.author.id]["soulshot"] = [soul, amount]
 
         set_e = list()
@@ -639,7 +638,7 @@ class Raid(commands.Cog):
             cc = str(data_user['rpg']["equipped_items"]['consumable'])
             if cc is not None:
                 if cc in data_user['rpg']['items'].keys():
-                    if data_user['rpg']['items'][cc] - (p_raid[ctx.author.id].soulshot[1] - 1) < 1:
+                    if (p_raid[ctx.author.id].soulshot[1] - 1) < 1:
                         query_user["$unset"] = dict()
                         query_user["$unset"][f"rpg.items.{cc}"] = ""
                         query_user["$set"]["rpg.equipped_items.consumable"] = None
