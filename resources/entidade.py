@@ -487,8 +487,8 @@ class Entity(object):
     async def damage(self, ctx, entity, skill, enemy_atk):
         lvl_skill, name, enemy_cc, enemy_img = entity.level_skill, entity.name, entity.cc, entity.img
         enemy_luk, effects, msg_return, lethal, _eff = entity.status['luk'], entity.effects, "", False, 0
+        bluff, hit_kill, drain, msg_drain, test = False, False, False, "", not self.is_player or self.pvp
 
-        bluff, hit_kill, drain, msg_drain = False, False, False, ""
         if effects is not None:
             if "reflect" in effects.keys():
                 if effects["reflect"]["turns"] > 0:
@@ -547,25 +547,20 @@ class Entity(object):
             await ctx.send(embed=embed_)
             return entity
 
-        lvs = lvl_skill[int(skill['skill']) - 1] if not self.is_player or self.pvp else lvl_skill
+        lvs = lvl_skill[int(skill['skill']) - 1] if test else lvl_skill
         self.ls = lvs if 0 <= lvs <= 9 else 9
-
         confusion, act_eff = False, True
-        if entity.effects is not None:
 
+        if entity.effects is not None:
             if "confusion" in entity.effects.keys():
                 if entity.effects["confusion"]["turns"] > 0:
                     confusion = True if randint(1, 2) == 1 else False
-
             if "strike" in entity.effects.keys():
                 if entity.effects["strike"]['turns'] > 0:
                     act_eff = False
 
         if skill['effs'] is not None and act_eff:
-            if not self.is_player or self.pvp:
-                key = [k for k, v in skill['effs'][self.ls].items()]
-            else:
-                key = [k for k, v in skill['effs'].items()]
+            key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
             for c in key:
 
                 percent = 100 if not bluff else 75  # aumenta 25% de chance de pegar efeito de skill
@@ -585,17 +580,18 @@ class Entity(object):
                             _text1 = f'**{self.name.upper()}** `ainda está sob o efeito de` **{c.upper()}**'
                             msg_return += f"{_text1}\n\n"
                     else:
-                        if not self.is_player or self.pvp:
+                        if test:
                             self.effects[c] = skill['effs'][self.ls][c]
-                            max_turn = skill['effs'][self.ls][c]['turns']
-                            self.effects[c]['turns'] = randint(1, max_turn) if max_turn > 1 else max_turn
+                            min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
+                            min_turn = 3 if c in ["bluff"] else min_turn
+                            max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                            self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
-                            max_turn = skill['effs'][c]['turns']
-                            self.effects[c]['turns'] = randint(1, max_turn) if max_turn > 1 else max_turn
-
-                        if self.effects[c]['turns'] < 1 or self.effects[c]['turns'] > 9:
-                            self.effects[c]['turns'] = randint(1, 2)
+                            min_turn, max_turn = 2, skill['effs'][c]['turns']
+                            min_turn = 3 if c in ["bluff"] else min_turn
+                            max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                            self.effects[c]['turns'] = randint(min_turn, max_turn)
 
                         turns = self.effects[c]['turns']
                         _eff += turns
@@ -611,7 +607,7 @@ class Entity(object):
                            f' `esta sob o efeito de` **STRIKE**'
             msg_return += f"{_text_strike}\n\n"
 
-        damage_enchant = skill['damage'][self.ls] if not self.is_player or self.pvp else skill['damage']
+        damage_enchant = skill['damage'][self.ls] if test else skill['damage']
         d1 = int(damage_enchant[:damage_enchant.find('d')])
         d2 = int(damage_enchant[damage_enchant.find('d') + 1:])
         dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
@@ -619,7 +615,7 @@ class Entity(object):
         dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
         bk = randint(dd[0], dd[1]) if dd[0] != dd[1] else dd[0]
 
-        if not self.is_player or self.pvp:
+        if test:
             if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
                 tot_enemy_atk = enemy_atk * 1.75
             elif enemy_cc[1] in ['assassin', 'priest']:
@@ -632,7 +628,7 @@ class Entity(object):
             damage = enemy_atk + bk
 
         _soulshot, bda = 0, 0
-        if not self.is_player:
+        if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
                 entity.soulshot[1] -= 1
                 _soulshot = _class[entity.db['class_now']]['soulshot']
@@ -644,7 +640,7 @@ class Entity(object):
             value_critical = 27
         if enemy_cc[1] in ['assassin', 'priest']:
             value_critical = 25
-        if not self.is_player or self.pvp:
+        if test:
             value_critical -= int(enemy_luk / 5)
         if "cegueira" in self.effects.keys():
             lethal = True if self.effects["cegueira"]['turns'] > 0 else False
@@ -722,12 +718,12 @@ class Entity(object):
                     self.status['hp'] = 0
                 bb = "" if bda == 0 else f"\n`e` **{_soulshot}%** `de dano a mais por causa da soulshot:` **{bda}**"
                 if defense > 0:
-                    descrip = f'**{self.name.upper()}** `absorveu` **{armor_now}** `de dano` **{dn}** {bb}'
+                    descrip = f'**{self.name.upper()}** `absorveu` **{armor_now}** `de dano, recebendo` **{dn}** {bb}'
                 else:
                     descrip = f'**{self.name.upper()}** `recebeu` **{damage}** `de dano` {bb}'
             elif hit_kill and not confusion:
                 _lethal = self.status['hp'] - 1
-                self.status['hp'] = 1
+                self.status['hp'] = 0
                 descrip = f'**{self.name.upper()}** `recebeu` **{_lethal}** `de dano` **LETHAL!**'
             else:
                 entity.status['hp'] -= dn

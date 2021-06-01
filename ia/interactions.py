@@ -21,7 +21,7 @@ class IaInteractions(commands.Cog):
         self.scripts = [ia.about_me, ia.concept, ia.deeping, ia.introduction, ia.responses, ia.commands, ia.common]
         self.heart = HeartIA(self.scripts, 0.9)
 
-    async def send_message(self, message, content=None):
+    async def send_message(self, message, content=None, deleted=False):
         msg = await get_response(message) if content is None else content
         ctx = await self.bot.get_context(message)
         emoji = choice(self.bot.config['emojis']['ashley'])
@@ -29,7 +29,9 @@ class IaInteractions(commands.Cog):
         link = [emo for emo in guild.emojis if str(emo) == emoji][0].url
         embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_thumbnail(url=link)
-        return await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+        if deleted:
+            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+        await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -42,7 +44,7 @@ class IaInteractions(commands.Cog):
                     msg = "Eu vi você viu, excluiu né espertindo..."
                     if randint(1, 100) <= 50:
                         msg += f"\n{message.content[:999]}"
-                    return await self.send_message(message, msg)
+                    return await self.send_message(message, msg, True)
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
