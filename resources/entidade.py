@@ -723,7 +723,7 @@ class Entity(object):
                     descrip = f'**{self.name.upper()}** `recebeu` **{damage}** `de dano` {bb}'
             elif hit_kill and not confusion:
                 _lethal = self.status['hp'] - 1
-                self.status['hp'] = 0
+                self.status['hp'] = 1
                 descrip = f'**{self.name.upper()}** `recebeu` **{_lethal}** `de dano` **LETHAL!**'
             else:
                 entity.status['hp'] -= dn
