@@ -59,7 +59,6 @@ class Ashley(commands.AutoShardedBot):
         self.minerando = list()  # status de um jogador (OK)
         self.desafiado = list()  # status de um jogador (OK)
         # -----------================------------
-        self.session = self.loop.run_until_complete(self.create_session())
 
         # haw_data
         self.config = config
@@ -128,6 +127,9 @@ class Ashley(commands.AutoShardedBot):
                              f"{self.bh[3]}": False,  # quarto boss
                              f"{self.bh[4]}": False}  # quinto boss
 
+    async def on_ready(self):
+        self.session = self.http._HTTPClient__session
+
     # create link adfly
     def adlinks(self, code):
         _link = self.adfly.shorten(f"https://ashley-webapi.herokuapp.com/{code}")
@@ -136,14 +138,6 @@ class Ashley(commands.AutoShardedBot):
     # delete link adfly
     def addelete(self, linkid):
         self.adfly.delete_url(linkid)
-
-    @staticmethod
-    async def create_session():
-        return aiohttp.ClientSession()
-
-    async def close(self):
-        await self.session.close()
-        await super().close()
 
     async def atr_initialize(self):
         self.blacklist = dumps(await self.db.get_all_data("blacklist"))
