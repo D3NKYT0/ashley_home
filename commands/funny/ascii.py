@@ -1,3 +1,5 @@
+import discord
+
 from pyfiglet import Figlet
 from discord.ext import commands
 from resources.check import check_it

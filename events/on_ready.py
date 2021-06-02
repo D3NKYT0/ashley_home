@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import copy
+import json
 
 import time as date
 from itertools import cycle
@@ -13,6 +14,9 @@ from resources.structure import user_data_structure, guild_data_structure
 from resources.entidade import Entity
 from operator import itemgetter
 from resources.lotash import Lottery, create
+
+with open("data/auth.json") as auth:
+    _auth = json.loads(auth.read())
 
 cor = {
     'clear': '\033[m',
@@ -606,18 +610,24 @@ class OnReady(commands.Cog):
             print("\033[1;35m( ✔ ) | Reestruturação do banco de dados finalizada!\033[m\n")
 
         print("\n\033[1;35m( >> ) | Iniciando carregamento dos loops internos...\033[m")
-        self.bot.loop.create_task(self.change_status())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mSTATUS_DA_ASHLEY\033[1;32m foi carregado com sucesso!\33[m')
-        self.bot.loop.create_task(self.draw_member())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mDRAW_MEMBERS\033[1;32m foi carregado com sucesso!\33[m')
-        self.bot.loop.create_task(self.draw_gift())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mDRAW_GIFT\033[1;32m foi carregado com sucesso!\33[m')
-        self.bot.loop.create_task(self.security_macro())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mSECURITY_MACRO\033[1;32m foi carregado com sucesso!\33[m')
-        self.bot.loop.create_task(self.boss_system())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mBOSS_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
-        self.bot.loop.create_task(self.lottery_system())
-        print('\033[1;32m( 🔶 ) | O loop \033[1;34mLOTTERY_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["change_status"]:
+            self.bot.loop.create_task(self.change_status())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mSTATUS_DA_ASHLEY\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["draw_member"]:
+            self.bot.loop.create_task(self.draw_member())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mDRAW_MEMBERS\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["draw_gift"]:
+            self.bot.loop.create_task(self.draw_gift())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mDRAW_GIFT\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["security_macro"]:
+            self.bot.loop.create_task(self.security_macro())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mSECURITY_MACRO\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["boss_system"]:
+            self.bot.loop.create_task(self.boss_system())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mBOSS_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["lottery_system"]:
+            self.bot.loop.create_task(self.lottery_system())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mLOTTERY_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
         print("\033[1;35m( ✔ ) | Loops internos carregados com sucesso!\033[m\n")
 
         print(cor['cian'], '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬', cor['clear'])

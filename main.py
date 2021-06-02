@@ -27,11 +27,14 @@ from adlink.adfly_api_instance import api as api_adfly
 from discord import Webhook, AsyncWebhookAdapter
 from resources.check import validate_url
 
+with open("data/auth.json") as auth:
+    _auth = json.loads(auth.read())
+
 
 # CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA DISCORD
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, shard_count=1, **kwargs)
+        super().__init__(*args, shard_count=_auth["shard"], **kwargs)
         self.owner_id = 300592580381376513
         self.msg_cont = 0
         self.start_time = dt.utcnow()
@@ -96,7 +99,7 @@ class Ashley(commands.AutoShardedBot):
         # info bot
         self.server_ = "HEROKU"
         self.github = "https://github.com/Ashley-Lab/ashley_home"
-        self.progress = "V.1 -> Stable"
+        self.progress = f"V.1 -> {_auth['version']}"
         self.python_version = "3.9.5"
         self.version_str = f"1.0.0"
         self.version = f"API: {discord.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
@@ -838,16 +841,13 @@ class Ashley(commands.AutoShardedBot):
 
 if __name__ == "__main__":
 
-    with open("data/auth.json") as auth:
-        _auth = json.loads(auth.read())
-
     description_ashley = f"Um bot de assistencia para servidores criado por: Denky#5960\n" \
                          f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
                          f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
     intents = discord.Intents.default()
     intents.members = True
-    bot = Ashley(command_prefix=['ash.', 'ash '], description=description_ashley, pm_help=True, intents=intents)
+    bot = Ashley(command_prefix=_auth['prefix'], description=description_ashley, pm_help=True, intents=intents)
     bot.remove_command('help')
     cont = 0
     emojis = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}

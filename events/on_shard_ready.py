@@ -1,8 +1,12 @@
+import json
 from resources.color import random_color
 from discord import Embed
 from discord.ext import commands
 from resources.webhook import Webhook
 from datetime import datetime
+
+with open("data/auth.json") as auth:
+    _auth = json.loads(auth.read())
 
 
 class Shards(commands.Cog):
@@ -30,8 +34,8 @@ class Shards(commands.Cog):
         ).set_thumbnail(
             url=self.bot.user.avatar_url
         ).to_dict()
-
-        await self.webhook.send()
+        if _auth["on_shard"]:
+            await self.webhook.send()
 
 
 def setup(bot):

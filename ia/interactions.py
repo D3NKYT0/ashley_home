@@ -1,3 +1,4 @@
+import json
 import discord
 
 from ia.scripts import ia
@@ -9,9 +10,12 @@ from resources.utility import get_response, include
 from resources.color import random_color
 from datetime import datetime as dt
 
+with open("data/auth.json") as auth:
+    _auth = json.loads(auth.read())
+
 C_SIM, C_NAO = 98, 98
 chance, chance_not = 0, 0
-ASHLEY = ["ashley"]
+ASHLEY = _auth["bot"]
 
 
 class IaInteractions(commands.Cog):
@@ -144,7 +148,7 @@ class IaInteractions(commands.Cog):
                 # remoção do codi-name "ash" ou "ashley"
                 # --------------------============================--------------------
                 content_ = message.content.lower()
-                content_ = content_.replace("ashley", "").replace("ash", "")
+                content_ = content_.replace(ASHLEY[0], "")
                 content_ = content_.replace(" ?", "?").replace("  ", " ").strip()
                 # --------------------============================--------------------
 
