@@ -51,6 +51,7 @@ class Ashley(commands.AutoShardedBot):
         self.cmd_marry = dict()
         self.blacklist = list()
         self.shutdowns = list()
+        self.guilds_vips = list()
         # -----------================------------
         self.batalhando = list()  # status de um jogador (OK)
         self.jogando = list()  # status de um jogador (OK)
@@ -154,6 +155,9 @@ class Ashley(commands.AutoShardedBot):
         _ev_db = False if _event is None else False if not _event["status"] else True
         self.event_special, TEXT = _ev_db, "DESATIVADA" if not _ev_db else "ATIVADA"
         print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{TEXT}\033[1;32m com sucesso!\33[m')
+        all_data = (await self.db.cd("guilds")).find({"vip": True}, {"_id": 0, "guild_id": 1})
+        self.guilds_vips = [d["guild_id"] async for d in all_data]
+        print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mGUILDS_VIP\033[1;32m foi feita sucesso!\33[m')
 
     async def shutdown(self, reason):
         date_ = dt(*dt.utcnow().timetuple()[:6])

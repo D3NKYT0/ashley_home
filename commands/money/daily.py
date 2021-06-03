@@ -19,6 +19,15 @@ class DailyClass(commands.Cog):
         self.st = []
         self.color = self.bot.color
 
+        self.extra = ['unsealed_stone', 'Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal',
+                      'melted_artifact', 'marry_orange', 'marry_green', 'marry_blue']
+
+        self.soulshot = ['soushot_platinum_silver', 'soushot_platinum_mystic', 'soushot_platinum_inspiron',
+                         'soushot_platinum_violet', 'soushot_platinum_hero', 'soushot_leather_silver',
+                         'soushot_leather_mystic', 'soushot_leather_inspiron', 'soushot_leather_violet',
+                         'soushot_leather_hero', 'soushot_cover_silver', 'soushot_cover_mystic',
+                         'soushot_cover_inspiron', 'soushot_cover_violet', 'soushot_cover_hero']
+
     def status(self):
         for v in self.bot.data_cog.values():
             self.st.append(v)
@@ -36,7 +45,8 @@ class DailyClass(commands.Cog):
             daily.add_field(name="Daily Commands:",
                             value=f"{self.st[66]} `daily coin` Receba suas fichas diarias.\n"
                                   f"{self.st[66]} `daily energy` Receba suas energias diarias.\n"
-                                  f"{self.st[66]} `daily work` Trabalhe duro e receba seu salario.")
+                                  f"{self.st[66]} `daily work` Trabalhe duro e receba seu salario.\n"
+                                  f"{self.st[66]} `daily vip` Recompença diaria para VIPs.")
             daily.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             daily.set_thumbnail(url=self.bot.user.avatar_url)
             daily.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -75,6 +85,38 @@ class DailyClass(commands.Cog):
         await ctx.send(f'<:rank:519896825411665930>│🎊 **PARABENS** 🎉 : `Você acabou de ganhar` '
                        f'<:coin:546019942936608778> **{coin}** `fichas!` + **{patent * 25}** '
                        f'`pela sua patente. Olhe seu inventario usando o comando:` **ash i**')
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=86400, vip=True))
+    @daily.group(name='vip', aliases=['v'])
+    async def _vip(self, ctx):
+        """Comando usado pra ganhar coins de jogo da Ashley
+        Use ash daily coin"""
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        if not data_user['security']['status']:
+            return await ctx.send("<:alert:739251822920728708>│`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO "
+                                  "DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**")
+
+        reward = ['onyx', 'diamond', 'marry_pink']
+        if randint(1, 100) == 50:
+            reward.append(choice(self.extra))
+        if randint(1, 100) == 50:
+            reward.append(choice(self.extra))
+        if randint(1, 100) == 50:
+            reward.append(choice(self.extra))
+
+        soulshots = ["summon_box_secret", choice(self.soulshot), choice(self.soulshot), choice(self.soulshot)]
+        if randint(1, 100) == 50:
+            soulshots.append(choice(self.soulshot))
+        if randint(1, 100) == 50:
+            soulshots.append(choice(self.soulshot))
+
+        souls = await self.bot.db.add_rpg(ctx, soulshots, False, 5)
+        msg = f"<a:fofo:524950742487007233>│`VOCÊ GANHOU` ✨ **SOULSHOTS** ✨ {souls}"
+        response = await self.bot.db.add_reward(ctx, reward)
+        msg += f"\n<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}"
+        await ctx.send(msg)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

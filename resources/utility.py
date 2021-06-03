@@ -583,19 +583,20 @@ PROVINCES = [542406551923720202,
              542407345750278164,
              542407416768233530]
 
-ERRORS = ['The check functions for command staff ban failed.',
-          'The check functions for command staff kick failed.',
-          'The check functions for command staff language failed.',
-          'The check functions for command staff limpar failed.',
-          'Command raised an exception: IndexError: list index out of range',
-          'Command raised an exception: TimeoutError: ',
-          'The check functions for command config guild failed.',
-          'The check functions for command config report failed.',
-          'The check functions for command staff slowmode failed.',
-          'The check functions for command staff delete failed.',
-          'The check functions for command logger failed.',
-          'The check functions for command guild convert failed.',
-          'The check functions for command source failed.']
+ERRORS = ['The check functions for command staff ban failed.',  # 0
+          'The check functions for command staff kick failed.',  # 1
+          'The check functions for command staff language failed.',  # 2
+          'The check functions for command staff limpar failed.',  # 3
+          'Command raised an exception: IndexError: list index out of range',  # 4
+          'Command raised an exception: TimeoutError: ',  # 5
+          'The check functions for command config guild failed.',  # 6
+          'The check functions for command config report failed.',  # 7
+          'The check functions for command staff slowmode failed.',  # 8
+          'The check functions for command staff delete failed.',  # 9
+          'The check functions for command logger failed.',  # 10
+          'The check functions for command guild convert failed.',  # 11
+          'The check functions for command source failed.',  # 12
+          'The check functions for command register guild failed.']  # 13
 
 enforcado = ['''
 ```

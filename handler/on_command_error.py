@@ -43,10 +43,6 @@ class CommandErrorHandler(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
-        # Isso evita que quaisquer comandos com manipuladores locais sejam manipulados aqui em on_command_error.
-        if hasattr(ctx.command, 'on_error'):
-            return
-
         # Isso faz com que os comandos com argumentos invalidos tenham um retorno explicatorio!
         if isinstance(error, commands.BadArgument):
             perms = ctx.channel.permissions_for(ctx.me)
@@ -76,7 +72,7 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.CheckFailure):
             if error.__str__() == 'The check functions for command register guild failed.':
                 perms = ctx.channel.permissions_for(ctx.me)
-                if perms.send_messages and perms.read_messages:
+                if perms.send_messages and perms.read_messages and error.__str__() not in ERRORS:
                     return await ctx.send(f"<:negate:721581573396496464>│`VOCÊ NÃO TEM PERMISSÃO PARA USAR ESSE "
                                           f"COMANDO!`")
             if error.__str__() not in ERRORS:

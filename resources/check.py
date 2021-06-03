@@ -29,12 +29,18 @@ def check_it(**kwargs):
         if ctx.message.webhook_id is not None:
             return True
 
+        _vip = False
+        if ctx.guild is not None:
+            if ctx.guild.id in ctx.bot.guilds_vips:
+                _vip = True
+
         guild = ctx.bot.get_guild(ctx.bot.config['config']['default_guild'])
         if ctx.author.id not in [m.id for m in guild.members]:
             msg = "<:alert:739251822920728708>│`Voce precisa está dentro do meu servidor de suporte, para poder me " \
                   "usar.`\n**Obs:** Para entrar no servidor de suporte use o comando **ash invite** para receber o" \
-                  " convite do servidor!"
-            if ctx.command.name in ["invite", "register", "register guild"]:
+                  " convite do servidor!\n**Obs:** `Servidores` **VIPS** `não precisam que seus membros estejam no " \
+                  "servidor de suporte!`"
+            if ctx.command.name in ["invite", "register", "register guild"] or _vip:
                 pass
             else:
                 raise commands.CheckFailure(msg)

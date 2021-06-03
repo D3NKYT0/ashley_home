@@ -107,6 +107,11 @@ class HeadsOrTails(commands.Cog):
                     answer_ = await self.bot.db.add_money(ctx, change, True)
                     await ctx.send('<:rank:519896825411665930>│`VOCÊ ACERTOU!` 🎊 **PARABENS** 🎉 '
                                    '`você GANHOU:`\n {}'.format(answer_))
+
+                    souls = await self.bot.db.add_rpg(ctx, soulshots, False, 5)
+                    await ctx.send('<a:fofo:524950742487007233>│`VOCÊ GANHOU` ✨ **SOULSHOTS** ✨ '
+                                   '{}'.format(souls))
+
                     if change < 50:
                         response = await self.bot.db.add_reward(ctx, reward)
                         await ctx.send('<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
