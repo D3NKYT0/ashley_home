@@ -413,19 +413,18 @@ class Battle(commands.Cog):
                 else:
                     reward = [choice(db_monster['reward']) for _ in range(4)]
 
-                if db_player['level'] > 25:
-                    bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
-                             'stone_crystal_blue', 'stone_crystal_yellow']
+                bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
+                         'stone_crystal_blue', 'stone_crystal_yellow']
 
-                    if data['rpg']['vip']:
-                        reward[0] = choice(bonus)
-                        reward[1] = choice(bonus)
-                        reward[2] = choice(bonus)
-                        reward[3] = choice(bonus)
+                if data['rpg']['vip']:
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
+                    reward[2] = choice(bonus)
+                    reward[3] = choice(bonus)
 
-                    else:
-                        reward[0] = choice(bonus)
-                        reward[1] = choice(bonus)
+                else:
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
 
                 if change < 40:
                     if data['rpg']['vip']:
@@ -434,7 +433,7 @@ class Battle(commands.Cog):
                     else:
                         reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-                if change < 15 and db_player['level'] > 25:
+                if change < 15:
                     date_ = date.localtime()
                     item_event = choice(["soul_crystal_of_love", "soul_crystal_of_love", "soul_crystal_of_love",
                                          "soul_crystal_of_hope", "soul_crystal_of_hope", "soul_crystal_of_hope",
@@ -464,7 +463,7 @@ class Battle(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
-        if change < 10 and player[ctx.author.id].status['hp'] > 0 and db_player['level'] > 25:
+        if change < 10 and player[ctx.author.id].status['hp'] > 0:
 
             equips_list = list()
             for ky in self.bot.config['equips'].keys():
