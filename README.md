@@ -20,6 +20,7 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 ## [Ashley Wiki](https://github.com/Ashley-Lab/ashley_home/wiki)  
 ℹ [Sobre a Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Sobre)  
 📓 [Iniciando na Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Iniciando-na-Ashley)  
+👑 [Benefícios VIP](https://github.com/Ashley-Lab/ashley_home/wiki/Beneficios-VIP)  
 📜 [Comandos da Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos)  
 * 🔧 [Comandos Admin](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-admin)
 * 👩 [Comandos Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-ashley)
