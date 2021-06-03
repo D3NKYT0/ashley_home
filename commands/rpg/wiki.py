@@ -22,8 +22,9 @@ class WikiClass(commands.Cog):
         if item is not None:
             item = item.lower()
             if item in wiki.keys():
-                wiki, desc, rare, how = wiki[item], wiki['description'], wiki['rare'], wiki['how']
-                typew, img, item = wiki['type'], wiki['image'], "exódia, o proibido" if item == "exodia" else item
+                wiki = wiki[item]
+                desc, rare, how, typew = wiki['description'], wiki['rare'], wiki['how'], wiki['type']
+                img, item = wiki['image'], "exódia, o proibido" if item == "exodia" else item
                 description = f'{item.title()}\n' \
                               f'\u200b\n' \
                               f'**Descrição**: {desc}\n' \
