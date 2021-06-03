@@ -15,7 +15,7 @@ class QuestClass(commands.Cog):
         for v in self.bot.data_cog.values():
             self.st.append(v)
 
-    @check_it(no_pm=True, is_owner=True)
+    @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='quest', aliases=['q'])
@@ -26,17 +26,17 @@ class QuestClass(commands.Cog):
             self.status()
             embed = discord.Embed(color=self.color)
             embed.add_field(name="Quest Commands:",
-                            value=f"{self.st[117]} `quest test` ...")
+                            value=f"{self.st[117]} `quest ht` [Hero is First Task]")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)
 
-    @check_it(no_pm=True, is_owner=True)
+    @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @quest.group(name='test', aliases=['t'])
-    async def _test(self, ctx):
+    @quest.group(name='hero_task', aliases=['ht'])
+    async def _hero_task(self, ctx):
         """..."""
         await ctx.send(f"Comando em contrução...")
 

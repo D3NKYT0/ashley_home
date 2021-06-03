@@ -58,21 +58,21 @@ class StaffAdmin(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @staff.command(name='ban', aliases=['banir'])
-    async def _ban(self, ctx, member=None, *, reason: str = None):
+    async def _ban(self, ctx, member: discord.Member = None, *, reason: str = None):
         """Comando usado pra banir usuarios
         Use ash staff ban <@usario a ser banido>"""
         try:
-            user = ctx.message.mentions[0]
-            if reason is None or member is None:
+            #user = ctx.message.mentions[0]
+            if member is None:
+                await ctx.send("<:alert:739251822920728708>│`Você deve especificar um usuario para banir!`")
+            elif reason is None:
                 return await ctx.send("<:negate:721581573396496464>│`Você precisa dizer um motivo para banir esse "
                                       "usuário!`")
-            elif user.id == ctx.author.id:
+            elif member.id == ctx.author.id:
                 return await ctx.send("<:negate:721581573396496464>│`Você não pode banir a si mesmo!`")
-            await ctx.guild.ban(user, delete_message_days=1, reason=reason)
-            await ctx.send("<:confirmed:721581574461587496>│`O usuario(a)` <@{}> `foi banido com sucesso do "
-                           "servidor.`".format(user.id))
-        except IndexError:
-            await ctx.send("<:alert:739251822920728708>│`Você deve especificar um usuario para banir!`")
+            await ctx.guild.ban(member, delete_message_days=1, reason=reason)
+            await ctx.send(f"<:confirmed:721581574461587496>│`O usuario(a)` {member.mention} `foi banido com sucesso do "
+                           "servidor.`")
         except discord.Forbidden:
             await ctx.send("<:negate:721581573396496464>│`Não posso banir o usuário, o cargo dele está acima de mim "
                            "ou não tenho permissão para banir membros!`")

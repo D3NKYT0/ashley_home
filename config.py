@@ -53,6 +53,9 @@ with open("data/poke.json", encoding="utf-8") as poke:
 with open("data/questions.json", encoding="utf-8") as questions:
     questions = json.load(questions)
 
+with open("data/quests.json", encoding="utf-8") as quests:
+    quests = json.load(quests)
+
 with open("data/recipes.json", encoding="utf-8") as recipes:
     recipes = json.load(recipes)
 
@@ -77,6 +80,9 @@ with open("data/staff.json", encoding="utf-8") as staff:
 with open("data/thinker.json", encoding="utf-8") as thinker:
     thinker = json.load(thinker)
 
+with open("data/wiki.json", encoding="utf-8") as wiki:
+    wiki = json.load(wiki)
+
 data = {
     "achievements": achievements,
     "answers": answers,
@@ -95,6 +101,7 @@ data = {
     "pets": pets,
     "poke": poke,
     "questions": questions,
+    "quests": quests,
     "recipes": recipes,
     "reflect": reflect,
     "riddles": riddles,
@@ -102,5 +109,6 @@ data = {
     "set_equips": set_equips,
     "skills": skills,
     "staff": staff,
-    "thinker": thinker
+    "thinker": thinker,
+    "wiki": wiki
 }

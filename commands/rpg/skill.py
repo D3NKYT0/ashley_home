@@ -18,14 +18,11 @@ class SkillClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='skill', aliases=['habilidade'])
-    async def skill(self, ctx):
+    async def skill(self, ctx, member: discord.Member = None):
         """Comando usado pra ver seus status no rpg da Ashley
         Use ash skill"""
         if ctx.invoked_subcommand is None:
-            try:
-                member = ctx.message.mentions[0]
-            except IndexError:
-                member = ctx.author
+            member = member or ctx.author
 
             try:
                 if self.he[ctx.author.id]:

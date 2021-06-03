@@ -118,4 +118,5 @@ commands.ashley.research
 commands.rpg.quest
 commands.ashley.captcha
 commands.member.lottery
+commands.rpg.wiki
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1

@@ -14,6 +14,13 @@ class BotInfo(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
 
+    def formatdelta(delta, fmt):
+        d = {"days": delta.days}
+        d['hours'], rem = divmod(delta.seconds, 3600)
+        d['years'], d['dias'] = divmod(delta.days, 365)
+        d['minutes'], d['seconds'] = divmod(rem, 60)
+        return fmt.format(**d)
+
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
@@ -27,6 +34,7 @@ class BotInfo(commands.Cog):
         voice = channel_types[False]
         text = channel_types[True]
         owner = str(self.bot.get_user(self.bot.owner_id))
+        uptime = formatdelta((dt.utcnow() - self.bot.start_time), "{hours} horas, {minutes} minutos e {seconds} segundos.")
 
         embed_bot = discord.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
         embed_bot.set_thumbnail(url=self.bot.user.avatar_url)
@@ -51,7 +59,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name='🐍 Python  | Version', value=f"`{self.bot.python_version}`", inline=False)
         embed_bot.add_field(name='<:cool:745375589245911190> Bot  | Version', value=str(ver_), inline=False)
         embed_bot.add_field(name="<a:loading:520418506567843860> | Tempo Online",
-                            value=f"{dt.utcnow() - self.bot.start_time}", inline=False)
+                            value=f"{uptime}", inline=False)
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
                             value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
                                   "cope=bot&permissions=8)", inline=False)
