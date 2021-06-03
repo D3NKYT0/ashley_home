@@ -1,6 +1,6 @@
 import discord
 
-from asyncio import sleep
+from asyncio import sleep, TimeoutError
 from discord.ext import commands
 from resources.check import check_it
 from resources.utility import ERRORS
@@ -59,10 +59,16 @@ class ConfigClass(commands.Cog):
                        ' um canal de registro de ações.```\n'
                        '**1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do ActionLog!`')
-            resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             await msg.delete()
             await ctx.send('<:confirmed:721581574461587496>│`ActionLog ativado!`')
             update['log_config']["log"] = True
@@ -96,10 +102,16 @@ class ConfigClass(commands.Cog):
                        'quantos membros existem em seu servidor, em tempo real.```\n'
                        '**1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Contador de membros!`')
-            resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             await msg.delete()
 
             try:
@@ -151,10 +163,16 @@ class ConfigClass(commands.Cog):
                        'etc```\n'
                        '**1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Registro de Entrada de Membros!`')
-            resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             await msg.delete()
             await ctx.send('<:confirmed:721581574461587496>│`Registro de Entrada de Membros ativado!`')
             update['func_config']["member_join"] = True
@@ -189,10 +207,16 @@ class ConfigClass(commands.Cog):
                        'etc```\n'
                        ' **1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Registro de Sainda de Membros!`')
-            resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             await msg.delete()
             await ctx.send('<:confirmed:721581574461587496>│`Registro de Saida de Membros ativado!`')
             update['func_config']["member_remove"] = True
@@ -228,10 +252,16 @@ class ConfigClass(commands.Cog):
                        'ou mais membros cadastrados na ashley```\n'
                        '**1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Sorteio de Membros!`')
-            resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             await msg.delete()
             await ctx.send('<:confirmed:721581574461587496>│`Sorteio de Membros ativado!`')
             update['bot_config']["ash_draw"] = True
@@ -264,7 +294,10 @@ class ConfigClass(commands.Cog):
                        'divertidas que eu posso fazer.```\n'
                        ' **1** para `SIM` ou **0** para `NÃO`')
 
-        resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if resp_1.content == '1':
             await ctx.send('<:confirmed:721581574461587496>│`Serviço de Interação com Membros ativado!`')
             update['ia_config']["auto_msg"] = True
@@ -300,13 +333,19 @@ class ConfigClass(commands.Cog):
             msg = await ctx.send('<a:blue:525032762256785409>│`Você deseja ativar o Report?` '
                                  '**1** para `SIM` ou **0** para `NÃO`')
 
-            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+            try:
+                resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
             values.append(resp_1.content)
             if resp_1.content == '1':
                 await msg.delete()
                 msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Report!`')
 
-                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+                try:
+                    resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+                except TimeoutError:
+                    return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
                 values.append(resp_2.channel_mentions[0].id)
                 await msg.delete()
 
@@ -348,9 +387,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[15]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -359,9 +396,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[14]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -370,9 +405,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[16]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -381,9 +414,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[17]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -392,9 +423,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[18]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -403,9 +432,7 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
-        if error.__str__() in ERRORS[6]:
+        if error.__str__() in ERRORS[19]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')
 
@@ -414,8 +441,6 @@ class ConfigClass(commands.Cog):
         if error.__str__() in ERRORS[4]:
             return await ctx.send('<:negate:721581573396496464>│`Você não marcou um canal de texto:` '
                                   '**COMANDO CANCELADO**')
-        if error.__str__() in ERRORS[5]:
-            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
         if error.__str__() in ERRORS[7]:
             return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
                                   '**manage_guild / Gerenciar Servidor**')

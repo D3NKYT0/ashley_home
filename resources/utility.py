@@ -596,7 +596,13 @@ ERRORS = ['The check functions for command staff ban failed.',  # 0
           'The check functions for command logger failed.',  # 10
           'The check functions for command guild convert failed.',  # 11
           'The check functions for command source failed.',  # 12
-          'The check functions for command register guild failed.']  # 13
+          'The check functions for command register guild failed.',  # 13
+          'The check functions for command config member_count failed.',  # 14
+          'The check functions for command config action_log failed.',  # 15
+          'The check functions for command config join_member failed.',  # 16
+          'The check functions for command config remove_member failed.',  # 17
+          'The check functions for command config draw_member failed.',  # 18
+          'The check functions for command config interaction failed.']  # 19
 
 enforcado = ['''
 ```
