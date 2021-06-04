@@ -4,7 +4,7 @@ from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import parse_duration as pd
-from random import randint
+from random import randint, choice
 from datetime import datetime
 
 m = 0
@@ -99,17 +99,17 @@ class DailyClass(commands.Cog):
                                   "DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**")
 
         reward = ['onyx', 'diamond', 'marry_pink']
-        if randint(1, 100) == 50:
+        if randint(1, 100) >= 50:
             reward.append(choice(self.extra))
-        if randint(1, 100) == 50:
+        if randint(1, 100) >= 50:
             reward.append(choice(self.extra))
-        if randint(1, 100) == 50:
+        if randint(1, 100) >= 50:
             reward.append(choice(self.extra))
 
         soulshots = ["summon_box_secret", choice(self.soulshot), choice(self.soulshot), choice(self.soulshot)]
-        if randint(1, 100) == 50:
+        if randint(1, 100) >= 50:
             soulshots.append(choice(self.soulshot))
-        if randint(1, 100) == 50:
+        if randint(1, 100) >= 50:
             soulshots.append(choice(self.soulshot))
 
         souls = await self.bot.db.add_rpg(ctx, soulshots, False, 5)
