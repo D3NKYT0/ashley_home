@@ -50,7 +50,7 @@ chamado de mobrau''', (147, 216), 7], ['''pare com as drogas''', (177, 237), 7]]
                 cont += len(c)
         if resp.count('''
 ''') > rede[4]:
-            await ctx.send('<:alert:739251822920728708>│``Sua mensagem foi muito grande!``')
+            await ctx.send('<:alert:739251822920728708>│`Sua mensagem foi muito grande!`')
         else:
             avatar = await get_avatar(ctx.author.avatar_url_as(format="png"), rede[0][0], rede[0][0])
 
