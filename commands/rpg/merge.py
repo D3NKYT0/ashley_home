@@ -34,7 +34,8 @@ class MergeClass(commands.Cog):
         self.cost_convert = {
             "crystal_fragment_light": 100,
             "crystal_fragment_energy": 100,
-            "crystal_fragment_dark": 100
+            "crystal_fragment_dark": 100,
+            "transmogrifador": 1
         }
 
     @check_it(no_pm=True)
