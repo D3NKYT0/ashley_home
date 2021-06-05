@@ -72,19 +72,19 @@ class UserBank(commands.Cog):
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
 
-        if money is None and not data_user["config"]["config"]:
+        if money is None and not data_user["config"]["vip"]:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`")
 
         if update_user["true_money"]["fragment"] < amount * 1000:
             quantidade = update_user["true_money"]["fragment"] // 1000
             return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{quantidade}** `conversões.`")
 
-        if not data_user["config"]["config"]:
+        if not data_user["config"]["vip"]:
             if money.lower() not in ["blessed", "real", "reais"]:
                 return await ctx.send("<:alert:739251822920728708>│`Você só pode converter para:` **BLESSED e REAIS!**")
 
         update_user["true_money"]["fragment"] -= 1000 * amount
-        if not data_user["config"]["config"]:
+        if not data_user["config"]["vip"]:
             if money.lower() == "blessed":
                 update_user["true_money"]["blessed"] += amount
             else:
@@ -94,7 +94,7 @@ class UserBank(commands.Cog):
             update_user["true_money"]["real"] += amount
         await self.bot.db.update_data(data_user, update_user, 'users')
 
-        if not data_user["config"]["config"]:
+        if not data_user["config"]["vip"]:
             extra = "Blessed Ethernyas" if money == "blessed" else "Reais"
             return await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
                                   f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} {extra}!**")
@@ -216,9 +216,9 @@ class UserBank(commands.Cog):
             except KeyError:
                 update['rpg']['items'][item_reward] = int(quant)
 
-        update['true_money']['blessed'] -= self.items[name] * int(quant)
+        update['true_money']['blessed'] -= self.items_shopping[name] * int(quant)
         await self.bot.db.update_data(data, update, 'users')
-        a = '{:,.2f}'.format(float(self.items[name] * int(quant)))
+        a = '{:,.2f}'.format(float(self.items_shopping[name] * int(quant)))
         b = a.replace(',', 'v')
         c = b.replace('.', ',')
         d = c.replace('v', '.')
