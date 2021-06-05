@@ -124,7 +124,7 @@ class OnReady(commands.Cog):
                     cl = await (await self.bot.db.cd("miscellaneous")).find_one({"_id": "lottery"})
 
                     if len(USERS) > 0 and DATE[2] != DN.day or DATE[2] == DN.day and len(SENA) > 0:
-
+                        await _espera.delete()
                         for USER in USERS:
                             winner = self.bot.get_user(USER["user_id"])
                             ACC, msg = ' '.join('%02d' % n for n in USER['ACERTOS']), ""
@@ -146,7 +146,6 @@ class OnReady(commands.Cog):
                                 await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
                                 msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
 
-                            await _espera.delete()
                             _winner = f"{winner.mention}" if winner in ashley_guild.members else f"**{winner}**"
                             await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria com:`"
                                                f" **{USER['ACC']}** `acertos` **{ACC}** `no concurso:` "
