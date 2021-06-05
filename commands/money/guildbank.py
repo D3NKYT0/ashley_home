@@ -35,15 +35,6 @@ class GuildBank(commands.Cog):
         d = c.replace('v', '.')
         return d
 
-    async def get_atr(self, guild_id, atr, is_true=False):
-        data = await self.bot.db.get_data("guild_id", guild_id, "guilds")
-        if data is not None:
-            if is_true:
-                return data['treasure'][atr]
-            return data['data'][atr] + data['treasure'][atr]
-        else:
-            return -1
-
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
@@ -51,15 +42,17 @@ class GuildBank(commands.Cog):
     async def treasure(self, ctx):
         """Comando usado pra ver a quantia de dinheiro de um server
         Use ash treasure"""
-        self.money = await self.get_atr(ctx.guild.id, 'total_money')
-        self.gold = await self.get_atr(ctx.guild.id, 'total_gold')
-        self.silver = await self.get_atr(ctx.guild.id, 'total_silver')
-        self.bronze = await self.get_atr(ctx.guild.id, 'total_bronze')
+        data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
 
-        self.money_ = await self.get_atr(ctx.guild.id, 'total_money', True)
-        self.gold_ = await self.get_atr(ctx.guild.id, 'total_gold', True)
-        self.silver_ = await self.get_atr(ctx.guild.id, 'total_silver', True)
-        self.bronze_ = await self.get_atr(ctx.guild.id, 'total_bronze', True)
+        self.money = data['treasure']['total_money'] + data['data']['total_money']
+        self.gold = data['treasure']['total_gold'] + data['data']['total_gold']
+        self.silver = data['treasure']['total_silver'] + data['data']['total_silver']
+        self.bronze = data['treasure']['total_bronze'] + data['data']['total_bronze']
+
+        self.money_ = data['treasure']['total_money']
+        self.gold_ = data['treasure']['total_gold']
+        self.silver_ = data['treasure']['total_silver']
+        self.bronze_ = data['treasure']['total_bronze']
 
         a = '{:,.2f}'.format(float(self.money))
         b = a.replace(',', 'v')

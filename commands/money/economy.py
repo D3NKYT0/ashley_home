@@ -21,20 +21,19 @@ class Economy(commands.Cog):
         d = c.replace('v', '.')
         return d
 
-    async def get_all_guilds_atr(self, atr, qnt=0):
-        for guild in self.bot.guilds:
-            data = await self.bot.db.get_data("guild_id", guild.id, "guilds")
-            if data is not None:
-                qnt_total = data['data'][atr] + data['treasure'][atr]
-                qnt += qnt_total
+    @staticmethod
+    async def get_all_guilds_atr(all_data, atr, qnt=0):
+        for data in all_data:
+            qnt_total = data['data'][atr] + data['treasure'][atr]
+            qnt += qnt_total
         return qnt
 
-    async def get_all_list(self, atr):
-        t_list = list()
-        for guild in self.bot.guilds:
-            data = await self.bot.db.get_data("guild_id", guild.id, "guilds")
-            if data is not None:
-                t_list.append(data['data'][atr])
+    @staticmethod
+    async def get_all_list(all_data, atr, t_list=None):
+        if t_list is None:
+            t_list = list()
+        for data in all_data:
+            t_list.append(data['data'][atr])
         return t_list
 
     @check_it(no_pm=True)
@@ -44,19 +43,22 @@ class Economy(commands.Cog):
     async def economy(self, ctx):
         """Comando usado pra ver a quantidade total de dinheiro da ashley
         Use ash economy"""
+        query = {"_id": 0, "guild_id": 1, "data": 1, "treasure": 1}
+        all_data = [d async for d in (await self.bot.db.cd("guilds")).find({}, query)]
+
         self.global_ranking = {"Bronze": 0, "Silver": 0, "Gold": 0}
         self.all_account = 0
 
-        self.money = await self.get_all_guilds_atr('total_money')
-        self.gold = await self.get_all_guilds_atr('total_gold')
-        self.silver = await self.get_all_guilds_atr('total_silver')
-        self.bronze = await self.get_all_guilds_atr('total_bronze')
+        self.money = await self.get_all_guilds_atr(all_data, 'total_money')
+        self.gold = await self.get_all_guilds_atr(all_data, 'total_gold')
+        self.silver = await self.get_all_guilds_atr(all_data, 'total_silver')
+        self.bronze = await self.get_all_guilds_atr(all_data, 'total_bronze')
 
-        for ranking in await self.get_all_list('ranking'):
+        for ranking in await self.get_all_list(all_data, 'ranking'):
             self.global_ranking[ranking] += 1
         tot_guild = self.global_ranking['Bronze'] + self.global_ranking['Silver'] + self.global_ranking['Gold']
 
-        for accounts in await self.get_all_list('accounts'):
+        for accounts in await self.get_all_list(all_data, 'accounts'):
             self.all_account += accounts
 
         a = '{:,.2f}'.format(float(self.money))

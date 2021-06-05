@@ -26,20 +26,80 @@ class UserBank(commands.Cog):
         self.items_shopping = self.bot.config['attribute']['shopping']
 
     @staticmethod
-    def format_num(num):
-        a = '{:,.0f}'.format(float(num))
+    def format_num(num, f=False):
+        a = '{:,.0f}'.format(float(num)) if not f else '{:,.2f}'.format(float(num))
         b = a.replace(',', 'v')
         c = b.replace('.', ',')
         d = c.replace('v', '.')
         return d
 
-    async def get_atr(self, user_id, atr):
-        data = await self.bot.db.get_data("user_id", user_id, "users")
-        result = data['treasure'][atr]
-        if result is not None:
-            return result
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.group(name='wallet', aliases=['carteira'])
+    async def wallet(self, ctx):
+        """Comando usado para verificar quanto dinheiro você tem
+        Use ash wallet"""
+        if ctx.invoked_subcommand is None:
+            data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            self.money = data['treasure']['money']
+            self.gold = data['treasure']['gold']
+            self.silver = data['treasure']['silver']
+            self.bronze = data['treasure']['bronze']
+            blessed = self.format_num(data['true_money']['blessed'])
+            fragment = self.format_num(data['true_money']['fragment'])
+            real = self.format_num(data['true_money']['real'], True)
+            adfly = self.format_num(data['true_money']['adfly'])
+            d = self.format_num(self.money, True)
+            msg = f"<:coins:519896825365528596>│ **{ctx.author}** No total  você tem **R$ {d}** de `ETHERNYAS` na " \
+                  f"sua carteira!\n {self.bot.money[2]} **{self.format_num(self.gold)}** | " \
+                  f"{self.bot.money[1]} **{self.format_num(self.silver)}** | " \
+                  f"{self.bot.money[0]} **{self.format_num(self.bronze)}**\n" \
+                  f"**{blessed}** - `Blessed Ethernyas` | **{fragment}** - `Fragmentos de Blessed Ethernyas`\n" \
+                  f"**R$ {real}** - `Reais` | **{adfly}** - `ADFLY/ADLINK COMMANDS`"
+            await ctx.send(msg)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @wallet.group(name='convert', aliases=['c'])
+    async def _add(self, ctx, amount: int = 0, money: str = None):
+        if amount is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia.`")
+        if amount < 1:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update_user = data_user
+
+        if money is None and not data_user["config"]["config"]:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`")
+
+        if update_user["true_money"]["fragment"] < amount * 1000:
+            quantidade = update_user["true_money"]["fragment"] // 1000
+            return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{quantidade}** `conversões.`")
+
+        if not data_user["config"]["config"]:
+            if money.lower() not in ["blessed", "real", "reais"]:
+                return await ctx.send("<:alert:739251822920728708>│`Você só pode converter para:` **BLESSED e REAIS!**")
+
+        update_user["true_money"]["fragment"] -= 1000 * amount
+        if not data_user["config"]["config"]:
+            if money.lower() == "blessed":
+                update_user["true_money"]["blessed"] += amount
+            else:
+                update_user["true_money"]["real"] += amount
         else:
-            return -1
+            update_user["true_money"]["blessed"] += amount
+            update_user["true_money"]["real"] += amount
+        await self.bot.db.update_data(data_user, update_user, 'users')
+
+        if not data_user["config"]["config"]:
+            extra = "Blessed Ethernyas" if money == "blessed" else "Reais"
+            return await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                                  f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} {extra}!**")
+        await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                       f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} [Reais e Blessed Ethernyas]!**")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -165,30 +225,6 @@ class UserBank(commands.Cog):
         await ctx.send(f"<:confirmed:721581574461587496>|`SUA COMPRA FOI FEITA COM SUCESSO` **{quant}** "
                        f"`{name.upper()} ADICIONADO NO SEU INVENTARIO COM SUCESSO QUE CUSTOU` "
                        f"**R$ {d}** `BLESSED ETHERNYAS`")
-
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='wallet', aliases=['carteira'])
-    async def wallet(self, ctx):
-        """Comando usado para verificar quanto dinheiro você tem
-        Use ash wallet"""
-        self.money = await self.get_atr(ctx.author.id, 'money')
-        self.gold = await self.get_atr(ctx.author.id, 'gold')
-        self.silver = await self.get_atr(ctx.author.id, 'silver')
-        self.bronze = await self.get_atr(ctx.author.id, 'bronze')
-
-        a = '{:,.2f}'.format(float(self.money))
-        b = a.replace(',', 'v')
-        c = b.replace('.', ',')
-        d = c.replace('v', '.')
-
-        msg = f"<:coins:519896825365528596>│ **{ctx.author}** No total  você tem **R$ {d}** de `ETHERNYAS` na sua " \
-              f"carteira!\n {self.bot.money[2]} **{self.format_num(self.gold)}** | " \
-              f"{self.bot.money[1]} **{self.format_num(self.silver)}** | " \
-              f"{self.bot.money[0]} **{self.format_num(self.bronze)}**"
-
-        await ctx.send(msg)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

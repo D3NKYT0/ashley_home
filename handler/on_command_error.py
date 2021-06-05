@@ -28,7 +28,9 @@ class CommandErrorHandler(commands.Cog):
             "Command raised an exception: DiscordServerError: 500 Internal Server Error (error code: 0): 500: "
             "Internal Server Error",
             "Command raised an exception: DiscordServerError: 503 Service Temporarily Unavailable (error code: 0):"
-            " <html> "]
+            " <html> ",
+            "Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions"
+        ]
 
     def error_check(self, error):
         for _err in self.errors:
