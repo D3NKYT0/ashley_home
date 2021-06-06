@@ -730,7 +730,7 @@ class Entity(object):
                 if entity.status['hp'] < 0:
                     entity.status['hp'] = 0
                 bb = "" if bda == 0 else f"\n`e` **{_soulshot}%** `de dano a mais por causa da soulshot:` **{bda}**"
-                confusy = "`, por está confuso o golpe a certou a si mesmo!`"
+                confusy = "`, por está confuso o golpe acertou a si mesmo!`"
                 descrip = f'**{entity.name.upper()}** `recebeu` **{damage}** `de dano` {bb}{confusy}'
 
             descrip += msg_drain
