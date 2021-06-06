@@ -77,7 +77,7 @@ class RegisterClass(commands.Cog):
 
         # ----------------------------------------------------------------------------------
         try:
-            await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
+            await ctx.author.send(_RESEARCH["1"] + _RESEARCH["-3"])
         except discord.errors.Forbidden:
             return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:

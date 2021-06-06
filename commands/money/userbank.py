@@ -169,8 +169,10 @@ class UserBank(commands.Cog):
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
                            f"**EXEMPLO:** `USE` **ASH SHOPPING 5 ALGEL WING** `PARA COMPRAR 5 ALGEL WING!`")
             embed = ['Shopping Premium:', self.bot.color, 'Lista: \n']
+
             if quant is None:
                 return await paginator(self.bot, self.items_shopping, self.items_shopping, embed, ctx)
+
             else:
                 num = quant - 1 if quant > 0 else 0
                 return await paginator(self.bot, self.items_shopping, self.items_shopping, embed, ctx, num)
@@ -199,7 +201,7 @@ class UserBank(commands.Cog):
             if i[1]["name"] == name:
                 item_reward, type_item = i[0], "equip"
 
-        if item_reward is not None:
+        if item_reward is None:
             for k, v in self.bot.items.items():
                 if v[1] == name:
                     item_reward, type_item = k, "inventory"
