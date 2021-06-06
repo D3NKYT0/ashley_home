@@ -60,7 +60,10 @@ class RegisterClass(commands.Cog):
         query = {"_id": 0, "user_id": 1, "research": 1}
         data = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         if "satisfaction" in data["research"].keys():
-            return await ctx.author.send(_RESEARCH["-4"])
+            try:
+                return await ctx.author.send(_RESEARCH["-4"])
+            except discord.errors.Forbidden:
+                return await ctx.send(_RESEARCH["-4"])
 
         def check(m):
             if m.author.id == ctx.author.id:
@@ -73,7 +76,10 @@ class RegisterClass(commands.Cog):
         _SCORE[ctx.author.id] = 0
 
         # ----------------------------------------------------------------------------------
-        await ctx.author.send(_RESEARCH["1"] + _RESEARCH["-3"])
+        try:
+            await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
+        except discord.errors.Forbidden:
+            return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
         except TimeoutError:
@@ -171,7 +177,10 @@ class RegisterClass(commands.Cog):
         query = {"_id": 0, "user_id": 1, "research": 1}
         data = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         if "feedback" in data["research"].keys():
-            return await ctx.author.send(_RESEARCH_2["-4"])
+            try:
+                return await ctx.author.send(_RESEARCH_2["-4"])
+            except discord.errors.Forbidden:
+                return await ctx.send(_RESEARCH_2["-4"])
 
         def check(m):
             if m.author.id == ctx.author.id:
@@ -184,7 +193,10 @@ class RegisterClass(commands.Cog):
         _SCORE_2[ctx.author.id] = 0
 
         # ----------------------------------------------------------------------------------
-        await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
+        try:
+            await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
+        except discord.errors.Forbidden:
+            return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS_2[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
         except TimeoutError:
