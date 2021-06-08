@@ -44,6 +44,9 @@ class CommandErrorHandler(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
+        if error.__str__() in ERRORS:
+            return
+
         # Isso faz com que os comandos com argumentos invalidos tenham um retorno explicatorio!
         if isinstance(error, commands.BadArgument):
             perms = ctx.channel.permissions_for(ctx.me)
@@ -73,13 +76,13 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.CheckFailure):
             if error.__str__() == 'The check functions for command register guild failed.':
                 perms = ctx.channel.permissions_for(ctx.me)
-                if perms.send_messages and perms.read_messages and error.__str__() not in ERRORS:
+                if perms.send_messages and perms.read_messages:
                     return await ctx.send(f"<:negate:721581573396496464>│`VOCÊ NÃO TEM PERMISSÃO PARA USAR ESSE "
                                           f"COMANDO!`")
-            if error.__str__() not in ERRORS:
-                perms = ctx.channel.permissions_for(ctx.me)
-                if perms.send_messages and perms.read_messages:
-                    return await ctx.send(f"{error}")
+
+            perms = ctx.channel.permissions_for(ctx.me)
+            if perms.send_messages and perms.read_messages:
+                return await ctx.send(f"{error}")
 
         # aqui faço as verificações dos cooldowns dos comandos padroes
         # obs: existem comandos com cooldowns personalizados que nao entram nesse contexto

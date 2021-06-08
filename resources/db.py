@@ -162,7 +162,7 @@ class Database(object):
         c = b.replace('.', ',')
         d = c.replace('v', '.')
 
-        if user is not None:
+        if user is not None and ctx is not None:
             _user = self.bot.get_user(user)
             try:
                 await _user.send(f"<:confirmed:721581574461587496>│`Voce acabou de vender um item no mercado, "
