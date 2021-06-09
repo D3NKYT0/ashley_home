@@ -23,7 +23,7 @@ class LogoutCog(commands.Cog):
             color=self.color,
             description=f'<:confirmed:721581574461587496>│**Logging out...**')
         await ctx.send(embed=embed)
-        await self.bot.closed()
+        await self.bot.close()
 
 
 def setup(bot):

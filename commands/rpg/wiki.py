@@ -27,7 +27,7 @@ class WikiClass(commands.Cog):
             item = item.replace("_", " ")
             item = item.lower()
             if item in wiki.keys():
-                wiki, = wiki[item]
+                wiki = wiki[item]
                 desc, rare, how, typew = wiki['description'], wiki['rare'], wiki['how'], wiki['type']
                 try:
                     emoji = wiki['emoji']

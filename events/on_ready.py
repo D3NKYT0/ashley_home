@@ -55,9 +55,8 @@ class OnReady(commands.Cog):
             "boss_key": 3,
             "angel_stone": 1,
             "enchant_silver": 1,
-            "blessed_enchant_silver": 1,
+            "Energy": 150,
             "armor_silver": 1,
-            "blessed_armor_silver": 1,
             "coins": 50
         }
         self.loot_mvp = {
