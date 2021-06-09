@@ -43,7 +43,9 @@ class OnReady(commands.Cog):
         self.bot = bot
         self.time_ready = None
         self.color = self.bot.color
-        self.m = self.bot.config['battle']['bosses']
+        self.m = list()
+        for m in self.bot.config['battle']['bosses']:
+            self.m += [m] * m['amount']
         self.url = 'https://www.twitch.tv/d3nkyt0'
         self.i = self.bot.items
         self.relics = ["WrathofNatureCapsule", "UltimateSpiritCapsule", "SuddenDeathCapsule", "InnerPeacesCapsule",
@@ -187,7 +189,7 @@ class OnReady(commands.Cog):
             # existe uma diferença de hora de +3 para o servidor da ashley
             if date_[3] in self.bot.bh and not self.bot.boss_live:  # cria o boss
                 if not self.bot.boss_per_day[str(date_[3])]:
-                    _boss = choice([m for m in self.m])
+                    _boss = choice(self.m)
                     db_boss = copy.deepcopy(_boss)
                     db_boss['lower_net'] = False
                     db_boss['enemy'] = None

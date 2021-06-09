@@ -101,7 +101,7 @@ class GuildBank(commands.Cog):
         """Comando que entrega sua recompença do servidor de cadastro."""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
-        if ctx.guild.id != data['guild_id']:
+        if ctx.guild.id != data['guild_id'] and ctx.guild.id != 519894833783898112:
             data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update_ = data_
             del update_['cooldown']["guild reward"]
@@ -183,7 +183,8 @@ class GuildBank(commands.Cog):
                                   f"DESANIME USE O COMANDO` **ASH TESOURO** `E FIQUE TENTE NOVAMENTE!`")
 
         await self.bot.db.update_data(data, update, 'users')
-        await ctx.send(f"<a:fofo:524950742487007233>│`POR SER REGISTRADO NESSE SERVIDOR VOCÊ GANHOU` "
+        msg = "POR SER REGISTRADO NESSE SERVIDOR " if ctx.author.id != 519894833783898112 else ""
+        await ctx.send(f"<a:fofo:524950742487007233>│`{msg}VOCÊ GANHOU` "
                        f"✨ **MUITOS ITENS** ✨\n{response}\n`Que custou para os cofres do servidor a quantia de` "
                        f"**R${d} ETHERNYAS**, `Para saber quanto ainda tem no saldo do servidor use o comando` "
                        f"**ash tesouro**")

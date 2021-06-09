@@ -218,10 +218,10 @@ def open_chest(chest, event=True, amount=None):
                 chest_new = choice(chests)
 
                 _data = choice_chest(chest_new, event)
-                chance_relic += _data[0]
-                max_money += _data[1]
-                max_coin += _data[2]
-                max_energy += _data[3]
+                chance_relic = _data[0]
+                max_money = _data[1]
+                max_coin = _data[2]
+                max_energy = _data[3]
                 items += _data[4]
                 relics = _data[5]
 
