@@ -865,6 +865,34 @@ class DataInteraction(object):
                 f"{position}º: {player} > {money_(data_user['true_money']['blessed'])}"
         return rank
 
+    async def get_rank_event(self, limit, ctx):  # atualizado no banco de dados
+        global cont
+
+        f = {"_id": 0, "guild_id": 1, "event.points": 1}
+        dt = [_ async for _ in ((await self.bot.db.cd("guilds")).find({}, f).sort([("event.points", -1)]))]
+        position = int([int(_["guild_id"]) for _ in dt].index(ctx.guild.id)) + 1
+        cont['list'] = 0
+
+        def money_(money):
+            a = '{:,.0f}'.format(float(money))
+            b = a.replace(',', 'v')
+            c = b.replace('.', ',')
+            d = c.replace('v', '.')
+            return d
+
+        def counter():
+            cont['list'] += 1
+            return cont['list']
+
+        rank = "\n".join([str(counter()) + "º: " +
+                          str(self.bot.get_guild(int(dt[x]["guild_id"]))) +
+                          " > " + str(money_(dt[x]["event"]["points"])) for x in range(limit)])
+        data_user = await self.db.get_data("guild_id", ctx.guild.id, "guilds")
+        player = str(ctx.guild)
+        rank += f"\n--------------------------------------------------------------------\n" \
+                f"{position}º: {player} > {money_(data_user['event']['points'])}"
+        return rank
+
     async def get_rank_fragment(self, limit, ctx):  # atualizado no banco de dados
         global cont
 

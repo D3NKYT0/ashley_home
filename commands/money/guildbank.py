@@ -23,6 +23,17 @@ class GuildBank(commands.Cog):
 
         self.st = []
 
+        self.items_events = {
+                             "Wrath of Nature Capsule": ["WrathofNatureCapsule", 100],
+                             "Ultimate Spirit Capsule": ["UltimateSpiritCapsule", 200],
+                             "Sudden Death Capsule": ["SuddenDeathCapsule", 400],
+                             "Inner Peaces Capsule": ["InnerPeacesCapsule", 600],
+                             "Eternal Winter Capsule": ["EternalWinterCapsule", 800],
+                             "Essence of Asura Capsule": ["EssenceofAsuraCapsule", 1000],
+                             "Divine Caldera Capsule": ["DivineCalderaCapsule", 1250],
+                             "Demoniac Essence Capsule": ["DemoniacEssenceCapsule", 1500]
+                             }
+
     def status(self):
         for v in self.bot.data_cog.values():
             self.st.append(v)
@@ -87,7 +98,8 @@ class GuildBank(commands.Cog):
             embed = discord.Embed(color=self.bot.color)
             embed.add_field(name="Guilds Commands:",
                             value=f"{self.st[29]} `guild reward` Receba suas recompenças a cada hora.\n"
-                                  f"{self.st[29]} `guild convert` Converta as pedras da guilda em ETHERNYAS.\n")
+                                  f"{self.st[29]} `guild convert` Converta as pedras da guilda em ETHERNYAS.\n"
+                                  f"{self.st[29]} `guild warehouse` Mande seus itens de evento para a GUILDA.")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -226,6 +238,56 @@ class GuildBank(commands.Cog):
                        f' aceito com sucesso, voce converteu todas as pedras do seu servidor em` '
                        f'**RS{d}** `ETHERNYAS`')
         await self.bot.data.add_sts(ctx.author, "guild_convert", 1)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @guild.group(name='warehouse', aliases=["w", "armazem"])
+    async def _warehouse(self, ctx, *, item=None):
+        if not self.bot.event_special:
+            return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE NAO TEM NENHUM EVENTO ESPECIAL!`")
+
+        if item is None:
+            return await ctx.send(f"<:negate:721581573396496464>│`VOCE PRECISA DIZER UM NOME DE UM ITEM!`")
+
+        item_name = None
+        for i in self.items_events.keys():
+            if i.lower() == item.lower():
+                item_name = i
+
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if item_name is not None:
+            if self.items_events[item_name][0] in update['inventory'].keys():
+                update['inventory'][self.items_events[item_name][0]] -= 1
+                if update['inventory'][self.items_events[item_name][0]] < 1:
+                    del update['inventory'][self.items_events[item_name][0]]
+                await self.bot.db.update_data(data, update, 'users')
+
+                g_data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
+                g_update = g_data
+
+                try:
+                    g_update['event']['Capsule'][self.items_events[item_name][0]] += 1
+                except KeyError:
+                    g_update['event']['Capsule'][self.items_events[item_name][0]] = 1
+
+                try:
+                    g_update['event']['points'] += self.items_events[item_name][1]
+                except KeyError:
+                    g_update['event']['points'] = self.items_events[item_name][1]
+
+                await self.bot.db.update_data(g_data, g_update, 'guilds')
+
+                return await ctx.send(f"<a:fofo:524950742487007233>│`VOCÊ ENVIOU UM` ✨ **ITEM DE EVENTO** ✨ "
+                                      f"`COM SUCESSO`\n `Aproveite e olhe:` **ash top event** "
+                                      f"`para saber se sua guilda esta indo bem!`")
+
+            else:
+                return await ctx.send(f"<:negate:721581573396496464>│`VOCE NAO TEM ESSE ITEM NO SEU INVENTARIO!`")
+        else:
+            return await ctx.send(f"<:negate:721581573396496464>│`VOCE PRECISA DIZER UM NOME DE UM ITEM DE EVENTO!`")
 
     @_convert.error
     async def _convert_error(self, ctx, error):

@@ -126,14 +126,6 @@ class TradeClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _class = data_user["rpg"]["class_now"]
-        _db_class = data_user["rpg"]["sub_class"][_class]
-        if _db_class['level'] < 26:
-            msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA TROCAR EQUIPAMENTOS!\n' \
-                  'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
         if data_member is None:
             return await ctx.send('<:alert:739251822920728708>│**ATENÇÃO** : '
                                   '`esse usuário não está cadastrado!`', delete_after=5.0)

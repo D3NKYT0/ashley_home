@@ -57,14 +57,6 @@ class MergeClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _class = update["rpg"]["class_now"]
-        _db_class = update["rpg"]["sub_class"][_class]
-        if _db_class['level'] < 26:
-            msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA USAR EQUIPAMENTOS!\n' \
-                  'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
         if item is None:
             return await ctx.send("<:negate:721581573396496464>│`Você precisa colocar o nome de um item que deseja "
                                   "fundir:` **ash merge <nome_do_item>** `voce consegue ver os itens "

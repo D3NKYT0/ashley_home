@@ -186,6 +186,19 @@ guild_data_structure = {
             "version": [1.0, "ashley-db-user-04-2021"],
             "available": 0,
             "webhook": None,
+            "event": {
+                "Capsule": {
+                    "WrathofNatureCapsule": 0,
+                    "UltimateSpiritCapsule": 0,
+                    "SuddenDeathCapsule": 0,
+                    "InnerPeacesCapsule": 0,
+                    "EternalWinterCapsule": 0,
+                    "EssenceofAsuraCapsule": 0,
+                    "DivineCalderaCapsule": 0,
+                    "DemoniacEssenceCapsule": 0
+                },
+                "points": 0
+            },
             "data": {
                 "commands": 0,
                 "ranking": "Bronze",
