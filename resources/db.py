@@ -884,11 +884,16 @@ class DataInteraction(object):
             cont['list'] += 1
             return cont['list']
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(self.bot.get_guild(int(dt[x]["guild_id"]))) +
-                          " > " + str(money_(dt[x]["event"]["points"])) for x in range(limit)])
+        def get_guild(bot, _dt):
+            if bot.get_guild(int(_dt["guild_id"])) is not None:
+                return str(self.bot.get_guild(int(_dt["guild_id"]))).replace("'", "").replace("#", "_")
+            else:
+                return "Servidor Fantasma"
+
+        rank = "\n".join([str(counter()) + "º: " + get_guild(self.bot, dt[x]) + " > "
+                          + str(money_(dt[x]["event"]["points"])) for x in range(limit)])
         data_user = await self.db.get_data("guild_id", ctx.guild.id, "guilds")
-        player = str(ctx.guild)
+        player = str(ctx.guild).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
                 f"{position}º: {player} > {money_(data_user['event']['points'])}"
         return rank

@@ -92,8 +92,8 @@ class Ashley(commands.AutoShardedBot):
         self.maintenance = False  # Default: False
         self.event_special = False  # Default: False
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 5, (8, 10)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "DIA_DAS_MAES"  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 6, (12, 13)]  # ANO / MES / DIA INI e DIA END
+        self.event_now = "DIA_DOS_NAMORADOS"  # NOME DO EVENTO ATUAL
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
 

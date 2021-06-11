@@ -16,6 +16,9 @@ class OnMessageEdit(commands.Cog):
         if before.content == after.content:
             return
 
+        if after.guild is None:
+            return
+
         data = await self.bot.db.get_data("guild_id", after.guild.id, "guilds")
 
         if not data:
