@@ -61,7 +61,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name="<a:loading:520418506567843860> | Tempo Online", value=f"{uptime}", inline=False)
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
                             value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
-                                  "cope=bot&permissions=8)", inline=False)
+                                  "cope=bot&permissions=806218998)", inline=False)
         embed_bot.set_footer(text="Comando usado por {} as {} Hrs".format(ctx.author, datetime.now().hour),
                              icon_url=ctx.author.avatar_url)
         await ctx.send(delete_after=120, embed=embed_bot)

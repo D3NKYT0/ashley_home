@@ -34,7 +34,7 @@ class RecipeClass(commands.Cog):
 
         if item is not None:
 
-            item = item.lower()
+            item = item.lower().replace(" ", "_")
             if item in recipes.keys():
 
                 recipe = recipes[item]

@@ -8,7 +8,8 @@ from resources.db import Database
 class InviteClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.url = "https://discordapp.com/oauth2/authorize?client_id=478977311266570242&scope=bot&permissions=8"
+        self.url = "https://discordapp.com/oauth2/authorize?client_id=478977311266570242&scope=bot&" \
+                   "permissions=806218998"
         self.color = self.bot.color
 
     @check_it(no_pm=True)

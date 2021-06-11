@@ -61,6 +61,9 @@ class MerchantClass(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você esqueceu de falar o nome do item para colocar "
                                   "na loja!`")
 
+        if item.lower() in ["medalhas", "rank points"]:
+            return await ctx.send("<:alert:739251822920728708>│`Você não pode vender esse tipo de item.`")
+
         item_key_equip, item_key_craft, _type, count = None, None, None, 0
         data = await self.bot.db.get_all_data("merchant")
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")

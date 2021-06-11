@@ -52,9 +52,10 @@ class FarmClass(commands.Cog):
                             await ctx.author.remove_roles(cargos[c])
                             await sleep(1)
                     for c in range(0, len(roles)):
-                        role = discord.utils.find(lambda r: r.name == roles[c], ctx.guild.roles)
-                        await ctx.author.add_roles(role)
-                        await sleep(1)
+                        if roles[c] not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
+                            role = discord.utils.find(lambda r: r.name == roles[c], ctx.guild.roles)
+                            await ctx.author.add_roles(role)
+                            await sleep(1)
                     updates['config']['roles'] = []
                     updates['config']['provinces'] = None
                     await self.bot.db.update_data(record, updates, "users")
@@ -90,7 +91,8 @@ class FarmClass(commands.Cog):
                                        "SUB-MUNDO!`", delete_after=30.0)
 
                         rules = ctx.author.roles
-                        roles = [r.name for r in ctx.author.roles if r.name != "@everyone"]
+                        roles = [r.name for r in ctx.author.roles if r.name not in
+                                 ["@everyone", "Server Booster", "</Ash_Lovers>"]]
                         await self.add_hell(ctx, roles)
 
                         for c in range(0, len(rules)):
@@ -228,7 +230,8 @@ class FarmClass(commands.Cog):
                         if resposta_area != -1:
                             rules = ctx.author.roles
 
-                            roles = [r.name for r in ctx.author.roles if r.name != "@everyone"]
+                            roles = [r.name for r in ctx.author.roles if r.name not in
+                                     ["@everyone", "Server Booster", "</Ash_Lovers>"]]
                             await self.add_role(ctx, roles, self.ctf[resposta_area])
 
                             for c in range(0, len(rules)):
