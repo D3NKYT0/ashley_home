@@ -265,7 +265,7 @@ class InventoryClass(commands.Cog):
                     equipped_items.append(i[1])
 
         if len(equipped_items) == 0:
-            msg = "VOCE NAO TEM ITENS EQUIPADOS NO MOMENTO, USE O COMANDO \"ASH I E\" PARA VER OS ITEMS PARA EQUIPAR," \
+            msg = "VOCE NAO TEM ITENS EQUIPADOS NO MOMENTO, USE O COMANDO \"ASH ES\" PARA VER OS ITEMS PARA EQUIPAR," \
                   " LOGO APOS USE O COMANDO \"ASH E I <NOME_DO_ITEM>\" PARA EQUIPAR O SEU ITEM."
             return await ctx.send(f"<:confirmed:721581574461587496>│`ITENS EQUIPADOS EM VOCE:`\n```{msg}```")
 
