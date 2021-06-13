@@ -242,6 +242,9 @@ class RpgStart(commands.Cog):
     async def guild_verify(self, ctx, guild: discord.Guild = None):
         """Comando para verificar a data de registro na ASHLEY"""
 
+        if guild is None:
+            guild = ctx.guild
+
         data = await self.bot.db.get_data("guild_id", guild.id, "guilds")
         if data is None:
             return ctx.send("<:alert:739251822920728708>│`Guilda nao cadastrada!`")

@@ -228,7 +228,7 @@ class Ashley(commands.AutoShardedBot):
             query_u = {"_id": 0, "user_id": 1, "security": 1, "user": 1, "inventory": 1,
                        "config": 1, "cooldown": 1, "treasure": 1, "rpg": 1, "guild_id": 1}
             data_user = await (await self.db.cd("users")).find_one({"user_id": ctx.author.id}, query_u)
-            query_user, query_guild = {"$set": {}, "$inc": {}}, {"$inc": {}}
+            query_user, query_guild = {"$set": {}, "$inc": {}}, {}
 
             if data_user is not None and data_guild is not None:
                 self.user_commands[ctx.author.id] += 1
@@ -287,6 +287,8 @@ class Ashley(commands.AutoShardedBot):
                         query_user["$set"]["user.titling"] = self.titling[key]
 
                 if data_user['security']['status']:
+                    if "$inc" not in query_guild.keys():
+                        query_guild["$inc"] = {}
                     query_guild["$inc"]["data.commands"] = 1
 
                 if (data_guild['data']['commands'] // 1000) > 5 and data_guild['data']['ranking'] == "Bronze":
@@ -635,6 +637,8 @@ class Ashley(commands.AutoShardedBot):
 
                 a, b, c, d = data_guild['available'], data_guild['vip'], randint(1, 100), data_user['guild_id']
                 if a > 0 and b and c < 25 and d == ctx.guild.id:
+                    if "$inc" not in query_guild.keys():
+                        query_guild["$inc"] = {}
                     query_user["$inc"]["true_money.fragment"] = 1
                     query_guild["$inc"]["available"] = -1
                     await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 {ctx.author.mention} `POR SUA "
@@ -644,8 +648,9 @@ class Ashley(commands.AutoShardedBot):
                 cl = await self.db.cd("users")
                 await cl.update_one({"user_id": data_user["user_id"]}, query_user)
 
-                cl = await self.db.cd("guilds")
-                await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
+                if len(query_guild.keys()) > 0:
+                    cl = await self.db.cd("guilds")
+                    await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
 
                 if str(ctx.command) not in self.no_panning:
                     msg = await self.db.add_money(ctx, randint(6, 12), True)
