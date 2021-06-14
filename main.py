@@ -90,12 +90,18 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.maintenance = False  # Default: False
-        self.event_special = True  # Default: False
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 6, (12, 13)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "DIA_DOS_NAMORADOS"  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 6, (20, 30)]  # ANO / MES / DIA INI e DIA END
+        self.event_now = "SAO_JOAO"  # NOME DO EVENTO ATUAL
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
+
+        # inicio automatico do evento
+        _DATE, _EVENT = date.localtime(), self.d_event
+        if _DATE[0] == _EVENT[0] and _DATE[1] == _EVENT[1] and _EVENT[2][0] < _DATE[2] < _EVENT[2][1]:
+            self.event_special = True
+        else:
+            self.event_special = False
 
         # info bot
         self.server_ = "HEROKU"
