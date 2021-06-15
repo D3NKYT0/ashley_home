@@ -98,73 +98,105 @@ class OnReady(commands.Cog):
             await cl.update_one({"_id": RD["_id"]}, {"$set": {"active": False}})
         return RAWRES
 
-    async def merchant_system(self):
-        await self.bot.wait_until_ready()
+    async def treasure_hunt(self, guild):
         while not self.bot.is_closed():
-            if await verify_cooldown(self.bot, "merchant_system", 300):
-                for guild in self.bot.guilds:
-                    query = {"_id": 0, "guild_id": 1, "data": 1, "bot_config": 1}
-                    g_data = await (await self.bot.db.cd("guilds")).find_one({"guild_id": guild.id}, query)
-                    if g_data is None:
-                        continue
 
-                    if len([m for m in guild.members if not m.bot]) >= 50 and g_data['data']['accounts'] >= 10:
-                        if g_data['bot_config']['ash_draw']:
-                            channel__ = self.bot.get_channel(g_data['bot_config']['ash_draw_id'])
-                            if channel__ is None:
-                                continue
+            # ESCOLHENDO O CANAL QUE VAI APARECER
+            guild = self.bot.get_guild(guild.id)
+            user = guild.get_member(478977311266570242)
+            channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
+                        and str(channel.type) == "text"]
+            channel = choice(channels)
 
-                    # ESCOLHENDO O CANAL QUE VAI APARECER
-                    guild = self.bot.get_guild(guild.id)
-                    user = guild.get_member(478977311266570242)
-                    channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
-                                and str(channel.type) == "text"]
-                    channel = choice(channels)
+            # APARECEU!
+            msg = await channel.send("<:game:519896830230790157>│**TENTEM ME PEGAR ACERTANDO A REAÇÃO QUE EU "
+                                     "ESCOLHI!**")
 
-                    # APARECEU!
-                    msg = await channel.send("<:game:519896830230790157>│**TENTEM ME PEGAR ACERTANDO A REAÇÃO QUE EU "
-                                             "ESCOLHI!**")
-
-                    for emo in self._emojis:
+            for emo in self._emojis:
+                if channel.permissions_for(user).external_emojis and channel.permissions_for(user).add_reactions:
+                    try:
                         await msg.add_reaction(emo)
-
-                    # ESCOLHENDO EMOJI DE CAPTURA
-                    _EMOJI = choice(self._emojis)
-                    emoji = _EMOJI.replace('<:', '').replace(_EMOJI[_EMOJI.rfind(':'):], '')
-
-                    def check_reaction(react, member):
+                    except discord.errors.Forbidden:
                         try:
-                            if react.message.id == msg.id:
-                                if not member.bot:
-                                    return True
-                            return False
-                        except AttributeError:
-                            return False
+                            await msg.delete()
+                            continue
+                        except discord.errors.NotFound:
+                            continue
 
-                    try:
-                        reaction = await self.bot.wait_for('reaction_add', timeout=60.0, check=check_reaction)
-                    except asyncio.TimeoutError:
-                        # FUGIU
-                        await msg.delete()
-                        await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=30.0)
-                        continue
+            # ESCOLHENDO EMOJI DE CAPTURA
+            _EMOJI = choice(self._emojis)
+            emoji = _EMOJI.replace('<a:', '').replace(_EMOJI[_EMOJI.rfind(':'):], '')
 
-                    try:
-                        _reaction = reaction[0].emoji.name
-                    except AttributeError:
-                        _reaction = reaction[0].emoji
+            def check_reaction(react, member):
+                try:
+                    if react.message.id == msg.id:
+                        if not member.bot:
+                            return True
+                    return False
+                except AttributeError:
+                    return False
 
-                    if _reaction == emoji and reaction[0].message.id == msg.id:
-                        # CAPTUROU
-                        await msg.delete()
-                        await channel.send("🎊 **PARABENS** 🎉 **ME PEGOU! AFF!**", delete_after=30.0)
-                    else:
-                        # ERROU
-                        await msg.delete()
-                        await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=30.0)
+            try:
+                reaction = await self.bot.wait_for('reaction_add', timeout=60.0, check=check_reaction)
+            except asyncio.TimeoutError:
+                # FUGIU
+                try:
+                    await msg.delete()
+                except discord.errors.NotFound:
+                    pass
+                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=30.0)
+                await asyncio.sleep(300)
+                continue
+
+            try:
+                _reaction = reaction[0].emoji.name
+            except AttributeError:
+                _reaction = reaction[0].emoji
+
+            if _reaction == emoji and reaction[0].message.id == msg.id:
+                # CAPTUROU
+                try:
+                    await msg.delete()
+                except discord.errors.NotFound:
+                    pass
+                await channel.send("🎊 **PARABENS** 🎉 **ME PEGOU! AFF!**", delete_after=30.0)
+                cl = await self.bot.db.cd("users")
+                data = await cl.find_one({"user_id": reaction[1].id}, {"_id": 0, "user_id": 1})
+                if data is not None:
+                    await cl.update_one({"user_id": data["user_id"]}, {"$inc": {"inventory.boss_key": 10}})
+                    await channel.send("🎊 **PARABENS** 🎉 **POR SER REGISTRADO VOCE TAMBEM GANHOU** `10` **BOSS KEY**",
+                                       delete_after=30.0)
+            else:
+                # ERROU
+                try:
+                    await msg.delete()
+                except discord.errors.NotFound:
+                    pass
+                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=30.0)
 
             # tempo de espera (de uma caçada pra outra)
             await asyncio.sleep(300)
+
+    async def merchant_system(self):
+        await self.bot.wait_until_ready()
+        for guild in self.bot.guilds:
+            query = {"_id": 0, "guild_id": 1, "data": 1, "bot_config": 1}
+            g_data = await (await self.bot.db.cd("guilds")).find_one({"guild_id": guild.id}, query)
+            if g_data is None:
+                continue
+
+            if len([m for m in guild.members if not m.bot]) >= 50 and g_data['data']['accounts'] >= 10:
+                if g_data['bot_config']['ash_draw']:
+                    channel__ = self.bot.get_channel(g_data['bot_config']['ash_draw_id'])
+                    if channel__ is None:
+                        continue
+
+                    # verificando as permissões da ashley
+                    user = guild.get_member(478977311266570242)
+                    if user.guild_permissions.external_emojis and user.guild_permissions.add_reactions:
+
+                        # cria um loop pra cada guilda separadamente
+                        self.bot.loop.create_task(self.treasure_hunt(guild))
 
     async def lottery_system(self):
         await self.bot.wait_until_ready()
@@ -702,7 +734,7 @@ class OnReady(commands.Cog):
             self.bot.loop.create_task(self.lottery_system())
             print('\033[1;32m( 🔶 ) | O loop \033[1;34mLOTTERY_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
         if _auth["merchant_system"]:
-            self.bot.loop.create_task(self.merchant_system())
+            await self.merchant_system()
             print('\033[1;32m( 🔶 ) | O loop \033[1;34mMERCHANT_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
         print("\033[1;35m( ✔ ) | Loops internos carregados com sucesso!\033[m\n")
 

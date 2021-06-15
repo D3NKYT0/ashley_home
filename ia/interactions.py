@@ -35,7 +35,10 @@ class IaInteractions(commands.Cog):
         embed.set_thumbnail(url=link)
         if deleted:
             return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
-        await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+        try:
+            await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+        except discord.errors.HTTPException:
+            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -48,6 +51,8 @@ class IaInteractions(commands.Cog):
                     msg = "Eu vi você viu, excluiu né espertindo..."
                     if randint(1, 100) <= 50:
                         msg += f"\n{message.content[:999]}"
+                    if message.content.startswith("ash "):
+                        return
                     return await self.send_message(message, msg, True)
 
     @commands.Cog.listener()
