@@ -385,7 +385,7 @@ class InventoryClass(commands.Cog):
 
         consumable = update['rpg']["equipped_items"]['consumable']
         _consumable = consumable if consumable is not None else ""
-        _ss = True if "soulshot" in _consumable else False
+        _ss = True if "soushot_" in _consumable else False
 
         if item.split()[0] in _class and _ss:
             return await ctx.send("<:negate:721581573396496464>│`VOCÊ PRECISA TIRAR A SOULSHOT PRIMEIRO,"
@@ -394,7 +394,7 @@ class InventoryClass(commands.Cog):
                                   "para desequipar o item atual, entao voce usa o comando novamente "
                                   "com o nome do item que voce quer equipar.**")
 
-        if "soulshot" in item and _ss:
+        if "soulshot" in item and not _ss:
             if update['rpg']["equipped_items"]['sword'] is None:
                 return await ctx.send("<:negate:721581573396496464>│`VOCÊ PRECISA DE UMA ARMA PARA USAR SOULSHOT!`")
 
