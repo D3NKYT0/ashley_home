@@ -122,6 +122,12 @@ class OnReady(commands.Cog):
                             continue
                         except discord.errors.NotFound:
                             continue
+                    except discord.errors.NotFound:
+                        try:
+                            await msg.delete()
+                            continue
+                        except discord.errors.NotFound:
+                            continue
 
             # ESCOLHENDO EMOJI DE CAPTURA
             _EMOJI = choice(self._emojis)

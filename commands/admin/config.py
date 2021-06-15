@@ -28,13 +28,13 @@ class ConfigClass(commands.Cog):
             self.status()
             top = discord.Embed(color=self.color)
             top.add_field(name="Config Commands:",
-                          value=f"{self.st[0]} `config action_log` Configura a função em questão.\n"
-                                f"{self.st[0]} `config member_count` Configura a função em questão.\n"
-                                f"{self.st[0]} `config join_member` Configura a função em questão.\n"
-                                f"{self.st[0]} `config remove_member` Configura a função em questão.\n"
-                                f"{self.st[0]} `config draw_member` Configura a função em questão.\n"
-                                f"{self.st[0]} `config interaction` Configura a função em questão.\n"
-                                f"{self.st[0]} `config report` Configura a função em questão.\n")
+                          value=f"{self.st[0]} `config action_log` Registra as ações do servidor.\n"
+                                f"{self.st[0]} `config member_count` Exibe a quantidade de membros.\n"
+                                f"{self.st[0]} `config join_member` Mostra quando um membro entrou.\n"
+                                f"{self.st[0]} `config remove_member` Mostra quando um membro saiu.\n"
+                                f"{self.st[0]} `config draw_member` Sistema de sorteio da Ashley.\n"
+                                f"{self.st[0]} `config interaction` Sistema de IA da Ashley.\n"
+                                f"{self.st[0]} `config report` Canal de report para STAFF.\n")
             top.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             top.set_thumbnail(url=self.bot.user.avatar_url)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
