@@ -62,7 +62,7 @@ class OpenClass(commands.Cog):
             RARITY = self.bot.stickers[STICKER][1]
             TYPE = self.bot.stickers[STICKER][2]
             OBS = "" if RARITY > 10 else "\n`E AINDA FOI UMA FIGURINHA PREMIADA!`"
-            TITLE = f"VOCÊ GANHOU A FIGURINHA: **{NAME.upper()}** 🎊 **PARABENS** 🎉{OBS}"
+            TITLE = f"🎊 **PARABENS** 🎉 VOCÊ GANHOU A FIGURINHA:\n**{NAME.upper()}**{OBS}"
 
             if STICKER in data_user["stickers"].keys():
                 await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "

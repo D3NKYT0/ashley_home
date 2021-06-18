@@ -452,20 +452,21 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if randint(1, 200) < 2 and data_user['security']['status'] and cmd not in self.block:
+                if randint(1, 100) <= 10 and data_user['security']['status'] and cmd not in self.block:
                     if ctx.guild.id not in self.sticker:
-                        self.sticker[ctx.guild.id] = 1
+                        self.sticker[ctx.guild.id] = 5
                     else:
-                        self.sticker[ctx.guild.id] += 1
+                        self.sticker[ctx.guild.id] += 5
 
                     embed = discord.Embed(
                         title="**Figurinha Liberada**",
                         colour=self.color,
-                        description=f"Esse servidor foi gratificado com uma figurinha "
-                                    f"**aleatoria**!\n Para pega-la é so usar o comando "
+                        description=f"Esse servidor foi gratificado com 5 figurinhas "
+                                    f"**aleatorias**!\n Para pega-las é so usar o comando "
                                     f"`ash pick`\n **qualquer membro pode pegar uma figurinha**\n"
-                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinha(s) "
+                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinhas "
                                     f"disponiveis!")
+                    embed.set_thumbnail(url="https://media.giphy.com/media/MTSADZF0IdHXFtxBXx/giphy.gif")
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
