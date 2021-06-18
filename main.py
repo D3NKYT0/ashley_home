@@ -44,6 +44,7 @@ class Ashley(commands.AutoShardedBot):
         self.user_commands = Counter()
         self.data_cog = dict()
         self.box = dict()
+        self.sticker = dict()
         self.chests_users = dict()
         self.chests_marry = dict()
         self.help_emoji = dict()
@@ -76,6 +77,12 @@ class Ashley(commands.AutoShardedBot):
         self.chests = self.config['attribute']['chests']
         self.chests_lm = self.config['attribute']['chests_lm']
         self.chests_m = self.config['attribute']['chests_m']
+
+        self.stickers = dict()
+        for TYPE in self.config['sticker_book'].keys():
+            for STICKER in self.config['sticker_book'][TYPE]:
+                self.stickers[STICKER] = self.config['sticker_book'][TYPE][STICKER]
+
         self.money = self.config['attribute']['money']
         self.items = self.config['items']
         self.icons = self.config['icons']
@@ -437,6 +444,29 @@ class Ashley(commands.AutoShardedBot):
                     embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     embed.set_thumbnail(url=BOX)
+                    perms = ctx.channel.permissions_for(ctx.me)
+                    if perms.send_messages and perms.read_messages:
+                        if perms.embed_links and perms.attach_files:
+                            await ctx.send(embed=embed)
+                        else:
+                            await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
+                if randint(1, 200) < 2 and data_user['security']['status'] and cmd not in self.block:
+                    if ctx.guild.id not in self.sticker:
+                        self.sticker[ctx.guild.id] = 1
+                    else:
+                        self.sticker[ctx.guild.id] += 1
+
+                    embed = discord.Embed(
+                        title="**Figurinha Liberada**",
+                        colour=self.color,
+                        description=f"Esse servidor foi gratificado com uma figurinha "
+                                    f"**aleatoria**!\n Para pega-la é so usar o comando "
+                                    f"`ash pick`\n **qualquer membro pode pegar uma figurinha**\n"
+                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinha(s) "
+                                    f"disponiveis!")
+                    embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:

@@ -42,6 +42,9 @@ with open(f"{_PREFIX}data/pets.json", encoding="utf-8") as pets:
 with open(f"{_PREFIX}data/equips.json", encoding="utf-8") as _equips:
     _equips = json.load(_equips)
 
+with open(f"{_PREFIX}data/sticker_book.json", encoding="utf-8") as sticker_book:
+    sticker_book = json.load(sticker_book)
+
 
 def calc_xp(xp, lvl):
     xp_now, xp_lvl_now, xp_lvl_back = xp, (lvl + 1) ** 5, lvl ** 5
@@ -135,6 +138,99 @@ def gift(key, time):
         image.show()
     else:
         image.save('giftcard.png')
+
+
+async def stickers(_data):
+    # load dashboard image
+    image = Image.open(f"{_PREFIX}images/dashboards/stickers_yugioh.png").convert('RGBA')
+    show = ImageDraw.Draw(image)
+
+    # load fonts
+    font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 50)
+
+    # type stickers
+    _TYPE = _data["type"]
+    _LIST = list(sticker_book[_TYPE].keys())
+
+    # take artifacts img
+    artifacts = {
+        f'{_TYPE}/{_LIST[0]}': [(14, 62)],
+        f'{_TYPE}/{_LIST[1]}': [(87, 62)],
+        f'{_TYPE}/{_LIST[2]}': [(159, 62)],
+        f'{_TYPE}/{_LIST[3]}': [(231, 62)],
+        f'{_TYPE}/{_LIST[4]}': [(303, 62)],
+        f'{_TYPE}/{_LIST[5]}': [(375, 62)],
+        f'{_TYPE}/{_LIST[6]}': [(447, 62)],
+        f'{_TYPE}/{_LIST[7]}': [(519, 62)],
+
+        f'{_TYPE}/{_LIST[8]}': [(14, 158)],  # 157
+        f'{_TYPE}/{_LIST[9]}': [(87, 158)],
+        f'{_TYPE}/{_LIST[10]}': [(159, 158)],
+        f'{_TYPE}/{_LIST[11]}': [(231, 158)],
+        f'{_TYPE}/{_LIST[12]}': [(303, 158)],
+        f'{_TYPE}/{_LIST[13]}': [(375, 158)],
+        f'{_TYPE}/{_LIST[14]}': [(447, 158)],
+        f'{_TYPE}/{_LIST[15]}': [(519, 158)],
+
+        f'{_TYPE}/{_LIST[16]}': [(14, 254)],
+        f'{_TYPE}/{_LIST[17]}': [(87, 254)],
+        f'{_TYPE}/{_LIST[18]}': [(159, 254)],
+        f'{_TYPE}/{_LIST[19]}': [(231, 254)],
+        f'{_TYPE}/{_LIST[20]}': [(303, 254)],
+        f'{_TYPE}/{_LIST[21]}': [(375, 254)],
+        f'{_TYPE}/{_LIST[22]}': [(447, 254)],
+        f'{_TYPE}/{_LIST[23]}': [(519, 254)],
+
+        f'{_TYPE}/{_LIST[24]}': [(14, 349)],
+        f'{_TYPE}/{_LIST[25]}': [(87, 349)],
+        f'{_TYPE}/{_LIST[26]}': [(159, 349)],
+        f'{_TYPE}/{_LIST[27]}': [(231, 349)],
+        f'{_TYPE}/{_LIST[28]}': [(303, 349)],
+        f'{_TYPE}/{_LIST[29]}': [(375, 349)],
+        f'{_TYPE}/{_LIST[30]}': [(447, 349)],
+        f'{_TYPE}/{_LIST[31]}': [(519, 349)],
+
+        f'{_TYPE}/{_LIST[32]}': [(617, 62)],
+        f'{_TYPE}/{_LIST[33]}': [(617, 158)],
+        f'{_TYPE}/{_LIST[34]}': [(617, 254)],
+        f'{_TYPE}/{_LIST[35]}': [(617, 349)]
+    }
+
+    for key in artifacts.keys():
+        img = Image.open(f"{_PREFIX}images/stickers/{key}.jpg").convert('RGBA')
+        img = img.resize((67, 89))
+        artifacts[key].append(img)
+
+    for k in artifacts.keys():
+        if k[k.find("/") + 1:] in _data['artifacts'].keys():
+            image.paste(artifacts[k][1], (artifacts[k][0][0], artifacts[k][0][1]), artifacts[k][1])
+
+    # rectangles' texts
+    rectangles = {
+        "name": [3, 3, 697, 46]
+    }
+
+    # Text Align
+    def text_align(box, text, font_t):
+        nonlocal show
+        x1, y1, x2, y2 = box
+        w, h = show.textsize(text.upper(), font=font_t)
+        x = (x2 - x1 - w) // 2 + x1
+        y = (y2 - y1 - h) // 2 + y1
+        return x, y
+
+    # add text to img
+    for k in rectangles.keys():
+        if k == "name":
+            x_, y_ = text_align(rectangles[k], _data[k], font_text)
+            show.text(xy=(x_ + 1, y_ + 1), text=_data[k].upper(), fill=(68, 29, 114), font=font_text)
+            show.text(xy=(x_, y_), text=_data[k].upper(), fill=(255, 255, 255), font=font_text)
+
+    if _TEST:
+        image.show()
+    else:
+        # save image
+        image.save('stickers.png')
 
 
 async def profile(data_):
@@ -695,4 +791,4 @@ async def welcome(data_welcome):
 if _TEST:
     _data = {}
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(profile(_data))
+    loop.run_until_complete(stickers(_data))

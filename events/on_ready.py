@@ -143,15 +143,17 @@ class OnReady(commands.Cog):
                     return False
 
             try:
-                reaction = await self.bot.wait_for('reaction_add', timeout=60.0, check=check_reaction)
+                reaction = await self.bot.wait_for('reaction_add', timeout=120.0, check=check_reaction)
             except asyncio.TimeoutError:
                 # FUGIU
                 try:
                     await msg.delete()
                 except discord.errors.NotFound:
                     pass
-                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=30.0)
-                await asyncio.sleep(300)
+                except discord.errors.Forbidden:
+                    pass
+                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=60.0)
+                await asyncio.sleep(600)
                 continue
 
             try:
@@ -165,7 +167,7 @@ class OnReady(commands.Cog):
                     await msg.delete()
                 except discord.errors.NotFound:
                     pass
-                await channel.send("🎊 **PARABENS** 🎉 **ME PEGOU! AFF!**", delete_after=30.0)
+                await channel.send("🎊 **PARABENS** 🎉 **ME PEGOU! AFF!**", delete_after=60.0)
                 cl = await self.bot.db.cd("users")
                 data = await cl.find_one({"user_id": reaction[1].id}, {"_id": 0, "user_id": 1})
                 if data is not None:
@@ -178,10 +180,10 @@ class OnReady(commands.Cog):
                     await msg.delete()
                 except discord.errors.NotFound:
                     pass
-                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=30.0)
+                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=60.0)
 
             # tempo de espera (de uma caçada pra outra)
-            await asyncio.sleep(300)
+            await asyncio.sleep(600)
 
     async def merchant_system(self):
         await self.bot.wait_until_ready()

@@ -176,7 +176,8 @@ user_data_structure = {
             "reward": dict(),
             "cooldown": dict(),
             "event": dict(),
-            "research": dict()
+            "research": dict(),
+            "stickers": dict()
 }
 
 guild_data_structure = {
