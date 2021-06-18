@@ -44,25 +44,29 @@ class OpenClass(commands.Cog):
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='pick', aliases=['pegar'])
     async def pick(self, ctx):
         """Abra um presente para liberar seu giftcard."""
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update_user = data_user
         if ctx.guild.id in self.bot.sticker:
             if self.bot.sticker[ctx.guild.id] < 1:
+                del update_user['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_user, update_user, 'users')
                 return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis!`\n"
                                       f"`TODAS AS FIGURINHAS FORAM PEGAS, AGUARDE UMA NOVA FIGURINHA DROPAR E FIQUE "
                                       f"ATENTO!`")
-
-            data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
 
             self.bot.sticker[ctx.guild.id] -= 1
             STICKER = choice(self.list_stickers)
             NAME = self.bot.stickers[STICKER][0]
             RARITY = self.bot.stickers[STICKER][1]
             TYPE = self.bot.stickers[STICKER][2]
-            OBS = "" if RARITY > 10 else "\n`E AINDA FOI UMA FIGURINHA PREMIADA!`"
-            TITLE = f"🎊 **PARABENS** 🎉 VOCÊ GANHOU A FIGURINHA:\n**{NAME.upper()}**{OBS}"
+            OBS = "" if RARITY >= 10 else "\n`E AINDA FOI UMA FIGURINHA PREMIADA!`" \
+                                          "\n`>> VOCE GANHOU 5 BLESSED ETHERNYAS <<`"
+            TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{NAME.upper()}**{OBS}" \
+                    f"\n```Aproveite e olhe seus albuns com o comando: ash sticker```"
 
             if STICKER in data_user["stickers"].keys():
                 await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "
@@ -75,12 +79,17 @@ class OpenClass(commands.Cog):
                 await ctx.send(file=file, embed=embed)
 
             cl = await self.bot.db.cd("users")
-            query = {"$inc": {f"stickers.{STICKER}": 1}}
-            if RARITY < 10:
+            query = {"$inc": {f"stickers.{STICKER}": 1, "user.stickers": 1}}
+            if RARITY < 10 and STICKER not in data_user["stickers"].keys():
                 query["$inc"]["true_money.blessed"] = 5
+            if (data_user["user"]["stickers"] + 1) % 10 != 0:
+                query["$unset"] = {}
+                query["$unset"][f"cooldown.{ctx.command}"] = ""
             await cl.update_one({"user_id": ctx.author.id}, query)
 
         else:
+            del update_user['cooldown'][str(ctx.command)]
+            await self.bot.db.update_data(data_user, update_user, 'users')
             await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis...`\n"
                            f"**OBS:** se eu for reiniciada, todas as figurinhas disponiveis sao resetadas. "
                            f"Isso é feito por medidas de segurança da minha infraestrutura!")
