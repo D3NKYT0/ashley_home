@@ -350,7 +350,7 @@ class Database(object):
             query = {"_id": 0, "guild_id": 1, "vip": 1}
             data_guild = await (await self.bot.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query)
 
-            query = {"_id": 0, "user_id": 1, "config": 1, "cooldown": 1}
+            query = {"_id": 0, "user_id": 1, "config": 1, "cooldown": 1, "user": 1}
             data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
             query_user = {"$set": {}}
 
@@ -361,7 +361,7 @@ class Database(object):
 
             if data_user is not None:
                 if kwargs.get("cooldown"):
-                    try:
+                    if str(ctx.command) in data_user["cooldown"].keys():
                         tt = (datetime.datetime.utcnow() - epoch).total_seconds()
                         time_diff = tt - data_user["cooldown"][str(ctx.command)]
                         time_left = kwargs.get("time") - time_diff
@@ -370,21 +370,18 @@ class Database(object):
                                                         f'esperar` **{{}}** `para usar esse comando '
                                                         f'novamente!`'.format(parse_duration(int(time_left))))
 
-                        gc = self.bot.guilds_commands[ctx.guild.id]
-                        if gc > 50 and str(ctx.command) == "daily work" or str(ctx.command) != "daily work":
-                            tt = (datetime.datetime.utcnow() - epoch).total_seconds()
-                            query_user["$set"][f"cooldown.{str(ctx.command)}"] = tt
-
-                    except KeyError:
-                        gc = self.bot.guilds_commands[ctx.guild.id]
-                        if gc > 50 and str(ctx.command) == "daily work" or str(ctx.command) != "daily work":
-                            tt = (datetime.datetime.utcnow() - epoch).total_seconds()
-                            query_user["$set"][f"cooldown.{str(ctx.command)}"] = tt
-
                     gc = self.bot.guilds_commands[ctx.guild.id]
                     if gc > 50 and str(ctx.command) == "daily work" or str(ctx.command) != "daily work":
-                        cl = await self.bot.db.cd("users")
-                        await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
+
+                        t1, t2 = str(ctx.command) == "pick", (data_user["user"]["stickers"] + 1) % 10 == 0
+                        t3 = str(ctx.command) != "pick"
+
+                        if t1 and t2 or t3:
+
+                            tt = (datetime.datetime.utcnow() - epoch).total_seconds()
+                            query_user["$set"][f"cooldown.{str(ctx.command)}"] = tt
+                            cl = await self.bot.db.cd("users")
+                            await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
                 if kwargs.get("g_vip") and data_guild['vip']:
                     if kwargs.get("vip") and data_user['config']['vip']:
