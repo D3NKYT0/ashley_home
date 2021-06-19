@@ -142,7 +142,7 @@ def gift(key, time):
 
 async def stickers(_data):
     # load dashboard image
-    image = Image.open(f"{_PREFIX}images/dashboards/stickers_yugioh.png").convert('RGBA')
+    image = Image.open(f"{_PREFIX}images/dashboards/stickers_{_data['type']}.png").convert('RGBA')
     show = ImageDraw.Draw(image)
 
     # load fonts
