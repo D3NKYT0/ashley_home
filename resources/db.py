@@ -366,6 +366,12 @@ class Database(object):
                         time_diff = tt - data_user["cooldown"][str(ctx.command)]
                         time_left = kwargs.get("time") - time_diff
                         if time_diff < kwargs.get("time"):
+                            if str(ctx.command) == "pick":
+                                now = datetime.datetime.now()
+                                minutes = 60 - now.minutes
+                                raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
+                                                            f'esperar` **{{}}** `para usar esse comando '
+                                                            f'novamente!`'.format(parse_duration(int(minutes))))
                             raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
                                                         f'esperar` **{{}}** `para usar esse comando '
                                                         f'novamente!`'.format(parse_duration(int(time_left))))

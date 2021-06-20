@@ -185,6 +185,15 @@ class OnReady(commands.Cog):
             # tempo de espera (de uma caçada pra outra)
             await asyncio.sleep(600)
 
+    async def reset_pick(self):
+        await self.bot.wait_until_ready()
+        while not self.bot.is_closed():
+            DATE = date.localtime()
+            if DATE[4] == 0:
+                cd = await self.bot.db.cd("users")
+                await cd.update_many({}, {"$unset": {"cooldown.pick": ""}})
+            await asyncio.sleep(60)
+
     async def merchant_system(self):
         await self.bot.wait_until_ready()
         for guild in self.bot.guilds:
@@ -744,6 +753,9 @@ class OnReady(commands.Cog):
         if _auth["merchant_system"]:
             await self.merchant_system()
             print('\033[1;32m( 🔶 ) | O loop \033[1;34mMERCHANT_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["reset_pick"]:
+            self.bot.loop.create_task(self.reset_pick())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mRESET_PICK\033[1;32m foi carregado com sucesso!\33[m')
         print("\033[1;35m( ✔ ) | Loops internos carregados com sucesso!\033[m\n")
 
         print(cor['cian'], '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬', cor['clear'])
