@@ -368,10 +368,11 @@ class Database(object):
                         if time_diff < kwargs.get("time"):
                             if str(ctx.command) == "pick":
                                 now = datetime.datetime.now()
-                                minutes = 60 - now.minutes
+                                minutes = 60 - now.minute
+                                s = "s" if minutes > 1 else ""
                                 raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
-                                                            f'esperar` **{{}}** `para usar esse comando '
-                                                            f'novamente!`'.format(parse_duration(int(minutes))))
+                                                            f'esperar` **{minutes} minuto{s}** `para usar esse comando'
+                                                            f' novamente!`')
                             raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
                                                         f'esperar` **{{}}** `para usar esse comando '
                                                         f'novamente!`'.format(parse_duration(int(time_left))))

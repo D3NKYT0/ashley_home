@@ -153,7 +153,7 @@ class OnReady(commands.Cog):
                 except discord.errors.Forbidden:
                     pass
                 await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=60.0)
-                await asyncio.sleep(600)
+                await asyncio.sleep(1800)
                 continue
 
             try:
@@ -183,7 +183,7 @@ class OnReady(commands.Cog):
                 await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=60.0)
 
             # tempo de espera (de uma caçada pra outra)
-            await asyncio.sleep(600)
+            await asyncio.sleep(1800)
 
     async def reset_pick(self):
         await self.bot.wait_until_ready()
