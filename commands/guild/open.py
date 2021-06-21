@@ -60,8 +60,9 @@ class OpenClass(commands.Cog):
             NAME = self.bot.stickers[STICKER][0]
             RARITY = self.bot.stickers[STICKER][1]
             TYPE = self.bot.stickers[STICKER][2]
-            OBS = "" if RARITY >= 10 else "\n`E AINDA FOI UMA FIGURINHA PREMIADA!`" \
-                                          "\n`>> VOCE GANHOU 5 BLESSED ETHERNYAS <<`"
+            OBS = "" if RARITY >= 10 else "\n<a:confet:853247252998389763> `E AINDA FOI UMA FIGURINHA PREMIADA!`" \
+                                          "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
+                                          "<a:stars:853247252389429278>"
             TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{NAME.upper()}**{OBS}" \
                     f"\n```Aproveite e olhe seus albuns com o comando: ash sticker```"
 

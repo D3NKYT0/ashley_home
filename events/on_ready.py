@@ -191,7 +191,7 @@ class OnReady(commands.Cog):
             DATE = date.localtime()
             if DATE[4] == 0:
                 cd = await self.bot.db.cd("users")
-                await cd.update_many({}, {"$unset": {"cooldown.pick": ""}})
+                await cd.update_many({}, {"$unset": {"cooldown.pick": ""}, "$set": {"user.stickers": 0}})
             await asyncio.sleep(60)
 
     async def merchant_system(self):

@@ -34,11 +34,11 @@ class IaInteractions(commands.Cog):
         embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_thumbnail(url=link)
         if deleted:
-            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=10.0)
         try:
-            await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+            await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=10.0)
         except discord.errors.HTTPException:
-            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed)
+            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=10.0)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -48,8 +48,8 @@ class IaInteractions(commands.Cog):
             dg, ud = data_guild, user_data
             if dg is not None and ud is not None and dg['ia_config']['auto_msg']:
                 if ud['user']['ia_response'] and randint(1, 100) <= 50:
-                    msg = "Eu vi você viu, excluiu né espertindo..."
-                    if randint(1, 100) <= 50:
+                    msg = "Eu vi você, excluiu né espertindo..."
+                    if randint(1, 100) <= 25:
                         msg += f"\n{message.content[:999]}"
                     if message.content.startswith("ash "):
                         return
@@ -66,8 +66,8 @@ class IaInteractions(commands.Cog):
                     return
 
                 if ud['user']['ia_response'] and randint(1, 100) <= 50:
-                    msg = "Eu vi você viu, editando né espertindo..."
-                    if randint(1, 100) <= 50:
+                    msg = "Eu vi você, editando né espertindo..."
+                    if randint(1, 100) <= 25:
                         msg += f"\n{before.content[:999]}"
                     return await self.send_message(after, msg)
 

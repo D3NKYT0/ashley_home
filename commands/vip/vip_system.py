@@ -82,6 +82,16 @@ class VipSystem(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`Você precisa de pelo menos` **20 Blesseds Ethernyas**'
                                   ' `para comprar o seu vip mensal`')
 
+        if "vip_coin" not in update_['inventory'].keys():
+            try:
+                del update_['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_, update_, 'users')
+            except KeyError:
+                pass
+            return await ctx.send('<:alert:739251822920728708>│`Você precisa de pelo menos` **1 Vip Coin**'
+                                  ' `para comprar o seu vip mensal`')
+
+        update_['inventory']['vip_coin'] -= 1
         update_['true_money']['blessed'] -= 20
         update_['config']['vip'] = True
         update_['rpg']['vip'] = True
@@ -162,6 +172,25 @@ class VipSystem(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`Você precisa de pelo menos` **30 Blesseds Ethernyas**'
                                   ' `para comprar o vip mensal da sua guilda`')
 
+        if "vip_coin" not in update_['inventory'].keys():
+            try:
+                del update_['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_, update_, 'users')
+            except KeyError:
+                pass
+            return await ctx.send('<:alert:739251822920728708>│`Você precisa de pelo menos` **2 Vip Coin**'
+                                  ' `para comprar o seu vip mensal`')
+
+        if update_['inventory']["vip_coin"] < 2:
+            try:
+                del update_['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_, update_, 'users')
+            except KeyError:
+                pass
+            return await ctx.send('<:alert:739251822920728708>│`Você precisa de pelo menos` **2 Vip Coin**'
+                                  ' `para comprar o seu vip mensal`')
+
+        update_['inventory']['vip_coin'] -= 2
         update_['true_money']['blessed'] -= 30
         update_guild['vip'] = True
         update_guild['available'] = 15000

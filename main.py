@@ -496,7 +496,7 @@ class Ashley(commands.AutoShardedBot):
                         epoch = dt.utcfromtimestamp(0)
                         cooldown = data_user["cooldown"]["vip member"]
                         time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
-                        if time_diff >= 2592000:
+                        if time_diff >= 2592000:  # um mes de diferença
                             if data_user['config']['vip']:
                                 query_user["$set"]["config.vip"] = False
                                 query_user["$set"]["rpg.vip"] = False
@@ -521,7 +521,7 @@ class Ashley(commands.AutoShardedBot):
 
                         epoch = dt.utcfromtimestamp(0)
                         time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
-                        if time_diff >= 2592000:
+                        if time_diff >= 2592000:  # um mes de diferença
                             if data_guild['vip']:
                                 if "$set" not in query_guild.keys():
                                     query_guild["$set"] = dict()
@@ -690,10 +690,21 @@ class Ashley(commands.AutoShardedBot):
                     await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
 
                 if str(ctx.command) not in self.no_panning:
-                    msg = await self.db.add_money(ctx, randint(6, 12), True)
+                    money = (6, 12)
+                    if data_user['config']['vip']:
+                        money = (12, 24)
+                    msg = await self.db.add_money(ctx, randint(money[0], money[1]), True)
+                    _f = "<a:king:853247254744137739> " if data_user['config']['vip'] else ""
+                    _guild = self.get_guild(519894833783898112)
+                    _member = _guild.get_member(ctx.author.id)
+                    if _member is not None:
+                        _roles = [r.name for r in _member.roles if r.name != "@everyone"]
+                    else:
+                        _roles = []
+                    _i = "<a:booster:853247252998651934> `BOOSTER MEMBER`" if "Server Booster" in _roles else ""
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
-                        await ctx.send(f"`Por usar um comando, {_name} tambem ganhou` {msg}", delete_after=5.0)
+                        await ctx.send(f"{_f}`Por usar um comando, {_name} tambem ganhou` {msg}{_i}", delete_after=5.0)
 
     async def on_guild_join(self, guild):
         if str(guild.id) in self.blacklist:
@@ -857,13 +868,13 @@ class Ashley(commands.AutoShardedBot):
         link = [emo for emo in guild.emojis if str(emo) == emoji][0].url
 
         query = {"_id": 0, "guild_id": 1, "webhook": 1}
-        data_guild = await (await self.bot.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query)
+        data_guild = await (await self.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query)
         query_guild = {"$set": {}}
         if data_guild['webhook'] is None:
             avatar = open(wh_avatar_url, 'rb')
             _webhook = await ctx.channel.create_webhook(name=wh_name, avatar=avatar.read())
             query_guild["$set"]["webhook"] = _webhook.url
-            cl = await self.bot.db.cd("guilds")
+            cl = await self.db.cd("guilds")
             await cl.update_one({"user_id": data_guild["guild_id"]}, query_guild, upsert=False)
 
         pet = f"{pet_name} do {ctx.author.name} disse:\n```{content}```"
