@@ -38,7 +38,7 @@ def check_it(**kwargs):
         if ctx.author.id not in [m.id for m in guild.members]:
             msg = "<:alert:739251822920728708>│`Voce precisa está dentro do meu servidor de suporte, para poder me " \
                   "usar.`\n**Obs:** Para entrar no servidor de suporte use o comando **ash invite** para receber o" \
-                  " convite do servidor!\n**Obs:** `Servidores` **VIPS** `não precisam que seus membros estejam no " \
+                  " convite do servidor!\n**Nota:** `Servidores` **VIPS** `não precisam que seus membros estejam no " \
                   "servidor de suporte!`"
             if ctx.command.name in ["invite", "register", "register guild"] or _vip:
                 pass

@@ -563,8 +563,8 @@ class Entity(object):
             key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
             for c in key:
 
-                percent = 100 if not bluff else 75  # aumenta 25% de chance de pegar efeito de skill
-                chance_effect, rate_chance = randint(1, percent) + lvs, 96.0
+                _percent = (1, 100) if not bluff else (25, 100)  # aumenta 25% de chance de pegar efeito de skill
+                chance_effect, rate_chance = randint(_percent[0], _percent[1]) + lvs, 96.0
                 rate_chance -= enemy_luk * 0.5 if enemy_luk > 0 else 0
 
                 self.chance = True if chance_effect > rate_chance else False

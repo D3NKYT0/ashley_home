@@ -44,6 +44,7 @@ class Ashley(commands.AutoShardedBot):
         self.user_commands = Counter()
         self.data_cog = dict()
         self.box = dict()
+        self.sticker = dict()
         self.chests_users = dict()
         self.chests_marry = dict()
         self.help_emoji = dict()
@@ -76,6 +77,12 @@ class Ashley(commands.AutoShardedBot):
         self.chests = self.config['attribute']['chests']
         self.chests_lm = self.config['attribute']['chests_lm']
         self.chests_m = self.config['attribute']['chests_m']
+
+        self.stickers = dict()
+        for TYPE in self.config['sticker_book'].keys():
+            for STICKER in self.config['sticker_book'][TYPE]:
+                self.stickers[STICKER] = self.config['sticker_book'][TYPE][STICKER]
+
         self.money = self.config['attribute']['money']
         self.items = self.config['items']
         self.icons = self.config['icons']
@@ -90,12 +97,18 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.maintenance = False  # Default: False
-        self.event_special = True  # Default: False
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 6, (12, 13)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "DIA_DOS_NAMORADOS"  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 6, (20, 30)]  # ANO / MES / DIA INI e DIA END
+        self.event_now = "SAO_JOAO"  # NOME DO EVENTO ATUAL
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
+
+        # inicio automatico do evento
+        _DATE, _EVENT = date.localtime(), self.d_event
+        if _DATE[0] == _EVENT[0] and _DATE[1] == _EVENT[1] and _EVENT[2][0] < _DATE[2] < _EVENT[2][1]:
+            self.event_special = True
+        else:
+            self.event_special = False
 
         # info bot
         self.server_ = "HEROKU"
@@ -439,6 +452,30 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
+                if randint(1, 100) <= 10 and data_user['security']['status'] and cmd not in self.block:
+                    if ctx.guild.id not in self.sticker:
+                        self.sticker[ctx.guild.id] = 5
+                    else:
+                        self.sticker[ctx.guild.id] += 5
+
+                    embed = discord.Embed(
+                        title="**Figurinha Liberada**",
+                        colour=self.color,
+                        description=f"Esse servidor foi gratificado com 5 figurinhas "
+                                    f"**aleatorias**!\n Para pega-las é so usar o comando "
+                                    f"`ash pick`\n **qualquer membro pode pegar uma figurinha**\n"
+                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinhas "
+                                    f"disponiveis!")
+                    embed.set_thumbnail(url="https://media.giphy.com/media/MTSADZF0IdHXFtxBXx/giphy.gif")
+                    embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+                    perms = ctx.channel.permissions_for(ctx.me)
+                    if perms.send_messages and perms.read_messages:
+                        if perms.embed_links and perms.attach_files:
+                            await ctx.send(embed=embed)
+                        else:
+                            await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
                 patent = patent_calculator(data_user['inventory']['rank_point'], data_user['inventory']['medal'])
                 if patent > data_user['user']['patent']:
                     query_user["$set"]["user.patent"] = patent
@@ -459,7 +496,7 @@ class Ashley(commands.AutoShardedBot):
                         epoch = dt.utcfromtimestamp(0)
                         cooldown = data_user["cooldown"]["vip member"]
                         time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
-                        if time_diff >= 2592000:
+                        if time_diff >= 2592000:  # um mes de diferença
                             if data_user['config']['vip']:
                                 query_user["$set"]["config.vip"] = False
                                 query_user["$set"]["rpg.vip"] = False
@@ -484,7 +521,7 @@ class Ashley(commands.AutoShardedBot):
 
                         epoch = dt.utcfromtimestamp(0)
                         time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
-                        if time_diff >= 2592000:
+                        if time_diff >= 2592000:  # um mes de diferença
                             if data_guild['vip']:
                                 if "$set" not in query_guild.keys():
                                     query_guild["$set"] = dict()
@@ -653,10 +690,21 @@ class Ashley(commands.AutoShardedBot):
                     await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
 
                 if str(ctx.command) not in self.no_panning:
-                    msg = await self.db.add_money(ctx, randint(6, 12), True)
+                    money = (6, 12)
+                    if data_user['config']['vip']:
+                        money = (12, 24)
+                    msg = await self.db.add_money(ctx, randint(money[0], money[1]), True)
+                    _f = "<a:king:853247254744137739> " if data_user['config']['vip'] else ""
+                    _guild = self.get_guild(519894833783898112)
+                    _member = _guild.get_member(ctx.author.id)
+                    if _member is not None:
+                        _roles = [r.name for r in _member.roles if r.name != "@everyone"]
+                    else:
+                        _roles = []
+                    _i = "<a:booster:853247252998651934> `BOOSTER MEMBER`" if "Server Booster" in _roles else ""
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
-                        await ctx.send(f"`Por usar um comando, {_name} tambem ganhou` {msg}", delete_after=5.0)
+                        await ctx.send(f"{_f}`Por usar um comando, {_name} tambem ganhou` {msg}{_i}", delete_after=5.0)
 
     async def on_guild_join(self, guild):
         if str(guild.id) in self.blacklist:
@@ -820,13 +868,13 @@ class Ashley(commands.AutoShardedBot):
         link = [emo for emo in guild.emojis if str(emo) == emoji][0].url
 
         query = {"_id": 0, "guild_id": 1, "webhook": 1}
-        data_guild = await (await self.bot.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query)
+        data_guild = await (await self.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query)
         query_guild = {"$set": {}}
         if data_guild['webhook'] is None:
             avatar = open(wh_avatar_url, 'rb')
             _webhook = await ctx.channel.create_webhook(name=wh_name, avatar=avatar.read())
             query_guild["$set"]["webhook"] = _webhook.url
-            cl = await self.bot.db.cd("guilds")
+            cl = await self.db.cd("guilds")
             await cl.update_one({"user_id": data_guild["guild_id"]}, query_guild, upsert=False)
 
         pet = f"{pet_name} do {ctx.author.name} disse:\n```{content}```"

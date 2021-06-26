@@ -31,7 +31,7 @@ class StaffAdmin(commands.Cog):
             embed.add_field(name="Staffs Commands:",
                             value=f"{self.st[1]} `staff delete` Exclua ate as ultimas 100 mensagens.\n"
                                   f"{self.st[1]} `staff ban` Bana um membro incoveniente.\n"
-                                  f"{self.st[1]} `staff kick` Espulse um engraçadinho que se achou.\n"
+                                  f"{self.st[1]} `staff kick` Expulse um engraçadinho que se achou.\n"
                                   f"{self.st[1]} `staff slowmode` Ative o modo lento em um canal.\n"
                                   f"{self.st[1]} `staff report` Reporte um membro para um moderador.\n")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")

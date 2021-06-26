@@ -38,6 +38,55 @@ class OpenClass(commands.Cog):
                            ("blessed_fragment_of_crystal_fire", 7)],
         }
 
+        self.list_stickers = list()
+        for k, v in self.bot.stickers.items():
+            self.list_stickers += [k] * v[1]
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
+    @commands.command(name='pick', aliases=['pegar'])
+    async def pick(self, ctx):
+        """Abra um presente para liberar seu giftcard."""
+        if ctx.guild.id in self.bot.sticker:
+            if self.bot.sticker[ctx.guild.id] < 1:
+                return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis!`\n"
+                                      f"`TODAS AS FIGURINHAS FORAM PEGAS, AGUARDE UMA NOVA FIGURINHA DROPAR E FIQUE "
+                                      f"ATENTO!`")
+
+            data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            self.bot.sticker[ctx.guild.id] -= 1
+            STICKER = choice(self.list_stickers)
+            NAME = self.bot.stickers[STICKER][0]
+            RARITY = self.bot.stickers[STICKER][1]
+            TYPE = self.bot.stickers[STICKER][2]
+            OBS = "" if RARITY >= 10 else "\n<a:confet:853247252998389763> `E AINDA FOI UMA FIGURINHA PREMIADA!`" \
+                                          "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
+                                          "<a:stars:853247252389429278>"
+            TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{NAME.upper()}**{OBS}" \
+                    f"\n```Aproveite e olhe seus albuns com o comando: ash sticker```"
+
+            if STICKER in data_user["stickers"].keys():
+                await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "
+                               f"**{NAME.upper()}**")
+            else:
+                file = discord.File(f"images/stickers/{TYPE}/{STICKER}.jpg", filename="reward.png")
+                embed = discord.Embed(title=TITLE, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_image(url="attachment://reward.png")
+                await ctx.send(file=file, embed=embed)
+
+            cl = await self.bot.db.cd("users")
+            query = {"$inc": {f"stickers.{STICKER}": 1, "user.stickers": 1}}
+            if RARITY < 10 and STICKER not in data_user["stickers"].keys():
+                query["$inc"]["true_money.blessed"] = 5
+            await cl.update_one({"user_id": ctx.author.id}, query)
+
+        else:
+            await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis...`\n"
+                           f"**OBS:** se eu for reiniciada, todas as figurinhas disponiveis sao resetadas. "
+                           f"Isso é feito por medidas de segurança da minha infraestrutura!")
+
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))

@@ -77,6 +77,9 @@ with open("data/skills.json", encoding="utf-8") as skills:
 with open("data/staff.json", encoding="utf-8") as staff:
     staff = json.load(staff)
 
+with open("data/sticker_book.json", encoding="utf-8") as sticker_book:
+    sticker_book = json.load(sticker_book)
+
 with open("data/thinker.json", encoding="utf-8") as thinker:
     thinker = json.load(thinker)
 
@@ -109,6 +112,7 @@ data = {
     "set_equips": set_equips,
     "skills": skills,
     "staff": staff,
+    "sticker_book": sticker_book,
     "thinker": thinker,
     "wiki": wiki
 }
