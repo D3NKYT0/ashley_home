@@ -29,7 +29,9 @@ class CommandErrorHandler(commands.Cog):
             "Internal Server Error",
             "Command raised an exception: DiscordServerError: 503 Service Temporarily Unavailable (error code: 0):"
             " <html> ",
-            "Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions"
+            "Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions",
+            "Command raised an exception: DiscordServerError: 503 Service Unavailable (error code: 0): upstream"
+            "connect error or disconnect/reset before headers. reset reason: connection failure"
         ]
 
     def error_check(self, error):

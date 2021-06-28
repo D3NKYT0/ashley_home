@@ -71,7 +71,7 @@ class OpenClass(commands.Cog):
                                f"**{NAME.upper()}**")
             else:
                 file = discord.File(f"images/stickers/{TYPE}/{STICKER}.jpg", filename="reward.png")
-                embed = discord.Embed(title=TITLE, color=self.bot.color)
+                embed = discord.Embed(description=TITLE, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
                 embed.set_image(url="attachment://reward.png")
                 await ctx.send(file=file, embed=embed)
@@ -369,11 +369,11 @@ class OpenClass(commands.Cog):
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
 
-        if data_user['config']['playing']:
+        if ctx.author.id in self.bot.jogando:
             return await ctx.send("<:alert:739251822920728708>│`Você está jogando, aguarde para quando"
                                   " vocÊ estiver livre!`")
 
-        if data_user['config']['battle']:
+        if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
