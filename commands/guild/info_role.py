@@ -36,14 +36,14 @@ class RoleInfo(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`Você precisa colocar um cargo para ver as '
                                   'informações!`')
 
-        created_at = role.created_at.strftime("%d %b %Y %H:%M")
+        created_at = role.created_at
         perms_channel = perms_check(role.permissions)
         _bool = {True: "Sim", False: "Não"}
         color_hex = "#{:02x}{:02x}{:02x}".format(role.colour.r, role.colour.g, role.colour.b)
 
         role_txt = f"▫**ID:** {role.id}\n" \
                    f"▫**Número de membros:** {len(role.members)}\n" \
-                   f'▫**Criado em:** {role.created_at.strftime("%d de %B de %Y às %H:%M")} ({created_at})\n' \
+                   f'▫**Criado em:** <t:{created_at:%s}:f>\n' \
                    f"▫**Posição:** {ctx.guild.roles[::-1].index(role) + 1}º / {len(ctx.guild.roles)}\n" \
                    f"▫**Separado?** {_bool[role.hoist]}\n" \
                    f"▫**Mencionável?** {_bool[role.mentionable]}\n" \

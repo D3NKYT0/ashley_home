@@ -27,16 +27,16 @@ class UserInfo(commands.Cog):
             database = "USUARIO NAO CADASTRADO"
 
         role = ",".join([r.name for r in member.roles if r.name != "@everyone"])
-        userjoinedat = str(member.joined_at).split('.', 1)[0]
-        usercreatedat = str(member.created_at).split('.', 1)[0]
+        userjoinedat = member.joined_at
+        usercreatedat = member.created_at
 
         embed = discord.Embed(
             title=":pushpin:Informações pessoais de:",
             color=self.color,
             description=member.name
         )
-        embed.add_field(name=":door:Entrou no server em:", value=userjoinedat, inline=True)
-        embed.add_field(name="📅Conta criada em:", value=usercreatedat, inline=True)
+        embed.add_field(name=":door:Entrou no server em:", value=f"<t:{userjoinedat:%s}:f>", inline=True)
+        embed.add_field(name="📅Conta criada em:", value=f"<t:{usercreatedat:%s}:f>", inline=True)
         embed.add_field(name="💻ID:", value=str(member.id), inline=True)
         embed.add_field(name=":label:Tag:", value=str(member.discriminator), inline=True)
         embed.add_field(name="Cargos:", value=role, inline=True)
