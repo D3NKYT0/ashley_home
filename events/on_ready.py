@@ -152,7 +152,10 @@ class OnReady(commands.Cog):
                     pass
                 except discord.errors.Forbidden:
                     pass
-                await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=60.0)
+                try:
+                    await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=60.0)
+                except discord.errors.Forbidden:
+                    pass
                 await asyncio.sleep(1800)
                 continue
 
