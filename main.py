@@ -10,6 +10,7 @@ import sys
 import os
 import traceback
 import humanize
+import platform
 # SEGUE ABAIXO OS IMPORTS PARCIAIS
 import time as date
 from random import choice, randint
@@ -114,7 +115,7 @@ class Ashley(commands.AutoShardedBot):
         self.server_ = "HEROKU"
         self.github = "https://github.com/Ashley-Lab/ashley_home"
         self.progress = f"V.1 -> {_auth['version']}"
-        self.python_version = "3.9.5"
+        self.python_version = platform.python_version()
         self.version_str = f"1.0.0"
         self.version = f"API: {discord.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
