@@ -104,8 +104,16 @@ class OnReady(commands.Cog):
             # ESCOLHENDO O CANAL QUE VAI APARECER
             guild = self.bot.get_guild(guild.id)
             user = guild.get_member(478977311266570242)
-            channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
-                        and str(channel.type) == "text"]
+
+            if guild.id != 519894833783898112:
+                channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
+                            and str(channel.type) == "text"]
+            else:
+                CHANNELS = [847250560067436545, 847250993983782912, 847251016628961310, 847251053485490206,
+                            847251104927318016, 847251147202887680, 847251267638001724, 847251338723065886,
+                            847255755052285962, 847255816415084546, 847256035944038420]
+                channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
+                            and str(channel.type) == "text" and channel.id in CHANNELS]
             channel = choice(channels)
 
             # APARECEU!
