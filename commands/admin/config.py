@@ -124,7 +124,7 @@ class ConfigClass(commands.Cog):
                 list_ = list()
                 for letter in text:
                     list_.append(numbers[int(letter)])
-                await channel_.edit(topic="<a:caralho:525105064873033764> **Membros:** " + str(list_))
+                await channel_.edit(topic="<a:caralho:525105064873033764> **Membros:** " + ''.join(list_))
 
                 await ctx.send('<:confirmed:721581574461587496>│`Contador de membros ativado!`')
             except discord.Forbidden:
