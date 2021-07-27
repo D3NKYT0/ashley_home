@@ -4,23 +4,17 @@ import psutil
 from discord.ext import commands
 from resources.check import check_it
 from datetime import datetime
+from humanize import i18n, precisedelta
 from resources.db import Database
 from collections import Counter
-from datetime import datetime as dt
 
+from datetime import datetime as dt
+i18n.activate("pt_BR")
 
 class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.color = self.bot.color
-
-    @staticmethod
-    def format_delta(delta, fmt):
-        d = {"days": delta.days}
-        d['hours'], rem = divmod(delta.seconds, 3600)
-        d['years'], d['dias'] = divmod(delta.days, 365)
-        d['minutes'], d['seconds'] = divmod(rem, 60)
-        return fmt.format(**d)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -32,9 +26,8 @@ class BotInfo(commands.Cog):
         total_members = sum(len(s.members) for s in self.bot.guilds)
         channel_types = Counter(isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels())
         ver_, voice, text = self.bot.version, channel_types[False], channel_types[True]
-        owner = str(self.bot.get_user(self.bot.owner_id))
-        txt = "{hours} horas, {minutes} minutos e {seconds} segundos."
-        uptime = self.format_delta((dt.utcnow() - self.bot.start_time), txt)
+        owner, dated = str(self.bot.get_user(self.bot.owner_id)), self.bot.user.created_at
+        uptime = uptime = precisedelta(datetime.utcnow() - self.bot.start_time, format='%0.0f')
 
         embed_bot = discord.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
         embed_bot.set_thumbnail(url=self.bot.user.avatar_url)
@@ -50,7 +43,7 @@ class BotInfo(commands.Cog):
                             value="[Clique Aqui](https://discord.gg/rYT6QrM)", inline=False)
         embed_bot.add_field(name='`💮 | Nome`', value=self.bot.user.name, inline=False)
         embed_bot.add_field(name='`◼ | Id bot`', value=self.bot.user.id, inline=False)
-        embed_bot.add_field(name='💠 | Criado em', value=self.bot.user.created_at.strftime("%d %b %Y %H:%M"),
+        embed_bot.add_field(name='💠 | Criado em', value=f"<t:{dated:%s}:f>",
                             inline=False)
         embed_bot.add_field(name='📛 | Tag', value=self.bot.user, inline=False)
         embed_bot.add_field(name='‍💻 | Servidores', value=str(len(self.bot.guilds)), inline=False)

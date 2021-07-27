@@ -13,8 +13,7 @@ class Shards(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.color = self.bot.color
-        self.webhook = Webhook(url="https://discordapp.com/api/webhooks/627584094959829002/FvTv2bT2k3pbSgO-7pp4-"
-                                   "nf6xPsE_oKp9BWbVhCpphzJJyWWVrjQjpXIveUWvIdNzOvL")
+        self.webhook = Webhook(url=_auth["_t__webhook_ready"])
 
     @commands.Cog.listener()
     async def on_shard_ready(self, shard_id):

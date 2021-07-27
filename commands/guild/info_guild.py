@@ -47,7 +47,7 @@ class ServerInfo(commands.Cog):
             cmds = str(data['data']['commands']) + " comandos contabilizados no total"
         except KeyError:
             cmds = str(self.bot.guilds_commands[ctx.guild.id]) + "comandos usados desde que fiquei online"
-        hour = datetime.datetime.now().strftime("%H:%M:%S")
+        hour, created = datetime.datetime.now().strftime("%H:%M:%S"), ctx.guild.created_at
         embed = discord.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
                                                                         "servidor!")
         embed.set_thumbnail(url=ctx.guild.icon_url)
@@ -62,7 +62,7 @@ class ServerInfo(commands.Cog):
         embed.add_field(name="Canal de AFK", value=str(afk), inline=True)
         embed.add_field(name="Bots:", value=str(len([a for a in ctx.guild.members if a.bot])), inline=True)
         embed.add_field(name="Nível de verificação", value=f"{verification}", inline=True)
-        embed.add_field(name="Criado em:", value=ctx.guild.created_at.strftime("%d %b %Y %H:%M"), inline=True)
+        embed.add_field(name="Criado em:", value=f"<t:{created:%s}:f>", inline=True)
         embed.add_field(name="Região:", value=str(ctx.guild.region).title(), inline=True)
         embed.add_field(name="Comandos Usados: ", value=str(cmds), inline=True)
         embed.add_field(name="Vip: ", value=status, inline=True)
