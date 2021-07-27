@@ -92,6 +92,8 @@ class VipSystem(commands.Cog):
                                   ' `para comprar o seu vip mensal`')
 
         update_['inventory']['vip_coin'] -= 1
+        if update_['inventory']['vip_coin'] < 1:
+            del update_['inventory']['vip_coin']
         update_['true_money']['blessed'] -= 20
         update_['config']['vip'] = True
         update_['rpg']['vip'] = True
@@ -191,6 +193,8 @@ class VipSystem(commands.Cog):
                                   ' `para comprar o seu vip mensal`')
 
         update_['inventory']['vip_coin'] -= 2
+        if update_['inventory']['vip_coin'] < 1:
+            del update_['inventory']['vip_coin']
         update_['true_money']['blessed'] -= 30
         update_guild['vip'] = True
         update_guild['available'] = 15000

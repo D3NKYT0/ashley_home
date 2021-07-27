@@ -470,6 +470,10 @@ class UserBank(commands.Cog):
             update = data
             if len(data['artifacts'].keys()) == 24 and not update['vip_free'] and not update['config']['vip']:
                 update['true_money']['blessed'] += 20
+                try:
+                    update['inventory']['vip_coin'] += 1
+                except KeyError:
+                    update['inventory']['vip_coin'] = 1
                 update['vip_free'] = True
                 img = choice(git)
                 embed = discord.Embed(color=self.bot.color)

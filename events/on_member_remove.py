@@ -78,7 +78,7 @@ class OnMemberRemove(commands.Cog):
                     list_ = list()
                     for letter in text:
                         list_.append(numbers[int(letter)])
-                    list_ = str(list_).replace('[', '').replace(']', '').replace(',', '.')
+                    list_ = ''.join(list_)
                     ashley = canal.guild.get_member(self.bot.user.id)
                     perms = canal.permissions_for(ashley)
                     if perms.send_messages and perms.read_messages:
