@@ -35,7 +35,8 @@ class ServerInfo(commands.Cog):
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
 
         if data is not None:
-            database = "SERVIDOR CADASTRADO"
+            link = f"https://ashley-new.herokuapp.com/guild/{ctx.guild.id}"
+            database = f"**[Clique Aqui]({link})**"
         else:
             database = "SERVIDOR NAO CADASTRADO"
 
