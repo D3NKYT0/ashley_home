@@ -120,4 +120,5 @@ commands.ashley.captcha
 commands.member.lottery
 commands.rpg.wiki
 commands.member.stickers
+commands.utility.vote
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1
