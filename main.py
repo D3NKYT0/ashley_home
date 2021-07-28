@@ -368,10 +368,10 @@ class Ashley(commands.AutoShardedBot):
                                     f"**Obs:** Você tem **{self.chests_users[ctx.author.id]['quant']}** bau(s)!")
                     embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-                    embed.set_thumbnail(url=CHEST)
+
                     awards = 'images/elements/chest.gif'
                     file = discord.File(awards, filename="reward_chest.gif")
-                    embed.set_image(url="attachment://reward_chest.gif")
+                    embed.set_thumbnail(url="attachment://reward_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
@@ -408,10 +408,9 @@ class Ashley(commands.AutoShardedBot):
                                     f"**Obs:** Você tem **{self.chests_marry[ctx.author.id]['quant']}** bau(s)!")
                     embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-                    embed.set_thumbnail(url=CHEST)
                     awards = 'images/elements/love.gif'
                     file = discord.File(awards, filename="love_chest.gif")
-                    embed.set_image(url="attachment://love_chest.gif")
+                    embed.set_thumbnail(url="attachment://love_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
