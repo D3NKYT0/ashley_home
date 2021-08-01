@@ -24,27 +24,30 @@ class Helper(commands.Cog):
                                                                 f"sistemas de economia completo!")
 
             embed.add_field(name="**Categorias de comandos:**",
-                            value="🔧 [Comandos Admin](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-admin)\n"
-                                  "👩 [Comandos Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-ashley)\n"
-                                  "❇️ [Comandos Funny](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)\n"
-                                  "🕹️ [Comandos Mini-Games](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)\n"
-                                  "🖼️ [Comandos Image](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)\n"
-                                  "👥 [Comandos Guild](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-guild)\n"
-                                  "👤 [Comandos Member](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-member)\n"
-                                  "💰 [Comandos Economy](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-economy)",
+                            value="🔧 [Comandos Admin](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-admin)\n"
+                                  "👩 [Comandos Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-ashley)\n"
+                                  "❇️ [Comandos Funny](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)\n"
+                                  "🕹️ [Comandos Mini-Games](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)\n"
+                                  "🖼️ [Comandos Image](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)\n"
+                                  "👥 [Comandos Guild](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-guild)\n"
+                                  "👤 [Comandos Member](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-member)\n"
+                                  "💰 [Comandos Economy](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-economy)\n"
+                                  "⚔️ [Comandos RPG](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-rpg)\n"
+                                  "ℹ️ [Comandos Utility](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%E2%84%B9%EF%B8%8F-comandos-utility)\n"
+                                  "👑 [Comandos VIP](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-vip)",
                             inline=False)
 
             embed.add_field(name="**Extras:**", 
-                            value="ℹ [Sobre a Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Sobre)\n"
-                                  "📓 [Iniciando na Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Iniciando-na-Ashley)\n"
-                                  "👑 [Benefícios VIP](https://github.com/Ashley-Lab/ashley_home/wiki/Beneficios-VIP)\n"
-                                  "<:gemash:761064114650873877> [Blessed Ethernya](https://github.com/Ashley-Lab/ashley_home/wiki/Blessed-Ethernya)\n"
-                                  "🏰 [Lore](https://github.com/Ashley-Lab/ashley_home/wiki/Lore)\n"
-                                  "🌎 [Províncias](https://github.com/Ashley-Lab/ashley_home/wiki/Provincias)\n",
+                            value="ℹ [Sobre a Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Sobre)\n"
+                                  "📓 [Iniciando na Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Iniciando-na-Ashley)\n"
+                                  "👑 [Benefícios VIP](https://github.com/D3NKYT0/ashley_home/wiki/Beneficios-VIP)\n"
+                                  "<:gemash:761064114650873877> [Blessed Ethernya](https://github.com/D3NKYT0/ashley_home/wiki/Blessed-Ethernya)\n"
+                                  "🏰 [Lore](https://github.com/D3NKYT0/ashley_home/wiki/Lore)\n"
+                                  "🌎 [Províncias](https://github.com/D3NKYT0/ashley_home/wiki/Provincias)\n",
                             inline=False)
 
-            embed.add_field(name="**Acesso nosso Artigo de Ajuda**",
-                            value="[Clique Aqui](https://github.com/Ashley-Lab/Ashley/blob/master/README.md)",
+            embed.add_field(name="**Acesse a minha wiki para mais informações:**",
+                            value="[Clique Aqui](https://github.com/D3NKYT0/ashley_home/wiki)",
                             inline=False)
 
             embed.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
