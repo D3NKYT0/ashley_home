@@ -1,14 +1,14 @@
 import discord
 import psutil
+import pytz
 
 from discord.ext import commands
 from resources.check import check_it
-from datetime import datetime
 from humanize import i18n, precisedelta
 from resources.db import Database
 from collections import Counter
-
 from datetime import datetime as dt
+
 i18n.activate("pt_BR")
 
 class BotInfo(commands.Cog):
@@ -26,11 +26,12 @@ class BotInfo(commands.Cog):
         total_members = sum(len(s.members) for s in self.bot.guilds)
         channel_types = Counter(isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels())
         ver_, voice, text = self.bot.version, channel_types[False], channel_types[True]
-        owner, dated = str(self.bot.get_user(self.bot.owner_id)), self.bot.user.created_at
-        uptime = uptime = precisedelta(datetime.utcnow() - self.bot.start_time, format='%0.0f')
+        owner, dated = str(self.bot.get_user(self.bot.owner_id)), ctx.me.created_at
+        uptime = uptime = precisedelta(dt.utcnow() - self.bot.start_time, format='%0.0f')
+        date = dt.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
 
         embed_bot = discord.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
-        embed_bot.set_thumbnail(url=self.bot.user.avatar_url)
+        embed_bot.set_thumbnail(url=ctx.me.avatar_url)
         embed_bot.add_field(name="📨 | Comandos Executados",
                             value='**{}** `comandos`'.format(sum(self.bot.commands_used.values())), inline=False)
         embed_bot.add_field(name="📖 | Canais de texto", value='**{}** `canais de texto`'.format(text), inline=False)
@@ -41,11 +42,11 @@ class BotInfo(commands.Cog):
                             inline=False)
         embed_bot.add_field(name="<:mito:745375589145247804> | Entre no meu servidor",
                             value="[Clique Aqui](https://discord.gg/rYT6QrM)", inline=False)
-        embed_bot.add_field(name='`💮 | Nome`', value=self.bot.user.name, inline=False)
-        embed_bot.add_field(name='`◼ | Id bot`', value=self.bot.user.id, inline=False)
+        embed_bot.add_field(name='`💮 | Nome`', value=ctx.me.name, inline=False)
+        embed_bot.add_field(name='`◼ | Id bot`', value=ctx.me.id, inline=False)
         embed_bot.add_field(name='💠 | Criado em', value=f"<t:{dated:%s}:f>",
                             inline=False)
-        embed_bot.add_field(name='📛 | Tag', value=self.bot.user, inline=False)
+        embed_bot.add_field(name='📛 | Tag', value=ctx.me, inline=False)
         embed_bot.add_field(name='‍💻 | Servidores', value=str(len(self.bot.guilds)), inline=False)
         embed_bot.add_field(name='👥 | Usuarios', value='{}'.format(total_members), inline=False)
         embed_bot.add_field(name='‍⚙ | Programador', value=str(owner), inline=False)
@@ -55,7 +56,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
                             value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
                                   "cope=bot&permissions=806218998)", inline=False)
-        embed_bot.set_footer(text="Comando usado por {} as {} Hrs".format(ctx.author, datetime.now().hour),
+        embed_bot.set_footer(text=f"Comando usado por {ctx.author} às {date}",
                              icon_url=ctx.author.avatar_url)
         await ctx.send(delete_after=120, embed=embed_bot)
 

@@ -18,9 +18,7 @@ class ReloadCog(commands.Cog):
     async def reload(self, ctx, cog):
         """apenas desenvolvedores"""
         try:
-            self.bot.unload_extension('{}'.format(cog))
-            await sleep(1)
-            self.bot.load_extension('{}'.format(cog))
+            self.bot.reload_extension(cog)
             embed = discord.Embed(
                 color=self.color,
                 description=f'<:confirmed:721581574461587496>│Extenção **{cog}**, recarregada com sucesso!')

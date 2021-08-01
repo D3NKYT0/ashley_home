@@ -23,39 +23,31 @@ class Helper(commands.Cog):
                                                                 f"de diversão e jogos, incluindo RPG de turnos e "
                                                                 f"sistemas de economia completo!")
 
-            embed.add_field(name="**Um pouco acerca dos meus sistemas**",
-                            value=">>> Possuo um sistema de economia muito completo e fechado, ou seja, o meu dono "
-                                  "não tem controle sobre ele. É um sistema que tem vindo a ser atualizado ao longo "
-                                  "do tempo para que possa ser o mais semelhante possível à economia real.\nExiste "
-                                  "também um sistema de RPG, que se baseia em juntar itens para criar equipamentos "
-                                  "melhores e batalhar contra monstros mais fortes!",
+            embed.add_field(name="**Categorias de comandos:**",
+                            value="🔧 [Comandos Admin](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-admin)\n"
+                                  "👩 [Comandos Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-ashley)\n"
+                                  "❇️ [Comandos Funny](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)\n"
+                                  "🕹️ [Comandos Mini-Games](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)\n"
+                                  "🖼️ [Comandos Image](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)\n"
+                                  "👥 [Comandos Guild](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-guild)\n"
+                                  "👤 [Comandos Member](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-member)\n"
+                                  "💰 [Comandos Economy](https://github.com/Ashley-Lab/ashley_home/wiki/Comandos#-comandos-economy)",
                             inline=False)
 
-            embed.add_field(name="**Inteligência Artificial**",
-                            value="Inteligência Artificial, mais conhecida como IA, é uma inteligência "
-                                  "semelhante à humana, pertencente a sistemas tecnológicos. Por palavras"
-                                  " mais simples, é como se as \"máquinas\" tivessem mente própria.\nEu "
-                                  "proporciono um sistema de IA que, atualmente, responde a mensagens dos"
-                                  " membros, desde bons-dias e boas-noites até várias perguntas ou até "
-                                  "mesmo brincar consigo, e pode ser ativado/desativado utilizando o "
-                                  "comando abaixo.\n\n_Note que, para usufruir deste sistema de IA "
-                                  "totalmente, terá que ativar o meu Serviço de Interação com Membros "
-                                  "(SIM) através do comando `ash config interaction`.\nNote também que existe "
-                                  "uma diferença entre o SIM e o comando `ash ia`. O SIM ativa a IA em si"
-                                  " e o comando ativa as respostas automáticas, ou seja, eu irei responder"
-                                  " a você mesmo quando você não fale comigo diretamente!_",
+            embed.add_field(name="**Extras:**", 
+                            value="ℹ [Sobre a Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Sobre)\n"
+                                  "📓 [Iniciando na Ashley](https://github.com/Ashley-Lab/ashley_home/wiki/Iniciando-na-Ashley)\n"
+                                  "👑 [Benefícios VIP](https://github.com/Ashley-Lab/ashley_home/wiki/Beneficios-VIP)\n"
+                                  "<:gemash:761064114650873877> [Blessed Ethernya](https://github.com/Ashley-Lab/ashley_home/wiki/Blessed-Ethernya)\n"
+                                  "🏰 [Lore](https://github.com/Ashley-Lab/ashley_home/wiki/Lore)\n"
+                                  "🌎 [Províncias](https://github.com/Ashley-Lab/ashley_home/wiki/Provincias)\n",
                             inline=False)
 
-            embed.add_field(name="**Entretenimento**",
-                            value=">>> Existem categorias de entretenimento que contêm (mini)jogos e outros diversos. "
-                                  "Se você é um colecionador, irá adorar o meu sistema de coleção de artefactos.",
+            embed.add_field(name="**Acesso nosso Artigo de Ajuda**",
+                            value="[Clique Aqui](https://github.com/Ashley-Lab/Ashley/blob/master/README.md)",
                             inline=False)
 
-            embed.add_field(name="**Acesso nossa WIKI de Ajuda**",
-                            value="[Clique Aqui](https://github.com/Ashley-Lab/ashley_home/wiki)",
-                            inline=False)
-
-            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+            embed.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
             embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)

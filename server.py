@@ -20,9 +20,14 @@ WEBHOOK = Webhook(url=_auth["_t__webhook_topgg"])
 LINK_VOTE = "https://top.gg/bot/478977311266570242/vote"
 
 
+def html_response(html_patch):
+    html_file = open(html_patch, "r")
+    return web.Response(status=200, text=html_file.read(), content_type='text/html')
+
+
 async def index(request):
     if request:
-        return web.Response(status=200, text='BEM VINDO AO SERVIDOR HTTP DA ASHLEY!')
+        return html_response('web/index.html')
 
 
 async def get_guild(request):
@@ -83,6 +88,8 @@ async def make_app():
 
     app = web.Application()
     app.add_routes(ROUTES)
+    app.router.add_static('/css/', path='web/static', name='css')
+    app.router.add_static('/image/', path='web/image', name='image')
     return app
 
 

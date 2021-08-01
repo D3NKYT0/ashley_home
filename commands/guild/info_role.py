@@ -39,7 +39,6 @@ class RoleInfo(commands.Cog):
         created_at = role.created_at
         perms_channel = perms_check(role.permissions)
         _bool = {True: "Sim", False: "Não"}
-        color_hex = "#{:02x}{:02x}{:02x}".format(role.colour.r, role.colour.g, role.colour.b)
 
         role_txt = f"▫**ID:** {role.id}\n" \
                    f"▫**Número de membros:** {len(role.members)}\n" \
@@ -48,7 +47,7 @@ class RoleInfo(commands.Cog):
                    f"▫**Separado?** {_bool[role.hoist]}\n" \
                    f"▫**Mencionável?** {_bool[role.mentionable]}\n" \
                    f"▫**Cor (rgb):** {role.colour.to_rgb()}\n" \
-                   f"▫**Cor (hex):** {color_hex.upper()}\n" \
+                   f"▫**Cor (hex):** {str(role.color).upper()}\n" \
                    f"▫**Gerenciado?** {_bool[role.managed]}\n" \
                    f"\n▫**Permissões no servidor:**\n`{perms_channel}`\n"
 
