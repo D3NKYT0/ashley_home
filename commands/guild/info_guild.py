@@ -1,6 +1,7 @@
 import discord
-import datetime
+import pytz
 
+from datetime import datetime
 from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
@@ -48,7 +49,7 @@ class ServerInfo(commands.Cog):
             cmds = str(data['data']['commands']) + " comandos contabilizados no total"
         except KeyError:
             cmds = str(self.bot.guilds_commands[ctx.guild.id]) + "comandos usados desde que fiquei online"
-        hour, created = datetime.datetime.now().strftime("%H:%M:%S"), ctx.guild.created_at
+        hour, created = datetime.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M"), ctx.guild.created_at
         embed = discord.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
                                                                         "servidor!")
         embed.set_thumbnail(url=ctx.guild.icon_url)

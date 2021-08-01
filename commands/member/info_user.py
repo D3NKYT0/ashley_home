@@ -27,7 +27,7 @@ class UserInfo(commands.Cog):
         else:
             database = "USUARIO NAO CADASTRADO"
 
-        role = ",".join([r.name for r in member.roles if r.name != "@everyone"])
+        role = ",".join([r.mention for r in member.roles if r.name != "@everyone"])
         """userjoinedat = str(member.joined_at).split('.', 1)[0]
         usercreatedat = str(member.created_at).split('.', 1)[0]"""
         userjoinedat = member.joined_at
@@ -44,7 +44,7 @@ class UserInfo(commands.Cog):
         embed.add_field(name=":label:Tag:", value=str(member.discriminator), inline=True)
         embed.add_field(name="Cargos:", value=role, inline=True)
         embed.add_field(name="DataBase:", value=database)
-        embed.set_footer(text="Pedido por {}#{}".format(ctx.author.name, ctx.author.discriminator))
+        embed.set_footer(text=f"Pedido por {ctx.author}")
         embed.set_thumbnail(url=member.avatar_url)
         await ctx.send(embed=embed)
 
