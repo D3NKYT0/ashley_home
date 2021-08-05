@@ -477,9 +477,9 @@ class DataInteraction(object):
 
                 if run_command:
                     if message.guild.id != 425864977996578816:
-                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou para o ranking` **{}** '
+                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** '
                                                    '`e ganhou a` **chance** `de garimpar mais ethernyas '
-                                                   'e` **+1000** `Fichas`'.format(message.author, "Silver"))
+                                                   'e` **+1000** `Fichas`'.format(message.author))
 
         elif 20 < data_user['user']['level'] < 30 and data_user['user']['ranking'] is not None:
             if randint(1, 200) == 200 and data_user['user']['ranking'] == "Silver":
@@ -492,9 +492,9 @@ class DataInteraction(object):
 
                 if run_command:
                     if message.guild.id != 425864977996578816:
-                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou para o ranking` **{}** `e ganhou '
-                                                   'a` **chance** `de garimpar mais eternyas do que o ranking passado '
-                                                   'e` **+2000** `Fichas`'.format(message.author, "Gold"))
+                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** `e ganhou'
+                                                   ' a` **chance** `de garimpar mais eternyas do que o ranking passado'
+                                                   ' e` **+2000** `Fichas`'.format(message.author))
 
         experience = data_user['user']['experience']
         lvl_anterior = data_user['user']['level']
@@ -509,8 +509,8 @@ class DataInteraction(object):
 
             if run_command:
                 if message.guild.id != 425864977996578816:
-                    await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou para o level` **{}** `e ganhou` '
-                                               '**+200** `Fichas`'.format(message.author, lvl_now))
+                    await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou seu level social para o level` **{}**'
+                                               ' `e ganhou` **+200** `Fichas`'.format(message.author, lvl_now))
 
         if len(query_user.keys()) > 0:
             cl = await self.bot.db.cd("users")

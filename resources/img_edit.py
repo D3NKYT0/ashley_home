@@ -45,6 +45,9 @@ with open(f"{_PREFIX}data/equips.json", encoding="utf-8") as _equips:
 with open(f"{_PREFIX}data/sticker_book.json", encoding="utf-8") as sticker_book:
     sticker_book = json.load(sticker_book)
 
+with open(f"{_PREFIX}data/skills.json", encoding="utf-8") as SKILLS:
+    SKILLS = json.load(SKILLS)
+
 
 def calc_xp(xp, lvl):
     xp_now, xp_lvl_now, xp_lvl_back = xp, (lvl + 1) ** 5, lvl ** 5
@@ -423,6 +426,8 @@ async def skill_points(database):
     # load dashboard image
     image = Image.open(f"{_PREFIX}images/dashboards/skill_point.png").convert('RGBA')
     show = ImageDraw.Draw(image)
+    cn = database["class_now"]
+    xp_lvl = database["sub_class"][cn]
 
     # Text Align
     def text_align(box, text, font_t):
@@ -437,8 +442,8 @@ async def skill_points(database):
     rectangles = {
         "xp": [292, 15, 693, 37],
         "level": [693, 11, 747, 42],
-        "class": [160, 103, 325, 141],
-        "name": [153, 147, 668, 186],
+        "class": [166, 92, 329, 130],
+        "name": [191, 152, 785, 190],
 
         "atk": [340, 85, 405, 137],
         "dex": [428, 85, 493, 137],
@@ -446,57 +451,57 @@ async def skill_points(database):
         "con": [615, 85, 680, 137],
         "luk": [709, 85, 774, 137],
 
-        "pdh": [33, 506, 120, 585]}
+        "pdh": [693, 507, 778, 577]}
 
     # locate of skills
     skills = {
-        "01-d1": [212, 235, 260, 283],
-        "02-c1": [282, 235, 330, 283],
-        "03-c1": [353, 235, 401, 283],
-        "04-c1": [424, 235, 472, 283],
-        "05-c1": [495, 235, 543, 283],
-        "06-c1": [566, 235, 614, 283],
+        "01-d1": [713, 199, 759, 245],
+        "02-d2": [713, 255, 759, 301],
+        "03-d3": [713, 310, 759, 356],
+        "04-d4": [713, 366, 759, 412],
+        "05-d5": [713, 421, 759, 467],
 
-        "11-d2": [212, 306, 260, 354],
-        "12-d2": [282, 306, 330, 354],
-        "13-c2": [353, 306, 401, 354],
-        "14-c2": [424, 306, 472, 354],
-        "15-c2": [495, 306, 543, 354],
-        "16-c2": [566, 306, 614, 354],
+        "06-c1": [223, 201, 269, 247],
+        "07-c2": [222, 284, 268, 330],
+        "08-c3": [223, 368, 269, 414],
+        "09-c4": [223, 451, 269, 497],
+        "10-c5": [223, 534, 269, 580],
+    }
 
-        "21-d3": [212, 377, 260, 425],
-        "22-d3": [282, 377, 330, 425],
-        "23-d3": [353, 377, 401, 425],
-        "24-c3": [424, 377, 472, 425],
-        "25-c3": [495, 377, 543, 425],
-        "26-c3": [566, 377, 614, 425],
+    desc = {
+        "skill-1": [290, 205, 679, 243],
+        "skill-2": [290, 288, 679, 326],
+        "skill-3": [290, 372, 679, 410],
+        "skill-4": [290, 455, 679, 493],
+        "skill-5": [290, 538, 679, 573],
+    }
 
-        "31-d4": [212, 447, 260, 495],
-        "32-d4": [282, 447, 330, 495],
-        "33-d4": [353, 447, 401, 495],
-        "34-d4": [424, 447, 472, 495],
-        "35-c4": [495, 447, 543, 495],
-        "36-c4": [566, 447, 614, 495],
+    other_class = {
+        "title-1": [2, 151, 157, 186],
+        "info-1": [2, 186, 157, 222],
 
-        "41-d5": [212, 519, 260, 567],
-        "42-d5": [282, 519, 330, 567],
-        "43-d5": [353, 519, 401, 567],
-        "44-d5": [424, 519, 472, 567],
-        "45-d5": [495, 519, 543, 567],
-        "46-c5": [566, 519, 614, 567]
+        "title-2": [2, 226, 157, 260],
+        "info-2": [2, 260, 157, 295],
+
+        "title-3": [2, 299, 157, 334],
+        "info-3": [2, 334, 157, 368],
+
+        "title-4": [2, 374, 157, 409],
+        "info-4": [2, 409, 157, 444],
+
+        "title-5": [2, 448, 157, 483],
+        "info-5": [2, 483, 157, 518],
+
+        "title-6": [2, 522, 157, 557],
+        "info-6": [2, 557, 157, 592],
     }
 
     # add img to main img
     avatar_user = await get_avatar(database['avatar_member'], 132, 132)
     image.paste(avatar_user, (10, 13), avatar_user)
 
-    # add img vip
-    if database['vip']:
-        vip = Image.open(f"{_PREFIX}images/elements/vip_rpg.png").convert('RGBA')
-        image.paste(vip, (214, 57), vip)
-
     # add percent to bar xp
-    percent = calc_xp(int(database['xp']), int(database['level']))  # XP / LEVEL
+    percent = calc_xp(int(xp_lvl['xp']), int(xp_lvl['level']))  # XP / LEVEL
     percent_img = Image.open(f"{_PREFIX}images/elements/1porcent.png").convert('RGBA')
     w_percent, h_percent = percent_img.size
     ini_x, ini_y = 293, 16
@@ -506,31 +511,58 @@ async def skill_points(database):
 
     # add skill to img
     for k in skills.keys():
-        c = database['class'] if k[3] == "c" else "default"
+        c = cn if k[3] == "c" else "default"
         skill = Image.open(f"{_PREFIX}images/skills/{c}/{k[4]}.jpg").convert('RGBA')
         skill = skill.resize((48, 48))
         image.paste(skill, (skills[k][0] + 1, skills[k][1] + 1), skill)
+
+    # add text to img sub-classes
+    num = 0
+    for k in database["sub_class"].keys():
+        if k.lower() != cn.lower():
+            num += 1
+            font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 20)
+
+            x_, y_ = text_align(other_class[f"title-{num}"], k.upper(), font_text)
+            show.text(xy=(x_ + 1, y_ + 1), text=k.upper(), fill=(255, 255, 255), font=font_text)
+            show.text(xy=(x_, y_), text=k.upper(), fill=(75, 75, 200), font=font_text)
+
+            percent = calc_xp(int(database["sub_class"][k]['xp']), int(database["sub_class"][k]['level']))
+            _TEXT = f"LVL: {database['sub_class'][k]['level']} / {percent[0] * 2} %"
+            x_, y_ = text_align(other_class[f"info-{num}"], _TEXT.upper(), font_text)
+            show.text(xy=(x_ + 1, y_ + 1), text=_TEXT.upper(), fill=(0, 0, 0), font=font_text)
+            show.text(xy=(x_, y_), text=_TEXT.upper(), fill=(255, 255, 255), font=font_text)
+
+    # add text to img - skills
+    SK = 0
+    for k in desc.keys():
+        font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 30)
+        _TEXT = f"{SKILLS[cn][str(SK)]['name'].upper()}"
+        x_, y_ = text_align(desc[k], _TEXT, font_text)
+        show.text(xy=(x_ + 1, y_ + 1), text=_TEXT, fill=(0, 0, 0), font=font_text)
+        show.text(xy=(x_, y_), text=_TEXT, fill=(50, 50, 150), font=font_text)
+        SK += 1
 
     # add text to img
     for k in rectangles.keys():
         if k == "xp":
             font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 24)
-            if database[k] < 32:
-                new_xp = f"{database[k]} / {percent[2]}      {percent[0] * 2} / 100%"
+            if xp_lvl[k] < 32:
+                new_xp = f"{xp_lvl[k]} / {percent[2]}      {percent[0] * 2} / 100%"
             else:
-                pre, tt = database[k] - percent[2], False
-                if int(database['level']) > 79 and pre > percent[1] - percent[2]:
+                pre, tt = xp_lvl[k] - percent[2], False
+                if int(xp_lvl['level']) > 79 and pre > percent[1] - percent[2]:
                     pre, tt = percent[1] - percent[2], True
                 new_xp = f"{'+' if tt else ''}{pre} / {percent[1] - percent[2]}      {percent[0] * 2} / 100%"
-            database[k] = new_xp
-            x_, y_ = text_align(rectangles[k], database[k], font_number)
-            show.text(xy=(x_ + 1, y_ - 2), text=database[k].upper(), fill=(0, 0, 0), font=font_number)
-            show.text(xy=(x_, y_ - 3), text=database[k].upper(), fill=(255, 255, 255), font=font_number)
+            xp_lvl[k] = new_xp
+            x_, y_ = text_align(rectangles[k], xp_lvl[k], font_number)
+            show.text(xy=(x_ + 1, y_ - 2), text=xp_lvl[k].upper(), fill=(0, 0, 0), font=font_number)
+            show.text(xy=(x_, y_ - 3), text=xp_lvl[k].upper(), fill=(255, 255, 255), font=font_number)
         elif k == "level":
             font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 28)
-            x_, y_ = text_align(rectangles[k], database[k], font_number)
-            show.text(xy=(x_ + 1, y_ - 2), text=database[k].upper(), fill=(0, 0, 0), font=font_number)
-            show.text(xy=(x_, y_ - 3), text=database[k].upper(), fill=(255, 255, 255), font=font_number)
+            x_, y_ = text_align(rectangles[k], str(xp_lvl[k]), font_number)
+            show.text(xy=(x_ + 1, y_ - 2), text=str(xp_lvl[k]).upper(), fill=(0, 0, 0), font=font_number)
+            show.text(xy=(x_, y_ - 3), text=str(xp_lvl[k]).upper(), fill=(255, 255, 255), font=font_number)
         elif k in ['atk', 'dex', 'acc', 'con', 'luk']:
             font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 50)
             x_, y_ = text_align(rectangles[k], database[k], font_number)
@@ -539,21 +571,21 @@ async def skill_points(database):
         elif k == "pdh":
             font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 60)
             x_, y_ = text_align(rectangles[k], database[k], font_number)
-            show.text(xy=(x_ + 1, y_ - 8), text=database[k].upper(), fill=(0, 0, 0), font=font_number)
-            show.text(xy=(x_, y_ - 7), text=database[k].upper(), fill=(255, 255, 255), font=font_number)
+            # show.text(xy=(x_ + 1, y_ - 8), text=database[k].upper(), fill=(0, 0, 0), font=font_number)
+            show.text(xy=(x_, y_ - 7), text=database[k].upper(), fill=(62, 25, 105), font=font_number)
         elif k == "name":
             font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 34)
             x_, y_ = text_align(rectangles[k], database[k], font_text)
             show.text(xy=(x_ + 1, y_ + 1), text=database[k].upper(), fill=(0, 0, 0), font=font_text)
             show.text(xy=(x_, y_), text=database[k].upper(), fill=(255, 255, 255), font=font_text)
         else:
-            if database[k] == "necromancer":
+            if cn == "necromancer":
                 font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 23)
             else:
                 font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 28)
-            x_, y_ = text_align(rectangles[k], database[k], font_text)
-            show.text(xy=(x_ + 1, y_ + 1), text=database[k].upper(), fill=(0, 0, 0), font=font_text)
-            show.text(xy=(x_, y_), text=database[k].upper(), fill=(255, 255, 255), font=font_text)
+            x_, y_ = text_align(rectangles[k], cn, font_text)
+            show.text(xy=(x_ + 1, y_ + 1), text=cn.upper(), fill=(0, 0, 0), font=font_text)
+            show.text(xy=(x_, y_), text=cn.upper(), fill=(225, 0, 75), font=font_text)
 
     if _TEST:
         image.show()
@@ -791,4 +823,4 @@ async def welcome(data_welcome):
 if _TEST:
     _data = {}
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(stickers(_data))
+    loop.run_until_complete(skill_points(_data))

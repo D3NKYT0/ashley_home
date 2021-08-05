@@ -55,10 +55,8 @@ class SkillClass(commands.Cog):
             db = {
                 "name": member.name,
                 "avatar_member": member.avatar_url_as(format="png"),
-                "vip": data['rpg']['vip'],
-                "xp": _db_class['xp'],
-                "level": str(_db_class['level']),
-                "class": str(data['rpg']['class_now']),
+                "class_now": data['rpg']["class_now"],
+                "sub_class": data['rpg']["sub_class"],
                 "atk": str(data['rpg']['status']['atk']),
                 "dex": str(data['rpg']['status']['agi']),
                 "acc": str(data['rpg']['status']['prec']),
