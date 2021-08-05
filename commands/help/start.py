@@ -11,7 +11,6 @@ class Helper(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
 
-    @check_it(no_pm=False)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.command(name='help', aliases=['ajuda'])
     async def help(self, ctx, *, command_help=None):

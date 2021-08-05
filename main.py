@@ -745,101 +745,106 @@ class Ashley(commands.AutoShardedBot):
         if message.author.id == self.user.id:
             return
 
-        ctx = await self.get_context(message)
-        if str(ctx.command) != "eval":
-            msg = copy.copy(message)
-            msg.content = message.content.lower()
-        else:
-            msg = copy.copy(message)
+        if message.guild is not None:
 
-        ctx = await self.get_context(msg)
-        perms = ctx.channel.permissions_for(ctx.me)
-        if not perms.send_messages or not perms.read_messages:
-            return
-
-        if ctx.command is not None:
-            if not perms.embed_links or not perms.attach_files:
-                return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
-                                      "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
-            if message.author.id not in self.testers and self.maintenance:
-                msg = self.config['attribute']['maintenance']
-                embed = discord.Embed(color=self.color, description=msg)
-                return await message.channel.send(embed=embed)
-
-        self.msg_cont += 1
-
-        if message.webhook_id is not None:
-            return await self.invoke(ctx)
-
-        if message.guild is not None and str(message.author.id) not in self.blacklist:
-            await self.data.add_experience(message, randint(5, 15))
-
-            run_command = False
-            data_guild = await self.db.get_data("guild_id", message.guild.id, "guilds")
-            query_u = {"_id": 0, "user_id": 1, "security": 1}
-            data_user = await (await self.db.cd("users")).find_one({"user_id": message.author.id}, query_u)
-            if data_guild is not None:
-                if data_guild['command_locked']['status']:
-                    if message.channel.id in data_guild['command_locked']['while_list']:
-                        run_command = True
-                else:
-                    if message.channel.id not in data_guild['command_locked']['black_list']:
-                        run_command = True
+            ctx = await self.get_context(message)
+            if str(ctx.command) != "eval":
+                msg = copy.copy(message)
+                msg.content = message.content.lower()
             else:
-                run_command = True
-                if message.guild.system_channel is not None and (self.msg_cont % 10) == 0:
-                    if await verify_cooldown(self, f"{message.guild.id}_no_register", 86400):
-                        embed = discord.Embed(
-                            color=self.color,
-                            description="<a:blue:525032762256785409>│`SEU SERVIDOR AINDA NAO ESTA CADASTRADO USE`"
-                                        " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
-                                        "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO COM "
-                                        "MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord.gg/rYT6QrM)")
-                        try:
-                            await message.guild.system_channel.send(embed=embed)
-                        except discord.Forbidden:
-                            try:
-                                if message.guild.owner is not None:
-                                    await message.guild.owner.send(embed=embed)
-                                else:
-                                    await message.channel.send(embed=embed)
-                            except discord.Forbidden:
-                                pass
-            if str(ctx.command) in ['channel', 'daily']:
-                run_command = True
+                msg = copy.copy(message)
 
-            if run_command:
-                if msg.content in self.shortcut:
-                    msg.content = self.shortcut[message.content.lower()]
-                if self.is_ashley:
-                    if data_user is None:
-                        await self.process_commands(msg)
-                    elif not data_user["security"]["self_baned"]:
-                        await self.process_commands(msg)
+            ctx = await self.get_context(msg)
+            perms = ctx.channel.permissions_for(ctx.me)
+            if not perms.send_messages or not perms.read_messages:
+                return
+
+            if ctx.command is not None:
+                if not perms.embed_links or not perms.attach_files:
+                    return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                          "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
+                if message.author.id not in self.testers and self.maintenance:
+                    msg = self.config['attribute']['maintenance']
+                    embed = discord.Embed(color=self.color, description=msg)
+                    return await message.channel.send(embed=embed)
+
+            self.msg_cont += 1
+
+            if message.webhook_id is not None:
+                return await self.invoke(ctx)
+
+            if str(message.author.id) not in self.blacklist:
+                await self.data.add_experience(message, randint(5, 15))
+
+                run_command = False
+                data_guild = await self.db.get_data("guild_id", message.guild.id, "guilds")
+                query_u = {"_id": 0, "user_id": 1, "security": 1}
+                data_user = await (await self.db.cd("users")).find_one({"user_id": message.author.id}, query_u)
+                if data_guild is not None:
+                    if data_guild['command_locked']['status']:
+                        if message.channel.id in data_guild['command_locked']['while_list']:
+                            run_command = True
+                    else:
+                        if message.channel.id not in data_guild['command_locked']['black_list']:
+                            run_command = True
+                else:
+                    run_command = True
+                    if message.guild.system_channel is not None and (self.msg_cont % 10) == 0:
+                        if await verify_cooldown(self, f"{message.guild.id}_no_register", 86400):
+                            embed = discord.Embed(
+                                color=self.color,
+                                description="<a:blue:525032762256785409>│`SEU SERVIDOR AINDA NAO ESTA CADASTRADO USE`"
+                                            " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
+                                            "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO COM "
+                                            "MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord.gg/rYT6QrM)")
+                            try:
+                                await message.guild.system_channel.send(embed=embed)
+                            except discord.Forbidden:
+                                try:
+                                    if message.guild.owner is not None:
+                                        await message.guild.owner.send(embed=embed)
+                                    else:
+                                        await message.channel.send(embed=embed)
+                                except discord.Forbidden:
+                                    pass
+                if str(ctx.command) in ['channel', 'daily']:
+                    run_command = True
+
+                if run_command:
+                    if msg.content in self.shortcut:
+                        msg.content = self.shortcut[message.content.lower()]
+                    if self.is_ashley:
+                        if data_user is None:
+                            await self.process_commands(msg)
+                        elif not data_user["security"]["self_baned"]:
+                            await self.process_commands(msg)
+                        else:
+                            if ctx.command is not None:
+                                if str(ctx.command) == "captcha":
+                                    await self.process_commands(msg)
+                                else:
+                                    await message.channel.send('<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA SERIE'
+                                                               ' DE 5 STRIKES E POR ISSO FOI BANIDO TEMPORARIAMENTE DA '
+                                                               'ASHLEY POR SUSPEITA DE USAR MACRO, PARA VOLTAR A USAR A '
+                                                               'ASHLEY NORMALMENTE VOCÊ VAI PRECISAR FAZER UM TESTE E '
+                                                               'PROVAR QUE NAO É UM ROBÔ, USANDO O COMANDO:` '
+                                                               '**ASH CAPTCHA** <a:red:525032764211200002>')
                     else:
                         if ctx.command is not None:
-                            if str(ctx.command) == "captcha":
-                                await self.process_commands(msg)
-                            else:
-                                await message.channel.send('<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA SERIE'
-                                                           ' DE 5 STRIKES E POR ISSO FOI BANIDO TEMPORARIAMENTE DA '
-                                                           'ASHLEY POR SUSPEITA DE USAR MACRO, PARA VOLTAR A USAR A '
-                                                           'ASHLEY NORMALMENTE VOCÊ VAI PRECISAR FAZER UM TESTE E '
-                                                           'PROVAR QUE NAO É UM ROBÔ, USANDO O COMANDO:` '
-                                                           '**ASH CAPTCHA** <a:red:525032764211200002>')
+                            await message.channel.send("<:negate:721581573396496464>|`AINDA ESTOU SENDO INICIADA, "
+                                                       "AGUARDE MAIS UM POUCO...!`", delete_after=5.0)
                 else:
                     if ctx.command is not None:
-                        await message.channel.send("<:negate:721581573396496464>|`AINDA ESTOU SENDO INICIADA, "
-                                                   "AGUARDE MAIS UM POUCO...!`", delete_after=5.0)
-            else:
-                if ctx.command is not None:
-                    await message.channel.send("<:alert:739251822920728708>|`NAO POSSO EXECUTAR COMANDOS NESSE"
-                                               " CANAL!`\n**CASO QUERIA ALTERAR ESSA CONFIGURAÇÃO, USE O COMANDO "
-                                               "ASH CHANNEL**")
+                        await message.channel.send("<:alert:739251822920728708>|`NAO POSSO EXECUTAR COMANDOS NESSE"
+                                                   " CANAL!`\n**CASO QUERIA ALTERAR ESSA CONFIGURAÇÃO, USE O COMANDO "
+                                                   "ASH CHANNEL**")
 
-        if message.channel.id == 837054554637467648:  # canal de sugestões da ASHLEY!
-            await message.add_reaction("<:confirmed:721581574461587496>")
-            await message.add_reaction("<:negate:721581573396496464>")
+            if message.channel.id == 837054554637467648:  # canal de sugestões da ASHLEY!
+                await message.add_reaction("<:confirmed:721581574461587496>")
+                await message.add_reaction("<:negate:721581573396496464>")
+
+        else:
+            await self.process_commands(message)
 
     @staticmethod
     def get_ram(special=False):
