@@ -12,7 +12,7 @@ class SourceGit(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
 
-    @check_it(no_pm=True, manage_guild=True)
+    @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='source')
@@ -51,12 +51,6 @@ class SourceGit(commands.Cog):
             final_url = '<{}/blob/master/{}#L{}>'.format(base, location, src.co_firstlineno)
 
         await ctx.send(final_url)
-
-    @source.error
-    async def source_error(self, ctx, error):
-        if error.__str__() in ERRORS[12]:
-            return await ctx.send('<:negate:721581573396496464>│`Você precisa de uma permissão especifica:` '
-                                  '**manage_guild / Gerenciar Servidor**')
 
 
 def setup(bot):

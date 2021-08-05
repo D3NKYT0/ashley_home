@@ -13,7 +13,6 @@ class Helper(commands.Cog):
 
     @check_it(no_pm=False)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='help', aliases=['ajuda'])
     async def help(self, ctx, *, command_help=None):
         """há fala serio!"""
@@ -23,18 +22,20 @@ class Helper(commands.Cog):
                                                                 f"de diversão e jogos, incluindo RPG de turnos e "
                                                                 f"sistemas de economia completo!")
 
-            embed.add_field(name="**Categorias de comandos:**",
+            embed.add_field(name="**Categorias de comandos - Utilidades**:",
                             value="🔧 [Comandos Admin](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-admin)\n"
                                   "👩 [Comandos Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-ashley)\n"
-                                  "❇️ [Comandos Funny](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)\n"
-                                  "🕹️ [Comandos Mini-Games](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)\n"
-                                  "🖼️ [Comandos Image](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)\n"
-                                  "👥 [Comandos Guild](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-guild)\n"
-                                  "👤 [Comandos Member](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-member)\n"
-                                  "💰 [Comandos Economy](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-economy)\n"
-                                  "⚔️ [Comandos RPG](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-rpg)\n"
                                   "ℹ️ [Comandos Utility](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%E2%84%B9%EF%B8%8F-comandos-utility)\n"
-                                  "👑 [Comandos VIP](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-vip)",
+                                  "👑 [Comandos VIP](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-vip)\n"
+                                  "👥 [Comandos Guild](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-guild)\n"
+                                  "👤 [Comandos Member](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-member)",
+                            inline=False)
+            embed.add_field(name="**Categorias de comandos - Diversão**:",
+                            value= "⚔️ [Comandos RPG](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-rpg)\n"
+                                   "💰 [Comandos Economy](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#-comandos-economy)\n"
+                                   "🕹️ [Comandos Mini-Games](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-mini-games)\n"
+                                   "❇️ [Comandos Funny](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-funny)\n"
+                                   "🖼️ [Comandos Image](https://github.com/D3NKYT0/ashley_home/wiki/Comandos#%EF%B8%8F-comandos-image)",
                             inline=False)
 
             embed.add_field(name="**Extras:**", 

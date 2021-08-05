@@ -15,4 +15,3 @@ discord.py
 httplib2
 humanize
 captcha
-topggpy

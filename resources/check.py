@@ -52,7 +52,7 @@ def check_it(**kwargs):
                 if kwargs.get('no_pm', False):
                     pass
                 else:
-                    raise commands.NoPrivateMessage('<:alert:739251822920728708>│`Você não pode mandar comandos em '
+                    raise commands.CheckFailure('<:alert:739251822920728708>│`Você não pode mandar comandos em '
                                                     'mensagens privadas!`')
 
         if not (isinstance(ctx.channel, (discord.DMChannel, discord.GroupChannel))) and kwargs.get('is_nsfw', False):
