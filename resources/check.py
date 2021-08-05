@@ -45,15 +45,15 @@ def check_it(**kwargs):
             else:
                 raise commands.CheckFailure(msg)
 
-        if isinstance(ctx.message.channel, (discord.DMChannel, discord.GroupChannel)):
-            if ctx.command.name == "help" or ctx.command.name == "ajuda":
+        if ctx.guild is None:
+            if str(ctx.command) == "help":
                 pass
             else:
                 if kwargs.get('no_pm', False):
                     pass
                 else:
                     raise commands.CheckFailure('<:alert:739251822920728708>│`Você não pode mandar comandos em '
-                                                    'mensagens privadas!`')
+                                                'mensagens privadas!`')
 
         if not (isinstance(ctx.channel, (discord.DMChannel, discord.GroupChannel))) and kwargs.get('is_nsfw', False):
             if ctx.channel.is_nsfw() is False:

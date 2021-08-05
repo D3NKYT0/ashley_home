@@ -21,7 +21,7 @@ cor = {
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.errors = [aiohttp.client_exceptions.ClientOSError, ConnectionResetError,
+        self.errors = [aiohttp.ClientOSError, ConnectionResetError,
                        discord.errors.DiscordServerError, discord.errors.HTTPException]
         self.errors_str = [
             "Command raised an exception: HTTPException: 504 Gateway Time-out (error code: 0): <!DOCTYPE html>",

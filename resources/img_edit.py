@@ -527,8 +527,8 @@ async def skill_points(database):
             show.text(xy=(x_ + 1, y_ + 1), text=k.upper(), fill=(255, 255, 255), font=font_text)
             show.text(xy=(x_, y_), text=k.upper(), fill=(75, 75, 200), font=font_text)
 
-            percent = calc_xp(int(database["sub_class"][k]['xp']), int(database["sub_class"][k]['level']))
-            _TEXT = f"LVL: {database['sub_class'][k]['level']} / {percent[0] * 2} %"
+            _percent = calc_xp(int(database["sub_class"][k]['xp']), int(database["sub_class"][k]['level']))
+            _TEXT = f"LVL: {database['sub_class'][k]['level']} / {_percent[0] * 2} %"
             x_, y_ = text_align(other_class[f"info-{num}"], _TEXT.upper(), font_text)
             show.text(xy=(x_ + 1, y_ + 1), text=_TEXT.upper(), fill=(0, 0, 0), font=font_text)
             show.text(xy=(x_, y_), text=_TEXT.upper(), fill=(255, 255, 255), font=font_text)
