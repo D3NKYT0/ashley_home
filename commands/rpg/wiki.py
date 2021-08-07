@@ -66,6 +66,18 @@ class WikiClass(commands.Cog):
                 mdef, pdef = equip['mdef'], equip['pdef']
                 con, prec, agi, atk = modifier['con'], modifier['prec'], modifier['agi'], modifier['atk']
                 rare, classe = equip['rarity'], equip['class']
+
+                if "silver" in name:
+                    requisito = "11"
+                elif "mystic" in name:
+                    requisito = "21"
+                elif "inspiron" in name:
+                    requisito = "41"
+                elif "violet" in name:
+                    requisito = "61"
+                else:
+                    requisito = "80"
+
                 if len(classe) > 1:
                     classe = ', '.join(classe)
                 else:
@@ -81,6 +93,7 @@ class WikiClass(commands.Cog):
                               f'**Classe(s)**: {classe.title()}\n' \
                               f'**Raridade**: {rare.title()} \n' \
                               f'**Tier**: {tier.title()}\n' \
+                              f'**Requisito:** Level `{requisito}` ou maior\n' \
                               f'```Markdown\n' \
                               f'=== Defesa ===\n' \
                               f'MDEF:⠀⠀{mdef}⠀⠀PDEF:⠀⠀{pdef}\n' \

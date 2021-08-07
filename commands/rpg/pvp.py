@@ -275,9 +275,10 @@ class PVP(commands.Cog):
                     description=f"`{player_2[_idp2].name.upper()} EVADIU`",
                     color=0x000000
                 )
-                if not lower_net:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
-                embed.set_thumbnail(url=f"{player_2_data['img']}")
+                """if not lower_net:
+                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
+                embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
+                embed.set_author(name=player_2_data['name'], icon_url=player_2_data['img'])
                 await ctx.send(embed=embed)
 
             # --------======== TEMPO DE ESPERA ========--------
@@ -346,9 +347,10 @@ class PVP(commands.Cog):
                     description=f"`{player_1[_idp1].name.upper()} EVADIU`",
                     color=0x000000
                 )
-                if not lower_net:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
-                embed.set_thumbnail(url=f"{player_1_data['img']}")
+                """if not lower_net:
+                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
+                embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
+                embed.set_author(name=player_1_data['name'], icon_url=player_1_data['img'])
                 await ctx.send(embed=embed)
 
             # --------======== TEMPO DE ESPERA ========--------

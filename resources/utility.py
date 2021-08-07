@@ -147,7 +147,7 @@ def quant_etherny(amount):
     return answer
 
 
-def embed_creator(description, img_url, monster, hp_max, hp, monster_img, lower_net):
+def embed_creator(description, img_url, monster, hp_max, hp, monster_img, lower_net, monster_name):
     global color_embed
     color = [0xff0000, 0xffcc00, 0x00cc00]
     if monster:
@@ -162,10 +162,10 @@ def embed_creator(description, img_url, monster, hp_max, hp, monster_img, lower_
         description=description,
         color=color_embed
     )
-    if not lower_net:
-        if img_url is not None:
-            embed.set_image(url=img_url)
-    embed.set_thumbnail(url=f"{monster_img}")
+    """if not lower_net:"""
+    if img_url is not None:
+        embed.set_thumbnail(url=img_url)
+    embed.set_author(name=monster_name, icon_url=monster_img)
     return embed
 
 
@@ -325,12 +325,8 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
                      f'`{items[key]["name"]}{(" " * (35 - len(items[key]["name"])))}` **{rarity.lower()}**\n'
 
         else:
-            cost = "\n".join(f"{items[i[0]][0]} `{i[1]}` `{items[i[0]][1]}`" for i in inventory[key]['cost'])
-            reward = "\n".join(f"{items[i[0]][0]} `{i[1]}` `{items[i[0]][1]}`" for i in inventory[key]['reward'])
             icon = inventory[key]['reward'][0][0]
-            string = f"{items[icon][0]} **{key.upper()}**\n" \
-                     f"**Custo:**\n {cost} \n " \
-                     f"**Recompensa:**\n {reward}\n\n"
+            string = f"{items[icon][0]} **{key.upper()}**\n\n"
 
         cont += len(string)
         if cont <= 1500 and cont_i < 20:

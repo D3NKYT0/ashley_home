@@ -162,9 +162,9 @@ class Entity(object):
             if self.is_player:
                 hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
                 _mp, ehp, econ, err = self.status['mp'], e_info[0]['hp'], e_info[0]['con'], e_info[1][0]
-                title = f"YOUR HP:  [{_hp if _hp > 0 else 0}/{_con * rr[0]}]  |  " \
-                        f"YOUR MP:  [{_mp if _mp > 0 else 0}/{_con * rr[1]}]\n" \
-                        f"OPPONENT: {e_info[2].upper()}\nHP: [{ehp if ehp > 0 else 0}/{econ * err}] | LVL: {e_info[3]}"
+                title = f"HP:  [{_hp if _hp > 0 else 0}/{_con * rr[0]}]  |  " \
+                        f"MP:  [{_mp if _mp > 0 else 0}/{_con * rr[1]}]\n" \
+                        f"INI HP: [{ehp if ehp > 0 else 0}/{econ * err}] | INI LVL: {e_info[3]}"
                 description, tot, attks = '', len(atacks), dict()
                 for c in range(0, len(atacks)):
                     attks[c + 1], lvs, c2, _att = atacks[c], self.level_skill[c], atacks[c], self.status['atk']
@@ -183,8 +183,18 @@ class Entity(object):
                     dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
                     dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
                     _atk = [int(tot_atk / 100 * (50 + c)), int(tot_atk / 100 * (50 + (c * 10)))]
-                    damage = f"{_atk[0]}-{_atk[1]}" if _atk[0] != _atk[1] else f"{_atk[0]}"
-                    bk = f"{dd[0]}-{dd[1]}" if dd[0] != dd[1] else f"{dd[0]}"
+
+                    if _atk[0] != _atk[1]:
+                        if dd[0] != dd[1]:
+                            damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[1]}"
+                        else:
+                            damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[0]}"
+                    else:
+                        if dd[0] != dd[1]:
+                            damage = f"{_atk[0] + dd[0]}-{_atk[0] + dd[1]}"
+                        else:
+                            damage = f"{_atk[0] + dd[0]}"
+
                     icon, skill_type = self.atacks[c2]['icon'], self.atacks[c2]['type']
                     emojis.append(self.atacks[c2]['icon'])
 
@@ -203,17 +213,18 @@ class Entity(object):
                     _mana = a_mana if effect_skill != "cura" else rm
                     _mana = ru if self.atacks[c2]['type'] == "especial" else _mana
 
-                    description += f"**{c + 1}** - {icon} **{c2.upper()}** `+{lvs}`\n" \
-                                   f"`Dano:` **{damage} + {bk}** | `Tipo:` **{skill_type.upper()}**\n" \
-                                   f"`Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
+                    description += f"**{c + 1}** - {icon} **{c2.upper()}** `+{lvs}` | **{skill_type.lower()}**\n" \
+                                   f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
                 regen = int(((self.status['con'] * self.rate[1]) / 100) * 50)
                 pl = 3 if not self.raid else 3 + (raid_num // 2)
+
                 description += f'**{tot + 1}** - <:MP:774699585620672534> **{"Pass turn MP".upper()}**\n' \
                                f'`MP Recovery:` **+{regen} de Mana**\n\n' \
                                f'**{tot + 2}** - <:HP:774699585070825503> **{"Pass turn HP".upper()}**\n' \
                                f'`HP Recovery:` **25-35% de HP** (**{self.potion}**/{pl})\n\n' \
                                f'**{tot + 3}** - <:fechar:749090949413732352> **Finalizar batalha**'
+
                 skillcombo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life**\n" \
                              f"`Dano:` **50% do HP retirado!** | `Tipo:` **COMBO**\n" \
                              f"`Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
@@ -229,7 +240,8 @@ class Entity(object):
                     description=description,
                     color=0x000000
                 )
-                embed.set_thumbnail(url="{}".format(user.avatar_url))
+                # embed.set_thumbnail(url="{}".format(user.avatar_url))
+                embed.set_author(name=user.name, icon_url=user.avatar_url)
                 await ctx.send(embed=embed)
 
                 while not bot.is_closed():
@@ -348,7 +360,7 @@ class Entity(object):
                                 embed = discord.Embed(
                                     description=f"`{user.name.upper()} VOCÊ JA ATINGIU O LIMITE DE POÇÃO DE VIDA!`\n"
                                                 f"{msg}", color=0x000000)
-                                embed.set_thumbnail(url=f"{user.avatar_url}")
+                                embed.set_author(name=user.name, icon_url=user.avatar_url)
                                 if not potion_msg:
                                     await ctx.send(embed=embed)
                                     self.next = 0
@@ -372,7 +384,7 @@ class Entity(object):
                                                 f"**Obs:** Passar a vez regenera a mana ou vida!",
                                     color=0x000000
                                 )
-                                embed.set_thumbnail(url=f"{user.avatar_url}")
+                                embed.set_author(name=user.name, icon_url=user.avatar_url)
                                 await ctx.send(embed=embed)
                                 self.next = 0
                                 hate_no_mana += 1
@@ -479,7 +491,7 @@ class Entity(object):
         hp_max = self.status['con'] * self.rate[0]
         monster = not self.is_player
         img_ = None
-        embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.ln)
+        embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.ln, self.name)
         if msg_return != "":
             await ctx.send(embed=embed_)
         return self.atack
@@ -510,7 +522,7 @@ class Entity(object):
             hp_max = self.status['con'] * self.rate[0]
             monster = not self.is_player if self.pvp else self.is_player
             img_ = "https://uploads1.yugioh.com/card_images/2110/detail/2004.jpg?1385103024"
-            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln)
+            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln, self.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -519,7 +531,7 @@ class Entity(object):
             hp_max = self.status['con'] * self.rate[0]
             monster = not self.is_player if self.pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln)
+            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln, self.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -528,7 +540,7 @@ class Entity(object):
             hp_max = self.status['con'] * self.rate[0]
             monster = not self.is_player if self.pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln)
+            embed_ = embed_creator(description, img_, monster, hp_max, self.status['hp'], enemy_img, self.ln, self.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -543,7 +555,7 @@ class Entity(object):
             bmsg = "\n`boss é imune a combo!`" if self.boss else ""
             description = f'**{self.name.upper()}** `recebeu` **{_damage}** `de dano, por levar um ` **combo!**{bmsg}'
             img = "https://media.giphy.com/media/INEBdVgN59AbWhyZCk/giphy.gif"
-            embed_ = embed_creator(description, img, monster, hp_max, self.status['hp'], self.img, self.ln)
+            embed_ = embed_creator(description, img, monster, hp_max, self.status['hp'], self.img, self.ln, self.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -651,12 +663,12 @@ class Entity(object):
             _cd = randint(int(critical_damage / 2), critical_damage)
             damage = int(damage + (damage / 100 * _cd))
             embed = discord.Embed(title="CRITICAL", color=0x38105e)
-            if not self.ln:
+            """if not self.ln:
                 file = discord.File("images/elements/critical.gif", filename="critical.gif")
                 embed.set_image(url="attachment://critical.gif")
                 await ctx.send(file=file, embed=embed)
-            else:
-                await ctx.send(embed=embed)
+            else:"""
+            await ctx.send(embed=embed)
 
         defense = self.pdef if skill['type'] == "fisico" else self.mdef
         if skill['type'] == "especial":
@@ -738,9 +750,9 @@ class Entity(object):
 
         hp_max = self.status['con'] * self.rate[0]
         monster = not self.is_player if self.pvp else self.is_player
-        embed_ = embed_creator(msg_return, skill['img'], monster, hp_max, self.status['hp'], self.img, self.ln)
+        bed_ = embed_creator(msg_return, skill['img'], monster, hp_max, self.status['hp'], self.img, self.ln, self.name)
         if msg_return != "":
-            await ctx.send(embed=embed_)
+            await ctx.send(embed=bed_)
 
         entity.effects = effects
         return entity
