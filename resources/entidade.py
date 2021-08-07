@@ -240,7 +240,6 @@ class Entity(object):
                     description=description,
                     color=0x000000
                 )
-                # embed.set_thumbnail(url="{}".format(user.avatar_url))
                 embed.set_author(name=user.name, icon_url=user.avatar_url)
                 await ctx.send(embed=embed)
 
@@ -663,12 +662,9 @@ class Entity(object):
             _cd = randint(int(critical_damage / 2), critical_damage)
             damage = int(damage + (damage / 100 * _cd))
             embed = discord.Embed(title="CRITICAL", color=0x38105e)
-            """if not self.ln:
-                file = discord.File("images/elements/critical.gif", filename="critical.gif")
-                embed.set_image(url="attachment://critical.gif")
-                await ctx.send(file=file, embed=embed)
-            else:"""
-            await ctx.send(embed=embed)
+            file = discord.File("images/elements/critical.gif", filename="critical.gif")
+            embed.set_thumbnail(url="attachment://critical.gif")
+            await ctx.send(file=file, embed=embed)
 
         defense = self.pdef if skill['type'] == "fisico" else self.mdef
         if skill['type'] == "especial":

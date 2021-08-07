@@ -162,7 +162,6 @@ def embed_creator(description, img_url, monster, hp_max, hp, monster_img, lower_
         description=description,
         color=color_embed
     )
-    """if not lower_net:"""
     if img_url is not None:
         embed.set_thumbnail(url=img_url)
     embed.set_author(name=monster_name, icon_url=monster_img)

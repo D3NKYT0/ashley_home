@@ -264,8 +264,6 @@ class Battle(commands.Cog):
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=db_monster['name'], icon_url=db_monster['img'])
                 await ctx.send(embed=embed)
@@ -342,8 +340,6 @@ class Battle(commands.Cog):
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=db_player['name'], icon_url=db_player['img'])
                 await ctx.send(embed=embed)
@@ -389,11 +385,9 @@ class Battle(commands.Cog):
                 color=0x000000
             )
             img = "https://media1.tenor.com/images/09b085a6b0b33a9a9c8529a3d2ee1914/tenor.gif?itemid=5648908"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after=5.0)
         else:
             # premiação
             if data['rpg']['vip']:
@@ -405,11 +399,9 @@ class Battle(commands.Cog):
                 description=f"`{ctx.author.name.upper()} GANHOU!` {answer_}",
                 color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, delete_after=5.0)
 
             if change < 60:
                 if data['rpg']['vip']:
@@ -452,7 +444,7 @@ class Battle(commands.Cog):
                     file = discord.File(awards, filename="reward.gif")
                     embed = discord.Embed(title=msg, color=self.bot.color)
                     embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-                    embed.set_image(url="attachment://reward.gif")
+                    embed.set_thumbnail(url="attachment://reward.gif")
 
                     # config do evento atual.
                     if date_[0] == self.e[0] and date_[1] == self.e[1] and self.e[2][0] < date_[2] < self.e[2][1]:
@@ -461,8 +453,8 @@ class Battle(commands.Cog):
                             await ctx.send(file=file, embed=embed)
 
                 response = await self.bot.db.add_reward(ctx, reward)
-                await ctx.send('<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                               '{}'.format(response))
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
+                               f'{response}', delete_after=5.0)
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -491,11 +483,11 @@ class Battle(commands.Cog):
 
             if rew is not None:
                 img = choice(git)
-                embed = discord.Embed(color=self.bot.color)
-                embed.set_image(url=img)
-                await ctx.send(embed=embed)
-                await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n'
-                               f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**')
+                msg = f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n' \
+                      f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed.set_thumbnail(url=img)
+                await ctx.send(embed=embed, delete_after=30.0)
 
         elif change < 25 and player[ctx.author.id].status['hp'] > 0:
 
@@ -519,7 +511,7 @@ class Battle(commands.Cog):
 
             if rew is not None:
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU UM` ✨ **CONSUMABLE** ✨\n'
-                               f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**')
+                               f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**', delete_after=5.0)
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)

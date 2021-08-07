@@ -240,8 +240,6 @@ class BossSystem(commands.Cog):
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=f"{self.bot.boss_now.name}", icon_url=f"{self.bot.boss_now.img}")
                 await ctx.send(embed=embed)
@@ -318,8 +316,6 @@ class BossSystem(commands.Cog):
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=db_player['name'], icon_url=db_player['img'])
                 await ctx.send(embed=embed)
@@ -335,8 +331,6 @@ class BossSystem(commands.Cog):
                 color=0x000000
             )
             img = "https://media1.tenor.com/images/09b085a6b0b33a9a9c8529a3d2ee1914/tenor.gif?itemid=5648908"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
             await ctx.send(embed=embed)
@@ -345,8 +339,6 @@ class BossSystem(commands.Cog):
             _din = await self.bot.db.add_money(ctx, randint(db_monster['ethernya'] // 4, db_monster['ethernya']), True)
             embed = discord.Embed(description=f"`{ctx.author.name.upper()} GANHOU!` {_din}", color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
 

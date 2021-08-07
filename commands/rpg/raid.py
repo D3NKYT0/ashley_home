@@ -327,8 +327,6 @@ class Raid(commands.Cog):
                     description=f"`{m_raid[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=f"{self.db_monster[ctx.author.id]['name']}",
                                  icon_url=f"{self.db_monster[ctx.author.id]['img']}")
@@ -444,8 +442,6 @@ class Raid(commands.Cog):
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
-                """if not data['rpg']['lower_net']:
-                    embed.set_image(url="https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")"""
                 embed.set_thumbnail(url=f"https://storage.googleapis.com/ygoprodeck.com/pics_artgame/47529357.jpg")
                 embed.set_author(name=f"{self.db_monster[ctx.author.id]['name']}",
                                  icon_url=f"{self.db_monster[ctx.author.id]['img']}")
@@ -495,8 +491,6 @@ class Raid(commands.Cog):
                 color=0x000000
             )
             img = "https://media1.tenor.com/images/09b085a6b0b33a9a9c8529a3d2ee1914/tenor.gif?itemid=5648908"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=f"{self.db_monster[ctx.author.id]['name']}",
                              icon_url=f"{self.db_monster[ctx.author.id]['img']}")
@@ -512,8 +506,6 @@ class Raid(commands.Cog):
             msg = f"`{ctx.author.name.upper()} GANHOU!` {answer_}"
             embed = discord.Embed(description=msg, color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
-            """if not data['rpg']['lower_net']:
-                embed.set_image(url=img)"""
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=f"{self.db_monster[ctx.author.id]['name']}",
                              icon_url=f"{self.db_monster[ctx.author.id]['img']}")
