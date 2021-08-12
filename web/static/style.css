@@ -36,19 +36,24 @@ body .container .card {
 
 body .container .card:nth-child(1) .box .content a {
   background: #2196f3;
+  margin-top: 10px;
 }
 
 body .container .card:nth-child(2) .box .content a {
   background: #e91e63;
+  margin-bottom: -10px;
 }
 
 body .container .card:nth-child(3) .box .content a {
   background: #23c186;
+  margin-top: 46px;
 }
 
 body .container .card:nth-child(4) .box .content a {
   background: #A9A9A9;
+  margin-top: 10px;
 }
+
 
 body .container .card .box {
   position: absolute;
@@ -93,7 +98,7 @@ body .container .card .box .content h2 {
 }
 
 body .container .card .box .content h3 {
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   color: #fff;
   z-index: 1;
   transition: 0.5s;

@@ -8,6 +8,7 @@ asyncio
 aiohttp
 requests
 pyfiglet
+aiohttp_jinja2
 websockets
 async_timeout
 aiohttp_requests

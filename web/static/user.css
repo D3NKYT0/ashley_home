@@ -1,0 +1,266 @@
+@font-face {
+    font-family: "BotFont";
+    src: url("/css/bot.otf");
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    padding: 0;
+    box-sizing: border-box;
+    background: #232427;
+    min-height: 100vh;
+}
+
+.card {
+    width: 450px;
+    height: 400px;
+    border-radius: 15px;
+    background-color: rgb(36,36,33);
+    position: relative;
+    margin: 0 auto 0;
+}
+
+
+
+.adjust .rounded-circle {
+    border-radius: 70px;
+    position: relative;
+    border: 6px solid #18191c;
+    background-color: #18191c;
+    margin-top: 20px;
+    margin-left: 165px;
+    margin-right: auto;
+
+}
+
+.adjust .top .banner {
+    position: absolute;
+    background: url("/image/back.jpg");
+    background-position: center;
+    background-size: cover;
+    width: 450px;
+    height: 90px;
+    border-radius: 15px 15px 4px 4px;
+}
+
+.tag {
+    font-size: 20px;
+    line-height: 24px;
+    /* margin-left: 160px; */
+    word-break: break-word;
+    white-space: normal;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.named {
+    font-family: "Helvetica Neue", Helvetica;
+    color: #fff;
+    font-weight: 700;
+    overflow: auto;
+    word-break: break-all;
+    text-overflow: unset;
+    vertical-align: top;
+    display: inline;
+
+  }
+
+.descrid {
+    font-family: "Helvetica Neue", Helvetica;
+    vertical-align: top;
+    font-weight: 900;
+    color: #b9bbbe;
+}
+
+.data {
+    text-align: center;
+    color: #b9bbbe;
+    font-size: 20px;
+}
+
+.dgeral {
+    font-size: 16px;
+    padding-top: 5px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0.08rem;
+    font-family: "BotFont";
+}
+
+.sclass {
+    font-size: 13px;
+    padding-top: 5px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0.08rem;
+    font-family: "BotFont";
+}
+
+.Tabs {
+    padding-left: 20px;
+    display: flex;
+    align-items: stretch;
+    height: 25px;
+    font-size: 25px;
+    font-family: "BotFont";
+    -webkit-box-align: stretch;
+}
+
+.geral {
+    border-bottom-color: #FFF;
+    position: absolute;
+    left: 32%;
+    top: 60%;
+    cursor: pointer;
+    border-bottom: 2px solid hsl(0deg 0% 100% / 6%);
+}
+
+.tabgeral {
+    display: block;
+}
+
+.tabrpg {
+    display: none; 
+}
+
+.rpg {
+    border-bottom-color: #FFF;
+    position: absolute;
+    left: 55%;
+    top: 60%;
+    cursor: pointer;
+    border-bottom: 2px solid hsl(0deg 0% 100% / 6%);
+}
+
+.data .level {
+    text-align: center;
+    font-family: "BotFont";
+    position: absolute;
+    top: 40%;
+    left: 42%;
+}
+
+.data .class {
+    text-align: center;
+    font-family: "BotFont";
+    color: #b9bbbe;
+    font-size: 20px;
+    padding-top: 50px;
+}
+
+.data .aboutme {
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 200;
+}
+
+.data .commands {
+    position: absolute;
+    font-weight: 600;
+    font-size: 15px;
+    left: 4%;
+    font-family: "Poppins", sans-serif;
+}
+
+.data .coin {
+    position: absolute;
+    font-weight: 600;
+    font-size: 15px;
+    padding-top: 17px;
+    left: 4%;
+    font-family: "Poppins", sans-serif;
+}
+
+.data .wallet {
+    position: absolute;
+    font-weight: 600;
+    font-size: 15px;
+    left: 4%;
+    padding-top: 32px;
+    font-family: "Poppins", sans-serif;
+}
+
+.data .rec {
+    position: absolute;
+    font-weight: 600;
+    font-size: 15px;
+    left: 4%;
+    padding-top: 47px;
+    font-family: "Poppins", sans-serif;
+}
+
+hr {
+    height: 12px;
+    border: 0;
+    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+}
+
+
+.data .apir {
+    height: 12px;
+    padding-top: 100px;
+}
+
+.data .commandn {
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.data .api {
+    color: #fff;
+    font-size: 15px;
+    position: absolute;
+    right: 30%;
+    left: auto;
+    bottom: 2%;
+}
+
+.data .api a {
+    color: #b9bbbe;
+    text-decoration: none;
+}
+
+.card:before, .card:after {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094, 
+      #0000ff, #00ff00,#ffff00, #ff0000);
+    background-size: 400%;
+    border-radius: 15px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    z-index: -1;
+    animation: steam 20s linear infinite;
+}
+
+@keyframes steam {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 400% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+}
+
+.card:after {
+    filter: blur(50px);
+}

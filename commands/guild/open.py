@@ -64,7 +64,7 @@ class OpenClass(commands.Cog):
                                           "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
                                           "<a:stars:853247252389429278>"
             TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{NAME.upper()}**{OBS}" \
-                    f"\n```Aproveite e olhe seus albuns com o comando: ash sticker```"
+                    f"\n```\nAproveite e olhe seus albuns\n com o comando: ash sticker```"
 
             if STICKER in data_user["stickers"].keys():
                 await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "

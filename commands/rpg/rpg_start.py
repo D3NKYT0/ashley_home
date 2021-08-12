@@ -99,6 +99,16 @@ class RpgStart(commands.Cog):
             return await ctx.send("<:negate:721581573396496464>│`ESSA OPÇAO NAO ESTÁ DISPONIVEL, TENTE NOVAMENTE!`")
         await msg.delete()
         if not data['rpg']['active']:
+
+            if asks['class_now'] in ["paladin", "warrior"]:
+                set_ini = {"16": 1, "17": 1, "18": 1, "19": 1, "20": 1}
+
+            elif asks['class_now'] in ["necromancer", "wizard", "warlock"]:
+                set_ini = {"61": 1, "62": 1, "63": 1, "64": 1, "65": 1}
+
+            else:
+                set_ini = {"11": 1, "12": 1, "13": 1, "14": 1, "15": 1}
+
             rpg = {
                 "class": 'default',
                 "active": True,
@@ -115,7 +125,7 @@ class RpgStart(commands.Cog):
                     "priest": {"level": 1, "xp": 0, "level_max": False}
                 },
                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                'items': dict(),
+                'items': set_ini,
                 'skills': [0, 0, 0, 0, 0],
                 "armors": {
                     "shoulder": [0, 0, 0, 0, 0],
@@ -144,6 +154,11 @@ class RpgStart(commands.Cog):
                 "activated_at": datetime.today(),
                 "quests": dict()
             }
+
+            bonus = "\n`Olá aventureiro! Bem vindo ao RPG, sua jornada será longa e é perigoso ir sozinho, então " \
+                    "estou lhe dando um presente, olhe seu inventário de equipamentos com o comando:` **ash es**\n" \
+                    "`Qualquer duvida use os comandos:`\n**ash wiki <nome do que voce quer saber>** `e` **ash help**"
+
         else:
             pdh = update['rpg']['sub_class'][asks['class_now']]["level"]
             rpg = {
@@ -162,10 +177,12 @@ class RpgStart(commands.Cog):
                 "quests": update['rpg']['quests']
             }
 
+            bonus = ""
+
         update['rpg'] = rpg
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
-        msg = f'<:confirmed:721581574461587496>│`CONFIGURAÇÃO DO RPG FEITA COM SUCESSO!`'
+        msg = f'<:confirmed:721581574461587496>│`CONFIGURAÇÃO DO RPG FEITA COM SUCESSO!` {bonus}'
         embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 

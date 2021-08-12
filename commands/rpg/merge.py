@@ -28,7 +28,8 @@ class MergeClass(commands.Cog):
             "solution_agent_blue": 1,
             "Discharge_Crystal": 15,
             "Acquittal_Crystal": 15,
-            "Crystal_of_Energy": 15
+            "Crystal_of_Energy": 15,
+            "transmogrifador": 1
         }
 
         self.cost_convert = {

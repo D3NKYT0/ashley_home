@@ -160,11 +160,13 @@ class Entity(object):
 
         if stun is False and ice is False:
             if self.is_player:
+                _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
+                _ini = "<:inimigo:873756815287017552>"
                 hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
                 _mp, ehp, econ, err = self.status['mp'], e_info[0]['hp'], e_info[0]['con'], e_info[1][0]
-                title = f"HP:  [{_hp if _hp > 0 else 0}/{_con * rr[0]}]  |  " \
-                        f"MP:  [{_mp if _mp > 0 else 0}/{_con * rr[1]}]\n" \
-                        f"INI HP: [{ehp if ehp > 0 else 0}/{econ * err}] | INI LVL: {e_info[3]}"
+                title = f"{_emo[1]}:  [ {_hp if _hp > 0 else 0} / {_con * rr[0]} ]  |  " \
+                        f"{_emo[2]}:  [ {_mp if _mp > 0 else 0} / {_con * rr[1]} ]\n" \
+                        f"{_emo[0]}: {_ini} - [ {ehp if ehp > 0 else 0} / {econ * err} ] | LVL - {e_info[3]}"
                 description, tot, attks = '', len(atacks), dict()
                 for c in range(0, len(atacks)):
                     attks[c + 1], lvs, c2, _att = atacks[c], self.level_skill[c], atacks[c], self.status['atk']
@@ -225,9 +227,8 @@ class Entity(object):
                                f'`HP Recovery:` **25-35% de HP** (**{self.potion}**/{pl})\n\n' \
                                f'**{tot + 3}** - <:fechar:749090949413732352> **Finalizar batalha**'
 
-                skillcombo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life**\n" \
-                             f"`Dano:` **50% do HP retirado!** | `Tipo:` **COMBO**\n" \
-                             f"`Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
+                skillcombo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life** | **COMBO**\n" \
+                             f"`Dano:` **50%** | Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
                 if self.is_combo:
                     description += skillcombo
 

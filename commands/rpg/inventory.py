@@ -367,7 +367,9 @@ class InventoryClass(commands.Cog):
                                       "USANDO O COMANDO:` **ASH LIBERAR** `E USE O NOME DO COMANDO:` "
                                       "**ASH INVENTORY EQUIP** `OU` **ASH I E**")
 
-            return await ctx.send("<:negate:721581573396496464>│`ESSE ITEM NAO EXISTE...`")
+            return await ctx.send("<:negate:721581573396496464>│`ESSE ITEM NAO EXISTE...`\n"
+                                  "`Verifique se vc digitou o comando corretamente:`\n"
+                                  "`Ex:` **ash e i EARRING OF DIAMOND - HERO**")
 
         _classes = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_classes]

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<title>{{ name }}</title>
+	<link rel="stylesheet" href="/css/user.css">
+  <link rel="shortcut icon" href="/image/ashley_no_bg.ico" />
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://farmgirl-pro.herokuapp.com/user/{{ id }}">
+  <meta property="og:title" content="Ashley API">
+  <meta property="og:description" content="A api da Ashley que mostra todos os dados do usuário.">
+  <meta property="og:image" content="/image/back.jpg">
+</head>
+<body>
+	<div class="dev">
+        <br>
+        <div class="card">
+          <div class="adjust">
+              <div class="top">
+                <div class="banner"></div>
+                  <img src={{ img }} alt="profile img" class="rounded-circle" width="100px" height="100px">
+                <div class="tag">
+                  <span class="named">{{ name }}</span>
+                  <span class="descrid">#{{ descri }}</span>
+                </div>
+              </div>
+              <div class="data">
+                <div class="level">Level {{ level }}</div>
+                <div class="class">{{ class }}</div>
+                <div class="aboutme">{{ about }}</div>
+                <hr>
+                <div class="Tabs">
+                  <div class="geral" onClick="JavaScript:selectTab('geral');">GERAL</div>
+                  <div class="rpg" onClick="JavaScript:selectTab('rpg');">RPG</div>
+                </div>
+                <div class="tabgeral">
+                  {% for geral in data_geral %}
+                    <div class="dgeral">{{ geral }}</div>
+                  {% endfor %}
+                </div>
+                <div class="tabrpg">
+                  {% for classe, level in zip(classn, classl) %}
+                    <div class="sclass">{{ classe }}: Level {{ level }} / 80</div>
+                  {% endfor %}
+                </div>
+                <div class="api">Para mais informações: <a href="/user/{{ id }}/api">API</a></div>
+              </div>
+          </div>
+        </div>
+  </div>
+</body>
+
+<script type="text/javascript">
+function selectTab(tabIndex) {
+  var elems = document.getElementsByClassName('tabgeral');
+  var lem = document.getElementsByClassName('tabrpg');
+
+  for (var i=0;i<lem.length;i+=1){
+    lem[i].style.display = 'none';
+  }
+
+  for (var i=0;i<elems.length;i+=1){
+    elems[i].style.display = 'block';
+  }
+
+  if ((tabIndex == "rpg")) {
+    for (var i=0;i<elems.length;i+=1){
+      elems[i].style.display = 'none';
+    }
+  } else if ((tabIndex == "geral")) {
+    for (var i=0;i<lem.length;i+=1){
+      lem[i].style.display = 'none';
+    }
+  }
+  var show = document.getElementsByClassName('tab' + tabIndex)
+  for (var i=0;i<show.length;i+=1){
+    show[i].style.display = 'block';
+  }
+}
+</script>
+
+</html>

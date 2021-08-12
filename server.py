@@ -1,5 +1,7 @@
 import os
 import json
+import aiohttp_jinja2
+import jinja2
 
 from aiohttp import web
 from discord import Embed, Client
@@ -30,6 +32,14 @@ async def index(request):
         return html_response('web/index.html')
 
 
+def number_convert(number):
+    a = '{:,.0f}'.format(float(number))
+    b = a.replace(',', 'v')
+    c = b.replace('.', ',')
+    d = c.replace('v', '.')
+    return d
+
+
 async def get_guild(request):
     try:
         _ID = int(request.match_info['guild_id'])
@@ -43,6 +53,7 @@ async def get_guild(request):
     return web.Response(status=401, text="SERVIDOR/GUILD INEXISTENTE")
 
 
+@aiohttp_jinja2.template('user.html')
 async def get_user(request):
     try:
         _ID = int(request.match_info['user_id'])
@@ -51,8 +62,50 @@ async def get_user(request):
     CL = await DB.cd("users")
     DATA = await CL.find_one({"user_id": _ID})
     if DATA is not None:
-        JSON_DATA = dumps(DATA)
-        return web.Response(status=200, text=f"{JSON_DATA}")
+        USER = await BOT.fetch_user(_ID)
+        ABOUT_DEFAULT = "Mude seu about, usando o comando \"ash about <text>\""
+        NAME, DESC, AVATAR = USER.name, USER.discriminator, USER.avatar_url
+        NAMES, LEVELS = list(), list()
+        ABOUT = DATA["user"]["about"] if DATA["user"]["about"] != ABOUT_DEFAULT else "Nenhum About me"
+        CLASS = DATA["rpg"]["class_now"] if DATA["rpg"]["class_now"] else "Nenhuma Classe"
+        if DATA["rpg"]["class_now"]:
+            for k in DATA["rpg"]["sub_class"]:
+                if k.lower() != DATA["rpg"]["class_now"].lower():
+                    NAMES.append(k)
+                    LEVELS.append(DATA["rpg"]["sub_class"][k]["level"])
+
+        DATA_GERAL = [
+                      f'Commands: {DATA["user"]["commands"]}',
+                      f'Rec: {DATA["user"]["rec"]}',
+                      f'Wallet: {number_convert(DATA["treasure"]["money"])}',
+                      f'Coin: {number_convert(DATA["inventory"]["coins"])}'
+                     ]
+        data = {
+                'id': _ID,
+                'name': NAME,
+                'descri': DESC,
+                'img': AVATAR,
+                'class': CLASS,
+                'about': ABOUT,
+                'level': DATA["user"]["level"],
+                'data_geral': DATA_GERAL,
+                'classn': NAMES,
+                'classl': LEVELS
+                }
+        return data
+    return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
+
+
+async def get_userapi(request):
+    try:
+        _ID = int(request.match_info['user_id'])
+    except ValueError:
+        _ID = 0
+    CL = await DB.cd("users")
+    DATA = await CL.find_one({"user_id": _ID})
+    if DATA is not None:
+        JSON_DATA = dumps(DATA, indent=4)
+        return web.Response(status=200, text=f"{JSON_DATA}", content_type="application/json")
     return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
 
 
@@ -84,10 +137,16 @@ async def make_app():
     ROUTES.append(web.get('/', index))
     ROUTES.append(web.post('/top_gg', top_gg))
     ROUTES.append(web.get('/user/{user_id}', get_user))
+    ROUTES.append(web.get('/user/{user_id}/api', get_userapi))
     ROUTES.append(web.get('/guild/{guild_id}', get_guild))
 
     app = web.Application()
     app.add_routes(ROUTES)
+
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('web'))
+    env = aiohttp_jinja2.get_env(app)
+    env.globals.update(zip=zip)
+
     app.router.add_static('/css/', path='web/static', name='css')
     app.router.add_static('/image/', path='web/image', name='image')
     return app
