@@ -253,10 +253,7 @@ class Battle(commands.Cog):
             if not evasion[ctx.author.id][0][1]:
                 evasion[ctx.author.id][0][0] = 0
 
-            _SK = True if type(skill) is str else False
-            skill_name = skill if _SK else skill['name']
-
-            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill_name == "CURA":
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_player, chance_monster = True, False
 
             if chance_player > chance_monster:
@@ -335,10 +332,7 @@ class Battle(commands.Cog):
             if not evasion[ctx.author.id][1][1]:
                 evasion[ctx.author.id][1][0] = 0
 
-            _SK = True if type(skill) is str else False
-            skill_name = skill if _SK else skill['name']
-
-            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill_name == "CURA":
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = True, False
 
             if chance_monster > chance_player:

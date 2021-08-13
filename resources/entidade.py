@@ -402,12 +402,7 @@ class Entity(object):
                 msg_return += f"{_text1}\n\n"
 
             if self.atack is not None and self.atack not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
-                try:
-                    NN = self.atack.upper()
-                    self.atack = self.atacks[self.atack]
-                    self.atack["name"] = NN
-                except TypeError:
-                    self.atack = choice(["PASS-TURN-MP", "PASS-TURN-HP"])
+                self.atack = self.atacks[self.atack]
 
         else:
             _text2 = f'**{self.name.upper()}** `esta` **{"STUNADO" if stun else "CONGELADO"}**'
@@ -520,7 +515,7 @@ class Entity(object):
                             hit_kill = True
 
         if skill is None:
-            description = f'**{name.upper()}** `não pode atacar!`'
+            description = f'**{name.upper()}** `não atacou nesse turno!`'
             hp_max = self.status['con'] * self.rate[0]
             monster = not self.is_player if self.pvp else self.is_player
             img_ = "https://uploads1.yugioh.com/card_images/2110/detail/2004.jpg?1385103024"
