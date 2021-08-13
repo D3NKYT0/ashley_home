@@ -224,7 +224,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
     elif str(ctx.command) == "merchant" or str(ctx.command) == "merc list":
         list_i = inventory
 
-    elif str(ctx.command) in ["shop", "shopping"]:
+    elif str(ctx.command) in ["shop", "shopping", "shop_vote"]:
         list_i = inventory
 
     elif str(ctx.command) == "equips":
@@ -301,6 +301,9 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
         elif str(ctx.command) == "shopping":
             string = f"[>>]: {key.upper()}\n<1 UND = {list_i[key]} BLESSED ETHERNYAS>\n\n"
 
+        elif str(ctx.command) == "shop_vote":
+            string = f"[>>]: {key.upper()}\n<1 UND = {list_i[key]} VOTE COINS>\n\n"
+
         elif str(ctx.command) == "merchant" or str(ctx.command) == "merc list":
             a = '{:,.2f}'.format(float(key['value']))
             b = a.replace(',', 'v')
@@ -329,13 +332,13 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
 
         cont += len(string)
         if cont <= 1500 and cont_i < 20:
-            if str(ctx.command) in ["shop", "shopping"]:
+            if str(ctx.command) in ["shop", "shopping", "shop_vote"]:
                 string = "```Markdown\n" + string + "```"
             description += string
             cont_i += 1
 
         else:
-            if str(ctx.command) in ["shop", "shopping"]:
+            if str(ctx.command) in ["shop", "shopping", "shop_vote"]:
                 string = "```Markdown\n" + string + "```"
             descriptions.append(description)
             description = f'{embed[2]}{string}'

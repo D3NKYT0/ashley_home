@@ -264,6 +264,9 @@ class PVP(commands.Cog):
             if not evasion[ctx.author.id][0][1]:
                 evasion[ctx.author.id][0][0] = 0
 
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                p1_chance, p2_chance = True, False
+
             if p1_chance > p2_chance:
                 player_1[_idp1] = await player_2[_idp2].damage(ctx, player_1[_idp1], skill, atk)
             else:
@@ -333,6 +336,9 @@ class PVP(commands.Cog):
                 p1_chance, evasion[ctx.author.id][1][1] = 0, False
             if not evasion[ctx.author.id][1][1]:
                 evasion[ctx.author.id][1][0] = 0
+
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                p2_chance, p1_chance = True, False
 
             if p2_chance > p1_chance:
                 player_2[_idp2] = await player_1[_idp1].damage(ctx, player_2[_idp2], skill, atk)

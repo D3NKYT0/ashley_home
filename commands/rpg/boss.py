@@ -229,6 +229,9 @@ class BossSystem(commands.Cog):
             if not evasion[ctx.author.id][0][1]:
                 evasion[ctx.author.id][0][0] = 0
 
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                chance_player, chance_monster = True, False
+
             if chance_player > chance_monster:
                 player[ctx.author.id] = await monster[ctx.author.id].damage(ctx, player[ctx.author.id], skill, atk)
             else:
@@ -304,6 +307,9 @@ class BossSystem(commands.Cog):
                 chance_player, evasion[ctx.author.id][1][1] = 0, False
             if not evasion[ctx.author.id][1][1]:
                 evasion[ctx.author.id][1][0] = 0
+
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                chance_monster, chance_player = True, False
 
             if chance_monster > chance_player:
                 monster[ctx.author.id] = await player[ctx.author.id].damage(ctx, monster[ctx.author.id], skill, atk)

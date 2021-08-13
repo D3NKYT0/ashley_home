@@ -24,6 +24,7 @@ class UserBank(commands.Cog):
         self.bronze = 0
         self.items = self.bot.config['attribute']['shop']
         self.items_shopping = self.bot.config['attribute']['shopping']
+        self.items_shop_vote = self.bot.config['attribute']['shop_vote']
 
     @staticmethod
     def format_num(num, f=False):
@@ -227,6 +228,78 @@ class UserBank(commands.Cog):
         await ctx.send(f"<:confirmed:721581574461587496>|`SUA COMPRA FOI FEITA COM SUCESSO` **{quant}** "
                        f"`{name.upper()} ADICIONADO NO SEU INVENTARIO COM SUCESSO QUE CUSTOU` "
                        f"**R$ {d}** `BLESSED ETHERNYAS`")
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='shop_vote', aliases=['sv'])
+    async def shop_vote(self, ctx, quant: int = None, *, item=None):
+        """A lojinha da ashley, compre itens e crafts que voce ainda nao conseguiu pegar em outros comandos."""
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if item is None:
+            await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
+                           f"**EXEMPLO:** `USE` **ASH SV 1 ALGEL WING** `PARA COMPRAR 1 ALGEL WING!`")
+            embed = ['Shop Vote:', self.bot.color, 'Lista: \n']
+
+            if quant is None:
+                return await paginator(self.bot, self.items_shop_vote, self.items_shop_vote, embed, ctx)
+
+            else:
+                num = quant - 1 if quant > 0 else 0
+                return await paginator(self.bot, self.items_shop_vote, self.items_shop_vote, embed, ctx, num)
+
+        if quant < 1:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+
+        name = None
+        for key in self.items_shop_vote.keys():
+            if key.lower() == item.lower():
+                name = key
+
+        if name is None:
+            return await ctx.send("<:alert:739251822920728708>│`ESSE ITEM NAO EXISTE OU NAO ESTA DISPONIVEL!`")
+
+        if 'vote_coin' not in update['inventory'].keys():
+            return await ctx.send("<:alert:739251822920728708>│`VOCE NAO TEM VOCE COINS SUFICIENTES!`")
+
+        if update['inventory']['vote_coin'] < self.items_shop_vote[name] * int(quant):
+            return await ctx.send("<:alert:739251822920728708>│`VOCE NAO TEM VOCE COINS SUFICIENTES!`")
+
+        equips_list = list()
+        for ky in self.bot.config['equips'].keys():
+            for k, v in self.bot.config['equips'][ky].items():
+                equips_list.append((k, v))
+
+        item_reward, type_item = None, None
+        for i in equips_list:
+            if i[1]["name"] == name:
+                item_reward, type_item = i[0], "equip"
+
+        if item_reward is None:
+            for k, v in self.bot.items.items():
+                if v[1] == name:
+                    item_reward, type_item = k, "inventory"
+
+        if type_item == "inventory":
+            try:
+                update['inventory'][item_reward] += int(quant)
+            except KeyError:
+                update['inventory'][item_reward] = int(quant)
+
+        if type_item == "equip":
+            try:
+                update['rpg']['items'][item_reward] += int(quant)
+            except KeyError:
+                update['rpg']['items'][item_reward] = int(quant)
+
+        update['inventory']['vote_coin'] -= self.items_shop_vote[name] * int(quant)
+
+        await self.bot.db.update_data(data, update, 'users')
+        d = self.items_shop_vote[name] * int(quant)
+        await ctx.send(f"<:confirmed:721581574461587496>|`SUA COMPRA FOI FEITA COM SUCESSO` **{quant}** "
+                       f"`{name.upper()} ADICIONADO NO SEU INVENTARIO COM SUCESSO QUE CUSTOU` **{d}** `VOTE COINS`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

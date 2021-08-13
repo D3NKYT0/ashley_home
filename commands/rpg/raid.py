@@ -316,6 +316,9 @@ class Raid(commands.Cog):
             if not evasion[ctx.author.id][0][1]:
                 evasion[ctx.author.id][0][0] = 0
 
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                chance_player, chance_monster = True, False
+
             if chance_player > chance_monster:
                 p_raid[ctx.author.id] = await m_raid[ctx.author.id].damage(ctx, p_raid[ctx.author.id], skill, atk)
             else:
@@ -430,6 +433,9 @@ class Raid(commands.Cog):
                 chance_player, evasion[ctx.author.id][1][1] = 0, False
             if not evasion[ctx.author.id][1][1]:
                 evasion[ctx.author.id][1][0] = 0
+
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+                chance_monster, chance_player = True, False
 
             if chance_monster > chance_player:
                 m_raid[ctx.author.id] = await p_raid[ctx.author.id].damage(ctx, m_raid[ctx.author.id], skill, atk)

@@ -1,7 +1,8 @@
 import os
 import json
-import aiohttp_jinja2
 import jinja2
+import logging
+import aiohttp_jinja2
 
 from aiohttp import web
 from discord import Embed, Client
@@ -152,4 +153,7 @@ async def make_app():
     return app
 
 
-web.run_app(make_app(), port=int(os.environ["PORT"]))
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.ERROR)
+    web_logger = logging.getLogger("aiohttp.web")
+    web.run_app(make_app(), port=int(os.environ["PORT"]), access_log=web_logger)

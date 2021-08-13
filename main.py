@@ -284,7 +284,8 @@ class Ashley(commands.AutoShardedBot):
                             perms = ctx.channel.permissions_for(ctx.me)
                             if perms.send_messages and perms.read_messages:
                                 await ctx.send(f"<:rank:519896825411665930>│🎊 **PARABENS** 🎉 `{_name} GANHOU:` "
-                                               f"<:silver:519896828120924170> **{quant}** `RANKPOINT A MAIS!`")
+                                               f"<:silver:519896828120924170> **{quant}** `RANKPOINT A MAIS!`",
+                                               delete_after=10.0)
 
                 if (data_user['user']['commands'] % 10) == 0:
                     chance = randint(1, 100)
@@ -294,7 +295,8 @@ class Ashley(commands.AutoShardedBot):
                             perms = ctx.channel.permissions_for(ctx.me)
                             if perms.send_messages and perms.read_messages:
                                 await ctx.send(f"<:rank:519896825411665930>│🎊 **PARABENS** 🎉 `{_name} GANHOU:` "
-                                               f"<:medals:519896836375314442> **1** `MEDALHA A MAIS!`")
+                                               f"<:medals:519896836375314442> **1** `MEDALHA A MAIS!`",
+                                               delete_after=10.0)
 
                 for key in self.titling.keys():
                     if data_user['user']['commands'] >= int(key):
