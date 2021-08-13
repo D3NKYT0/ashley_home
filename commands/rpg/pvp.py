@@ -264,7 +264,10 @@ class PVP(commands.Cog):
             if not evasion[ctx.author.id][0][1]:
                 evasion[ctx.author.id][0][0] = 0
 
-            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+            _SK = True if type(skill) is str else False
+            skill_name = skill if _SK else skill['name']
+
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill_name == "CURA":
                 p1_chance, p2_chance = True, False
 
             if p1_chance > p2_chance:
@@ -337,7 +340,10 @@ class PVP(commands.Cog):
             if not evasion[ctx.author.id][1][1]:
                 evasion[ctx.author.id][1][0] = 0
 
-            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill == "cura":
+            _SK = True if type(skill) is str else False
+            skill_name = skill if _SK else skill['name']
+
+            if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill_name == "CURA":
                 p2_chance, p1_chance = True, False
 
             if p2_chance > p1_chance:

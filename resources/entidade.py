@@ -403,7 +403,9 @@ class Entity(object):
 
             if self.atack is not None and self.atack not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
                 try:
+                    NN = self.atack.upper()
                     self.atack = self.atacks[self.atack]
+                    self.atack["name"] = NN
                 except TypeError:
                     self.atack = choice(["PASS-TURN-MP", "PASS-TURN-HP"])
 
