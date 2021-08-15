@@ -367,7 +367,7 @@ class BossSystem(commands.Cog):
                     xpr = (xpm // 100) * perc
             if xpr < xpm / 100 * 1:
                 xpr = int(xpm / 100 * 1)
-            xp_reward = [int(xpr + xpr * 0.15), int(xpr), int(xpr * 0.15)]
+            xp_reward = [int(xpr + xpr * 0.5), int(xpr), int(xpr * 0.5)]
             _xp = choice([0, 1, 2])
             await self.bot.data.add_xp(ctx, xp_reward[_xp])
             await ctx.send(embed=embed)

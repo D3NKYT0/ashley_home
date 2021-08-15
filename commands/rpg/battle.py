@@ -360,6 +360,10 @@ class Battle(commands.Cog):
         perc = xp if lp - lm <= 0 else xp + abs(0.15 * (db_player['level'] - db_monster['level']))
         data_xp = calc_xp(db_player['xp'], db_player['level'])
 
+        # bonus de XP durante evento!
+        if self.bot.event_special and perc < 10:
+            perc = 10
+
         if db_player['xp'] < 32:
             xpm = data_xp[2]
             xpr = xpm
@@ -377,7 +381,7 @@ class Battle(commands.Cog):
         if xpr < xpm / 100 * 1:
             xpr = int(xpm / 100 * 1)
 
-        xp_reward = [int(xpr + xpr * 0.15), int(xpr), int(xpr * 0.15)]
+        xp_reward = [int(xpr + xpr * 0.5), int(xpr), int(xpr * 0.5)]
 
         # chance de drop
         change = randint(1, 100)

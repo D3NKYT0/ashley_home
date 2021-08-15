@@ -100,8 +100,8 @@ class Ashley(commands.AutoShardedBot):
         # status
         self.maintenance = False  # Default: False
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 6, (20, 30)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "SAO_JOAO"  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
+        self.event_now = "NOVO_SERVIDOR"  # NOME DO EVENTO ATUAL
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
 
@@ -335,16 +335,16 @@ class Ashley(commands.AutoShardedBot):
                                            f'partir de agora e ` **+2000** `Fichas para jogar`')
 
                 try:
-                    cmds_event = len(self.cmd_event[ctx.author.id].keys())
+                    _events = len(self.cmd_event[ctx.author.id].keys())
                 except KeyError:
-                    cmds_event = 0
+                    _events = 0
 
                 try:
-                    cmd_marry = len(self.cmd_marry[ctx.author.id].keys())
+                    _marrys = len(self.cmd_marry[ctx.author.id].keys())
                 except KeyError:
-                    cmd_marry = 0
+                    _marrys = 0
 
-                if randint(1, 200) - cmds_event < 5 and data_user['security']['status'] and self.event_special:
+                if randint(1, 200) - _events <= 5 and data_user['security']['status'] and self.event_special:
                     try:
                         del self.cmd_event[ctx.author.id]
                     except KeyError:
@@ -383,7 +383,7 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if randint(1, 200) - cmd_marry < 5 and data_user['security']['status'] and data_user['user']['married']:
+                if randint(1, 200) - _marrys <= 5 and data_user['security']['status'] and data_user['user']['married']:
                     try:
                         del self.cmd_marry[ctx.author.id]
                     except KeyError:
@@ -422,7 +422,7 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if randint(1, 200) < 3 and data_user['security']['status'] and cmd not in self.block:
+                if randint(1, 100) <= 5 and data_user['security']['status'] and cmd not in self.block:
                     list_boxes = []
                     for k, v in self.boxes.items():
                         list_boxes += [k] * v
@@ -455,7 +455,7 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if randint(1, 100) <= 10 and data_user['security']['status'] and cmd not in self.block:
+                if randint(1, 100) <= 5 and data_user['security']['status'] and cmd not in self.block:
                     amount = randint(2, 5)
                     if ctx.guild.id not in self.sticker:
                         self.sticker[ctx.guild.id] = amount
@@ -480,7 +480,7 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if randint(1, 100) <= 1 and data_user['security']['status'] and cmd not in self.block:
+                if randint(1, 100) <= 5 and data_user['security']['status'] and cmd not in self.block:
                     amount = randint(1, 3)
                     if ctx.guild.id not in self.moon_bag:
                         self.moon_bag[ctx.guild.id] = amount
@@ -488,7 +488,7 @@ class Ashley(commands.AutoShardedBot):
                         self.moon_bag[ctx.guild.id] += amount
 
                     embed = discord.Embed(
-                        title="**Figurinha Liberada**",
+                        title="**Moon Bag Liberada**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com **{amount} moon bag!**\n"
                                     f"Para pegar é so usar o comando `ash moon`\n"
