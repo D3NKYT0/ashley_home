@@ -93,14 +93,14 @@ class OpenClass(commands.Cog):
     @commands.command(name='moon', aliases=['lua'])
     async def moon(self, ctx):
         """Abra um presente para liberar seu giftcard."""
-        if ctx.guild.id in self.bot.moon:
-            if self.bot.moon[ctx.guild.id] < 1:
+        if ctx.guild.id in self.bot.moon_bag:
+            if self.bot.moon_bag[ctx.guild.id] < 1:
                 return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem moon bag disponiveis!`\n"
                                       f"`TODAS AS MOON BAG FORAM PEGAS, AGUARDE UMA NOVA MOON BAG DROPAR E FIQUE "
                                       f"ATENTO!`")
 
             data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
-            self.bot.sticker[ctx.guild.id] -= 1
+            self.bot.moon_bag[ctx.guild.id] -= 1
             cl = await self.bot.db.cd("users")
             query = {"$inc": {f"inventory.moon_bag": 1}}
             await cl.update_one({"user_id": ctx.author.id}, query)

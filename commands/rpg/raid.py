@@ -97,23 +97,24 @@ class Raid(commands.Cog):
 
         _ESPECIAL = False
         if extra is not None:
-            if 'pass_royal' in data['inventory'].keys():
-                if data['inventory']['pass_royal'] > 0:
-                    _ESPECIAL = True
-                    update['inventory']['pass_royal'] -= 1
+            if extra in ["especial", 'e']:
+                if 'pass_royal' in data['inventory'].keys():
+                    if data['inventory']['pass_royal'] > 0:
+                        _ESPECIAL = True
+                        update['inventory']['pass_royal'] -= 1
 
-                    cl = await self.bot.db.cd("users")
-                    if update['inventory']['pass_royal'] < 1:
-                        query = {"$unset": {f"inventory.moon_bag": ""}}
-                    else:
-                        query = {"$inc": {f"inventory.moon_bag": -1}}
-                    await cl.update_one({"user_id": ctx.author.id}, query)
+                        cl = await self.bot.db.cd("users")
+                        if update['inventory']['pass_royal'] < 1:
+                            query = {"$unset": {f"inventory.moon_bag": ""}}
+                        else:
+                            query = {"$inc": {f"inventory.moon_bag": -1}}
+                        await cl.update_one({"user_id": ctx.author.id}, query)
 
-        if extra and not _ESPECIAL:
-            await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
-                           f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}` "
-                           f"**no seu inventario para lutar com os monstros especiais!**\n"
-                           f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
+            if extra in ["especial", 'e'] and not _ESPECIAL:
+                return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
+                                      f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}` "
+                                      f"**no seu inventario para lutar com os monstros especiais!**\n"
+                                      f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
