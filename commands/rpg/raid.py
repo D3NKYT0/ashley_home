@@ -664,7 +664,7 @@ class Raid(commands.Cog):
             else:
                 msg = f"**Sendo {especial_m} deles, especiais!**"
                 await ctx.send(f"<:confirmed:721581574461587496>│`VOCÊ CONSEGUIU MATAR:` "
-                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!` ")
+                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!` {msg if especial_m > 0 else ''}")
 
         if raid_rank[ctx.author.id] >= 10:
             try:
