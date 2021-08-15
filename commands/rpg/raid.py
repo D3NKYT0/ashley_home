@@ -74,6 +74,8 @@ class Raid(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
+        especial_m = 0
+
         if ctx.author.id in self.bot.desafiado:
             return await ctx.send("<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`")
 
@@ -98,6 +100,14 @@ class Raid(commands.Cog):
             if 'pass_royal' in data['inventory'].keys():
                 if data['inventory']['pass_royal'] > 0:
                     _ESPECIAL = True
+                    update['inventory']['pass_royal'] -= 1
+
+                    cl = await self.bot.db.cd("users")
+                    if update['inventory']['pass_royal'] < 1:
+                        query = {"$unset": {f"inventory.moon_bag": ""}}
+                    else:
+                        query = {"$inc": {f"inventory.moon_bag": -1}}
+                    await cl.update_one({"user_id": ctx.author.id}, query)
 
         if extra and not _ESPECIAL:
             await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
@@ -231,6 +241,8 @@ class Raid(commands.Cog):
         # ======================================================================================================
 
         _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
+        if "quest" in _mon["name"]:
+            especial_m += 1
         self.db_monster[ctx.author.id] = _mon
         # criando as entidade do monstro...
         _db_monster = self.db_monster[ctx.author.id]
@@ -249,6 +261,8 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
+                if "quest" in _mon["name"]:
+                    especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -277,6 +291,8 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
+                if "quest" in _mon["name"]:
+                    especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -365,6 +381,8 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
+                if "quest" in _mon["name"]:
+                    especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -391,6 +409,8 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
+                if "quest" in _mon["name"]:
+                    especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -637,12 +657,14 @@ class Raid(commands.Cog):
         if raid_rank[ctx.author.id] > 0:
             if raid_rank[ctx.author.id] > update['user']['raid']:
                 update['user']['raid'] = raid_rank[ctx.author.id]
+                msg = f"**Sendo {especial_m} deles, especiais!**"
                 await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `VOCÊ CONSEGUIU MATAR:` "
-                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!`\n **ESSE É SEU NOVO RECORD!** "
-                               f"`APROVEITE E OLHE O COMANDO:` **ASH TOP RAID**")
+                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!` {msg if especial_m > 0 else ''}\n "
+                               f"**ESSE É SEU NOVO RECORD!** `APROVEITE E OLHE O COMANDO:` **ASH TOP RAID**")
             else:
+                msg = f"**Sendo {especial_m} deles, especiais!**"
                 await ctx.send(f"<:confirmed:721581574461587496>│`VOCÊ CONSEGUIU MATAR:` "
-                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!`")
+                               f"**{raid_rank[ctx.author.id]}** `MONSTROS!` ")
 
         if raid_rank[ctx.author.id] >= 10:
             try:

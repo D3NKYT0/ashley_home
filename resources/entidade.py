@@ -228,7 +228,7 @@ class Entity(object):
                                f'**{tot + 3}** - <:fechar:749090949413732352> **Finalizar batalha**'
 
                 skillcombo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life** | **COMBO**\n" \
-                             f"`Dano:` **50%** | Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
+                             f"`Dano:` **50%** | `Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
                 if self.is_combo:
                     description += skillcombo
 
