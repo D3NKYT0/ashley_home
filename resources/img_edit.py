@@ -746,9 +746,22 @@ def equips(data_s):
         for k, v in _equips[ky].items():
             eq[k] = v
 
+    def get_rarity(name):
+        if "silver" in name.lower():
+            return "panel_star_1"
+        if "mystic" in name.lower():
+            return "panel_star_2"
+        if "inspiron" in name.lower():
+            return "panel_star_3"
+        if "violet" in name.lower():
+            return "panel_star_4"
+        if "hero" in name.lower():
+            return "panel_star_5"
+        return None
+
     # add equips to img
     for k in mapped["equipped"].keys():
-        if data_s['equipped'][k] is not None:
+        if data_s['equipped'][k][0] is not None:
             armor = ['shoulder', 'breastplate', 'gloves', 'leggings', 'boots']
             jewel = ['necklace', 'earring', 'ring']
             if k in armor or k == "shield":
@@ -760,14 +773,20 @@ def equips(data_s):
             else:
                 e_type = "consumable"
             if k in armor:
-                f_t = f"{eq[data_s['equipped'][k]]['rarity']}/{data_s['equipped'][k]}"
+                f_t = f"{eq[data_s['equipped'][k][0]]['rarity']}/{data_s['equipped'][k][0]}"
             elif k == "sword" or k in jewel or k == "consumable":
-                f_t = f"{data_s['equipped'][k]}"
+                f_t = f"{data_s['equipped'][k][0]}"
             else:
-                f_t = f"shield/{data_s['equipped'][k]}"
+                f_t = f"shield/{data_s['equipped'][k][0]}"
             equipped = Image.open(f"{_PREFIX}images/equips/{e_type}/{f_t}.jpg").convert('RGBA')
             equipped = equipped.resize((56, 56))
             image.paste(equipped, (mapped["equipped"][k][0] + 1, mapped["equipped"][k][1]), equipped)
+
+            _NAME = get_rarity(data_s['equipped'][k][1])
+            if _NAME is not None and k in armor:
+                equipped = Image.open(f"{_PREFIX}images/elements/{_NAME}.png").convert('RGBA')
+                equipped = equipped.resize((56, 56))
+                image.paste(equipped, (mapped["equipped"][k][0] + 1, mapped["equipped"][k][1]), equipped)
 
     if _TEST:
         image.show()

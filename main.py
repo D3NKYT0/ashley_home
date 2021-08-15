@@ -46,6 +46,7 @@ class Ashley(commands.AutoShardedBot):
         self.data_cog = dict()
         self.box = dict()
         self.sticker = dict()
+        self.moon_bag = dict()
         self.chests_users = dict()
         self.chests_marry = dict()
         self.help_emoji = dict()
@@ -455,20 +456,47 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 if randint(1, 100) <= 10 and data_user['security']['status'] and cmd not in self.block:
+                    amount = randint(2, 5)
                     if ctx.guild.id not in self.sticker:
-                        self.sticker[ctx.guild.id] = 5
+                        self.sticker[ctx.guild.id] = amount
                     else:
-                        self.sticker[ctx.guild.id] += 5
+                        self.sticker[ctx.guild.id] += amount
 
                     embed = discord.Embed(
                         title="**Figurinha Liberada**",
                         colour=self.color,
-                        description=f"Esse servidor foi gratificado com 5 figurinhas "
+                        description=f"Esse servidor foi gratificado com {amount} figurinhas "
                                     f"**aleatorias**!\n Para pega-las é so usar o comando "
                                     f"`ash pick`\n **qualquer membro pode pegar uma figurinha**\n"
                                     f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinhas "
                                     f"disponiveis!")
                     embed.set_thumbnail(url="https://media.giphy.com/media/MTSADZF0IdHXFtxBXx/giphy.gif")
+                    embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+                    perms = ctx.channel.permissions_for(ctx.me)
+                    if perms.send_messages and perms.read_messages:
+                        if perms.embed_links and perms.attach_files:
+                            await ctx.send(embed=embed)
+                        else:
+                            await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
+                if randint(1, 100) <= 1 and data_user['security']['status'] and cmd not in self.block:
+                    amount = randint(1, 3)
+                    if ctx.guild.id not in self.moon_bag:
+                        self.moon_bag[ctx.guild.id] = amount
+                    else:
+                        self.moon_bag[ctx.guild.id] += amount
+
+                    embed = discord.Embed(
+                        title="**Figurinha Liberada**",
+                        colour=self.color,
+                        description=f"Esse servidor foi gratificado com **{amount} moon bag!**\n"
+                                    f"Para pegar é so usar o comando `ash moon`\n"
+                                    f"**qualquer membro pode pegar uma moon bag**\n"
+                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} moon bag "
+                                    f"disponiveis!")
+                    img = "https://i.pinimg.com/originals/f4/66/c7/f466c75b3fdbb134b2666cfa8f1f8e93.gif"
+                    embed.set_thumbnail(url=img)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:

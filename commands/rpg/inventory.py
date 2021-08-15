@@ -17,6 +17,25 @@ class InventoryClass(commands.Cog):
         self.botmsg = {}
         self.he = self.bot.help_emoji
 
+    def rarity_item(self, data):
+        equips_list = list()
+        for ky in self.bot.config['equips'].keys():
+            for k, v in self.bot.config['equips'][ky].items():
+                equips_list.append((k, v))
+
+        equipped_items = dict()
+        for key, value in data['rpg']["equipped_items"].items():
+            for i in equips_list:
+                if i[0] == value:
+                    equipped_items[key] = i[1]['name']
+
+        _KK = equipped_items.keys()
+        for key in data['rpg']["equipped_items"].keys():
+            if key not in _KK:
+                equipped_items[key] = ""
+
+        return equipped_items
+
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
@@ -100,6 +119,8 @@ class InventoryClass(commands.Cog):
                 con += self.bot.config['skills'][data['rpg']['class_now']]['modifier_80']['con']
                 luk += self.bot.config["skills"][data['rpg']['class_now']]['modifier_80']['luk']
 
+            _EQUIPPED = self.rarity_item(data)
+
             data_equips = {
                 "name": ctx.author.name,
                 "class": str(data['rpg']['class_now']),
@@ -141,17 +162,17 @@ class InventoryClass(commands.Cog):
                 },
 
                 'equipped': {
-                    "breastplate": data['rpg']["equipped_items"]['breastplate'],
-                    "leggings": data['rpg']["equipped_items"]['leggings'],
-                    "boots": data['rpg']["equipped_items"]['boots'],
-                    "gloves": data['rpg']["equipped_items"]['gloves'],
-                    "shoulder": data['rpg']["equipped_items"]['shoulder'],
-                    "sword": data['rpg']["equipped_items"]['sword'],
-                    "shield": data['rpg']["equipped_items"]['shield'],
-                    "consumable": data['rpg']["equipped_items"]['consumable'],
-                    "necklace": data['rpg']["equipped_items"]['necklace'],
-                    "earring": data['rpg']["equipped_items"]['earring'],
-                    "ring": data['rpg']["equipped_items"]['ring']
+                    "breastplate": (data['rpg']["equipped_items"]['breastplate'], _EQUIPPED['breastplate']),
+                    "leggings": (data['rpg']["equipped_items"]['leggings'], _EQUIPPED['leggings']),
+                    "boots": (data['rpg']["equipped_items"]['boots'], _EQUIPPED['boots']),
+                    "gloves": (data['rpg']["equipped_items"]['gloves'], _EQUIPPED['gloves']),
+                    "shoulder": (data['rpg']["equipped_items"]['shoulder'], _EQUIPPED['shoulder']),
+                    "sword": (data['rpg']["equipped_items"]['sword'], _EQUIPPED['sword']),
+                    "shield": (data['rpg']["equipped_items"]['shield'], _EQUIPPED['shield']),
+                    "consumable": (data['rpg']["equipped_items"]['consumable'], _EQUIPPED['consumable']),
+                    "necklace": (data['rpg']["equipped_items"]['necklace'], _EQUIPPED['necklace']),
+                    "earring": (data['rpg']["equipped_items"]['earring'], _EQUIPPED['earring']),
+                    "ring": (data['rpg']["equipped_items"]['ring'], _EQUIPPED['ring'])
                 }
             }
 

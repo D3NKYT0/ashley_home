@@ -29,6 +29,7 @@ class Raid(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.m = self.bot.config['battle']['monsters']
+        self.q = self.bot.config['battle']['quests']
         self.w_s = self.bot.config['attribute']['chance_weapon']
         self.db_monster = {}
         self.db_player = {}
@@ -36,7 +37,9 @@ class Raid(commands.Cog):
     def choice_monster(self, data, db_player, rr):
         # configuração do monstro
         _min, _max = 25 + rr if rr < 31 else 59, 30 + rr if rr < 31 else 60
-        _monster = choice([m for m in self.m if _min < self.m[self.m.index(m)]['level'] < _max])
+        m, q = [m for m in self.m if _min < self.m[self.m.index(m)]['level'] < _max], [q for q in self.q]
+        mq = m + q
+        _monster = choice(mq) if db_player["ESPECIAL"] else choice(m)
         _monster_now = copy.deepcopy(_monster)
         _monster_now['lower_net'] = True if data['rpg']['lower_net'] else False
         _monster_now['enemy'] = db_player
@@ -60,7 +63,7 @@ class Raid(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='wave', aliases=['onda', 'orda', 'w'])
-    async def wave(self, ctx):
+    async def wave(self, ctx, extra=None):
         """Comando usado pra batalhar no rpg da ashley
         Use ash raid"""
         global raid_rank, m_raid, p_raid, money, xp_tot, xp_off, evasion
@@ -89,6 +92,18 @@ class Raid(commands.Cog):
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
+
+        _ESPECIAL = False
+        if extra is not None:
+            if 'pass_royal' in data['inventory'].keys():
+                if data['inventory']['pass_royal'] > 0:
+                    _ESPECIAL = True
+
+        if extra and not _ESPECIAL:
+            await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
+                           f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}` "
+                           f"**no seu inventario para lutar com os monstros especiais!**\n"
+                           f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
@@ -131,6 +146,11 @@ class Raid(commands.Cog):
         self.db_player[ctx.author.id]["pdef"] = 0
         self.db_player[ctx.author.id]["mdef"] = 0
         self.db_player[ctx.author.id]["_id"] = ctx.author.id
+
+        if _ESPECIAL:
+            self.db_player[ctx.author.id]["ESPECIAL"] = True
+        else:
+            self.db_player[ctx.author.id]["ESPECIAL"] = False
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]

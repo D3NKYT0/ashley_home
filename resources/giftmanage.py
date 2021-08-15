@@ -73,10 +73,14 @@ async def open_gift(bot, gift):
                              'SoulStoneDarkGreen', 'SoulStoneBlue'])
             rare = [item_1, item_2, item_3]
 
-            if chance < 5:
+            if chance < 15:
                 item_plus = choice(["soul_crystal_of_love", "soul_crystal_of_love", "soul_crystal_of_love",
                                     "soul_crystal_of_hope", "soul_crystal_of_hope", "soul_crystal_of_hope",
                                     "soul_crystal_of_hate", "soul_crystal_of_hate", "soul_crystal_of_hate"])
+                rare.append(item_plus)
+
+            if chance < 5:
+                item_plus = choice(["teleport_scroll", "teleport_scroll", "teleport_scroll", "pass_royal"])
                 rare.append(item_plus)
 
         return {"money": ethernyas, "coins": coins, "items": items, "rare": rare, "validity": validity}
