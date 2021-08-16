@@ -7,7 +7,6 @@ import psutil
 import json
 import copy
 import sys
-import os
 import traceback
 import humanize
 import platform

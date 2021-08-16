@@ -1,5 +1,4 @@
 from random import choice, randint
-from config import data as config
 from resources.verify_cooldown import verify_cooldown
 
 

@@ -1,3 +1,5 @@
+import discord
+
 from discord.ext import commands
 from random import choice
 from resources.utility import enforcado

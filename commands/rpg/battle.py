@@ -10,7 +10,6 @@ from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import calc_xp
 from datetime import datetime
-from resources.utility import create_id
 
 evasion = {}
 player = {}

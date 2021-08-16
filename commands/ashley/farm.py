@@ -77,6 +77,19 @@ class FarmClass(commands.Cog):
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='join', aliases=['entrar'])
+    async def join(self, ctx):
+        """Comando usado pra ir pro canal hell do server da ashley
+        Use ash join"""
+        if ctx.channel.id == 872515868477751296:
+            await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU LHE ENVINANDO PARA O "
+                           "SERVIDOR`", delete_after=5.0)
+            role = discord.utils.find(lambda r: r.name == "</Members>", ctx.guild.roles)
+            await ctx.author.add_roles(role)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='hell', aliases=['inferno'])
     async def hell(self, ctx):
@@ -199,16 +212,35 @@ class FarmClass(commands.Cog):
                                         "- Para ir até **Dracaris**: Clique em :fire:\n"
                                         "- Para ir até **Forgerion**: Clique em :hammer_pick:")
                         botmsg = await ctx.send(embed=embed)
-                        await botmsg.add_reaction('🔮')
-                        await botmsg.add_reaction('🦁')
-                        await botmsg.add_reaction('🕯')
-                        await botmsg.add_reaction('💀')
-                        await botmsg.add_reaction('🐦')
-                        await botmsg.add_reaction('🌳')
-                        await botmsg.add_reaction('🗡')
-                        await botmsg.add_reaction('🏯')
-                        await botmsg.add_reaction('🔥')
-                        await botmsg.add_reaction('⚒')
+
+                        if 'teleport_scroll' in record['inventory'].keys():
+
+                            record['inventory']['teleport_scroll'] -= 1
+                            cl = await self.bot.db.cd("users")
+                            if record['inventory']['teleport_scroll'] < 1:
+                                query = {"$unset": {f"inventory.teleport_scroll": ""}}
+                            else:
+                                query = {"$inc": {f"inventory.teleport_scroll": -1}}
+                            await cl.update_one({"user_id": ctx.author.id}, query)
+
+                            await botmsg.add_reaction('🔮')
+                            await botmsg.add_reaction('🦁')
+                            await botmsg.add_reaction('🕯')
+                            await botmsg.add_reaction('💀')
+                            await botmsg.add_reaction('🐦')
+                            await botmsg.add_reaction('🌳')
+                            await botmsg.add_reaction('🗡')
+                            await botmsg.add_reaction('🏯')
+                            await botmsg.add_reaction('🔥')
+                            await botmsg.add_reaction('⚒')
+
+                        else:
+                            return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
+                                                  f"{self.bot.items['teleport_scroll'][0]} `1` "
+                                                  f"`{self.bot.items['teleport_scroll'][1]}` "
+                                                  f"**no seu inventario para teleportar para as provincias!**\n"
+                                                  f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
+
                         global msg_area_id
                         msg_area_id = botmsg.id
                         area = 0

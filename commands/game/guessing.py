@@ -1,3 +1,5 @@
+import discord
+
 from asyncio import TimeoutError
 from random import choice, randint
 from discord.ext import commands

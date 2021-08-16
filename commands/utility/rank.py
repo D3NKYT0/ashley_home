@@ -2,7 +2,6 @@ import re
 import discord
 import operator
 import unicodedata
-import gc as _gc
 
 from discord.ext import commands
 from resources.db import Database

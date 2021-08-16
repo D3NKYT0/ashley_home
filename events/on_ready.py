@@ -4,11 +4,9 @@ import copy
 import json
 
 import time as date
-from itertools import cycle
 from discord.ext import commands
 from random import choice, randint, shuffle
 from datetime import datetime as dt, timedelta
-from resources.utility import date_format, rank_definition
 from resources.verify_cooldown import verify_cooldown
 from resources.structure import user_data_structure, guild_data_structure
 from resources.entidade import Entity
@@ -33,8 +31,8 @@ loot_mvp = dict()
 
 def last_day_of_month(date_now):
     if date_now.month == 12:
-        return date.replace(day=31)
-    return date_now.replace(month=date_now.month+1, day=1) - timedelta(days=1)
+        return date_now.replace(day=31)
+    return date_now.replace(month=date_now.month + 1, day=1) - timedelta(days=1)
 
 
 class OnReady(commands.Cog):
@@ -222,7 +220,6 @@ class OnReady(commands.Cog):
                     # verificando as permissões da ashley
                     user = guild.get_member(478977311266570242)
                     if user.guild_permissions.external_emojis and user.guild_permissions.add_reactions:
-
                         # cria um loop pra cada guilda separadamente
                         self.bot.loop.create_task(self.treasure_hunt(guild))
 
@@ -570,9 +567,9 @@ class OnReady(commands.Cog):
                             perms = channel__.permissions_for(ash_member)
                             if perms.send_messages and perms.read_messages:
                                 if not perms.embed_links or not perms.attach_files:
-                                    await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
-                                                   "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
-                                                   " CORRETAMENTE!**")
+                                    await channel__.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
+                                                         "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER "
+                                                         "FUNCIONAR CORRETAMENTE!**")
                                 else:
                                     await channel__.send(embed=embed)
 
@@ -627,9 +624,9 @@ class OnReady(commands.Cog):
                             perms = channel__.permissions_for(ash_member)
                             if perms.send_messages and perms.read_messages:
                                 if not perms.embed_links or not perms.attach_files:
-                                    await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
-                                                   "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
-                                                   " CORRETAMENTE!**")
+                                    await channel__.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
+                                                         "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER "
+                                                         "FUNCIONAR CORRETAMENTE!**")
                                 else:
                                     await channel__.send(embed=embed)
 

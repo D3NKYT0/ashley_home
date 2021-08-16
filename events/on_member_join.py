@@ -99,59 +99,32 @@ class OnMemberJoin(commands.Cog):
                 except discord.errors.NotFound:
                     pass
 
-            try:
-                if self.bot.config['config']['default_guild'] == member.guild.id:
-                    role = discord.utils.find(lambda r: r.name == "</Members>", member.guild.roles)
-                    await member.add_roles(role)
-                    data = await self.bot.db.get_data("user_id", member.id, "users")
-                    update = data
-                    if data is not None:
-                        if len(data['config']['roles']) != 0:
-                            cargos = member.roles
-                            for c in range(0, len(cargos)):
-                                if cargos[c].name != "@everyone":
-                                    await member.remove_roles(cargos[c])
-                            role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
-                            await member.add_roles(role)
-                            canal = self.bot.get_channel(576795574783705104)
-                            if canal is None:
-                                return
-                            ashley = canal.guild.get_member(self.bot.user.id)
-                            perms = canal.permissions_for(ashley)
-                            if perms.send_messages and perms.read_messages:
-                                if not perms.embed_links or not perms.attach_files:
-                                    await canal.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
-                                                     "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
-                                                     " CORRETAMENTE!**")
-                                else:
-                                    return await canal.send(f"<a:blue:525032762256785409>│{member.mention} `SAIR SEM"
-                                                            f" DAR RESPAWN NAO É A MANEIRA CORRETA DE SAIR DO "
-                                                            f"SERVIDOR`")
+            if self.bot.config['config']['default_guild'] == member.guild.id:
 
-                        if data['config']['provinces'] is not None:
-                            update['config']['provinces'] = None
-                            await self.bot.db.update_data(data, update, "users")
+                _canal = self.bot.get_channel(872515868477751296)
+                await _canal.send(f"<a:blue:525032762256785409>│{member.mention} `USE O COMANDO:` **ASH JOIN** "
+                                  f"`PARA ENTRAR NO SERVIDOR!`")
 
-                        data = await self.bot.db.get_data("guild_id", member.guild.id, "guilds")
-                        canal = self.bot.get_channel(data['func_config']['member_join_id'])
-                        if canal is None:
-                            return
-                        t = f"<a:blue:525032762256785409>│**OBS:** {member.mention} `PARA OBTER AJUDA USE O " \
-                            f"COMANDO` **ASH AJUDA**"
-                        embed = discord.Embed(color=self.color, description=t)
-                        ashley = canal.guild.get_member(self.bot.user.id)
-                        perms = canal.permissions_for(ashley)
-                        if perms.send_messages and perms.read_messages:
-                            if not perms.embed_links or not perms.attach_files:
-                                await canal.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
-                                                 "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
-                                                 " CORRETAMENTE!**")
-                            else:
-                                await canal.send(embed=embed)
-            except discord.Forbidden:
-                pass
-            except discord.errors.NotFound:
-                pass
+                data = await self.bot.db.get_data("user_id", member.id, "users")
+                update = data
+                if data is not None:
+                    if len(data['config']['roles']) != 0:
+
+                        cargos = member.roles
+                        for c in range(0, len(cargos)):
+                            if cargos[c].name not in ["@everyone", 'Server Booster']:
+                                await member.remove_roles(cargos[c])
+
+                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
+                        await member.add_roles(role)
+                        canal = self.bot.get_channel(576795574783705104)
+                        return await canal.send(f"<a:blue:525032762256785409>│{member.mention} `SAIR SEM"
+                                                f" DAR RESPAWN NAO É A MANEIRA CORRETA DE SAIR DO "
+                                                f"SERVIDOR`")
+
+                    if data['config']['provinces'] is not None:
+                        update['config']['provinces'] = None
+                        await self.bot.db.update_data(data, update, "users")
 
 
 def setup(bot):

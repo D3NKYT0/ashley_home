@@ -1,8 +1,6 @@
-import gc as _gc
 import json
 import discord
 import datetime
-import operator
 
 from random import randint
 from collections import Counter

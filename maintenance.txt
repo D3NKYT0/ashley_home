@@ -31,12 +31,10 @@ commands.money.guildbank
 commands.money.userbank
 commands.admin.channel_locker
 commands.admin.announce
-commands.owner.create_doc
 commands.owner.eval
 commands.owner.load
 commands.owner.logout
 commands.owner.reload
-commands.owner.repeat_command
 commands.admin.source
 commands.owner.tot_commands
 commands.owner.unload

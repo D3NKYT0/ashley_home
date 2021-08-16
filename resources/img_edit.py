@@ -20,7 +20,6 @@ if _TEST:
     import asyncio
     _PREFIX = "../"
 else:
-    from config import data
     _PREFIX = ""
 
 

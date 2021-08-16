@@ -1,7 +1,6 @@
 import discord
 
 from discord.ext import commands
-from asyncio import sleep
 from resources.check import check_it
 from resources.db import Database
 

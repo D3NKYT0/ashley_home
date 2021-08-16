@@ -1,9 +1,6 @@
 import discord
 
 from discord.ext import commands
-from config import data as config
-from asyncio import sleep
-from resources.utility import include
 
 
 class SystemMessage(commands.Cog):
