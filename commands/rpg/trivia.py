@@ -51,6 +51,48 @@ class Trivias(commands.Cog):
 
 [11]: Melhore sua habilidade 5, encantando ela para +1
 <Comando: ash enchant add 5>
+
+[12]: Olhe seu perfil
+<Comando: ash perfil>
+
+[13]: Obtenha seu primeiro artefato:
+<Comando: ash rifa>
+
+[14]: Olhe seu perfil novamente
+<Comando: ash perfil>
+
+[15]: Olhe sua carteira
+<Comando: ash carteira>
+
+[16]: Obtenha sua primeira pedra do selamento
+<Comando: ash stone>
+
+[17]: olhe o seu inventario de itens
+<Comando: ash i>
+
+[18]: Olhe a lista dos itens craftaveis
+<Comando: ash recipe>
+
+[19]: Crafte seu primeiro item
+<Comando: ash craft>
+
+[20]: chegue no level 11 do rpg
+<Comando: ash bt>
+
+[21]: olhe o seu inventario de equipamentos
+<Comando: ash es>
+
+[22]: Equipe sua armadura (esta no iventario de equipamentos)
+<Comando: ash e i nome_do_item>
+
+[23]: Olhe seu painel de equipamentos
+<Comando: ash e>
+
+[24]: Tenha sua primeira batalha com um BOSS
+<Comandos: ash boss>
+
+[25]: Para mais informações use:
+<Comandos: ash help ; ash wiki nome_do_item>
 ```"""
         embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
