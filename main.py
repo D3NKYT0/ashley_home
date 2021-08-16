@@ -492,7 +492,7 @@ class Ashley(commands.AutoShardedBot):
                         description=f"Esse servidor foi gratificado com **{amount} moon bag!**\n"
                                     f"Para pegar é so usar o comando `ash moon`\n"
                                     f"**qualquer membro pode pegar uma moon bag**\n"
-                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} moon bag "
+                                    f"**Obs:** Essa guilda tem {self.moon_bag[ctx.guild.id]} moon bag "
                                     f"disponiveis!")
                     img = "https://i.pinimg.com/originals/f4/66/c7/f466c75b3fdbb134b2666cfa8f1f8e93.gif"
                     embed.set_thumbnail(url=img)

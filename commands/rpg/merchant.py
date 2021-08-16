@@ -61,7 +61,7 @@ class MerchantClass(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você esqueceu de falar o nome do item para colocar "
                                   "na loja!`")
 
-        if item.lower() in ["medalhas", "rank points"]:
+        if item.lower() in ["medalhas", "rank points", "vote coin", "medalha", "rank point"]:
             return await ctx.send("<:alert:739251822920728708>│`Você não pode vender esse tipo de item.`")
 
         item_key_equip, item_key_craft, _type, count = None, None, None, 0
