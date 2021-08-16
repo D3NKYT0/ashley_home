@@ -295,6 +295,8 @@ class UserBank(commands.Cog):
                 update['rpg']['items'][item_reward] = int(quant)
 
         update['inventory']['vote_coin'] -= self.items_shop_vote[name] * int(quant)
+        if update['inventory']['vote_coin'] <= 0:
+            del update['inventory']['vote_coin']
 
         await self.bot.db.update_data(data, update, 'users')
         d = self.items_shop_vote[name] * int(quant)
