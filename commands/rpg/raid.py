@@ -625,16 +625,47 @@ class Raid(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
+        equips_list = list()
+        for ky in self.bot.config['equips'].keys():
+            for k, v in self.bot.config['equips'][ky].items():
+                equips_list.append((k, v))
+
+        list_items = []
+        for i_, amount in self.w_s.items():
+            list_items += [i_] * amount
+
+        equips = list()
+        for _ in range(especial_m):
+            if randint(1, 100) <= 25:
+                armor_or_shield_drop = choice(list_items)
+                equips.append(armor_or_shield_drop)
+
+        msg_final = "**POR MATAR MONSTROS QUESTS**\n"
+        if len(equips) > 0:
+            for item in equips:
+                try:
+                    update['rpg']['items'][item] += 1
+                except KeyError:
+                    update['rpg']['items'][item] = 1
+
+                rew = None
+                for i in equips_list:
+                    if i[0] == item:
+                        rew = i[1]
+
+                if rew is not None:
+                    msg_final += f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n' \
+                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**\n\n'
+
+        if len(equips) > 0:
+            img = choice(git)
+            embed = discord.Embed(color=self.bot.color)
+            embed.set_thumbnail(url=img)
+            await ctx.send(embed=embed)
+            await ctx.send(msg_final)
+
         if change < 10 and raid_rank[ctx.author.id] > 0 and self.db_player[ctx.author.id]['level'] > 25:
 
-            equips_list = list()
-            for ky in self.bot.config['equips'].keys():
-                for k, v in self.bot.config['equips'][ky].items():
-                    equips_list.append((k, v))
-
-            list_items = []
-            for i_, amount in self.w_s.items():
-                list_items += [i_] * amount
             armor_or_shield = choice(list_items)
 
             try:
@@ -650,7 +681,7 @@ class Raid(commands.Cog):
             if rew is not None:
                 img = choice(git)
                 embed = discord.Embed(color=self.bot.color)
-                embed.set_image(url=img)
+                embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed)
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n'
                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**')

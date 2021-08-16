@@ -355,6 +355,15 @@ class BossSystem(commands.Cog):
             xp, lp, lm = db_monster['xp'], db_player['level'], db_monster['level']
             perc = xp if lp - lm <= 0 else xp + abs(0.15 * (db_player['level'] - db_monster['level']))
             data_xp = calc_xp(db_player['xp'], db_player['level'])
+
+            # bonus de XP durante evento!
+            if self.bot.event_special and perc < 10:
+                perc = 10
+
+            # bonus de XP por estar em provincia
+            if data['config']['provinces'] is not None:
+                perc += 5
+
             if db_player['xp'] < 32:
                 xpm = data_xp[2]
                 xpr = xpm

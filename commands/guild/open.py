@@ -7,6 +7,7 @@ from random import choice, randint
 from resources.giftmanage import register_gift, open_gift, open_chest
 from resources.img_edit import gift as gt
 from resources.utility import convert_item_name
+from resources.moon import get_moon
 
 
 class OpenClass(commands.Cog):
@@ -41,6 +42,51 @@ class OpenClass(commands.Cog):
         self.list_stickers = list()
         for k, v in self.bot.stickers.items():
             self.list_stickers += [k] * v[1]
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.group(name='moon', aliases=['lua'])
+    async def moon(self, ctx):
+        """Abra um presente para liberar seu giftcard."""
+        if ctx.invoked_subcommand is None:
+            if ctx.guild.id in self.bot.moon_bag:
+                if self.bot.moon_bag[ctx.guild.id] < 1:
+                    return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem moon bag disponiveis!`"
+                                          f"\n`TODAS AS MOON BAG FORAM PEGAS, AGUARDE UMA NOVA MOON BAG DROPAR E FIQUE"
+                                          f" ATENTO!`")
+
+                data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                self.bot.moon_bag[ctx.guild.id] -= 1
+                cl = await self.bot.db.cd("users")
+                query = {"$inc": {f"inventory.moon_bag": 1}}
+                await cl.update_one({"user_id": ctx.author.id}, query)
+                await ctx.send(f"<a:fofo:524950742487007233>│✨ **VOCE PEGOU** ✨ "
+                               f"{self.bot.items['moon_bag'][0]} `1` `{self.bot.items['moon_bag'][1]}`\n")
+
+            else:
+                await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem moon bag disponiveis...`\n"
+                               f"**OBS:** se eu for reiniciada, todas as moon bag disponiveis sao resetadas. "
+                               f"Isso é feito por medidas de segurança da minha infraestrutura!")
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @moon.command(name='phase', aliases=['fase', 'p', 'f'])
+    async def _phase(self, ctx):
+        data = get_moon()
+        msg = f"<:confirmed:721581574461587496>│`Moon Phase:` **{data[0]}** -  `Moon Position:` **{data[1]}**"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @moon.command(name='open', aliases=['abrir', 'o', 'a'])
+    async def _open(self, ctx):
+        msg = f"<:alert:739251822920728708>│`Em desenvolvimento...`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -85,31 +131,6 @@ class OpenClass(commands.Cog):
         else:
             await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis...`\n"
                            f"**OBS:** se eu for reiniciada, todas as figurinhas disponiveis sao resetadas. "
-                           f"Isso é feito por medidas de segurança da minha infraestrutura!")
-
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='moon', aliases=['lua'])
-    async def moon(self, ctx):
-        """Abra um presente para liberar seu giftcard."""
-        if ctx.guild.id in self.bot.moon_bag:
-            if self.bot.moon_bag[ctx.guild.id] < 1:
-                return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem moon bag disponiveis!`\n"
-                                      f"`TODAS AS MOON BAG FORAM PEGAS, AGUARDE UMA NOVA MOON BAG DROPAR E FIQUE "
-                                      f"ATENTO!`")
-
-            data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
-            self.bot.moon_bag[ctx.guild.id] -= 1
-            cl = await self.bot.db.cd("users")
-            query = {"$inc": {f"inventory.moon_bag": 1}}
-            await cl.update_one({"user_id": ctx.author.id}, query)
-            await ctx.send(f"<a:fofo:524950742487007233>│✨ **VOCE PEGOU** ✨ "
-                           f"{self.bot.items['moon_bag'][0]} `1` `{self.bot.items['moon_bag'][1]}`\n")
-
-        else:
-            await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem moon bag disponiveis...`\n"
-                           f"**OBS:** se eu for reiniciada, todas as moon bag disponiveis sao resetadas. "
                            f"Isso é feito por medidas de segurança da minha infraestrutura!")
 
     @check_it(no_pm=True)

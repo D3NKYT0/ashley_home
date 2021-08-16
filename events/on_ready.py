@@ -199,8 +199,29 @@ class OnReady(commands.Cog):
         while not self.bot.is_closed():
             DATE = date.localtime()
             if DATE[4] == 0:
+
+                guild = self.bot.get_guild(519894833783898112)
+                for member in guild.members:
+                    query = {"_id": 0, "user_id": 1, "config": 1}
+                    record = await (await self.bot.db.cd("users")).find_one({"user_id": member.id}, query)
+                    roles = record['config']['roles']
+                    cargos = member.roles
+                    if len(roles) > 0:
+
+                        for c in range(0, len(cargos)):
+                            if cargos[c].name not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
+                                await member.remove_roles(cargos[c])
+
+                        for c in range(0, len(roles)):
+                            if roles[c] not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
+                                role = discord.utils.find(lambda r: r.name == roles[c], guild.roles)
+                                await member.add_roles(role)
+
                 cd = await self.bot.db.cd("users")
-                await cd.update_many({}, {"$unset": {"cooldown.pick": ""}, "$set": {"user.stickers": 0}})
+                query = {"$unset": {"cooldown.pick": ""},
+                         "$set": {"user.stickers": 0, "config.provinces": None, "config.roles": list()}}
+                await cd.update_many({}, query)
+
             await asyncio.sleep(60)
 
     async def merchant_system(self):

@@ -363,6 +363,10 @@ class Battle(commands.Cog):
         if self.bot.event_special and perc < 10:
             perc = 10
 
+        # bonus de XP por estar em provincia
+        if data['config']['provinces'] is not None:
+            perc += 5
+
         if db_player['xp'] < 32:
             xpm = data_xp[2]
             xpr = xpm
