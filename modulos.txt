@@ -119,4 +119,5 @@ commands.member.lottery
 commands.rpg.wiki
 commands.member.stickers
 commands.utility.vote
+commands.rpg.trivia
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1
