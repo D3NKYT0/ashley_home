@@ -13,50 +13,46 @@ class OnMemberRemove(commands.Cog):
     async def on_member_remove(self, member):
 
         data = await self.bot.db.get_data("guild_id", member.guild.id, "guilds")
-
-        if not data:
-            return
         
         if data is not None:
             try:
                 if data['func_config']['member_remove']:
                     canal = self.bot.get_channel(data['func_config']['member_remove_id'])
 
-                    if canal is None:
-                        return
+                    if canal is not None:
 
-                    data_goodbye = {
-                        "type": "goodbye",
-                        "name": str(member.name),
-                        "avatar": member.avatar_url_as(format="png"),
-                        "text": None
-                    }
+                        data_goodbye = {
+                            "type": "goodbye",
+                            "name": str(member.name),
+                            "avatar": member.avatar_url_as(format="png"),
+                            "text": None
+                        }
 
-                    await welcome(data_goodbye)
+                        await welcome(data_goodbye)
 
-                    file = discord.File('goodbye.png')
-                    if file is not None:
-                        try:
-                            await canal.send(file=file, content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
-                        except discord.errors.HTTPException:
-                            pass
-                    else:
-                        embed = discord.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
-                        userjoinedat = str(member.joined_at).split('.', 1)[0]
-                        usercreatedat = str(member.created_at).split('.', 1)[0]
-                        embed.add_field(name="Entrou no server em:", value=userjoinedat, inline=True)
-                        embed.add_field(name="Conta criada em:", value=usercreatedat, inline=True)
-                        embed.add_field(name="ID:", value=str(member.id), inline=True)
-                        embed.set_thumbnail(url=member.avatar_url)
-                        ashley = canal.guild.get_member(self.bot.user.id)
-                        perms = canal.permissions_for(ashley)
-                        if perms.send_messages and perms.read_messages:
-                            if not perms.embed_links or not perms.attach_files:
-                                await canal.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
-                                                 "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
-                                                 " CORRETAMENTE!**")
-                            else:
-                                await canal.send(embed=embed)
+                        file = discord.File('goodbye.png')
+                        if file is not None:
+                            try:
+                                await canal.send(file=file, content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+                            except discord.errors.HTTPException:
+                                pass
+                        else:
+                            embed = discord.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
+                            userjoinedat = str(member.joined_at).split('.', 1)[0]
+                            usercreatedat = str(member.created_at).split('.', 1)[0]
+                            embed.add_field(name="Entrou no server em:", value=userjoinedat, inline=True)
+                            embed.add_field(name="Conta criada em:", value=usercreatedat, inline=True)
+                            embed.add_field(name="ID:", value=str(member.id), inline=True)
+                            embed.set_thumbnail(url=member.avatar_url)
+                            ashley = canal.guild.get_member(self.bot.user.id)
+                            perms = canal.permissions_for(ashley)
+                            if perms.send_messages and perms.read_messages:
+                                if not perms.embed_links or not perms.attach_files:
+                                    await canal.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` "
+                                                     "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
+                                                     " CORRETAMENTE!**")
+                                else:
+                                    await canal.send(embed=embed)
 
             except AttributeError:
                 pass

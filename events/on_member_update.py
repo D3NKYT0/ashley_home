@@ -17,16 +17,24 @@ class MemberUpdate(commands.Cog):
                     if data['log_config']['log'] and data['log_config']['member_edit_nickname']:
                         if before.name != after.name:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
-                            if canal is None:
-                                return
-                            to_send = discord.Embed(
-                                title=":star2: **Nome de usuário alterado**",
-                                color=self.color,
-                                description=f"**membro:** {before.name}")
-                            to_send.add_field(name='Nome Antigo', value=f'**{before.name}**')
-                            to_send.add_field(name='Nome Novo', value=f'**{after.name}**')
-                            to_send.set_footer(text="Ashley ® Todos os direitos reservados.")
-                            await canal.send(embed=to_send)
+                            if canal is not None:
+                                to_send = discord.Embed(
+                                    title=":star2: **Nome de usuário alterado**",
+                                    color=self.color,
+                                    description=f"**membro:** {before.name}")
+                                to_send.add_field(name='Nome Antigo', value=f'**{before.name}**')
+                                to_send.add_field(name='Nome Novo', value=f'**{after.name}**')
+                                to_send.set_footer(text="Ashley ® Todos os direitos reservados.")
+                                await canal.send(embed=to_send)
+                except AttributeError:
+                    pass
+                except discord.errors.NotFound:
+                    pass
+                except discord.errors.HTTPException:
+                    pass
+                except TypeError:
+                    pass
+                try:
                     if data['log_config']['log'] and data['log_config']['member_edit_avatar']:
                         if before.avatar != after.avatar:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])

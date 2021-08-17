@@ -1,7 +1,6 @@
 import discord
 import copy
 
-import time as date
 from asyncio import sleep
 from discord.ext import commands
 from random import randint, choice
@@ -98,17 +97,12 @@ class Raid(commands.Cog):
         _ESPECIAL = False
         if extra is not None:
             if extra in ["especial", 'e']:
-                if 'pass_royal' in data['inventory'].keys():
-                    if data['inventory']['pass_royal'] > 0:
+                if 'pass_royal' in update['inventory'].keys():
+                    if update['inventory']['pass_royal'] > 0:
                         _ESPECIAL = True
                         update['inventory']['pass_royal'] -= 1
-
-                        cl = await self.bot.db.cd("users")
                         if update['inventory']['pass_royal'] < 1:
-                            query = {"$unset": {f"inventory.moon_bag": ""}}
-                        else:
-                            query = {"$inc": {f"inventory.moon_bag": -1}}
-                        await cl.update_one({"user_id": ctx.author.id}, query)
+                            del update['inventory']['pass_royal']
 
             if extra in ["especial", 'e'] and not _ESPECIAL:
                 return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "

@@ -26,12 +26,10 @@ class SystemMessage(commands.Cog):
                     if message.mentions[0] == self.bot.user:
 
                         perms = ctx.channel.permissions_for(ctx.me)
-                        if not perms.send_messages or not perms.read_messages:
-                            return
-
-                        await message.channel.send('<:negate:721581573396496464>│`Sua guilda ainda não está '
-                                                   'registrada, por favor digite:` **ash register guild** '
-                                                   '`para cadastrar sua guilda no meu` **banco de dados!**')
+                        if perms.send_messages or perms.read_messages:
+                            await message.channel.send('<:negate:721581573396496464>│`Sua guilda ainda não está '
+                                                       'registrada, por favor digite:` **ash register guild** '
+                                                       '`para cadastrar sua guilda no meu` **banco de dados!**')
                 except IndexError:
                     pass
 
