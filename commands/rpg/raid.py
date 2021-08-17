@@ -236,7 +236,7 @@ class Raid(commands.Cog):
         # ======================================================================================================
 
         _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-        if "quest" in _mon["name"]:
+        if "quest" in _mon["name"].lower():
             especial_m += 1
         self.db_monster[ctx.author.id] = _mon
         # criando as entidade do monstro...
@@ -256,7 +256,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"]:
+                if "quest" in _mon["name"].lower():
                     especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
@@ -286,7 +286,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"]:
+                if "quest" in _mon["name"].lower():
                     especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
@@ -376,7 +376,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"]:
+                if "quest" in _mon["name"].lower():
                     especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
@@ -404,7 +404,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = self.choice_monster(data, self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"]:
+                if "quest" in _mon["name"].lower():
                     especial_m += 1
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
