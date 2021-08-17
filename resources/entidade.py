@@ -445,9 +445,15 @@ class Entity(object):
                 try:
                     if 'damage' in self.effects[c]['type']:
                         damage, burn = self.effects[c]['damage'], ""
+
                         if c == "queimadura" and randint(1, 2) == 2:
                             damage += int(damage / 100 * 50)
                             burn += "\n `levou 50% a mais por queimadura profunda`"
+
+                        if c == "veneno" and randint(1, 2) == 2:
+                            damage += int(damage / 100 * 50)
+                            burn += "\n `levou 50% a mais por intoxicação aguda`"
+
                         self.status['hp'] -= damage
                         if self.status['hp'] < 0:
                             self.status['hp'] = 0
@@ -498,7 +504,11 @@ class Entity(object):
         enemy_luk, effects, msg_return, lethal, _eff = entity.status['luk'], entity.effects, "", False, 0
         bluff, hit_kill, drain, msg_drain, test = False, False, False, "", not self.is_player or self.pvp
 
+        skull = False
         if effects is not None:
+            if "skull" in effects.keys():
+                if effects["skull"]["turns"] > 0:
+                    skull = True
             if "reflect" in effects.keys():
                 if effects["reflect"]["turns"] > 0:
                     effects['reflect']['damage'] = 0
@@ -626,11 +636,11 @@ class Entity(object):
 
         if test:
             if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
-                tot_enemy_atk = enemy_atk * 1.75
+                tot_enemy_atk = enemy_atk * 1.4
             elif enemy_cc[1] in ['assassin', 'priest']:
-                tot_enemy_atk = enemy_atk * 1.5
+                tot_enemy_atk = enemy_atk * 1.1
             else:
-                tot_enemy_atk = enemy_atk * 1.25
+                tot_enemy_atk = enemy_atk * 1.2
             damage_skill = int(tot_enemy_atk / 100 * (50 + randint(skill['skill'], skill['skill'] * 10)))
             damage = damage_skill + bk
         else:
@@ -642,6 +652,8 @@ class Entity(object):
                 entity.soulshot[1] -= 1
                 _soulshot = _class[entity.db['class_now']]['soulshot']
                 bda = int(damage / 100 * _soulshot) if int(damage / 100 * _soulshot) < 100 else 99
+                if skull:
+                    bda = 0
                 damage += bda
 
         critical, critical_chance, critical_damage, value_critical = False, randint(1, 30), enemy_cc[0], 29
@@ -655,6 +667,9 @@ class Entity(object):
             lethal = True if self.effects["cegueira"]['turns'] > 0 else False
         if critical_chance >= value_critical or lethal:
             critical = True
+
+        if skull:
+            critical = False
 
         if critical:
             _cd = randint(int(critical_damage / 2), critical_damage)
