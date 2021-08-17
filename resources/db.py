@@ -382,7 +382,6 @@ class Database(object):
                         t3 = str(ctx.command) != "pick"
 
                         if t1 and t2 or t3:
-
                             tt = (datetime.datetime.utcnow() - epoch).total_seconds()
                             query_user["$set"][f"cooldown.{str(ctx.command)}"] = tt
                             cl = await self.bot.db.cd("users")
@@ -437,7 +436,7 @@ class DataInteraction(object):
     async def add_experience(self, message, exp):  # atualizado no banco de dados
 
         run_command = False
-        query = {"_id": 0, "guild_id": 1, "command_locked": 1}
+        query = {"_id": 0, "guild_id": 1, "command_locked": 1, "func_config": 1}
         data_guild = await (await self.bot.db.cd("guilds")).find_one({"guild_id": message.guild.id}, query)
 
         if data_guild is not None:
@@ -475,7 +474,10 @@ class DataInteraction(object):
 
                 if run_command:
                     if message.guild.id != 425864977996578816:
-                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** '
+                        if data_guild['func_config']['level_up_channel']:
+                            channel = self.bot.get_channel(data_guild['func_config']['level_up_channel_id'])
+                            if channel is not None:
+                                await channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** '
                                                    '`e ganhou a` **chance** `de garimpar mais ethernyas '
                                                    'e` **+1000** `Fichas`'.format(message.author))
 
@@ -490,7 +492,10 @@ class DataInteraction(object):
 
                 if run_command:
                     if message.guild.id != 425864977996578816:
-                        await message.channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** `e ganhou'
+                        if data_guild['func_config']['level_up_channel']:
+                            channel = self.bot.get_channel(data_guild['func_config']['level_up_channel_id'])
+                            if channel is not None:
+                                await channel.send('🎊 **PARABENS** 🎉 {} `você subiu seu ranking` **SOCIAL** `e ganhou'
                                                    ' a` **chance** `de garimpar mais eternyas do que o ranking passado'
                                                    ' e` **+2000** `Fichas`'.format(message.author))
 
@@ -507,8 +512,12 @@ class DataInteraction(object):
 
             if run_command:
                 if message.guild.id != 425864977996578816:
-                    await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou seu level social para o level` **{}**'
-                                               ' `e ganhou` **+200** `Fichas`'.format(message.author, lvl_now))
+                    if data_guild['func_config']['level_up_channel']:
+                        channel = self.bot.get_channel(data_guild['func_config']['level_up_channel_id'])
+                        if channel is not None:
+                            await message.channel.send('🎊 **PARABENS** 🎉 {} `você upou seu level social para o'
+                                                       ' level` **{}** `e ganhou` **+200** '
+                                                       '`Fichas`'.format(message.author, lvl_now))
 
         if len(query_user.keys()) > 0:
             cl = await self.bot.db.cd("users")

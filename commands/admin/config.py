@@ -30,6 +30,7 @@ class ConfigClass(commands.Cog):
             top.add_field(name="Config Commands:",
                           value=f"{self.st[0]} `config action_log` Registra as ações do servidor.\n"
                                 f"{self.st[0]} `config member_count` Exibe a quantidade de membros.\n"
+                                f"{self.st[0]} `config level_up` Mostra quando um membro sobe de level.\n"
                                 f"{self.st[0]} `config join_member` Mostra quando um membro entrou.\n"
                                 f"{self.st[0]} `config remove_member` Mostra quando um membro saiu.\n"
                                 f"{self.st[0]} `config draw_member` Sistema de sorteio da Ashley.\n"
@@ -137,6 +138,48 @@ class ConfigClass(commands.Cog):
             await ctx.send('<:confirmed:721581574461587496>│`Contador de membros desativado!`')
             update['log_config']["log"] = False
             update['log_config']["log_channel_id"] = None
+        await self.bot.db.update_data(data, update, "guilds")
+        msg = await ctx.send("<a:loading:520418506567843860>│`AGUARDE, ESTOU PROCESSANDO SEU CADASTRO!`")
+        await sleep(2)
+        await msg.delete()
+        await ctx.send('<:confirmed:721581574461587496>│**PARABENS** : `CONFIGURAÇÃO REALIZADA COM SUCESSO!`')
+
+    @check_it(no_pm=True, manage_guild=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @config.command(name='level_up', aliases=['lvl'])
+    async def _level_up(self, ctx):
+        data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
+        update = data
+
+        def check_option(m):
+            return m.author == ctx.author and m.content == '0' or m.author == ctx.author and m.content == '1'
+
+        def check_channel(m):
+            return m.author == ctx.author and m.channel_mentions[0].id
+
+        await ctx.send('<a:blue:525032762256785409>│`Você deseja ativar o Registro de level up?` \n'
+                       '```Esse recurso registra quando um membro sobre de level social na ashley```\n'
+                       '**1** para `SIM` ou **0** para `NÃO`')
+
+        try:
+            resp_1 = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
+        if resp_1.content == '1':
+            msg = await ctx.send('<a:blue:525032762256785409>│`Marque o canal do Registro de Level up!`')
+            try:
+                resp_2 = await self.bot.wait_for('message', check=check_channel, timeout=30.0)
+            except TimeoutError:
+                return await ctx.send("<:negate:721581573396496464>│`Tempo esgotado, por favor tente novamente.`")
+            await msg.delete()
+            await ctx.send('<:confirmed:721581574461587496>│`Registro de level up ativado!`')
+            update['func_config']["level_up_channel"] = True
+            update['func_config']["level_up_channel_id"] = resp_2.channel_mentions[0].id
+        else:
+            await ctx.send('<:confirmed:721581574461587496>│`Registro de level up desativado!`')
+            update['func_config']["level_up_channel"] = False
+            update['func_config']["level_up_channel_id"] = None
         await self.bot.db.update_data(data, update, "guilds")
         msg = await ctx.send("<a:loading:520418506567843860>│`AGUARDE, ESTOU PROCESSANDO SEU CADASTRO!`")
         await sleep(2)

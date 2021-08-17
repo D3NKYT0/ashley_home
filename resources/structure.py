@@ -253,6 +253,8 @@ guild_data_structure = {
                 "member_join_id": None,
                 "member_remove": False,
                 "member_remove_id": None,
+                "level_up_channel": False,
+                "level_up_channel_id": None,
             },
             "moderation": {
                 "status": False,
