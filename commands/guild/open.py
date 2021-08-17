@@ -340,6 +340,10 @@ class OpenClass(commands.Cog):
                     await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ **GANHOU O EVENTO** ✨')
                     self.bot.event_special = False
                 await self.bot.db.update_data(data, update, 'users')
+                _event = await (await self.bot.db.cd("events")).find_one({"_id": self.bot.event_now})
+                _event_update = _event
+                _event_update["status"] = False
+                await self.bot.db.update_data(_event, _event_update, 'events')
 
         else:
             await ctx.send(f"<:negate:721581573396496464>│`Você nao tem mais baus disponiveis...`\n"
