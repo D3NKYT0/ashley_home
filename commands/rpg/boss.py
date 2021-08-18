@@ -340,6 +340,7 @@ class BossSystem(commands.Cog):
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
             await ctx.send(embed=embed)
+
         else:
             db_monster = monster[ctx.author.id].db
             _din = await self.bot.db.add_money(ctx, randint(db_monster['ethernya'] // 4, db_monster['ethernya']), True)

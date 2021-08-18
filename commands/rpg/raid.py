@@ -507,14 +507,18 @@ class Raid(commands.Cog):
         if self.db_player[ctx.author.id]['xp'] < 32:
             xpm = data_xp[2]
             xpr = xpm
+
         else:
+
             if 1 < self.db_player[ctx.author.id]['level'] < 7:
                 percent = [randint(50, 75), randint(40, 60), randint(30, 55), randint(25, 45), randint(20, 40)]
                 xpm = data_xp[1] - data_xp[2]
                 xpr = int(xpm / 100 * percent[self.db_player[ctx.author.id]['level'] - 2])
+
             else:
                 xpm = data_xp[1] - data_xp[2]
                 xpr = int(xpm / 100 * perc)
+
         if xpr < xpm / 100 * 1:
             xpr = int(xpm / 100 * 1)
 
@@ -558,12 +562,13 @@ class Raid(commands.Cog):
                 else:
                     reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(4)]
 
-                raid_reward = ["soul_crystal_of_love", "soul_crystal_of_love", "soul_crystal_of_love",
-                               "soul_crystal_of_hope", "soul_crystal_of_hope", "soul_crystal_of_hope",
-                               "soul_crystal_of_hate", "soul_crystal_of_hate", "soul_crystal_of_hate",
-                               "fused_diamond", "fused_diamond", "fused_ruby", "fused_ruby",
-                               "fused_sapphire", "fused_sapphire", "fused_emerald", "fused_emerald",
-                               "unsealed_stone", "melted_artifact"]
+                raid_reward = ["soul_crystal_of_love", "soul_crystal_of_hope", "soul_crystal_of_hate",
+                               "fused_diamond", "fused_ruby", "fused_sapphire", "fused_emerald", "unsealed_stone",
+                               "melted_artifact", "transcendental_stone", "transcendental_flower", "transmogrifador",
+                               "angel_stone", "angel_wing", "frozen_letter", "blessed_enchant_skill",
+                               "enchant_hero", "enchant_violet", "enchant_inspiron", "enchant_mystic",
+                               "enchant_silver", "armor_hero", "armor_violet", "armor_inspiron", "armor_mystic",
+                               "armor_silver"]
 
                 msg = "\n"
 
