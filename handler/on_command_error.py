@@ -31,7 +31,8 @@ class CommandErrorHandler(commands.Cog):
             " <html> ",
             "Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions",
             "Command raised an exception: DiscordServerError: 503 Service Unavailable (error code: 0): upstream"
-            "connect error or disconnect/reset before headers. reset reason: connection failure"
+            "connect error or disconnect/reset before headers. reset reason: connection failure",
+            "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe"
         ]
 
     def error_check(self, error):

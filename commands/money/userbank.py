@@ -25,6 +25,7 @@ class UserBank(commands.Cog):
         self.items = self.bot.config['attribute']['shop']
         self.items_shopping = self.bot.config['attribute']['shopping']
         self.items_shop_vote = self.bot.config['attribute']['shop_vote']
+        self.rewards_lucky = self.bot.config['attribute']['rewards_lucky']
 
     @staticmethod
     def format_num(num, f=False):
@@ -737,6 +738,101 @@ class UserBank(commands.Cog):
                 update['inventory']['unsealed_stone'] += 1
             except KeyError:
                 update['inventory']['unsealed_stone'] = 1
+            await self.bot.db.update_data(data, update, 'users')
+            await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
+            await self.bot.data.add_sts(ctx.author, "stone", 1)
+
+        else:
+            await ctx.send(f"> `A SORTE NAO ESTAVA COM VOCE`", delete_after=30.0)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='lucky', aliases=['sorte'])
+    async def lucky(self, ctx, stone: int = None):
+        """pedra da liberação usada para tirar o selo das armaduras seladas."""
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        global coin, cost, plus
+
+        n_cost = [2000, 300, 100]
+
+        if stone not in [1, 2, 3]:
+            return await ctx.send(f"🎫│`Que tipo de` **PEDRA** `voce deseja gastar?"
+                                  f" Escolha uma dessas opções abaixo!`\n"
+                                  f"**[ ash stone 1 ]** - `Para` {self.bot.money[0]} "
+                                  f"`Custa:` **{n_cost[0]}** "
+                                  f"`Bonus de Chance:` **+1%**\n"
+                                  f"**[ ash stone 2 ]** - `Para` {self.bot.money[1]} "
+                                  f"`Custa:` **{n_cost[1]}** "
+                                  f"`Bonus de Chance:` **+2%**\n"
+                                  f"**[ ash stone 3 ]** - `Para` {self.bot.money[2]} "
+                                  f"`Custa:` **{n_cost[2]}** "
+                                  f"`Bonus de Chance:` **+3%**")
+        else:
+            if stone == 1:
+                cost = n_cost[0]
+                coin = "bronze"
+                plus = 1
+            if stone == 2:
+                cost = n_cost[1]
+                coin = "silver"
+                plus = 2
+            if stone == 3:
+                cost = n_cost[2]
+                coin = "gold"
+                plus = 3
+
+        if data['treasure'][coin] < cost:
+            return await ctx.send('<:negate:721581573396496464>│`Desculpe, você não tem pedras suficientes.` '
+                                  '**COMANDO CANCELADO**')
+
+        # DATA DO MEMBRO
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update_user = data_user
+        update_user['treasure'][coin] -= cost
+        if update_user['treasure'][coin] < 0:
+            update_user['treasure'][coin] = 0
+        await self.bot.db.update_data(data_user, update_user, 'users')
+
+        # DATA NATIVA DO SERVIDOR
+        data_guild_native = await self.bot.db.get_data("guild_id", data_user['guild_id'], "guilds")
+        update_guild_native = data_guild_native
+        if update_guild_native is not None:
+            update_guild_native['data'][f"total_{coin}"] -= cost
+            if update_guild_native['data'][f"total_{coin}"] < 0:
+                update_guild_native['data'][f"total_{coin}"] = 0
+            await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
+
+        msg = await ctx.send("<a:loading:520418506567843860>│`VERIFICANDO SUA SORTE...`")
+        await sleep(1)
+        await msg.delete()
+
+        percent = randint(1, 100)
+        chance = 100 * 0.05 + plus / 2 if randint(1, 10) > 5 else 100 * 0.01 + 100 * 0.05 / 2 + plus
+        if percent <= chance:
+
+            # ESCOLHENDO O PREMIO:
+            list_items = []
+            for i_, amount in self.rewards_lucky.items():
+                list_items += [i_] * amount
+            reward = choice(list_items)
+
+            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
+                                  description=f"{self.bot.items[reward][0]} `{1}` "
+                                              f"`{self.bot.items[reward][1]}`")
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+
+            msg = await ctx.send("<a:loading:520418506567843860>│`SALVANDO SEU PREMIO...`")
+            await sleep(3)
+            await msg.delete()
+
+            data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            update = data
+            try:
+                update['inventory'][reward] += 1
+            except KeyError:
+                update['inventory'][reward] = 1
             await self.bot.db.update_data(data, update, 'users')
             await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
             await self.bot.data.add_sts(ctx.author, "stone", 1)
