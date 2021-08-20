@@ -89,17 +89,18 @@ class Ashley(commands.AutoShardedBot):
         self.icons = self.config['icons']
         self.pets = self.config['pets']
         self.no_panning = self.config['attribute']['no_panning']
-        self.testers = self.config['attribute']['testers']
-        self.staff = self.config['attribute']['staff']
-        self.team = self.config['attribute']['team']
+        self.testers = self.config['staff']['testers']
+        self.staff = self.config['staff']['list']
+        self.team = self.staff
         self.shortcut = self.config['attribute']['shortcut']
         self.block = self.config['attribute']['block']
 
         # definição do inicio e o fim da manutenção
-        self.maintenance_msg = self.config['attribute']['maintenance']
         self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
-        self.maintenance_msg.replace("maintenance_ini", self.maintenance_ini_end[0])
-        self.maintenance_msg.replace("maintenance_end", self.maintenance_ini_end[1])
+        maintenance_msg = self.config['attribute']['maintenance']
+        maintenance_msg = maintenance_msg.replace("maintenance_ini", self.maintenance_ini_end[0])
+        maintenance_msg = maintenance_msg.replace("maintenance_end", self.maintenance_ini_end[1])
+        self.maintenance_msg = maintenance_msg
 
         # status
         self.maintenance = True  # Default: False

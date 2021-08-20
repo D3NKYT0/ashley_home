@@ -79,7 +79,7 @@ class Battle(commands.Cog):
 
         update['inventory']['coins'] -= ct
         self.bot.batalhando.append(ctx.author.id)
-        if ctx.author.id in self.xp_off[ctx.author.id]:
+        if ctx.author.id in self.xp_off:
             del self.xp_off[ctx.author.id]
         await self.bot.db.update_data(data, update, 'users')
 

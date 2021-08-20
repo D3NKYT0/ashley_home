@@ -61,12 +61,21 @@ class CommandErrorHandler(commands.Cog):
 
         # Todos os eventos de erros ignorados, qualquer coisa ignorada retornará e impedirá que algo aconteça.
         if isinstance(error, commands.CommandNotFound) or isinstance(error, commands.UserInputError):
+
+            if ctx.author.id not in self.bot.staff and self.bot.maintenance:
+                perms = ctx.channel.permissions_for(ctx.me)
+                if perms.send_messages and perms.read_messages:
+                    msg = self.bot.maintenance_msg
+                    embed = discord.Embed(color=self.color, description=msg)
+                    return await ctx.send(embed=embed)
+
             if ctx.author.id not in self.bot.testers and self.bot.maintenance:
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:
                     msg = self.bot.maintenance_msg
                     embed = discord.Embed(color=self.color, description=msg)
                     return await ctx.send(embed=embed)
+
             return
 
         # Qualquer comando desabilitado retornará uma mensagem de aviso
