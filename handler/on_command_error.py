@@ -21,6 +21,8 @@ cor = {
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.color = self.bot.color
+        self.ini_end = self.bot.maintenance_ini_end
         self.errors = [aiohttp.ClientOSError, ConnectionResetError,
                        discord.errors.DiscordServerError, discord.errors.HTTPException]
         self.errors_str = [
@@ -64,7 +66,7 @@ class CommandErrorHandler(commands.Cog):
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:
                     msg = self.bot.maintenance_msg
-                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    embed = discord.Embed(color=self.color, description=msg.format(self.ini_end[0], self.ini_end[1]))
                     return await ctx.send(embed=embed)
             return
 
@@ -116,6 +118,7 @@ class CommandErrorHandler(commands.Cog):
             if str(ctx.command) in ["pvp"]:
                 if ctx.author.id in self.bot.desafiado:
                     self.bot.desafiado.remove(ctx.author.id)
+
             # retorno da msg de erro fora de CTX
             await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO DISCORD E SEU"
                            f" COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O COMANDO"

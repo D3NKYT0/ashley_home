@@ -7,6 +7,8 @@ from resources.check import check_it
 from resources.db import Database
 from resources.giftmanage import register_code, generate_gift
 from resources.utility import convert_item_name
+from resources.crypto import encrypt_text, decrypt_text
+
 
 
 class Adflier(commands.Cog):
@@ -128,12 +130,14 @@ class Adflier(commands.Cog):
                     return await ctx.send(embed=embed)
             else:
                 _code1, _code2 = generate_gift()
-                code64b = base64.b64encode(str.encode(_code1))
-                link = self.bot.adlinks(code64b)
-                _update['code'] = [_code1, _code2]
+                code = encrypt_text(_code1)
+                link = self.bot.adlinks(code[0])
+                _update['code'] = [code[0], _code2]
                 _update['adlink'] = [link[0], link[1]]
                 _update['bonus'] = _bonus
                 _update['pending'] = True
+                _update['key'] = code[2]
+                _update['iv'] = code[1]
                 await self.bot.db.update_data(_data, _update, 'adfly')
 
                 text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
@@ -147,9 +151,9 @@ class Adflier(commands.Cog):
 
         else:
             _code1, _code2 = generate_gift()
-            code64b = base64.b64encode(str.encode(_code1))
-            link = self.bot.adlinks(code64b)
-            await register_code(self.bot, ctx.author.id, _code1, _code2, link[0], link[1], _bonus)
+            code = encrypt_text(_code1)
+            link = self.bot.adlinks(code[0])
+            await register_code(self.bot, ctx.author.id, code[0], _code2, link[0], link[1], _bonus, code[1], code[2])
 
             text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
             embed = discord.Embed(color=self.color, description=text)
@@ -176,7 +180,7 @@ class Adflier(commands.Cog):
             return await ctx.send("<:negate:721581573396496464>│`Você ainda não gerou nenhum código com o comando:`"
                                   " **ash adfly**")
 
-        key = update['code'][0] if "-" in code else update['code'][1]
+        key = decrypt_text(update['code'][0], update['iv'], update['key']) if "-" in code else update['code'][1]
         if key.upper() != code.upper():
             return await ctx.send("<:negate:721581573396496464>│`Não foi você que gerou esse código com o comando:`"
                                   " **ash adfly**")

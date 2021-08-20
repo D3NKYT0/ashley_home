@@ -9,7 +9,7 @@ from random import choice, randint, shuffle
 from datetime import datetime as dt, timedelta
 from resources.verify_cooldown import verify_cooldown
 from resources.structure import user_data_structure, guild_data_structure
-from resources.entidade import Entity
+from resources.fight import Entity
 from operator import itemgetter
 from resources.lotash import Lottery, create
 
@@ -339,11 +339,10 @@ class OnReady(commands.Cog):
                 if not self.bot.boss_per_day[str(date_[3])]:
                     _boss = choice(self.m)
                     db_boss = copy.deepcopy(_boss)
-                    db_boss['lower_net'] = False
                     db_boss['enemy'] = None
                     db_boss["pdef"] += randint(50, 150)
                     db_boss["mdef"] += randint(50, 150)
-                    self.bot.boss_now = Entity(db_boss, False)
+                    self.bot.boss_now = Entity(db_boss, False, is_boss=True)
                     self.bot.boss_per_day[str(date_[3])] = True
                     self.bot.boss_live = True
                     self.bot.boss_msg = False
@@ -386,7 +385,7 @@ class OnReady(commands.Cog):
                     await channel.send(embed=embed)
 
                     # sistema de loot
-                    reward = self.bot.boss_now.db["reward"]
+                    reward = self.bot.boss_now.data["reward"]
 
                     if len(players) >= 1:
                         list_items = []

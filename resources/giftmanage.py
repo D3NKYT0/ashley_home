@@ -36,8 +36,16 @@ async def register_gift(bot, time):
                 return gift_t
 
 
-async def register_code(bot, _id, _code1, _code2, adlink1, adlink2, bonus):
-    data = {"_id": _id, "code": [_code1, _code2], "adlink": [adlink1, adlink2], "bonus": bonus, "pending": True}
+async def register_code(bot, _id, _code1, _code2, adlink1, adlink2, bonus, iv, key):
+    data = {
+            "_id": _id,
+            "code": [_code1, _code2],
+            "key": key,
+            "iv": iv,
+            "adlink": [adlink1, adlink2],
+            "bonus": bonus,
+            "pending": True
+           }
     await bot.db.push_data(data, "adfly")
 
 

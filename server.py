@@ -4,6 +4,7 @@ import jinja2
 import logging
 import aiohttp_jinja2
 
+from resources.crypto import decrypt_text
 from aiohttp import web
 from discord import Embed, Client
 from datetime import datetime
@@ -12,8 +13,10 @@ from resources.db import Database
 from resources.webhook import Webhook
 from resources.color import random_color
 
+
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
+
 
 BOT = Client()
 ROUTES = list()
@@ -56,6 +59,7 @@ async def get_guild(request):
 
 @aiohttp_jinja2.template('user.html')
 async def get_user(request):
+    print(await request.text())
     try:
         _ID = int(request.match_info['user_id'])
     except ValueError:
@@ -131,6 +135,21 @@ async def top_gg(request):
     return web.Response(status=401, text="Authorization failed")
 
 
+@aiohttp_jinja2.template('code.html')
+async def adfly(request):
+    if request:
+        return {'code': 'Use o comando "ash adfly"'}
+
+
+@aiohttp_jinja2.template('code.html')
+async def adflycode(request):
+    CL = await DB.cd("adfly")
+    DATA = await CL.find_one({"code": request.match_info["code"]})
+    KEY, IV = DATA["key"], DATA["iv"]
+    code = decrypt_text(request.match_info["code"], IV, KEY)
+    return {'code': code}
+
+
 async def make_app():
     global BOT
     await BOT.login(token=_auth['_t__ashley'])
@@ -140,14 +159,14 @@ async def make_app():
     ROUTES.append(web.get('/user/{user_id}', get_user))
     ROUTES.append(web.get('/user/{user_id}/api', get_userapi))
     ROUTES.append(web.get('/guild/{guild_id}', get_guild))
+    ROUTES.append(web.get('/adfly', adfly))
+    ROUTES.append(web.get('/adfly/{code}', adflycode))
 
     app = web.Application()
     app.add_routes(ROUTES)
-
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('web'))
     env = aiohttp_jinja2.get_env(app)
     env.globals.update(zip=zip)
-
     app.router.add_static('/css/', path='web/static', name='css')
     app.router.add_static('/image/', path='web/image', name='image')
     return app

@@ -1,20 +1,16 @@
-import discord
 import copy
+import discord
 
 import time as date
 from asyncio import sleep
 from discord.ext import commands
 from random import randint, choice
-from resources.entidade import Entity
+from resources.fight import Entity, Ext
 from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import calc_xp
 from datetime import datetime
-
-evasion = {}
-player = {}
-monster = {}
-xp_off = {}
+player, monster, extension = {}, {}, Ext()
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -25,9 +21,9 @@ git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.g
 class Battle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.m = self.bot.config['battle']['monsters']
         self.w_s = self.bot.config['attribute']['chance_weapon']
         self.e = self.bot.d_event
+        self.xp_off = {}
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -36,30 +32,29 @@ class Battle(commands.Cog):
     async def battle(self, ctx):
         """Comando usado pra batalhar no rpg da ashley
         Use ash battle"""
-        global player, monster, xp_off, evasion
-        xp_off[ctx.author.id] = False
-        evasion[ctx.author.id] = [[0, False], [0, False]]
+        global player, monster
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
         if ctx.author.id in self.bot.desafiado:
-            return await ctx.send("<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`")
+            msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
-            embed = discord.Embed(
-                color=self.bot.color,
-                description='<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`')
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.jogando:
-            return await ctx.send("<:alert:739251822920728708>│`Você está jogando, aguarde para quando"
-                                  " vocÊ estiver livre!`")
+            msg = "<:alert:739251822920728708>│`Você está jogando, aguarde para quando você estiver livre!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         if not data['rpg']['active']:
-            embed = discord.Embed(
-                color=self.bot.color,
-                description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
+            msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         ct = 50
@@ -72,116 +67,27 @@ class Battle(commands.Cog):
 
         try:
             if data['inventory']['coins'] < ct:
-                embed = discord.Embed(
-                    color=self.bot.color,
-                    description=f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n'
-                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
+                msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
+                      f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
+
         except KeyError:
-            embed = discord.Embed(
-                color=self.bot.color,
-                description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
         self.bot.batalhando.append(ctx.author.id)
+        if ctx.author.id in self.xp_off[ctx.author.id]:
+            del self.xp_off[ctx.author.id]
         await self.bot.db.update_data(data, update, 'users')
 
-        # configuração do player
-        set_value = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
-        db_player = data['rpg']
-        db_player["img"] = ctx.author.avatar_url_as(format="png")
-        db_player['name'] = ctx.author.name
-        db_player["pdef"] = 0
-        db_player["mdef"] = 0
-        db_player["_id"] = ctx.author.id
-
-        _class = data["rpg"]["class_now"]
-        _db_class = data["rpg"]["sub_class"][_class]
-        db_player["xp"] = _db_class["xp"]
-        db_player["level"] = _db_class["level"]
-
-        soul, amount = False, 0
-        if data['rpg']["equipped_items"]['consumable'] is not None:
-            if 'soushot' in data['rpg']["equipped_items"]['consumable']:
-                soul = True
-                amount += 1
-                if data['rpg']["equipped_items"]['consumable'] in data['rpg']['items'].keys():
-                    amount += data['rpg']['items'][data['rpg']["equipped_items"]['consumable']]
-        db_player["soulshot"] = [soul, amount]
-
-        set_e = list()
-
-        # bonus status player
-        eq = dict()
-        for ky in self.bot.config["equips"].keys():
-            for kk, vv in self.bot.config["equips"][ky].items():
-                eq[kk] = vv
-
-        for k in db_player["status"].keys():
-            try:
-                db_player["status"][k] += self.bot.config["skills"][db_player['class']]['modifier'][k]
-                if db_player['level'] > 25:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier'][k]
-                if db_player['level'] > 49:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier_50'][k]
-                if db_player['level'] > 79:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier_80'][k]
-            except KeyError:
-                pass
-
-        for c in db_player['equipped_items'].keys():
-            if db_player['equipped_items'][c] is None:
-                continue
-
-            if c in set_value:
-                set_e.append(str(c))
-
-            db_player["pdef"] += eq[db_player['equipped_items'][c]]['pdef']
-            db_player["mdef"] += eq[db_player['equipped_items'][c]]['mdef']
-            for name in db_player["status"].keys():
-                try:
-                    db_player["status"][name] += eq[db_player['equipped_items'][c]]['modifier'][name]
-                except KeyError:
-                    pass
-
-        for kkk in self.bot.config["set_equips"].values():
-            if kkk['set'] == set_e:
-                for name in db_player["status"].keys():
-                    try:
-                        db_player["status"][name] += kkk['modifier'][name]
-                    except KeyError:
-                        pass
-                db_player["pdef"] += kkk["pdef"]
-                db_player["mdef"] += kkk["mdef"]
-
-        # configuração do monstro
-        lvl = data['rpg']['level']
-        dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 5 if 10 <= lvl <= 30 else 10 if 31 <= lvl <= 50 else 15
-        max_ = lvl + dif if lvl + dif < 61 else 60
-        min_ = lvl - 5 if lvl - 5 > 1 else 1
-        min_ = min_ if min_ < 55 else 55
-
-        _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
-        db_monster = copy.deepcopy(_monster)
-        db_monster['lower_net'] = True if data['rpg']['lower_net'] else False
-        db_monster['enemy'] = db_player
-        db_monster["pdef"] = 0 + lvl
-        db_monster["mdef"] = 0 + lvl
-
-        # bonus status monster
-        for k in db_monster["status"].keys():
-            if db_player['level'] > 25:
-                db_monster["status"][k] += randint(2, 4)
-
-        for sts in db_player['equipped_items'].keys():
-            if db_player['equipped_items'][sts] is not None:
-                db_monster["status"]['luk'] += randint(0, 1)
-                db_monster["status"]['atk'] += randint(0, 2)
-                db_monster["status"]['con'] += randint(0, 2)
+        # configuração do player e monster
+        db_player = extension.set_player(ctx.author, data)
+        db_monster = extension.set_monster(db_player)
 
         # criando as entidades...
-
         if ctx.author.id in player.keys():
             del player[ctx.author.id]
         if ctx.author.id in monster.keys():
@@ -197,13 +103,11 @@ class Battle(commands.Cog):
             if player[ctx.author.id].status['hp'] <= 0 or monster[ctx.author.id].status['hp'] <= 0:
                 break
 
-            skill = await player[ctx.author.id].turn([monster[ctx.author.id].status, monster[ctx.author.id].rate,
-                                                      monster[ctx.author.id].name, monster[ctx.author.id].lvl],
-                                                     self.bot, ctx)
+            skill = await player[ctx.author.id].turn(ctx, ctx.author, monster[ctx.author.id])
 
             if skill == "BATALHA-CANCELADA":
+                self.xp_off[ctx.author.id] = True
                 player[ctx.author.id].status['hp'] = 0
-                xp_off[ctx.author.id] = True
 
             if player[ctx.author.id].status['hp'] <= 0 or monster[ctx.author.id].status['hp'] <= 0:
                 break
@@ -219,17 +123,15 @@ class Battle(commands.Cog):
             await sleep(0.5)
             # --------======== ............... ========--------
 
-            atk = int(player[ctx.author.id].status['atk'])
-
             # player chance
             d20 = randint(1, 20)
-            lvlp = int(player[ctx.author.id].lvl / 10)
+            lvlp = int(player[ctx.author.id].level / 10)
             prec = int(player[ctx.author.id].status['prec'] / 2)
             chance_player = d20 + lvlp + prec
 
             # monster chance
             d16 = randint(1, 16)
-            lvlm = int(monster[ctx.author.id].lvl / 10)
+            lvlm = int(monster[ctx.author.id].level / 10)
             agi = int(monster[ctx.author.id].status['agi'] / 3)
             chance_monster = d16 + lvlm + agi
 
@@ -246,21 +148,21 @@ class Battle(commands.Cog):
                     if monster[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_monster = 0
 
-            evasion[ctx.author.id][0][1] = False if chance_player > chance_monster else True
-            if evasion[ctx.author.id][0][1] and evasion[ctx.author.id][0][0] > 1:
-                chance_monster, evasion[ctx.author.id][0][1] = 0, False
-            if not evasion[ctx.author.id][0][1]:
-                evasion[ctx.author.id][0][0] = 0
+            player[ctx.author.id].evasion[1] = False if chance_player > chance_monster else True
+            if player[ctx.author.id].evasion[1] and player[ctx.author.id].evasion[0] > 1:
+                chance_monster, player[ctx.author.id].evasion[1] = 0, False
+            if not player[ctx.author.id].evasion[1]:
+                player[ctx.author.id].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_player, chance_monster = True, False
 
             if chance_player > chance_monster:
-                player[ctx.author.id] = await monster[ctx.author.id].damage(ctx, player[ctx.author.id], skill, atk)
+                player[ctx.author.id] = await monster[ctx.author.id].damage(ctx, player[ctx.author.id], skill)
             else:
 
-                if evasion[ctx.author.id][0][1]:
-                    evasion[ctx.author.id][0][0] += 1
+                if player[ctx.author.id].evasion[1]:
+                    player[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
@@ -278,11 +180,11 @@ class Battle(commands.Cog):
             if player[ctx.author.id].status['hp'] <= 0 or monster[ctx.author.id].status['hp'] <= 0:
                 break
 
-            skill = await monster[ctx.author.id].turn(monster[ctx.author.id].status['hp'], self.bot, ctx)
+            skill = await monster[ctx.author.id].turn(ctx, ctx.author, player[ctx.author.id])
 
             if skill == "BATALHA-CANCELADA":
                 player[ctx.author.id].status['hp'] = 0
-                xp_off[ctx.author.id] = True
+                self.xp_off[ctx.author.id] = True
 
             if player[ctx.author.id].status['hp'] <= 0 or monster[ctx.author.id].status['hp'] <= 0:
                 break
@@ -298,19 +200,15 @@ class Battle(commands.Cog):
             await sleep(0.5)
             # --------======== ............... ========--------
 
-            atk_bonus = monster[ctx.author.id].status['atk'] * 0.5 if player[ctx.author.id].lvl > 25 else \
-                monster[ctx.author.id].status['atk'] * 0.25
-            atk = int(monster[ctx.author.id].status['atk'] + atk_bonus)
-
             # monster chance
             d20 = randint(1, 20)
-            lvlm = int(monster[ctx.author.id].lvl / 10)
+            lvlm = int(monster[ctx.author.id].level / 10)
             prec = int(monster[ctx.author.id].status['prec'] / 2)
             chance_monster = d20 + lvlm + prec
 
             # player chance
             d16 = randint(1, 16)
-            lvlp = int(player[ctx.author.id].lvl / 10)
+            lvlp = int(player[ctx.author.id].level / 10)
             agi = int(player[ctx.author.id].status['agi'] / 3)
             chance_player = d16 + lvlp + agi
 
@@ -325,21 +223,21 @@ class Battle(commands.Cog):
                     if player[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_player = 0
 
-            evasion[ctx.author.id][1][1] = False if chance_monster > chance_player else True
-            if evasion[ctx.author.id][1][1] and evasion[ctx.author.id][1][0] > 1:
-                chance_player, evasion[ctx.author.id][1][1] = 0, False
-            if not evasion[ctx.author.id][1][1]:
-                evasion[ctx.author.id][1][0] = 0
+            monster[ctx.author.id].evasion[1] = False if chance_monster > chance_player else True
+            if monster[ctx.author.id].evasion[1] and monster[ctx.author.id].evasion[0] > 1:
+                chance_player, monster[ctx.author.id].evasion[1] = 0, False
+            if not monster[ctx.author.id].evasion[1]:
+                monster[ctx.author.id].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = True, False
 
             if chance_monster > chance_player:
-                monster[ctx.author.id] = await player[ctx.author.id].damage(ctx, monster[ctx.author.id], skill, atk)
+                monster[ctx.author.id] = await player[ctx.author.id].damage(ctx, monster[ctx.author.id], skill)
             else:
 
-                if evasion[ctx.author.id][1][1]:
-                    evasion[ctx.author.id][1][0] += 1
+                if monster[ctx.author.id].evasion[1]:
+                    monster[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
@@ -365,7 +263,7 @@ class Battle(commands.Cog):
 
         # bonus de XP por estar em provincia
         if data['config']['provinces'] is not None:
-            perc += 5
+            perc += 10
 
         if db_player['xp'] < 32:
             xpm = data_xp[2]
@@ -391,7 +289,7 @@ class Battle(commands.Cog):
 
         # depois da batalha
         if monster[ctx.author.id].status['hp'] > 0:
-            if not xp_off[ctx.author.id]:
+            if not self.xp_off[ctx.author.id]:
                 await self.bot.data.add_xp(ctx, xp_reward[2])
             embed = discord.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
@@ -536,7 +434,8 @@ class Battle(commands.Cog):
             cc = data_user['rpg']["equipped_items"]['consumable']
             if cc in data_user['rpg']['items'].keys():
                 if (player[ctx.author.id].soulshot[1] - 1) < 1:
-                    query_user["$unset"] = {f"rpg.items.{cc}": ""}
+                    query_user["$unset"] = dict()
+                    query_user["$unset"][f"rpg.items.{cc}"] = ""
                     query_user["$set"]["rpg.equipped_items.consumable"] = None
                 else:
                     query_user["$set"][f"rpg.items.{cc}"] = player[ctx.author.id].soulshot[1] - 1

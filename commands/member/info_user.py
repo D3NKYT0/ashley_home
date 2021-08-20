@@ -28,6 +28,7 @@ class UserInfo(commands.Cog):
             database = "USUARIO NAO CADASTRADO"
 
         role = ",".join([r.mention for r in member.roles if r.name != "@everyone"])
+        role = "Você não tem cargos" if role is None else role
         """userjoinedat = str(member.joined_at).split('.', 1)[0]
         usercreatedat = str(member.created_at).split('.', 1)[0]"""
         userjoinedat = member.joined_at

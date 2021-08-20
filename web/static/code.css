@@ -1,0 +1,286 @@
+@font-face {
+    font-family: 'Bot';
+    src: url("/css/bot.otf") format("opentype");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+}
+
+::selection {
+    background-color: #8c1064;
+    color: #FFFFFF;
+}
+
+p, h1, h2 {
+    color: #FFFFFF;
+    font-family: 'Bot';
+    text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+}
+
+.container {
+    width: 100%;
+    max-width: 76%;
+    padding-left: 12%;
+    padding-right: 12%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.code-section {
+    width: 100%;
+    height: 108vh;
+    background-image: url('/image/code-background.jpg');
+}
+
+.code-fade {
+    height: 100%;
+    background-image: linear-gradient(to bottom, transparent 90vh, #252525 100%);
+}
+
+.code-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column wrap;
+    width: 100%;
+    height: 100vh;
+}
+
+.code-blessed {
+    width: 250px;
+    animation: pulse 3s infinite;
+}
+
+.code-box {
+    margin-top: 20px;
+    background-color: #401d72a9;
+    border: 2px solid #eccf0d;
+    border-radius: 5px;
+}
+
+.code-box-title {
+    padding: 4px 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #eccf0d;
+}
+
+.code-box-title>p {
+    text-align: center;
+    font-size: 27px;
+}
+
+.code-box-content {
+    padding: 26px 50px;
+}
+
+.code-box-content>p {
+    text-align: center;
+    font-size: 25px;
+}
+
+.copy-button {
+    margin-top: 15px;
+    padding: 7px 24px;
+    color: #FFFFFF;
+    font-size: 22px;
+    font-family: 'Bot';
+    text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+    border: 2px solid #000000;
+    border-radius: 7px;
+    transition-duration: 0.4s;
+}
+
+.copy-button:hover {
+    cursor: pointer;
+}
+
+.copy-button:not(.copied) {
+    background-color: #eccf0d;
+}
+
+.copy-button.copied {
+    background-color: #4e1b73;
+}
+
+.arrow-down {
+    position: absolute;
+    color: #eccf0d;
+    font-size: 45px;
+    bottom: 0;
+    animation: float 3s infinite;
+}
+
+.arrow-down:hover {
+    cursor: pointer;
+}
+
+
+.info-section {
+    width: 100%;
+    background-color: #252525;
+}
+
+.info-title {
+    display: flex;
+    justify-content: center;
+    padding-top: 22px;
+}
+
+.info-title>h1 {
+    font-size: 40px;
+    text-align: center;
+    background-color: #4e1b73d6;
+    padding: 6px 20px;
+    border: 2px solid black;
+    border-radius: 7px;
+}
+
+.infos {
+    display: flex;
+    align-items: center;
+    flex-flow: column wrap;
+    margin-top: 30px;
+}
+
+.infos>div {
+    width: 100%;
+    padding: 0 10px;
+}
+
+.info-box {
+    margin-top: 20px;
+    background-color: #401d72a9;
+    border: 2px solid #eccf0d;
+    border-radius: 5px;
+}
+
+.info-box-title {
+    padding: 4px 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #eccf0d;
+}
+
+.info-box-title>p {
+    text-align: center;
+    font-size: 27px;
+}
+
+.info-box-content {
+    padding: 18px 20px;
+}
+
+.info-box-content>p {
+    font-size: 25px;
+    font-weight: bolder;
+    font-family: Times;
+    text-shadow: none;
+}
+
+.info-box-content>p>span {
+    color: #ffe601;
+}
+
+.info-box-content>p>img {
+    display: inline-block;
+    width: 20px;
+}
+
+footer {
+    margin-top: 90px;
+    padding-bottom: 10px;
+}
+
+footer>hr {
+    display: block;
+    width: 45%;
+    margin: auto;
+    color: #ecce0de1;
+}
+
+footer>p {
+    margin-top: 5px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.copyright {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.links>a {
+    color: #ffe601;
+    text-decoration: none;
+    transition-duration: 0.3s;
+}
+
+.links>a:hover {
+    color: #ceb900;
+}
+
+@keyframes pulse {
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-20px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
+}
+
+@media screen and (max-width: 850px) {
+    .container {
+        max-width: 80%;
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .infos {
+        margin-top: 10px;
+    }
+
+    .info-title>h1 {
+        font-size: 30px;
+        padding: 0 0;
+        width: 90%;
+    }
+
+    .info-box-content {
+        padding: 10px 7px;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .code-box {
+        width: 90%
+    }
+
+    .code-box-content {
+        padding: 27px 0;
+    }
+
+    .code-box-content>p {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 325px) {
+    .code-box-content>p {
+        font-size: 100%;
+    }
+}

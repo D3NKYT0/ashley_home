@@ -197,6 +197,12 @@ class RpgStart(commands.Cog):
 
         data = await self.bot.db.get_data("user_id", member.id, "users")
         date_old = data['rpg']['activated_at']
+
+        if date_old is None:
+            msg = f'<:negate:721581573396496464>│{member} `USE O COMANDO` **ASH RPG** `ANTES!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         date_now = datetime.today()
         d1 = date_old.strftime("%d-%m-%Y")
         days = abs((date_old - date_now).days)

@@ -147,7 +147,7 @@ def quant_etherny(amount):
     return answer
 
 
-def embed_creator(description, img_url, monster, hp_max, hp, monster_img, lower_net, monster_name):
+def embed_creator(description, img_url, monster, hp_max, hp, monster_img, monster_name):
     global color_embed
     color = [0xff0000, 0xffcc00, 0x00cc00]
     if monster:

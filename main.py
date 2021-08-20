@@ -94,15 +94,17 @@ class Ashley(commands.AutoShardedBot):
         self.team = self.config['attribute']['team']
         self.shortcut = self.config['attribute']['shortcut']
         self.block = self.config['attribute']['block']
-        self.maintenance_msg = str(self.config['attribute']['maintenance']).format("05:00", "09:00")
+        self.maintenance_msg = self.config['attribute']['maintenance']
 
         # status
-        self.maintenance = False  # Default: False
+        self.maintenance = True  # Default: False
+        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
         self.is_ashley = False  # Default: False
         self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
         self.event_now = "NOVO_SERVIDOR"  # NOME DO EVENTO ATUAL
-        self.fastboot = True  # Default: True
-        self.db_struct = False  # Default: False
+        self.rate_drop = 4
+        self.fastboot = False  # Default: True
+        self.db_struct = True  # Default: False
 
         # inicio automatico do evento
         _DATE, _EVENT = date.localtime(), self.d_event
@@ -116,7 +118,7 @@ class Ashley(commands.AutoShardedBot):
         self.github = "https://github.com/D3NKYT0/ashley_home"
         self.progress = f"V.1 -> {_auth['version']}"
         self.python_version = platform.python_version()
-        self.version_str = f"1.0.0"
+        self.version_str = f"1.5.0"
         self.version = f"API: {discord.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes
@@ -145,7 +147,7 @@ class Ashley(commands.AutoShardedBot):
 
     # create link adfly
     def adlinks(self, code):
-        _link = self.adfly.shorten(f"https://ashley-webapi.herokuapp.com/{code}")
+        _link = self.adfly.shorten(f"https://ashley-new.herokuapp.com/adfly/{code}")
         return _link["data"][0]["id"], _link["data"][0]["short_url"]
 
     # delete link adfly
@@ -168,6 +170,8 @@ class Ashley(commands.AutoShardedBot):
         _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
         _ev_db = False if _event is None else True if _event["status"] else False
         self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
+        if self.event_special:
+            self.rate_drop = 8
         print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{TEXT}\033[1;32m com sucesso!\33[m')
         all_data = (await self.db.cd("guilds")).find({"vip": True}, {"_id": 0, "guild_id": 1})
         self.guilds_vips = [d["guild_id"] async for d in all_data]
@@ -346,7 +350,7 @@ class Ashley(commands.AutoShardedBot):
                 user_status, user_marry = data_user['security']['status'], data_user['user']['married']
 
                 # bau de evento
-                if randint(1, 200) - _ev <= 10 and user_status and self.event_special:
+                if randint(1, 200) - _ev <= self.rate_drop and user_status and self.event_special:
                     try:
                         del self.cmd_event[ctx.author.id]
                     except KeyError:
@@ -386,7 +390,7 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # presente
-                elif randint(1, 100) <= 10 and user_status and cmd not in self.block:
+                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
                     list_boxes = []
                     for k, v in self.boxes.items():
                         list_boxes += [k] * v
@@ -420,7 +424,7 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # figurinha
-                elif randint(1, 100) <= 10 and user_status and cmd not in self.block:
+                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
                     amount = randint(2, 5)
                     if ctx.guild.id not in self.sticker:
                         self.sticker[ctx.guild.id] = amount
@@ -446,7 +450,7 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # moon bag
-                elif randint(1, 100) <= 10 and user_status and cmd not in self.block:
+                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
                     amount = randint(1, 3)
                     if ctx.guild.id not in self.moon_bag:
                         self.moon_bag[ctx.guild.id] = amount
@@ -473,7 +477,7 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # bau de casamento
-                elif randint(1, 200) - _ma <= 10 and user_status and user_marry:
+                elif randint(1, 200) - _ma <= self.rate_drop and user_status and user_marry:
                     try:
                         del self.cmd_marry[ctx.author.id]
                     except KeyError:
@@ -817,12 +821,18 @@ class Ashley(commands.AutoShardedBot):
                 query_u = {"_id": 0, "user_id": 1, "security": 1}
                 data_user = await (await self.db.cd("users")).find_one({"user_id": message.author.id}, query_u)
                 if data_guild is not None:
-                    if data_guild['command_locked']['status']:
+
+                    # sistem do bloqueador de comandos
+                    if data_guild['command_locked']['status']:  # modo while_list
+                        # bloqueia todos os canais / liberando apenas os que estao na: while_list
                         if message.channel.id in data_guild['command_locked']['while_list']:
                             run_command = True
-                    else:
+
+                    else:  # modo black_list
+                        # libera todos os canais / bloqueando apenas os que estao na: black_list
                         if message.channel.id not in data_guild['command_locked']['black_list']:
                             run_command = True
+
                 else:
                     run_command = True
                     if message.guild.system_channel is not None and (self.msg_cont % 10) == 0:
@@ -831,8 +841,8 @@ class Ashley(commands.AutoShardedBot):
                                 color=self.color,
                                 description="<a:blue:525032762256785409>│`SEU SERVIDOR AINDA NAO ESTA CADASTRADO USE`"
                                             " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
-                                            "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO COM "
-                                            "MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord.gg/rYT6QrM)")
+                                            "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO "
+                                            "COM MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord.gg/rYT6QrM)")
                             try:
                                 await message.guild.system_channel.send(embed=embed)
                             except discord.Forbidden:
@@ -843,7 +853,8 @@ class Ashley(commands.AutoShardedBot):
                                         await message.channel.send(embed=embed)
                                 except discord.Forbidden:
                                     pass
-                if str(ctx.command) in ['channel', 'daily']:
+
+                if str(ctx.command) in ['channel']:  # exceção dos comandos
                     run_command = True
 
                 if run_command:
@@ -859,12 +870,13 @@ class Ashley(commands.AutoShardedBot):
                                 if str(ctx.command) == "captcha":
                                     await self.process_commands(msg)
                                 else:
-                                    await message.channel.send('<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA SERIE'
-                                                               ' DE 5 STRIKES E POR ISSO FOI BANIDO TEMPORARIAMENTE DA '
-                                                               'ASHLEY POR SUSPEITA DE USAR MACRO, PARA VOLTAR A USAR A '
-                                                               'ASHLEY NORMALMENTE VOCÊ VAI PRECISAR FAZER UM TESTE E '
-                                                               'PROVAR QUE NAO É UM ROBÔ, USANDO O COMANDO:` '
-                                                               '**ASH CAPTCHA** <a:red:525032764211200002>')
+                                    await message.channel.send('<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA '
+                                                               'SERIE DE 5 STRIKES E POR ISSO FOI BANIDO '
+                                                               'TEMPORARIAMENTE DA ASHLEY POR SUSPEITA DE USAR MACRO,'
+                                                               ' PARA VOLTAR A USAR A ASHLEY NORMALMENTE VOCÊ VAI '
+                                                               'PRECISAR FAZER UM TESTE E PROVAR QUE NAO É UM ROBÔ,'
+                                                               ' USANDO O COMANDO:` **ASH CAPTCHA** '
+                                                               '<a:red:525032764211200002>')
                     else:
                         if ctx.command is not None:
                             await message.channel.send("<:negate:721581573396496464>|`AINDA ESTOU SENDO INICIADA, "
