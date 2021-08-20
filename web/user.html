@@ -9,7 +9,7 @@
   <meta property="og:url" content="https://farmgirl-pro.herokuapp.com/user/{{ id }}">
   <meta property="og:title" content="Ashley API">
   <meta property="og:description" content="A api da Ashley que mostra todos os dados do usuário.">
-  <meta property="og:image" content="/image/back.jpg">
+  <meta property="og:image" content="/image/ashley.png">
 </head>
 <body>
 	<div class="dev">
@@ -26,7 +26,11 @@
               </div>
               <div class="data">
                 <div class="level">Level {{ level }}</div>
-                <div class="class">{{ class }}</div>
+                {% if levelcl %}
+                  <div class="class">{{ class }}: Level {{ levelcl }} / 80</div>
+                {% else %}
+                  <div class="class">{{ class }}</div>
+                {% endif %}
                 <div class="aboutme">{{ about }}</div>
                 <hr>
                 <div class="Tabs">

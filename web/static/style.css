@@ -1,7 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700;800&display=swap");
 
+@font-face {
+    font-family: 'Bot';
+    src: url("/css/bot.otf") format("opentype");
+}
+
 body {
-  display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
@@ -12,6 +16,10 @@ body {
   background: #232427;
   zoom: 90%;
   min-height: 100vh;
+}
+
+p {
+  font-family: "Bot";
 }
 
 body .container {
@@ -146,6 +154,15 @@ body::-webkit-scrollbar-thumb {
     border-radius: 15px;
 }
 
+.cardd {
+  background-color: rgb(36,36,33);
+  width: 250px;
+  height: 300px;
+  border-radius: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 .adjust .rounded-circle {
     border-radius: 70px;
@@ -234,21 +251,38 @@ body::-webkit-scrollbar-thumb {
     margin-left: 150px;
 }
 
-.footer { 
-  padding: 5px;
-  color: #fff;
-  position: relative;
-  width: 100%;
-  display: flex;
-  margin-top: 155px;
-  justify-content: center;
-  align-items: center;  height: 20px;
-  text-align: center;
-  background: #141414;
+footer {
+    color: #FFFFFF;
+    font-family: 'Bot';
+    text-shadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
+    margin-top: 100px;
+    padding-bottom: 10px;
 }
 
-.textf {
-  position: absolute;
-  font-weight: 600;
-  text-align: center;
+footer>hr {
+    display: block;
+    width: 45%;
+    margin: auto;
+    color: #ecce0de1;
+}
+
+footer>p {
+    margin-top: 5px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.copyright {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.links>a {
+    color: #ffe601;
+    text-decoration: none;
+    transition-duration: 0.3s;
+}
+
+.links>a:hover {
+    color: #ceb900;
 }

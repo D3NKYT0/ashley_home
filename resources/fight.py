@@ -701,7 +701,7 @@ class Entity(object):
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
                 entity.soulshot[1] -= 1
-                _soulshot = CLS[entity.db['class_now']]['soulshot']
+                _soulshot = CLS[entity.data['class_now']]['soulshot']
                 bda = int(damage / 100 * _soulshot) if int(damage / 100 * _soulshot) < 100 else 99
                 if skull:
                     bda = 0

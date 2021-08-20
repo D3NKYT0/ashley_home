@@ -17,7 +17,6 @@ from resources.color import random_color
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
 
-
 BOT = Client()
 ROUTES = list()
 DB = Database(None)
@@ -34,7 +33,6 @@ def html_response(html_patch):
 async def index(request):
     if request:
         return html_response('web/index.html')
-
 
 def number_convert(number):
     a = '{:,.0f}'.format(float(number))
@@ -56,7 +54,6 @@ async def get_guild(request):
         return web.Response(status=200, text=f"{JSON_DATA}")
     return web.Response(status=401, text="SERVIDOR/GUILD INEXISTENTE")
 
-
 @aiohttp_jinja2.template('user.html')
 async def get_user(request):
     print(await request.text())
@@ -73,6 +70,7 @@ async def get_user(request):
         NAMES, LEVELS = list(), list()
         ABOUT = DATA["user"]["about"] if DATA["user"]["about"] != ABOUT_DEFAULT else "Nenhum About me"
         CLASS = DATA["rpg"]["class_now"] if DATA["rpg"]["class_now"] else "Nenhuma Classe"
+        LEVELCLASS = DATA["rpg"]["sub_class"][CLASS]["level"] if CLASS != "Nenhuma Classe" else None
         if DATA["rpg"]["class_now"]:
             for k in DATA["rpg"]["sub_class"]:
                 if k.lower() != DATA["rpg"]["class_now"].lower():
@@ -91,6 +89,7 @@ async def get_user(request):
                 'descri': DESC,
                 'img': AVATAR,
                 'class': CLASS,
+                'levelcl': LEVELCLASS,
                 'about': ABOUT,
                 'level': DATA["user"]["level"],
                 'data_geral': DATA_GERAL,
@@ -99,7 +98,6 @@ async def get_user(request):
                 }
         return data
     return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
-
 
 async def get_userapi(request):
     try:
@@ -112,6 +110,7 @@ async def get_userapi(request):
         JSON_DATA = dumps(DATA, indent=4)
         return web.Response(status=200, text=f"{JSON_DATA}", content_type="application/json")
     return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
+
 
 
 async def top_gg(request):
@@ -134,12 +133,9 @@ async def top_gg(request):
         return web.Response(status=200, text="WEBHOOK ENVIADO COM SUCESSO!")
     return web.Response(status=401, text="Authorization failed")
 
-
 @aiohttp_jinja2.template('code.html')
 async def adfly(request):
-    if request:
-        return {'code': 'Use o comando "ash adfly"'}
-
+    return {'code': 'Use o comando "ash adfly"'}
 
 @aiohttp_jinja2.template('code.html')
 async def adflycode(request):
@@ -176,3 +172,4 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.ERROR)
     web_logger = logging.getLogger("aiohttp.web")
     web.run_app(make_app(), port=int(os.environ["PORT"]), access_log=web_logger)
+
