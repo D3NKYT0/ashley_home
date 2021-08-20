@@ -94,17 +94,21 @@ class Ashley(commands.AutoShardedBot):
         self.team = self.config['attribute']['team']
         self.shortcut = self.config['attribute']['shortcut']
         self.block = self.config['attribute']['block']
+
+        # definição do inicio e o fim da manutenção
         self.maintenance_msg = self.config['attribute']['maintenance']
+        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
+        self.maintenance_msg.replace("maintenance_ini", self.maintenance_ini_end[0])
+        self.maintenance_msg.replace("maintenance_end", self.maintenance_ini_end[1])
 
         # status
         self.maintenance = True  # Default: False
-        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
         self.is_ashley = False  # Default: False
         self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "NOVO_SERVIDOR"  # NOME DO EVENTO ATUAL
+        self.event_now = "AGUARDANDO NOVO EVENTO..."  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
-        self.fastboot = False  # Default: True
-        self.db_struct = True  # Default: False
+        self.fastboot = True  # Default: True
+        self.db_struct = False  # Default: False
 
         # inicio automatico do evento
         _DATE, _EVENT = date.localtime(), self.d_event

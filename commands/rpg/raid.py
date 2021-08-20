@@ -378,6 +378,14 @@ class Raid(commands.Cog):
 
             data_xp = calc_xp(self.db_player[ctx.author.id]['xp'], self.db_player[ctx.author.id]['level'])
 
+            # bonus de XP durante evento!
+            if self.bot.event_special and perc < 10:
+                perc = 10
+
+            # bonus de XP por estar em provincia
+            if data['config']['provinces'] is not None:
+                perc += 10
+
             if self.db_player[ctx.author.id]['xp'] < 32:
                 xpm = data_xp[2]
                 xpr = xpm
