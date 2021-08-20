@@ -103,7 +103,7 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.maintenance = True  # Default: False
-        self.is_ashley = False  # Default: False
+        self.is_ashley = True  # Default: False
         self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
         self.event_now = "AGUARDANDO NOVO EVENTO..."  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
@@ -175,7 +175,7 @@ class Ashley(commands.AutoShardedBot):
         _ev_db = False if _event is None else True if _event["status"] else False
         self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
         if self.event_special:
-            self.rate_drop = 8
+            self.rate_drop = self.rate_drop * 2
         print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{TEXT}\033[1;32m com sucesso!\33[m')
         all_data = (await self.db.cd("guilds")).find({"vip": True}, {"_id": 0, "guild_id": 1})
         self.guilds_vips = [d["guild_id"] async for d in all_data]
