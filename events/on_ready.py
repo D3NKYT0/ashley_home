@@ -458,7 +458,8 @@ class OnReady(commands.Cog):
                                    f"Total de Hits: {self.bot.boss_players[user.id]['hit']}\n" \
                                    f"Total de Critical: {self.bot.boss_players[user.id]['crit']}\n" \
                                    f"Total de Effects: {self.bot.boss_players[user.id]['eff']}\n" \
-                                   f"Total de Damage: {self.bot.boss_players[user.id]['dano']}```"
+                                   f"Damage Recebido: {self.bot.boss_players[user.id]['dano']}\n" \
+                                   f"Damage no Boss: {self.bot.boss_players[user.id]['dano_boss']}```"
                             embed = discord.Embed(color=self.bot.color, title=_tt, description=desc)
                             title_1 = "**Loot Aleatorio**"
                             if len(loot_random) == 0:

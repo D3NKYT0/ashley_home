@@ -811,6 +811,7 @@ class Entity(object):
                 _score -= ctx.bot.boss_players[entity.data["_id"]]["dano"] // 1000 * 25
 
                 ctx.bot.boss_players[entity.data["_id"]]["score"] = _score
+                ctx.bot.boss_players[entity.data["_id"]]["dano_boss"] += dn
 
             if "_id" in self.data.keys():
                 if self.data["_id"] in ctx.bot.boss_players.keys() and ctx.bot.boss_live:

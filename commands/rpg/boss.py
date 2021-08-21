@@ -71,7 +71,8 @@ class BossSystem(commands.Cog):
         self.bot.batalhando.append(ctx.author.id)
 
         if ctx.author.id not in self.bot.boss_players.keys():
-            self.bot.boss_players[ctx.author.id] = {"hpt": 0, "hit": 0, "crit": 0, "score": 0, "dano": 0, "eff": 0}
+            data_boss = {"hpt": 0, "hit": 0, "crit": 0, "score": 0, "dano": 0, "eff": 0, "dano_boss": 0}
+            self.bot.boss_players[ctx.author.id] = data_boss
 
         await self.bot.db.update_data(data, update, 'users')
 
