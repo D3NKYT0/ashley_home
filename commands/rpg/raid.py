@@ -436,70 +436,69 @@ class Raid(commands.Cog):
                              icon_url=f"{self.db_monster[ctx.author.id]['img']}")
             await ctx.send(embed=embed)
 
-            if change < 75:
+            if data['rpg']['vip']:
+                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(8)]
+            else:
+                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(4)]
+
+            raid_reward = ["soul_crystal_of_love", "soul_crystal_of_hope", "soul_crystal_of_hate",
+                           "fused_diamond", "fused_ruby", "fused_sapphire", "fused_emerald", "unsealed_stone",
+                           "melted_artifact", "transcendental_stone", "transcendental_flower", "transmogrifador",
+                           "angel_stone", "angel_wing", "frozen_letter", "blessed_enchant_skill",
+                           "enchant_hero", "enchant_violet", "enchant_inspiron", "enchant_mystic",
+                           "enchant_silver", "armor_hero", "armor_violet", "armor_inspiron", "armor_mystic",
+                           "armor_silver"]
+
+            msg = "\n"
+
+            if raid_rank[ctx.author.id] >= 5:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **5** `monstros`\n"
+
+            if raid_rank[ctx.author.id] >= 10:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **10** `monstros`\n"
+
+            if raid_rank[ctx.author.id] >= 15:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **15** `monstros`\n"
+
+            if raid_rank[ctx.author.id] >= 20:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **20** `monstros`\n"
+
+            if raid_rank[ctx.author.id] >= 25:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **25** `monstros`\n"
+
+            if raid_rank[ctx.author.id] >= 30:
+                reward.append(choice(raid_reward))
+                msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **30** `monstros`\n"
+
+            if self.db_player[ctx.author.id]['level'] > 25:
+                bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
+                         'stone_crystal_blue', 'stone_crystal_yellow']
+
                 if data['rpg']['vip']:
-                    reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(8)]
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
+                    reward[2] = choice(bonus)
+                    reward[3] = choice(bonus)
+
                 else:
-                    reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(4)]
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
 
-                raid_reward = ["soul_crystal_of_love", "soul_crystal_of_hope", "soul_crystal_of_hate",
-                               "fused_diamond", "fused_ruby", "fused_sapphire", "fused_emerald", "unsealed_stone",
-                               "melted_artifact", "transcendental_stone", "transcendental_flower", "transmogrifador",
-                               "angel_stone", "angel_wing", "frozen_letter", "blessed_enchant_skill",
-                               "enchant_hero", "enchant_violet", "enchant_inspiron", "enchant_mystic",
-                               "enchant_silver", "armor_hero", "armor_violet", "armor_inspiron", "armor_mystic",
-                               "armor_silver"]
+            if change < 50:
+                if data['rpg']['vip']:
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                else:
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-                msg = "\n"
-
-                if raid_rank[ctx.author.id] >= 5:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **5** `monstros`\n"
-
-                if raid_rank[ctx.author.id] >= 10:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **10** `monstros`\n"
-
-                if raid_rank[ctx.author.id] >= 15:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **15** `monstros`\n"
-
-                if raid_rank[ctx.author.id] >= 20:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **20** `monstros`\n"
-
-                if raid_rank[ctx.author.id] >= 25:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **25** `monstros`\n"
-
-                if raid_rank[ctx.author.id] >= 30:
-                    reward.append(choice(raid_reward))
-                    msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **30** `monstros`\n"
-
-                if self.db_player[ctx.author.id]['level'] > 25:
-                    bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
-                             'stone_crystal_blue', 'stone_crystal_yellow']
-
-                    if data['rpg']['vip']:
-                        reward[0] = choice(bonus)
-                        reward[1] = choice(bonus)
-                        reward[2] = choice(bonus)
-                        reward[3] = choice(bonus)
-
-                    else:
-                        reward[0] = choice(bonus)
-                        reward[1] = choice(bonus)
-
-                if change < 50:
-                    if data['rpg']['vip']:
-                        reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
-                        reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
-                    else:
-                        reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
-
-                response = await self.bot.db.add_reward(ctx, reward, True)
-                await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                               f'{response}\n{msg}')
+            response = await self.bot.db.add_reward(ctx, reward, True)
+            await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
+                           f'{response}\n{msg}')
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -579,11 +578,11 @@ class Raid(commands.Cog):
 
         if raid_rank[ctx.author.id] >= 10:
             try:
-                update['inventory']['boss_key'] += 1
+                update['inventory']['frozen_letter'] += 1
             except KeyError:
-                update['inventory']['boss_key'] = 1
+                update['inventory']['frozen_letter'] = 1
             await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` **10+** `monstros,"
-                           f" voce dropou` ✨ <:bosskey:766048658470600714> ✨ `1` **Boss Key** "
+                           f" voce dropou` ✨ <:bosskey:766048658470600714> ✨ `1` **Frozen Letter** "
                            f"`adicionando ao seu inventario o item com sucesso...`")
 
         if ctx.author.id in self.bot.batalhando:

@@ -1,4 +1,5 @@
 import discord
+import copy
 
 from discord.ext import commands
 from resources.check import check_it
@@ -603,7 +604,7 @@ class OpenClass(commands.Cog):
         await sleep(seconds * amount)
         await msg.delete()
 
-        db_player = extension.set_player(ctx.author, data)
+        db_player = extension.set_player(ctx.author, copy.deepcopy(data))
         data_xp = calc_xp(db_player['xp'], db_player['level'])
         ini, end = (1 * amount) + db_player["intelligence"], (5 * amount) + db_player["intelligence"]
         perc = randint(1, end)
@@ -620,9 +621,9 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
-        _class = data["rpg"]["class_now"]
-        _db_class = data["rpg"]["sub_class"][_class]
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        _class = data_user["rpg"]["class_now"]
+        _db_class = data_user["rpg"]["sub_class"][_class]
         percent = calc_xp(int(_db_class['xp']), int(_db_class['level']))  # XP / LEVEL
         if _db_class['xp'] < 32:
             new_xp = f"{_db_class['xp']} / {percent[2]} | {percent[0] * 2} / 100%"
