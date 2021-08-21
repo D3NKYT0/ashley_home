@@ -15,36 +15,6 @@ class LoverClass(commands.Cog):
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='lower_net', aliases=['ln'])
-    async def lower_net(self, ctx):
-        """Comando para ativar/desativar imagens e gifs do battle."""
-        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
-        update = data
-
-        if ctx.author.id in self.bot.jogando:
-            return await ctx.send("<:alert:739251822920728708>│`Você está jogando, aguarde para quando"
-                                  " vocÊ estiver livre!`")
-
-        if not data['rpg']['active']:
-            embed = discord.Embed(
-                color=self.bot.color,
-                description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
-            return await ctx.send(embed=embed)
-
-        if ctx.author.id in self.bot.batalhando:
-            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
-        update['rpg']['lower_net'] = not update['rpg']['lower_net']
-        await self.bot.db.update_data(data, update, "users")
-        msg = "ATIVADO" if not update['rpg']['lower_net'] else "DESATIVADO"
-        emo = "<:confirmed:721581574461587496>" if not update['rpg']['lower_net'] else "<:negate:721581573396496464>"
-        await ctx.send(f"{emo}│`O MODO DE IMAGEM FOI {msg}!`")
-
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='lover', aliases=['al'])
     async def lover(self, ctx):
@@ -144,6 +114,12 @@ class LoverClass(commands.Cog):
             energy = True
 
         try:
+            time_diff = (dt.utcnow() - epoch).total_seconds() - data["cooldown"]["daily vip"]
+            vip = True if time_diff > 86400 else False
+        except KeyError:
+            vip = True
+
+        try:
             time_diff = (dt.utcnow() - epoch).total_seconds() - data["cooldown"]["guild reward"]
             reward = True if time_diff > 3600 else False
         except KeyError:
@@ -208,7 +184,11 @@ class LoverClass(commands.Cog):
         a3 = ctx.author.id in self.bot.batalhando
         a4 = ctx.author.id in self.bot.comprando
         a5 = ctx.author.id in self.bot.minerando
-        a6 = data['config']['provinces']
+        a6 = ctx.author.id in self.bot.desafiado
+        a7 = ctx.author.id in self.bot.lendo
+        a8 = data['config']['provinces']
+
+        vip_msg = f"{'🟢' if vip else '🔴'} `Energy` Se tiver verde está disponivel pra usar.\n"
 
         embed = discord.Embed(color=self.bot.color)
 
@@ -218,13 +198,16 @@ class LoverClass(commands.Cog):
                               f"{'🟢' if a3 else '🔴'} `Batalhando` Se for verde esta ativado.\n"
                               f"{'🟢' if a4 else '🔴'} `Comprando` Se for verde esta ativado.\n"
                               f"{'🟢' if a5 else '🔴'} `Minerando` Se for verde esta ativado.\n"
-                              f"{'🟢' if a6 is not None else '🔴'} `Provincia` Se for verde esta ativado.")
+                              f"{'🟢' if a6 else '🔴'} `Sendo Desafiado` Se for verde esta ativado.\n"
+                              f"{'🟢' if a7 else '🔴'} `Lendo` Se for verde esta ativado.\n"
+                              f"{'🟢' if a8 is not None else '🔴'} `Provincia` Se for verde esta ativado.")
 
         embed.add_field(name="-== COMANDOS DIARIOS ==-", inline=False,
                         value=f"{'🟢' if coin else '🔴'} `Coin` Se tiver verde está disponivel pra usar.\n"
                               f"{'🟢' if work else '🔴'} `Work` Se tiver verde está disponivel pra usar.\n"
                               f"{'🟢' if rec else '🔴'} `Rec` Se tiver verde está disponivel pra usar.\n"
                               f"{'🟢' if energy else '🔴'} `Energy` Se tiver verde está disponivel pra usar.\n"
+                              f"{vip_msg if data['config']['vip'] else ''}"
                               f"{'🟢' if reward else '🔴'} `Reward` Se tiver verde está disponivel pra usar.")
 
         embed.add_field(name="--== COMANDOS USADOS ==--", inline=False,

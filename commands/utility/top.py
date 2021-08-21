@@ -34,7 +34,7 @@ class TopClass(commands.Cog):
                                 f"{self.st[67]} `top command` Top 20 dos usuarios com mais COMANDOS.\n"
                                 f"{self.st[67]} `top point` Top 20 dos usuarios com mais PONTOS.\n"
                                 f"{self.st[67]} `top rpg` Top 20 dos usuarios com maiores LEVEIS do RPG.\n"
-                                f"{self.st[67]} `top raid` Top 20 dos usuarios com maiores RAIDS do RPG.\n"
+                                f"{self.st[67]} `top wave` Top 20 dos usuarios com maiores RAIDS do RPG.\n"
                                 f"{self.st[67]} `top fragment` Top 20 dos usuarios com mais FRAGMENTOS.\n"
                                 f"{self.st[67]} `top blessed` Top 20 dos usuarios com mais BLESSEDS.\n"
                                 f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.")
@@ -153,14 +153,14 @@ class TopClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @top.group(name='raid')
-    async def _raid(self, ctx):
+    @top.group(name='wave')
+    async def _wave(self, ctx):
         """Comando usado pra retornar o top 20 em questão das RAIDS
         Use ash top raid"""
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")
         top = await self.bot.data.get_rank_raid(20, ctx)
-        await ctx.send(f'<:rank:519896825411665930>|**TOP RAID**```py\n{top}```')
+        await ctx.send(f'<:rank:519896825411665930>|**TOP WAVE**```py\n{top}```')
         await msg.delete()
 
     @check_it(no_pm=True)
