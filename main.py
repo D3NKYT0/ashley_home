@@ -96,12 +96,16 @@ class Ashley(commands.AutoShardedBot):
         self.block = self.config['attribute']['block']
 
         # definição do inicio e o fim da manutenção
-        maintenance_msg = str(self.config['attribute']['maintenance'])
-        maintenance_msg_2 = str(maintenance_msg.replace("maintenance_ini", "19:00"))  # inicio da manutenção
-        self.maintenance_msg = str(maintenance_msg_2.replace("maintenance_end", "22:00"))  # fim da manutenção
+        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
+        msg_main = f"<a:xablau:525105065460105226>│`DESCULPE ESTOU EM MANUTENÇÃO. MAS DENTRO DE ALGUMAS HORAS " \
+                   f"TUDO ESTARÁ NORMALIZADO. MANUTENÇÃO INICOU HOJE AS ({self.maintenance_ini_end[0]}) PREVISAO" \
+                   f" DE TERMINO ({self.maintenance_ini_end[1]}) [+1h-1h] PODENDO DURAR UM POUCO MENOS OU MAIS`" \
+                   f"\n**OBS:** `ATUALMENTE APENAS PESSOAS AUTORIZADAS PODEM USAR OS RECURSOS DA ASHLEY, MAS " \
+                   f"LOGO TUDO ESTARÁ NORMALIZADO. A EQUIPE DA` **ASHLEY** `SENTE MUITO POR ESSE TRANSTORNO!`",
+        self.maintenance = True  # Default: False
+        self.maintenance_msg = msg_main
 
         # status
-        self.maintenance = True  # Default: False
         self.is_ashley = True  # Default: False
         self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
         self.event_now = "AGUARDANDO NOVO EVENTO..."  # NOME DO EVENTO ATUAL
@@ -807,7 +811,7 @@ class Ashley(commands.AutoShardedBot):
                     return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
                 if message.author.id not in self.testers and self.maintenance:
-                    msg = self.config['attribute']['maintenance']
+                    msg = self.maintenance_msg
                     embed = discord.Embed(color=self.color, description=msg)
                     return await message.channel.send(embed=embed)
 

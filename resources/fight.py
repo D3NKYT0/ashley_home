@@ -82,12 +82,11 @@ class Entity(object):
                 if self.data['enemy']['level'] > 25:
                     # drobra o rate (multiplicador do hp e mana)
                     self.rate = [(12 + self.data['level'] // 10), (12 + self.data['level'] // 10)]
-
             self.skills = self.data['atacks']
-            self.status['hp'] = self.status['con'] * self.rate[0]
-            self.status['mp'] = self.status['con'] * self.rate[1]
             self.level_skill = [0]
             self.cc = [self.data['cc'], "monster"]  # critical e classe
+            self.tot_hp, self.tot_mp = self.status['con'] * self.rate[0], self.status['con'] * self.rate[1]
+            self.status['hp'], self.status['mp'] = self.tot_hp, self.tot_mp
 
     async def verify_equips(self, ctx):
         for value in self.data["equipped_items"].values():
@@ -680,7 +679,7 @@ class Entity(object):
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
         skull, drain, bluff, hit_kill = self.verify_effect(effects)
-        lvs = lvl_skill[int(skill['skill']) - 1] if test else lvl_skill
+        lvs = lvl_skill[int(skill['skill']) - 1] if test else lvl_skill[0]
         self.ls = lvs if 0 <= lvs <= 9 else 9
         confusion, act_eff, _soulshot, bda, reflect = False, True, 0, 0, False
 

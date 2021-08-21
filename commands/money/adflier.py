@@ -131,7 +131,8 @@ class Adflier(commands.Cog):
             else:
                 _code1, _code2 = generate_gift()
                 code = encrypt_text(_code1)
-                link = self.bot.adlinks(code[0])
+                codelink = code[0].replace("/", "denky")
+                link = self.bot.adlinks(codelink)
                 _update['code'] = [code[0], _code2]
                 _update['adlink'] = [link[0], link[1]]
                 _update['bonus'] = _bonus
@@ -152,7 +153,8 @@ class Adflier(commands.Cog):
         else:
             _code1, _code2 = generate_gift()
             code = encrypt_text(_code1)
-            link = self.bot.adlinks(code[0])
+            codelink = code[0].replace("/", "denky")
+            link = self.bot.adlinks(codelink)
             await register_code(self.bot, ctx.author.id, code[0], _code2, link[0], link[1], _bonus, code[1], code[2])
 
             text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'

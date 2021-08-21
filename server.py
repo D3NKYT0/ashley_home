@@ -1,7 +1,6 @@
 import os
 import json
 import jinja2
-import logging
 import aiohttp_jinja2
 
 from resources.crypto import decrypt_text
@@ -34,6 +33,7 @@ async def index(request):
     if request:
         return html_response('web/index.html')
 
+
 def number_convert(number):
     a = '{:,.0f}'.format(float(number))
     b = a.replace(',', 'v')
@@ -53,6 +53,7 @@ async def get_guild(request):
         JSON_DATA = dumps(DATA)
         return web.Response(status=200, text=f"{JSON_DATA}")
     return web.Response(status=401, text="SERVIDOR/GUILD INEXISTENTE")
+
 
 @aiohttp_jinja2.template('user.html')
 async def get_user(request):
@@ -99,6 +100,7 @@ async def get_user(request):
         return data
     return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
 
+
 async def get_userapi(request):
     try:
         _ID = int(request.match_info['user_id'])
@@ -110,7 +112,6 @@ async def get_userapi(request):
         JSON_DATA = dumps(DATA, indent=4)
         return web.Response(status=200, text=f"{JSON_DATA}", content_type="application/json")
     return web.Response(status=401, text="USUARIO/MEMBER INEXISTENTE")
-
 
 
 async def top_gg(request):
@@ -133,16 +134,21 @@ async def top_gg(request):
         return web.Response(status=200, text="WEBHOOK ENVIADO COM SUCESSO!")
     return web.Response(status=401, text="Authorization failed")
 
+
 @aiohttp_jinja2.template('code.html')
 async def adfly(request):
     return {'code': 'Use o comando "ash adfly"'}
 
+
 @aiohttp_jinja2.template('code.html')
 async def adflycode(request):
     CL = await DB.cd("adfly")
-    DATA = await CL.find_one({"code": request.match_info["code"]})
+    code = request.match_info["code"].replace("denky", "/")
+    DATA = await CL.find_one({"code": code})
+    if DATA is None:
+        return {'code': 'Use o comando "ash adfly"'}
     KEY, IV = DATA["key"], DATA["iv"]
-    code = decrypt_text(request.match_info["code"], IV, KEY)
+    code = decrypt_text(code, IV, KEY)
     return {'code': code}
 
 
@@ -169,7 +175,4 @@ async def make_app():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.ERROR)
-    web_logger = logging.getLogger("aiohttp.web")
-    web.run_app(make_app(), port=int(os.environ["PORT"]), access_log=web_logger)
-
+    web.run_app(make_app(), port=int(os.environ["PORT"]))

@@ -107,6 +107,8 @@ class Raid(commands.Cog):
 
         # configuração do player
         self.db_player[ctx.author.id] = extension.set_player(ctx.author, data)
+        # adição de uma chave especial para o modo de wave especial
+        self.db_player[ctx.author.id]["ESPECIAL"] = _ESPECIAL
 
         if ctx.author.id in p_raid.keys():
             del p_raid[ctx.author.id]
@@ -233,8 +235,8 @@ class Raid(commands.Cog):
                 p_raid[ctx.author.id] = await m_raid[ctx.author.id].damage(ctx, p_raid[ctx.author.id], skill)
             else:
 
-                if p_raid[ctx.author.id][1]:
-                    p_raid[ctx.author.id][0] += 1
+                if p_raid[ctx.author.id].evasion[1]:
+                    p_raid[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{m_raid[ctx.author.id].name.upper()} EVADIU`",
@@ -351,8 +353,8 @@ class Raid(commands.Cog):
                 m_raid[ctx.author.id] = await p_raid[ctx.author.id].damage(ctx, m_raid[ctx.author.id], skill)
             else:
 
-                if m_raid[ctx.author.id][1]:
-                    m_raid[ctx.author.id][0] += 1
+                if m_raid[ctx.author.id].evasion[1]:
+                    m_raid[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
