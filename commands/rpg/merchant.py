@@ -24,7 +24,7 @@ class MerchantClass(commands.Cog):
         if len(data) == 0:
             return await ctx.send(f"<:negate:721581573396496464>|`NÃO HA LOJAS CADASTRADAS NO MERCADO, "
                                   f"PARA CRIAR UMA LOJA USE O COMANDO:`\n"
-                                  f"**ash merchant add <valor_da_und> <quantidade> <nome_do_item>**")
+                                  f"**ash merc add <valor_da_und> <quantidade> <nome_do_item>**")
 
         embed = ['Mercado de Itens/Equipamentos:', self.bot.color, 'Lojas: \n']
         equips_list = list()
@@ -71,8 +71,8 @@ class MerchantClass(commands.Cog):
             for key in data:
                 if key['owner'] == ctx.author.id:
                     count += 1
-        TOT = _MAX_VIP if data_user['config']['vip'] else _MAX
-        if count > TOT:
+        _TOT = _MAX_VIP if data_user['config']['vip'] else _MAX
+        if count > _TOT:
             return await ctx.send("<:alert:739251822920728708>│`Você atingiu a quantidade maxima de lojas disponiveis"
                                   " por usuario, voce pode esperar as lojas esvaziarem por compras ou pode "
                                   "editar/remover a loja do mercado.`")
@@ -174,7 +174,7 @@ class MerchantClass(commands.Cog):
         if len(data) == 0:
             return await ctx.send(f"<:negate:721581573396496464>|`NÃO HA LOJAS CADASTRADAS NO MERCADO, "
                                   f"PARA CRIAR UMA LOJA USE O COMANDO:`\n"
-                                  f"**ash merchant add <valor_da_und> <quantidade> <nome_do_item>**")
+                                  f"**ash merc add <valor_da_und> <quantidade> <nome_do_item>**")
 
         embed = ['Mercado de Itens/Equipamentos:', self.bot.color, 'Minhas Lojas: \n']
         equips_list = list()
@@ -191,7 +191,7 @@ class MerchantClass(commands.Cog):
         if len(lojas) == 0:
             return await ctx.send(f"<:negate:721581573396496464>|`VOCE NÃO TEM LOJAS CADASTRADAS NO MERCADO, "
                                   f"PARA CRIAR UMA LOJA USE O COMANDO:`\n"
-                                  f"**ash merchant add <valor_da_und> <quantidade> <nome_do_item>**")
+                                  f"**ash merc add <valor_da_und> <quantidade> <nome_do_item>**")
 
         num = page - 1 if page > 0 else None
         await paginator(self.bot, equips_list, lojas, embed, ctx, num)
