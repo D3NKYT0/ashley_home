@@ -9,6 +9,11 @@ from resources.img_edit import gift as gt
 from resources.utility import convert_item_name
 from resources.moon import get_moon
 
+from asyncio import sleep
+from resources.fight import Ext
+from resources.img_edit import calc_xp
+extension = Ext()
+
 
 class OpenClass(commands.Cog):
     def __init__(self, bot):
@@ -565,6 +570,67 @@ class OpenClass(commands.Cog):
             response = await self.bot.db.add_reward(ctx, reward['relic'], True)
             await ctx.send(f'<a:caralho:525105064873033764>│`VOCÊ TAMBEM GANHOU` ✨ **O ITEM SECRETO** ✨ '
                            f'{response}')
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='frozen', aliases=['carta', 'letter'])
+    async def frozen(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`Lendo...` **{seconds * amount} segundos...**"
+        embed = discord.Embed(color=self.bot.color, description=text)
+        msg = await ctx.send(embed=embed)
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        db_player = extension.set_player(ctx.author, data)
+        data_xp = calc_xp(db_player['xp'], db_player['level'])
+        ini, end = (1 * amount) + db_player["intelligence"], (5 * amount) + db_player["intelligence"]
+        perc = randint(1, end)
+        xpm = data_xp[1] - data_xp[2]
+        xpr = int(xpm / 100 * perc)
+
+        update["rpg"]["intelligence"] += 1
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+        await self.bot.db.update_data(data, update, 'users')
+        await self.bot.data.add_xp(ctx, xpr)
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        _class = data["rpg"]["class_now"]
+        _db_class = data["rpg"]["sub_class"][_class]
+        percent = calc_xp(int(_db_class['xp']), int(_db_class['level']))  # XP / LEVEL
+        if _db_class['xp'] < 32:
+            new_xp = f"{_db_class['xp']} / {percent[2]} | {percent[0] * 2} / 100%"
+        else:
+            new_xp = f"{_db_class['xp'] - percent[2]} / {percent[1] - percent[2]} | {percent[0] * 2} / 100%"
+        text = f"**XP:** {new_xp}\n`{'█' * percent[0]}{'-' * (50 - percent[0])}`"
+        embed = discord.Embed(color=self.bot.color, description=text)
+        await ctx.send(embed=embed, delete_after=5.0)
 
 
 def setup(bot):

@@ -86,6 +86,7 @@ user_data_structure = {
                     "priest": {"level": 1, "xp": 0, "level_max": False}
                 },
                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                "intelligence": 0,
                 'items': dict(),
                 'skills': [0, 0, 0, 0, 0],
                 "armors": {

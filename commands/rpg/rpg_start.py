@@ -125,6 +125,7 @@ class RpgStart(commands.Cog):
                     "priest": {"level": 1, "xp": 0, "level_max": False}
                 },
                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                "intelligence": 0,
                 'items': set_ini,
                 'skills': [0, 0, 0, 0, 0],
                 "armors": {
@@ -169,6 +170,7 @@ class RpgStart(commands.Cog):
                 "vip": update['rpg']['vip'],
                 "sub_class": update['rpg']['sub_class'],
                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": pdh},
+                "intelligence": update['rpg']['intelligence'],
                 'items': update['rpg']['items'],
                 'skills': update['rpg']['skills'],
                 "armors": update['rpg']['armors'],
