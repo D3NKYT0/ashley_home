@@ -222,27 +222,17 @@ class Raid(commands.Cog):
                     if m_raid[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_monster = 0
 
-            # se houve evasão (fica verdadeiro)
-            m_raid[ctx.author.id].evasion[1] = False if chance_player > chance_monster else True
-
-            # se houve evasão, e o contador é acima de 2 (com essa seria 3) zera o contador e nao há evasão
-            if m_raid[ctx.author.id].evasion[1] and m_raid[ctx.author.id].evasion[0] > 1:
-                chance_monster, m_raid[ctx.author.id].evasion[1] = 0, False
-
-            # se nao houve evasão ( o contador zera )
-            if not m_raid[ctx.author.id].evasion[1]:
-                m_raid[ctx.author.id].evasion[0] = 0
+            if m_raid[ctx.author.id].evasion >= 3:
+                chance_monster, m_raid[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_player, chance_monster = 100, 0
 
             if chance_player > chance_monster:
                 p_raid[ctx.author.id] = await m_raid[ctx.author.id].damage(ctx, p_raid[ctx.author.id], skill)
+                m_raid[ctx.author.id].evasion = 0
             else:
-
-                # aumenta o contador das evasões seguidas (nao pode passar de 2)
-                if m_raid[ctx.author.id].evasion[1]:
-                    m_raid[ctx.author.id].evasion[0] += 1
+                m_raid[ctx.author.id].evasion += 1
 
                 embed = discord.Embed(
                     description=f"`{m_raid[ctx.author.id].name.upper()} EVADIU`",
@@ -346,23 +336,17 @@ class Raid(commands.Cog):
                     if p_raid[ctx.author.id].effects["gelo"]["turns"] > 0:
                         chance_player = 0
 
-            p_raid[ctx.author.id].evasion[1] = False if chance_player > chance_monster else True
-
-            if p_raid[ctx.author.id].evasion[1] and p_raid[ctx.author.id].evasion[0] > 1:
-                chance_player, p_raid[ctx.author.id].evasion[1] = 0, False
-
-            if not p_raid[ctx.author.id].evasion[1]:
-                p_raid[ctx.author.id].evasion[0] = 0
+            if p_raid[ctx.author.id].evasion >= 3:
+                chance_player, p_raid[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = 100, 0
 
             if chance_monster > chance_player:
                 m_raid[ctx.author.id] = await p_raid[ctx.author.id].damage(ctx, m_raid[ctx.author.id], skill)
+                p_raid[ctx.author.id].evasion = 0
             else:
-
-                if p_raid[ctx.author.id].evasion[1]:
-                    p_raid[ctx.author.id].evasion[0] += 1
+                p_raid[ctx.author.id].evasion += 1
 
                 embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",

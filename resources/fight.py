@@ -49,7 +49,7 @@ class Entity(object):
         self.pdef = self.data['pdef']
         self.mdef = self.data['mdef']
         self.soulshot = self.data['soulshot'] if self.is_player else None
-        self.evasion = [0, False]
+        self.evasion = 0
 
         if self.is_player:
             self._class = self.data['class'] if self.level < 26 else self.data['class_now']
@@ -899,6 +899,7 @@ class Ext(object):
         _monster_now["pdef"] = rr * 20
         _monster_now["mdef"] = rr * 20
         _monster_now["status"]["con"] += rr * 10
+        _monster_now["status"]["atk"] += rr * 2
 
         for k in _monster_now["status"].keys():
             if db_player['level'] > 25:
