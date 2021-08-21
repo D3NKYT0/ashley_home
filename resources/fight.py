@@ -493,48 +493,52 @@ class Entity(object):
 
             else:
                 # IA Choice Skill
-                chance_skill_choice = randint(1, 100)
+                try:
+                    chance_skill_choice = randint(1, 100)
 
-                if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp:
-                    if not self.ultimate:
-                        if "quest" in self.name.lower():
-                            self.skill = choice(["especial - magia negra", "especial - ataque direto"])
-                        elif self.name == "Mago Negro":
-                            self.skill = choice(["magia negra", "ataque direto"])
-                        elif self.name in ["Dragão Branco de Olho Azuis", "Slifer - O Dragão dos Céus"]:
-                            self.skill = choice(["luz divina", "ataque supremo"])
+                    if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp:
+                        if not self.ultimate:
+                            if "quest" in self.name.lower():
+                                self.skill = choice(["especial - magia negra", "especial - ataque direto"])
+                            elif self.name == "Mago Negro":
+                                self.skill = choice(["magia negra", "ataque direto"])
+                            elif self.name in ["Dragão Branco de Olho Azuis", "Slifer - O Dragão dos Céus"]:
+                                self.skill = choice(["luz divina", "ataque supremo"])
+                            else:
+                                self.skill = choice(["magia negra", "ataque direto"])
+                            self.ultimate = True
                         else:
-                            self.skill = choice(["magia negra", "ataque direto"])
-                        self.ultimate = True
-                    else:
-                        new_skills_full = list(skills)
-                        new_skills_full.pop(skills.index("cura"))
-                        self.ultimate, self.skill = False, choice(new_skills_full)
+                            new_skills_full = list(skills)
+                            new_skills_full.pop(skills.index("cura"))
+                            self.ultimate, self.skill = False, choice(new_skills_full)
 
-                elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75:
-                    self.skill = choice(["stun", "gelo", "manadrain"])
-
-                elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50:
-                    if chance_skill_choice <= 50 and not self.healthy:
-                        self.skill = "cura"
-                    self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
-
-                elif self.status["hp"] <= self.tot_hp / 100 * 25:
-                    if 50 <= chance_skill_choice <= 75:
+                    elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75:
                         self.skill = choice(["stun", "gelo", "manadrain"])
-                    if chance_skill_choice <= 50 and not self.healthy:
-                        self.skill = "cura"
-                    self.skill = choice(skills)
 
-                elif self.status["hp"] <= self.tot_hp / 100 * 10:
-                    if chance_skill_choice <= 50 and not self.is_combo:
-                        self.skill = "SKILL-COMBO"
-                    self.skill = choice(skills)
+                    elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50:
+                        if chance_skill_choice <= 50 and not self.healthy:
+                            self.skill = "cura"
+                        self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
 
-                else:
-                    new_skills_other = list(skills)
-                    new_skills_other.pop(skills.index("cura"))
-                    self.skill = choice(new_skills_other)
+                    elif self.status["hp"] <= self.tot_hp / 100 * 25:
+                        if 50 <= chance_skill_choice <= 75:
+                            self.skill = choice(["stun", "gelo", "manadrain"])
+                        if chance_skill_choice <= 50 and not self.healthy:
+                            self.skill = "cura"
+                        self.skill = choice(skills)
+
+                    elif self.status["hp"] <= self.tot_hp / 100 * 10:
+                        if chance_skill_choice <= 50 and not self.is_combo:
+                            self.skill = "SKILL-COMBO"
+                        self.skill = choice(skills)
+
+                    else:
+                        new_skills_other = list(skills)
+                        new_skills_other.pop(skills.index("cura"))
+                        self.skill = choice(new_skills_other)
+
+                except (ValueError, IndexError):
+                    self.skill = choice(skills)
 
                 if self.last_skill == self.skill:  # proibido repetir a mesma skill duas vezes seguidas
                     new_skills = list(skills)
