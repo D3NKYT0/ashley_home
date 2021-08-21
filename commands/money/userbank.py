@@ -759,13 +759,13 @@ class UserBank(commands.Cog):
         if stone not in [1, 2, 3]:
             return await ctx.send(f"🎫│`Que tipo de` **PEDRA** `voce deseja gastar?"
                                   f" Escolha uma dessas opções abaixo!`\n"
-                                  f"**[ ash stone 1 ]** - `Para` {self.bot.money[0]} "
+                                  f"**[ ash lucky 1 ]** - `Para` {self.bot.money[0]} "
                                   f"`Custa:` **{n_cost[0]}** "
                                   f"`Bonus de Chance:` **+1%**\n"
-                                  f"**[ ash stone 2 ]** - `Para` {self.bot.money[1]} "
+                                  f"**[ ash lucky 2 ]** - `Para` {self.bot.money[1]} "
                                   f"`Custa:` **{n_cost[1]}** "
                                   f"`Bonus de Chance:` **+2%**\n"
-                                  f"**[ ash stone 3 ]** - `Para` {self.bot.money[2]} "
+                                  f"**[ ash lucky 3 ]** - `Para` {self.bot.money[2]} "
                                   f"`Custa:` **{n_cost[2]}** "
                                   f"`Bonus de Chance:` **+3%**")
         else:

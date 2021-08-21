@@ -574,7 +574,7 @@ class OpenClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='frozen', aliases=['carta', 'letter'])
+    @commands.command(name='frozen', aliases=['ler', 'leitura', 'letter'])
     async def frozen(self, ctx, amount: int = 1):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
