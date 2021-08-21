@@ -96,14 +96,15 @@ class Ashley(commands.AutoShardedBot):
         self.block = self.config['attribute']['block']
 
         # definição do inicio e o fim da manutenção
-        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
-        msg_main = f"<a:xablau:525105065460105226>│`DESCULPE ESTOU EM MANUTENÇÃO. MAS DENTRO DE ALGUMAS HORAS " \
-                   f"TUDO ESTARÁ NORMALIZADO. MANUTENÇÃO INICOU HOJE AS ({self.maintenance_ini_end[0]}) PREVISAO" \
-                   f" DE TERMINO ({self.maintenance_ini_end[1]}) [+1h-1h] PODENDO DURAR UM POUCO MENOS OU MAIS`" \
-                   f"\n**OBS:** `ATUALMENTE APENAS PESSOAS AUTORIZADAS PODEM USAR OS RECURSOS DA ASHLEY, MAS " \
-                   f"LOGO TUDO ESTARÁ NORMALIZADO. A EQUIPE DA` **ASHLEY** `SENTE MUITO POR ESSE TRANSTORNO!`",
         self.maintenance = True  # Default: False
-        self.maintenance_msg = msg_main
+        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
+        self.maintenance_msg = f"<a:xablau:525105065460105226>│`DESCULPE ESTOU EM MANUTENÇÃO. MAS DENTRO DE ALGUMAS" \
+                               f" HORAS TUDO ESTARÁ NORMALIZADO. MANUTENÇÃO INICOU HOJE AS " \
+                               f"({self.maintenance_ini_end[0]}) PREVISAO DE TERMINO " \
+                               f"({self.maintenance_ini_end[1]}) +1h-1h PODENDO DURAR UM POUCO MENOS OU MAIS`\n" \
+                               f"**OBS:** `ATUALMENTE APENAS PESSOAS AUTORIZADAS PODEM USAR OS RECURSOS DA ASHLEY," \
+                               f" MAS LOGO TUDO ESTARÁ NORMALIZADO. A EQUIPE DA` **ASHLEY** `SENTE MUITO POR ESSE" \
+                               f" TRANSTORNO!`"
 
         # status
         self.is_ashley = True  # Default: False
@@ -811,8 +812,7 @@ class Ashley(commands.AutoShardedBot):
                     return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
                 if message.author.id not in self.testers and self.maintenance:
-                    msg = self.maintenance_msg
-                    embed = discord.Embed(color=self.color, description=msg)
+                    embed = discord.Embed(color=self.color, description=self.maintenance_msg)
                     return await message.channel.send(embed=embed)
 
             self.msg_cont += 1
