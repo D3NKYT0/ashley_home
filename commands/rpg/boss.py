@@ -260,7 +260,7 @@ class BossSystem(commands.Cog):
             await ctx.send(embed=embed)
 
         else:
-            db_monster = monster[ctx.author.id].db
+            db_monster = monster[ctx.author.id].data
             _din = await self.bot.db.add_money(ctx, randint(db_monster['ethernya'] // 4, db_monster['ethernya']), True)
             embed = discord.Embed(description=f"`{ctx.author.name.upper()} GANHOU!` {_din}", color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
