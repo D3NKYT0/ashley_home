@@ -495,7 +495,7 @@ class Entity(object):
                 # IA Choice Skill
                 chance_skill_choice = randint(1, 100)
 
-                if self.status["hp"] == self.tot_hp:
+                if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp:
                     if not self.ultimate:
                         if "quest" in self.name.lower():
                             self.skill = choice(["especial - magia negra", "especial - ataque direto"])
@@ -507,7 +507,9 @@ class Entity(object):
                             self.skill = choice(["magia negra", "ataque direto"])
                         self.ultimate = True
                     else:
-                        self.ultimate, self.skill = False, choice(skills)
+                        new_skills_full = list(skills)
+                        new_skills_full.pop(skills.index("cura"))
+                        self.ultimate, self.skill = False, choice(new_skills_full)
 
                 elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75:
                     self.skill = choice(["stun", "gelo", "manadrain"])
@@ -530,7 +532,9 @@ class Entity(object):
                     self.skill = choice(skills)
 
                 else:
-                    self.skill = choice(skills)
+                    new_skills_other = list(skills)
+                    new_skills_other.pop(skills.index("cura"))
+                    self.skill = choice(new_skills_other)
 
                 if self.last_skill == self.skill:  # proibido repetir a mesma skill duas vezes seguidas
                     new_skills = list(skills)

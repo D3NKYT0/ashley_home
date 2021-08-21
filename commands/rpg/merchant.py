@@ -188,6 +188,11 @@ class MerchantClass(commands.Cog):
                 if key['owner'] == ctx.author.id:
                     lojas.append(key)
 
+        if len(lojas) == 0:
+            return await ctx.send(f"<:negate:721581573396496464>|`VOCE NÃO TEM LOJAS CADASTRADAS NO MERCADO, "
+                                  f"PARA CRIAR UMA LOJA USE O COMANDO:`\n"
+                                  f"**ash merchant add <valor_da_und> <quantidade> <nome_do_item>**")
+
         num = page - 1 if page > 0 else None
         await paginator(self.bot, equips_list, lojas, embed, ctx, num)
 
