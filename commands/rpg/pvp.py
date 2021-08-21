@@ -186,24 +186,24 @@ class PVP(commands.Cog):
                     if player_2[_idp2].effects["hold"]["turns"] > 0:
                         p2_chance = 0
 
-            player_1[_idp1].evasion[1] = False if p1_chance > p2_chance else True
+            player_2[_idp2].evasion[1] = False if p1_chance > p2_chance else True
 
-            if player_1[_idp1].evasion[1] and player_1[_idp1].evasion[0] > 1:
-                p2_chance, player_1[_idp1].evasion[1] = 0, False
+            if player_2[_idp2].evasion[1] and player_2[_idp2].evasion[0] > 1:
+                p2_chance, player_2[_idp2].evasion[1] = 0, False
 
-            if not player_1[_idp1].evasion[1]:
-                player_1[_idp1].evasion[0] = 0
+            if not player_2[_idp2].evasion[1]:
+                player_2[_idp2].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
-                p1_chance, p2_chance = True, False
+                p1_chance, p2_chance = 100, 0
 
             if p1_chance > p2_chance:
                 player_1[_idp1] = await player_2[_idp2].damage(ctx, player_1[_idp1], skill)
 
             else:
 
-                if player_1[_idp1].evasion[1]:
-                    player_1[_idp1].evasion[0] += 1
+                if player_2[_idp2].evasion[1]:
+                    player_2[_idp2].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{player_2[_idp2].name.upper()} EVADIU`",
@@ -263,24 +263,24 @@ class PVP(commands.Cog):
                     if player_1[_idp1].effects["hold"]["turns"] > 0:
                         p1_chance = 0
 
-            player_2[_idp2].evasion[1] = False if p2_chance > p1_chance else True
+            player_1[_idp1].evasion[1] = False if p2_chance > p1_chance else True
 
-            if player_2[_idp2].evasion[1] and player_2[_idp2].evasion[0] > 1:
-                p1_chance, player_2[_idp2].evasion[1] = 0, False
+            if player_1[_idp1].evasion[1] and player_1[_idp1].evasion[0] > 1:
+                p1_chance, player_1[_idp1].evasion[1] = 0, False
 
-            if not player_2[_idp2].evasion[1]:
-                player_2[_idp2].evasion[0] = 0
+            if not player_1[_idp1].evasion[1]:
+                player_1[_idp1].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
-                p2_chance, p1_chance = True, False
+                p2_chance, p1_chance = 100, 0
 
             if p2_chance > p1_chance:
                 player_2[_idp2] = await player_1[_idp1].damage(ctx, player_2[_idp2], skill)
 
             else:
 
-                if player_2[_idp2].evasion[1]:
-                    player_2[_idp2].evasion[0] += 1
+                if player_1[_idp1].evasion[1]:
+                    player_1[_idp1].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{player_1[_idp1].name.upper()} EVADIU`",

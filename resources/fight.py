@@ -87,6 +87,11 @@ class Entity(object):
             self.cc = [self.data['cc'], "monster"]  # critical e classe
             self.tot_hp, self.tot_mp = self.status['con'] * self.rate[0], self.status['con'] * self.rate[1]
             self.status['hp'], self.status['mp'] = self.tot_hp, self.tot_mp
+            # IA skills
+            self.last_skill = None
+            self.ultimate = False
+            self.healthy = False
+            self.is_combo = False
 
     async def verify_equips(self, ctx):
         for value in self.data["equipped_items"].values():
@@ -487,7 +492,54 @@ class Entity(object):
                         break
 
             else:
-                self.skill = choice(skills)  # melhorar IA
+                # IA Choice Skill
+                chance_skill_choice = randint(1, 100)
+
+                if self.status["hp"] == self.tot_hp:
+                    if not self.ultimate:
+                        if "quest" in self.name.lower():
+                            self.skill = choice(["especial - magia negra", "especial - ataque direto"])
+                        elif self.name == "Mago Negro":
+                            self.skill = choice(["magia negra", "ataque direto"])
+                        elif self.name in ["Dragão Branco de Olho Azuis", "Slifer - O Dragão dos Céus"]:
+                            self.skill = choice(["luz divina", "ataque supremo"])
+                        else:
+                            self.skill = choice(["magia negra", "ataque direto"])
+                        self.ultimate = True
+                    else:
+                        self.ultimate, self.skill = False, choice(skills)
+
+                elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75:
+                    self.skill = choice(["stun", "gelo", "manadrain"])
+
+                elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50:
+                    if chance_skill_choice <= 50 and not self.healthy:
+                        self.skill = "cura"
+                    self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
+
+                elif self.status["hp"] <= self.tot_hp / 100 * 25:
+                    if 50 <= chance_skill_choice <= 75:
+                        self.skill = choice(["stun", "gelo", "manadrain"])
+                    if chance_skill_choice <= 50 and not self.healthy:
+                        self.skill = "cura"
+                    self.skill = choice(skills)
+
+                elif self.status["hp"] <= self.tot_hp / 100 * 10:
+                    if chance_skill_choice <= 50 and not self.is_combo:
+                        self.skill = "SKILL-COMBO"
+                    self.skill = choice(skills)
+
+                else:
+                    self.skill = choice(skills)
+
+                if self.last_skill == self.skill:  # proibido repetir a mesma skill duas vezes seguidas
+                    new_skills = list(skills)
+                    new_skills.pop(skills.index(self.skill))
+                    self.skill = choice(new_skills)
+
+                self.last_skill = self.skill
+                self.healthy = True if self.skill == "cura" else False
+                self.is_combo = True if self.skill == "SKILL-COMBO" else False
 
                 _text1 = f"**{self.name.upper()}** `ESCOLHEU O ATAQUE:` **{self.skill.upper()}**"
                 msg_return += f"{_text1}\n\n"

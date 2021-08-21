@@ -79,8 +79,7 @@ class Battle(commands.Cog):
 
         update['inventory']['coins'] -= ct
         self.bot.batalhando.append(ctx.author.id)
-        if ctx.author.id in self.xp_off:
-            del self.xp_off[ctx.author.id]
+        self.xp_off[ctx.author.id] = False
         await self.bot.db.update_data(data, update, 'users')
 
         # configuração do player e monster
@@ -148,21 +147,21 @@ class Battle(commands.Cog):
                     if monster[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_monster = 0
 
-            player[ctx.author.id].evasion[1] = False if chance_player > chance_monster else True
-            if player[ctx.author.id].evasion[1] and player[ctx.author.id].evasion[0] > 1:
-                chance_monster, player[ctx.author.id].evasion[1] = 0, False
-            if not player[ctx.author.id].evasion[1]:
-                player[ctx.author.id].evasion[0] = 0
+            monster[ctx.author.id].evasion[1] = False if chance_player > chance_monster else True
+            if monster[ctx.author.id].evasion[1] and monster[ctx.author.id].evasion[0] > 1:
+                chance_monster, monster[ctx.author.id].evasion[1] = 0, False
+            if not monster[ctx.author.id].evasion[1]:
+                monster[ctx.author.id].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
-                chance_player, chance_monster = True, False
+                chance_player, chance_monster = 100, 0
 
             if chance_player > chance_monster:
                 player[ctx.author.id] = await monster[ctx.author.id].damage(ctx, player[ctx.author.id], skill)
             else:
 
-                if player[ctx.author.id].evasion[1]:
-                    player[ctx.author.id].evasion[0] += 1
+                if monster[ctx.author.id].evasion[1]:
+                    monster[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
@@ -223,21 +222,23 @@ class Battle(commands.Cog):
                     if player[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_player = 0
 
-            monster[ctx.author.id].evasion[1] = False if chance_monster > chance_player else True
-            if monster[ctx.author.id].evasion[1] and monster[ctx.author.id].evasion[0] > 1:
-                chance_player, monster[ctx.author.id].evasion[1] = 0, False
-            if not monster[ctx.author.id].evasion[1]:
-                monster[ctx.author.id].evasion[0] = 0
+            player[ctx.author.id].evasion[1] = False if chance_monster > chance_player else True
+
+            if player[ctx.author.id].evasion[1] and player[ctx.author.id].evasion[0] > 1:
+                chance_player, player[ctx.author.id].evasion[1] = 0, False
+
+            if not player[ctx.author.id].evasion[1]:
+                player[ctx.author.id].evasion[0] = 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
-                chance_monster, chance_player = True, False
+                chance_monster, chance_player = 100, 0
 
             if chance_monster > chance_player:
                 monster[ctx.author.id] = await player[ctx.author.id].damage(ctx, monster[ctx.author.id], skill)
             else:
 
-                if monster[ctx.author.id].evasion[1]:
-                    monster[ctx.author.id].evasion[0] += 1
+                if player[ctx.author.id].evasion[1]:
+                    player[ctx.author.id].evasion[0] += 1
 
                 embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
