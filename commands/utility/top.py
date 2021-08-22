@@ -34,7 +34,7 @@ class TopClass(commands.Cog):
                                 f"{self.st[67]} `top command` Top 20 dos usuarios com mais COMANDOS.\n"
                                 f"{self.st[67]} `top point` Top 20 dos usuarios com mais PONTOS.\n"
                                 f"{self.st[67]} `top rpg` Top 20 dos usuarios com maiores LEVEIS do RPG.\n"
-                                f"{self.st[67]} `top wave` Top 20 dos usuarios com maiores RAIDS do RPG.\n"
+                                f"{self.st[67]} `top wave` Top 20 dos usuarios com maiores WAVES do RPG.\n"
                                 f"{self.st[67]} `top fragment` Top 20 dos usuarios com mais FRAGMENTOS.\n"
                                 f"{self.st[67]} `top blessed` Top 20 dos usuarios com mais BLESSEDS.\n"
                                 f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.")

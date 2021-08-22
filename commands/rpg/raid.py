@@ -230,7 +230,8 @@ class Raid(commands.Cog):
 
             if chance_player > chance_monster:
                 p_raid[ctx.author.id] = await m_raid[ctx.author.id].damage(ctx, p_raid[ctx.author.id], skill)
-                m_raid[ctx.author.id].evasion = 0
+                if skill != "PASS-TURN-MP" or skill != "PASS-TURN-HP" or skill is not None:
+                    m_raid[ctx.author.id].evasion = 0
             else:
                 m_raid[ctx.author.id].evasion += 1
 
@@ -344,7 +345,8 @@ class Raid(commands.Cog):
 
             if chance_monster > chance_player:
                 m_raid[ctx.author.id] = await p_raid[ctx.author.id].damage(ctx, m_raid[ctx.author.id], skill)
-                p_raid[ctx.author.id].evasion = 0
+                if skill != "PASS-TURN-MP" or skill != "PASS-TURN-HP" or skill is not None:
+                    p_raid[ctx.author.id].evasion = 0
             else:
                 p_raid[ctx.author.id].evasion += 1
 
