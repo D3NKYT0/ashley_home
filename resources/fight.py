@@ -543,9 +543,12 @@ class Entity(object):
                     self.skill = choice(skills)
 
                 if self.last_skill == self.skill:  # proibido repetir a mesma skill duas vezes seguidas
-                    new_skills = list(skills)
-                    new_skills.pop(skills.index(self.skill))
-                    self.skill = choice(new_skills)
+                    try:
+                        new_skills = list(skills)
+                        new_skills.pop(skills.index(self.skill))
+                        self.skill = choice(new_skills)
+                    except (ValueError, IndexError):
+                        self.skill = choice(skills)
 
                 self.last_skill = self.skill
                 self.healthy = True if self.skill == "cura" else False
@@ -877,9 +880,8 @@ class Ext(object):
     def set_monster(self, db_player):
         lvl = db_player['level']
         dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 5 if 10 <= lvl <= 30 else 10 if 31 <= lvl <= 50 else 15
-        max_ = lvl + dif if lvl + dif < 61 else 60
-        min_ = lvl - 5 if lvl - 5 > 1 else 1
-        min_ = min_ if min_ < 55 else 55
+        min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 60 else 60
+        min_ = min_ if min_ <= 55 else 55
 
         _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
         db_monster = copy.deepcopy(_monster)
@@ -901,10 +903,9 @@ class Ext(object):
 
     def set_monster_raid(self, db_player, rr):
         # configuração do monstro
-        _min, _max = 25 + rr if rr < 31 else 59, 30 + rr if rr < 31 else 60
-        m, q = [m for m in self.m if _min < self.m[self.m.index(m)]['level'] < _max], [q for q in self.q]
-        mq = m + q
-        _monster = choice(mq) if db_player["ESPECIAL"] else choice(m)
+        _min, _max = 20 + rr if rr + 20 < 55 else 55, 30 + rr if rr + 30 < 50 else 60
+        m = [m for m in self.m if _min < self.m[self.m.index(m)]['level'] < _max]
+        _monster = choice(m + self.q) if db_player["ESPECIAL"] else choice(m)
         _monster_now = copy.deepcopy(_monster)
         _monster_now['enemy'] = db_player
         _monster_now["pdef"] = rr * 20
