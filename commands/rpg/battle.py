@@ -1,4 +1,3 @@
-import copy
 import discord
 
 import time as date

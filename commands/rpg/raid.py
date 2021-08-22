@@ -1,5 +1,4 @@
 import discord
-import copy
 
 from asyncio import sleep
 from discord.ext import commands
@@ -30,7 +29,7 @@ class Raid(commands.Cog):
     @commands.command(name='wave', aliases=['onda', 'orda', 'w'])
     async def wave(self, ctx, extra=None):
         """Comando usado pra batalhar no rpg da ashley
-        Use ash raid"""
+        Use ash wave"""
         global raid_rank, m_raid, p_raid, money, xp_tot, xp_off
         xp_off[ctx.author.id], raid_rank[ctx.author.id], especial_m = False, 0, 0
 
@@ -76,7 +75,7 @@ class Raid(commands.Cog):
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
         if _db_class['level'] < 26:
-            msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR UMA RAID!\n' \
+            msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR UMA WAVE!\n' \
                   'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
@@ -572,7 +571,7 @@ class Raid(commands.Cog):
                 msg = f"**Sendo {especial_m} deles, especiais!**"
                 await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `VOCÊ CONSEGUIU MATAR:` "
                                f"**{raid_rank[ctx.author.id]}** `MONSTROS!` {msg if especial_m > 0 else ''}\n "
-                               f"**ESSE É SEU NOVO RECORD!** `APROVEITE E OLHE O COMANDO:` **ASH TOP RAID**")
+                               f"**ESSE É SEU NOVO RECORD!** `APROVEITE E OLHE O COMANDO:` **ASH TOP WAVE**")
             else:
                 msg = f"**Sendo {especial_m} deles, especiais!**"
                 await ctx.send(f"<:confirmed:721581574461587496>│`VOCÊ CONSEGUIU MATAR:` "
@@ -629,4 +628,4 @@ class Raid(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Raid(bot))
-    print('\033[1;32m( 🔶 ) | O comando \033[1;34mRAID\033[1;32m foi carregado com sucesso!\33[m')
+    print('\033[1;32m( 🔶 ) | O comando \033[1;WAVE\033[1;32m foi carregado com sucesso!\33[m')
