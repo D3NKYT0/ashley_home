@@ -75,7 +75,7 @@ class EnchanterClass(commands.Cog):
                     pass
 
         for kkk in self.bot.config["set_equips"].values():
-            if kkk['set'] == set_e:
+            if len([e for e in set_e if e in kkk['set']]) == 5:
                 for name in db_player["status"].keys():
                     try:
                         db_player["status"][name] += kkk['modifier'][name]

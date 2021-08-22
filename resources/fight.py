@@ -169,9 +169,11 @@ class Entity(object):
         hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
         _mp, ehp, econ, err = self.status['mp'], entity.status['hp'], entity.status['con'], entity.rate[0]
 
+        extra = f" | WAVE: {wave_now}" if self.is_wave else ""
+
         title = f"{_emo[1]}:  [ {_hp if _hp > 0 else 0} / {_con * rr[0]} ]  |  " \
                 f"{_emo[2]}:  [ {_mp if _mp > 0 else 0} / {_con * rr[1]} ]\n" \
-                f"{_emo[0]}: {_ini} - [ {ehp if ehp > 0 else 0} / {econ * err} ] | LVL - {entity.level}"
+                f"{_emo[0]}: {_ini} - [ {ehp if ehp > 0 else 0} / {econ * err} ] | LVL - {entity.level}{extra}"
 
         description, tot, attacks = '', len(skills), dict()
         for _ in range(0, len(skills)):
@@ -955,30 +957,30 @@ class Ext(object):
 
         # configurando os equipamentos
         for c in db_player['equipped_items'].keys():
-            if db_player['equipped_items'][c] is None:
-                continue
+            if db_player["equipped_items"][c] is not None:
 
-            if c in SET_ARMOR:
-                set_e.append(str(c))
+                if c in SET_ARMOR:
+                    set_e.append(str(db_player['equipped_items'][c]))
 
-            db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
-            db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']
-            for name in db_player["status"].keys():
-                try:
-                    db_player["status"][name] += self.eq[db_player['equipped_items'][c]]['modifier'][name]
-                except KeyError:
-                    pass
+                db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
+                db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']
+
+                for name in db_player["status"].keys():
+                    try:
+                        db_player["status"][name] += self.eq[db_player['equipped_items'][c]]['modifier'][name]
+                    except KeyError:
+                        pass
 
         # configurando o set de bonus de uma armadura completa
         for kkk in SET_EQUIPS.values():
-            if kkk['set'] == set_e:
+            if len([e for e in set_e if e in kkk['set']]) == 5:
+                db_player["pdef"] += kkk["pdef"]
+                db_player["mdef"] += kkk["mdef"]
                 for name in db_player["status"].keys():
                     try:
                         db_player["status"][name] += kkk['modifier'][name]
                     except KeyError:
                         pass
-                db_player["pdef"] += kkk["pdef"]
-                db_player["mdef"] += kkk["mdef"]
 
         # sistema de enchants armors
         enchant, _pdef, _mdef = db_player['armors'], 0, 0

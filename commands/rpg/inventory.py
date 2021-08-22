@@ -79,7 +79,7 @@ class InventoryClass(commands.Cog):
                             pass
 
             for kkk in self.bot.config["set_equips"].values():
-                if kkk['set'] == set_armor:
+                if len([e for e in set_armor if e in kkk['set']]) == 5:
                     for name in sts.keys():
                         try:
                             sts[name] += kkk['modifier'][name]
