@@ -155,7 +155,7 @@ class BossSystem(commands.Cog):
             if chance_player > chance_monster:
                 player[ctx.author.id] = await monster[ctx.author.id].damage(ctx, player[ctx.author.id], skill)
                 if skill != "PASS-TURN-MP" or skill != "PASS-TURN-HP" or skill is not None:
-                    monster[ctx.author.id] = 0
+                    monster[ctx.author.id].evasion = 0
             else:
                 monster[ctx.author.id].evasion += 1
 
@@ -218,8 +218,8 @@ class BossSystem(commands.Cog):
                     if player[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_player = 0
 
-            if monster[ctx.author.id].evasion >= 3:
-                chance_player, monster[ctx.author.id].evasion = 0, 0
+            if player[ctx.author.id].evasion >= 3:
+                chance_player, player[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = 100, 0
@@ -227,9 +227,9 @@ class BossSystem(commands.Cog):
             if chance_monster > chance_player:
                 monster[ctx.author.id] = await player[ctx.author.id].damage(ctx, monster[ctx.author.id], skill)
                 if skill != "PASS-TURN-MP" or skill != "PASS-TURN-HP" or skill is not None:
-                    monster[ctx.author.id].evasion = 0
+                    player[ctx.author.id].evasion = 0
             else:
-                monster[ctx.author.id].evasion += 1
+                player[ctx.author.id].evasion += 1
 
                 embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
