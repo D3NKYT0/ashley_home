@@ -22,7 +22,7 @@ for ky in all_data['equips'].keys():
 
 
 class Entity(object):
-    def __init__(self, data, is_player, is_pvp=False, is_wave=False, is_boss=False):
+    def __init__(self, data, is_player, is_pvp=False, is_wave=False, is_boss=False, is_mini_boss=False):
         # data da entidade
         self.data = data
 
@@ -31,6 +31,7 @@ class Entity(object):
         self.is_pvp = is_pvp
         self.is_wave = is_wave
         self.is_boss = is_boss
+        self.is_mini_boss = is_mini_boss
         self.is_strike = False
         self.is_combo = False
 
@@ -501,14 +502,18 @@ class Entity(object):
 
                     if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp:
                         if not self.ultimate:
-                            if "quest" in self.name.lower():
+                            if "quest" in self.name.lower() or self.is_mini_boss:
                                 self.skill = choice(["especial - magia negra", "especial - ataque direto"])
+
                             elif self.name == "Mago Negro":
                                 self.skill = choice(["magia negra", "ataque direto"])
+
                             elif self.name in ["Dragão Branco de Olho Azuis", "Slifer - O Dragão dos Céus"]:
                                 self.skill = choice(["luz divina", "ataque supremo"])
+
                             else:
                                 self.skill = choice(["magia negra", "ataque direto"])
+
                             self.ultimate = True
                         else:
                             new_skills_full = list(skills)

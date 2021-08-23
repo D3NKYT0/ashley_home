@@ -107,7 +107,7 @@ class Battle(commands.Cog):
             del monster[ctx.author.id]
 
         player[ctx.author.id] = Entity(db_player, True)
-        monster[ctx.author.id] = Entity(db_monster, False)
+        monster[ctx.author.id] = Entity(db_monster, False, is_mini_boss=mini_boss)
 
         # durante a batalha
         while not self.bot.is_closed():
