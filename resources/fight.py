@@ -733,14 +733,14 @@ class Entity(object):
 
         if skill == "SKILL-COMBO":
             _damage = self.status['hp'] // 2
-            _damage = _damage if not self.is_boss else 0
+            _damage = _damage if not self.is_boss and not self.is_mini_boss else 0
 
             self.status['hp'] -= _damage
             if self.status['hp'] < 0:
                 self.status['hp'] = 0
 
             monster = not self.is_player if self.is_pvp else self.is_player
-            bmsg = "\n`boss é imune a combo!`" if self.is_boss else ""
+            bmsg = "\n`boss e mini boss são imune a combo!`" if self.is_boss or self.is_mini_boss else ""
             description = f'**{self.name.upper()}** `recebeu` **{_damage}** `de dano, por levar um ` **combo!**{bmsg}'
             img = "https://media.giphy.com/media/INEBdVgN59AbWhyZCk/giphy.gif"
             embed_ = embed_creator(description, img, monster, self.tot_hp, self.status['hp'], self.img, self.name)
