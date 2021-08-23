@@ -129,7 +129,7 @@ class OpenClass(commands.Cog):
         for n in numbers:
             bonus += n
 
-        if randint(1, 100) + amount_test + bonus > 90:  # 10% + bonus + amount
+        if randint(1, 100) + amount_test + bonus > 95:  # 5% + bonus + amount
 
             msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
             embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
@@ -158,9 +158,15 @@ class OpenClass(commands.Cog):
     @moon.command(name='check', aliases=['c'])
     async def _check(self, ctx):
         data = get_moon()
-        msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
-        msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH MOON OPEN**"
-        title = "O QUE PODE CAIR SE VOCE ABRIR UMA MOON BAG AGORA:"
+
+        numbers, bonus = [int(n) for n in str(data[1]).replace(".", "")], 0
+        for n in numbers:
+            bonus += n
+
+        msg = f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
+        msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
+               f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`"
+        title = f"MOON BAG DE HOJE:"
         embed = discord.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
         embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))

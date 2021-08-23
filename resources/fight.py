@@ -498,9 +498,9 @@ class Entity(object):
             else:
                 # IA Choice Skill
                 try:
-                    chance_skill_choice = randint(1, 100)
+                    chance_skill_choice, mini_b = randint(1, 100), self.is_mini_boss
 
-                    if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp:
+                    if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp or self.status["hp"] > self.tot_hp:
                         if not self.ultimate:
                             if "quest" in self.name.lower() or self.is_mini_boss:
                                 self.skill = choice(["especial - magia negra", "especial - ataque direto"])
@@ -520,10 +520,10 @@ class Entity(object):
                             new_skills_full.pop(skills.index("cura"))
                             self.ultimate, self.skill = False, choice(new_skills_full)
 
-                    elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75:
+                    elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75 and not mini_b:
                         self.skill = choice(["stun", "gelo", "manadrain"])
 
-                    elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50:
+                    elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50 and not mini_b:
                         if chance_skill_choice <= 50 and not self.healthy:
                             self.skill = "cura"
                         self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
