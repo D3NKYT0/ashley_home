@@ -20,14 +20,14 @@ def phase(pos):
     index = (pos * dec(8)) + dec("0.5")
     index = math.floor(index)
     return {
-        0: "New Moon",
-        1: "Waxing Crescent",
-        2: "First Quarter",
-        3: "Waxing Gibbous",
-        4: "Full Moon",
-        5: "Waning Gibbous",
-        6: "Last Quarter",
-        7: "Waning Crescent"
+        0: "Lua Nova",
+        1: "Quarto Crescente",
+        2: "Lua Crescente",
+        3: "Crescente Gibosa",
+        4: "Lua Cheia",
+        5: "Minguante Gibosa",
+        6: "Quarto Minguante",
+        7: "Lua Minguante"
     }[int(index) & 7]
 
 

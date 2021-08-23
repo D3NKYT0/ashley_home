@@ -28,13 +28,15 @@ class Battle(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='battle', aliases=['batalha', 'batalhar', 'bt'])
-    async def battle(self, ctx):
+    async def battle(self, ctx, moon=None):
         """Comando usado pra batalhar no rpg da ashley
         Use ash battle"""
         global player, monster
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
+
+        mini_boss = False if moon is False or moon != "moon" else True
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
@@ -77,13 +79,26 @@ class Battle(commands.Cog):
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
+        if update['inventory']['coins'] < 0:
+            del update['inventory']['coins']
+
+        if mini_boss:
+            if "stone_of_moon" not in update['inventory'].keys():
+                msg = '<:negate:721581573396496464>│`VOCE NÃO TEM STONE OF MOON NO SEU INVENTARIO!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            update['inventory']['stone_of_moon'] -= 1
+            if update['inventory']['stone_of_moon'] < 0:
+                del update['inventory']['stone_of_moon']
+
         self.bot.batalhando.append(ctx.author.id)
         self.xp_off[ctx.author.id] = False
         await self.bot.db.update_data(data, update, 'users')
 
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
-        db_monster = extension.set_monster(db_player)
+        db_monster = extension.set_monster(db_player, mini_boss)
 
         # criando as entidades...
         if ctx.author.id in player.keys():

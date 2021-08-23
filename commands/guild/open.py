@@ -20,6 +20,9 @@ class OpenClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.i = self.bot.items
+
+        self.rewards_moon = self.bot.config['attribute']['moon']
+
         self.chest_choice = {"Baú de Casamento - Rosa": "marry_pink", "Baú de Casamento - Laranja": "marry_orange",
                              "Baú de Casamento - Verde": "marry_green", "Baú de Casamento - Azul": "marry_blue"}
 
@@ -89,10 +92,65 @@ class OpenClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @moon.command(name='open', aliases=['abrir', 'o', 'a'])
-    async def _open(self, ctx):
-        msg = f"<:alert:739251822920728708>│`Em desenvolvimento...`"
-        embed = discord.Embed(color=self.bot.color, description=msg)
-        await ctx.send(embed=embed)
+    async def _open(self, ctx, amount=None):
+        if amount is None:
+            return await ctx.send('<:alert:739251822920728708>│`Insira a quantidade de MOON BAGS que deseja usar!`\n'
+                                  '**NOTA:** `Quanto mais voce usar, mais chance de ganhar!`')
+
+        try:
+            amount_test = int(amount)
+        except ValueError:
+            return await ctx.send('<:negate:721581573396496464>│`Desculpe, você precisa dizer um numero.` '
+                                  '**COMANDO CANCELADO**')
+
+        data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update_user = data_user
+
+        if "moon_bag" not in update_user['inventory'].keys():
+            return await ctx.send('<:negate:721581573396496464>│`Desculpe, você não tem MOON BAG no seu inventario.` '
+                                  '**COMANDO CANCELADO**')
+
+        if update_user['inventory']["moon_bag"] < amount_test:
+            return await ctx.send(f'<:negate:721581573396496464>│`Desculpe, você não tem {amount_test} MOON BAG no '
+                                  f'seu inventario.` **COMANDO CANCELADO**')
+
+        update_user['inventory']["moon_bag"] -= amount_test
+        if update_user['inventory']["moon_bag"] < 0:
+            del update_user['inventory']["moon_bag"]
+        await self.bot.db.update_data(data_user, update_user, 'users')
+
+        # ESCOLHENDO O PREMIO:
+        list_items, data = [], get_moon()
+        for i_, amount in self.rewards_moon[data[0]].items():
+            list_items += [i_] * amount
+        reward = choice(list_items)
+
+        numbers, bonus = [int(n) for n in str(data[1]).replace(".", "")], 0
+        for n in numbers:
+            bonus += n
+
+        if randint(1, 100) + amount_test + bonus > 95:  # 3% + bonus + amount
+
+            msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
+            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=embed)
+
+            msg = await ctx.send("<a:loading:520418506567843860>│`SALVANDO SEU PREMIO...`")
+            await sleep(3)
+            await msg.delete()
+
+            data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            update = data
+            try:
+                update['inventory'][reward] += 1
+            except KeyError:
+                update['inventory'][reward] = 1
+            await self.bot.db.update_data(data, update, 'users')
+            await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
+
+        else:
+            await ctx.send(f"> `VOCE NAO ACHOU NADA DENTRO DA(S)` **{amount_test}** `MOON BAG(S)`", delete_after=30.0)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

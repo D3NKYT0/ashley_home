@@ -835,7 +835,7 @@ class UserBank(commands.Cog):
                 update['inventory'][reward] = 1
             await self.bot.db.update_data(data, update, 'users')
             await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
-            await self.bot.data.add_sts(ctx.author, "stone", 1)
+            await self.bot.data.add_sts(ctx.author, "lucky", 1)
 
         else:
             await ctx.send(f"> `A SORTE NAO ESTAVA COM VOCE`", delete_after=30.0)
