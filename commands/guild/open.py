@@ -129,7 +129,7 @@ class OpenClass(commands.Cog):
         for n in numbers:
             bonus += n
 
-        if randint(1, 100) + amount_test + bonus > 95:  # 3% + bonus + amount
+        if randint(1, 100) + amount_test + bonus > 90:  # 10% + bonus + amount
 
             msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
             embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
@@ -151,6 +151,21 @@ class OpenClass(commands.Cog):
 
         else:
             await ctx.send(f"> `VOCE NAO ACHOU NADA DENTRO DA(S)` **{amount_test}** `MOON BAG(S)`", delete_after=30.0)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @moon.command(name='check', aliases=['c'])
+    async def _check(self, ctx):
+        data = get_moon()
+        msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
+        msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH MOON OPEN**"
+        title = "O QUE PODE CAIR SE VOCE ABRIR UMA MOON BAG AGORA:"
+        embed = discord.Embed(title=title, color=self.bot.color, description=msg)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
+        embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

@@ -885,7 +885,7 @@ class Ext(object):
         dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 5 if 10 <= lvl <= 30 else 10 if 31 <= lvl <= 50 else 15
         min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 60 else 60
         min_, moon_data = min_ if min_ <= 55 else 55, get_moon()
-        mini_boss_monster = choice(self.mini_boss[moon_data[0]])
+        mini_boss_monster = self.mb[self.mini_boss[moon_data[0]]]
         _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
         db_monster = copy.deepcopy(_monster) if not mini_boss else copy.deepcopy(mini_boss_monster)
         db_monster['enemy'], db_monster["pdef"], db_monster["mdef"] = db_player, lvl, lvl
