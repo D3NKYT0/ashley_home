@@ -94,6 +94,12 @@ class Entity(object):
             self.ultimate = False
             self.healthy = False
             self.is_combo = False
+            # classe nao definida
+            self._class = None
+
+    @property
+    def get_class(self):
+        return self._class
 
     async def verify_equips(self, ctx):
         for value in self.data["equipped_items"].values():
@@ -497,13 +503,26 @@ class Entity(object):
 
             else:
                 # IA Choice Skill
+                _FALAS = [
+                    f"`HA HA HA HA! QUEM FOI O LOUCO QUE DISSE QUE VOCE ERA UM` **HEROI**\n",
+                    f"`HA HA HA HA! SE VOCE NAO BATER MAIS FORTE EU` **IREI**\n"
+                    f"`HA HA HA HA! DEPOIS DESSE ATAQUE VAI PRECISAR FAZER UMA ARMADURA` **NOVA**\n"
+                    f"`HA HA HA HA! TALVES EU DEVESSE EMPRESTAR A ARMA DO MEU SERVO,` **SEU FRACOTE**\n"
+                    f"`HA HA HA HA! NAO ME SUBESTIME` **INSOLENTE**\n"
+                ]
                 try:
                     chance_skill_choice, mini_b = randint(1, 100), self.is_mini_boss
 
                     if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp or self.status["hp"] > self.tot_hp:
                         if not self.ultimate:
                             if "quest" in self.name.lower() or self.is_mini_boss:
-                                self.skill = choice(["especial - magia negra", "especial - ataque direto"])
+                                if self.is_mini_boss and entity.is_player:
+                                    if entity.get_class in ["warrior", "paladin"]:
+                                        self.skill = "SKILL-COMBO"
+                                        if self.is_mini_boss:
+                                            msg_return += f"`olha só o que temos aqui... um` **{entity.get_class}**\n"
+                                else:
+                                    self.skill = choice(["especial - magia negra", "especial - ataque direto"])
 
                             elif self.name == "Mago Negro":
                                 self.skill = choice(["magia negra", "ataque direto"])
@@ -519,14 +538,23 @@ class Entity(object):
                             new_skills_full = list(skills)
                             new_skills_full.pop(skills.index("cura"))
                             self.ultimate, self.skill = False, choice(new_skills_full)
+                            if self.is_mini_boss:
+                                msg_return += f"`quando eu enfrento um fraco como voce, é assim que eu faço!`\n"
 
                     elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75 and not mini_b:
                         self.skill = choice(["stun", "gelo", "manadrain"])
+                        if self.is_mini_boss:
+                            msg_return += f"`HA HA HA HA! tente escapar` **DISSO**\n"
 
                     elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50 and not mini_b:
                         if chance_skill_choice <= 50 and not self.healthy:
                             self.skill = "cura"
                         self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
+                        if self.is_mini_boss and self.skill == "cura":
+                            msg_return += f"`VOCE NAO VAI ME VENCER TAO FACILMENTE!`\n"
+
+                        if self.is_mini_boss and self.skill != "cura":
+                            msg_return += f"`IREI DEBILITADO DE UMA FORMA OU OUTRA!`\n"
 
                     elif self.status["hp"] <= self.tot_hp / 100 * 25:
                         if 50 <= chance_skill_choice <= 75:
@@ -535,26 +563,47 @@ class Entity(object):
                             self.skill = "cura"
                         self.skill = choice(skills)
 
+                        if self.is_mini_boss and self.skill == "cura":
+                            msg_return += f"`VOCE NAO VAI ME VENCER TAO FACILMENTE!`\n"
+
+                        if self.is_mini_boss and self.skill != "cura":
+                            msg_return += f"`MALDITOOOOOOO VAI PARA O INFERNO!!`\n"
+
                     elif self.status["hp"] <= self.tot_hp / 100 * 10:
                         if chance_skill_choice <= 50 and not self.is_combo:
                             self.skill = "SKILL-COMBO"
                         self.skill = choice(skills)
+
+                        if self.is_mini_boss and self.skill == "SKILL-COMBO":
+                            msg_return += f"`HA HA HA HA! VOCE ACHA QUE VAI SOBREVIVER DEPOIS` **DISSO**\n"
+
+                        if self.is_mini_boss and self.skill != "SKILL-COMBO":
+                            msg_return += f"`HA HA HA HA! TALVES EU DEVA MANDAR FAZER SEU` **CAIXAO**\n"
 
                     else:
                         new_skills_other = list(skills)
                         new_skills_other.pop(skills.index("cura"))
                         self.skill = choice(new_skills_other)
 
+                        if self.is_mini_boss:
+                            msg_return += choice(_FALAS)
+
                 except (ValueError, IndexError):
                     self.skill = choice(skills)
+                    if self.is_mini_boss:
+                        msg_return += choice(_FALAS)
 
                 if self.last_skill == self.skill:  # proibido repetir a mesma skill duas vezes seguidas
                     try:
                         new_skills = list(skills)
                         new_skills.pop(skills.index(self.skill))
                         self.skill = choice(new_skills)
+                        if self.is_mini_boss:
+                            msg_return += choice(_FALAS)
                     except (ValueError, IndexError):
                         self.skill = choice(skills)
+                        if self.is_mini_boss:
+                            msg_return += choice(_FALAS)
 
                 self.last_skill = self.skill
                 self.healthy = True if self.skill == "cura" else False
