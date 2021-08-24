@@ -101,6 +101,8 @@ class Raid(commands.Cog):
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
+        if update['inventory']['coins'] < 1:
+            del update['inventory']['coins']
         self.bot.batalhando.append(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
 

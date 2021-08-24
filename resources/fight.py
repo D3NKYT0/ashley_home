@@ -93,7 +93,7 @@ class Entity(object):
             self.last_skill = None
             self.ultimate = False
             self.healthy = False
-            self.is_combo = False
+            self.ia_combo = False
             # classe nao definida
             self._class = None
 
@@ -570,7 +570,7 @@ class Entity(object):
                             msg_return += f"`MALDITOOOOOOO VAI PARA O INFERNO!!`\n"
 
                     elif self.status["hp"] <= self.tot_hp / 100 * 15:
-                        if chance_skill_choice <= 50 and not self.is_combo:
+                        if chance_skill_choice <= 50 and not self.ia_combo:
                             self.skill = "SKILL-COMBO"
                         self.skill = choice(skills)
 
@@ -607,7 +607,7 @@ class Entity(object):
 
                 self.last_skill = self.skill
                 self.healthy = True if self.skill == "cura" else False
-                self.is_combo = True if self.skill == "SKILL-COMBO" else False
+                self.ia_combo = True if self.skill == "SKILL-COMBO" else False
 
                 if self.skill is None:
                     self.skill = "cura"

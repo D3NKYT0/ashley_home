@@ -79,7 +79,7 @@ class Battle(commands.Cog):
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
-        if update['inventory']['coins'] < 0:
+        if update['inventory']['coins'] < 1:
             del update['inventory']['coins']
 
         if mini_boss:
@@ -89,7 +89,7 @@ class Battle(commands.Cog):
                 return await ctx.send(embed=embed)
 
             update['inventory']['stone_of_moon'] -= 1
-            if update['inventory']['stone_of_moon'] < 0:
+            if update['inventory']['stone_of_moon'] < 1:
                 del update['inventory']['stone_of_moon']
 
         self.bot.batalhando.append(ctx.author.id)
