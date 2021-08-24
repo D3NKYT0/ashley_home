@@ -755,31 +755,27 @@ class Entity(object):
         return critical, damage
 
     async def damage(self, ctx, entity, skill):
-        # informações basicas do inimigo
-        lvl_skill, name, enemy_cc, enemy_img = entity.level_skill, entity.name, entity.cc, entity.img
-        enemy_luk, effects, enemy_atk = entity.status['luk'], entity.effects, entity.status['atk']
-
         if skill is None:
-            description = f'**{name.upper()}** `não atacou nesse turno!`'
+            description = f'**{entity.name.upper()}** `não atacou nesse turno!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://uploads1.yugioh.com/card_images/2110/detail/2004.jpg?1385103024"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], enemy_img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
             await ctx.send(embed=embed_)
             return entity
 
         if skill == "PASS-TURN-MP":
-            description = f'**{name.upper()}** `passou o turno, usando a poção de MANA!`'
+            description = f'**{entity.name.upper()}** `passou o turno, usando a poção de MANA!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], enemy_img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
             await ctx.send(embed=embed_)
             return entity
 
         if skill == "PASS-TURN-HP":
-            description = f'**{name.upper()}** `passou o turno, usando a poção de VIDA!`'
+            description = f'**{entity.name.upper()}** `passou o turno, usando a poção de VIDA!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], enemy_img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -801,10 +797,9 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        skull, drain, bluff, hit_kill = self.verify_effect(effects)
-        lvs = lvl_skill[int(skill['skill']) - 1] if test else lvl_skill[0]
-        self.ls = lvs if 0 <= lvs <= 9 else 9
-        confusion, act_eff, _soulshot, bda, reflect = False, True, 0, 0, False
+        skull, drain, bluff, hit_kill = self.verify_effect(self.effects)
+        lvs = entity.level_skill[int(skill['skill']) - 1] if test else entity.level_skill[0]
+        self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
         if entity.effects is not None:
 
@@ -818,7 +813,7 @@ class Entity(object):
 
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
-        damage = self.calc_damage_skill(skill, test, lvs, enemy_cc, enemy_atk)
+        damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
@@ -829,16 +824,16 @@ class Entity(object):
                     bda = 0
                 damage += bda
 
-        res = await self.chance_critical(ctx, enemy_cc, enemy_luk, test, skull, damage, lethal)
+        res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage, lethal)
         defense, critical, damage = self.pdef if skill['type'] == "fisico" else self.mdef, res[0], res[1]
 
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
         _defense = randint(int(defense / 2), defense) if defense > 2 else defense
 
-        if "reflect" in effects.keys():
+        if "reflect" in entity.effects.keys():
             reflect, damage = True, int(damage / 2)
-            effects['reflect']['damage'] = damage
+            entity.effects['reflect']['damage'] = damage
 
         armor_now = _defense if _defense > 0 else 1
         percent = abs(int(armor_now / (damage / 100)))
@@ -886,7 +881,7 @@ class Entity(object):
                         ctx.bot.boss_players[self.data["_id"]]["dano"] += dn
 
             if drain:
-                recovery = int(dn / 100 * effects["drain"]["damage"])
+                recovery = int(dn / 100 * self.effects["drain"]["damage"])
                 entity.status['hp'] += recovery
                 if entity.status['hp'] > entity.status['con'] * entity.rate[0]:
                     entity.status['hp'] = entity.status['con'] * entity.rate[0]
@@ -925,7 +920,6 @@ class Entity(object):
         if msg_return != "":
             await ctx.send(embed=bed_)
 
-        entity.effects = effects
         return entity
 
 
