@@ -166,7 +166,7 @@ class OpenClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
         msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
                f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`"
-        title = f"MOON BAG DE HOJE:"
+        title = f"MOON BAG DE: {data[0].upper()}"
         embed = discord.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
         embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))

@@ -505,15 +505,15 @@ class Entity(object):
                 # IA Choice Skill
                 _FALAS = [
                     f"`HA HA HA HA! QUEM FOI O LOUCO QUE DISSE QUE VOCE ERA UM` **HEROI**\n",
-                    f"`HA HA HA HA! SE VOCE NAO BATER MAIS FORTE EU` **IREI**\n"
-                    f"`HA HA HA HA! DEPOIS DESSE ATAQUE VAI PRECISAR FAZER UMA ARMADURA` **NOVA**\n"
-                    f"`HA HA HA HA! TALVES EU DEVESSE EMPRESTAR A ARMA DO MEU SERVO,` **SEU FRACOTE**\n"
+                    f"`HA HA HA HA! SE VOCE NAO BATER MAIS FORTE EU` **IREI**\n",
+                    f"`HA HA HA HA! DEPOIS DESSE ATAQUE VAI PRECISAR FAZER UMA ARMADURA` **NOVA**\n",
+                    f"`HA HA HA HA! TALVES EU DEVESSE EMPRESTAR A ARMA DO MEU SERVO,` **SEU FRACOTE**\n",
                     f"`HA HA HA HA! NAO ME SUBESTIME` **INSOLENTE**\n"
                 ]
                 try:
                     chance_skill_choice, mini_b = randint(1, 100), self.is_mini_boss
 
-                    if self.tot_hp / 100 * 75 <= self.status["hp"] <= self.tot_hp or self.status["hp"] > self.tot_hp:
+                    if self.tot_hp / 100 * 85 <= self.status["hp"] <= self.tot_hp or self.status["hp"] > self.tot_hp:
                         if not self.ultimate:
                             if "quest" in self.name.lower() or self.is_mini_boss:
                                 if self.is_mini_boss and entity.is_player:
@@ -541,12 +541,12 @@ class Entity(object):
                             if self.is_mini_boss:
                                 msg_return += f"`quando eu enfrento um fraco como voce, é assim que eu faço!`\n"
 
-                    elif self.tot_hp / 100 * 50 <= self.status["hp"] <= self.tot_hp / 100 * 75 and not mini_b:
+                    elif self.tot_hp / 100 * 65 <= self.status["hp"] <= self.tot_hp / 100 * 85 and not mini_b:
                         self.skill = choice(["stun", "gelo", "manadrain"])
                         if self.is_mini_boss:
                             msg_return += f"`HA HA HA HA! tente escapar` **DISSO**\n"
 
-                    elif self.tot_hp / 100 * 25 <= self.status["hp"] <= self.tot_hp / 100 * 50 and not mini_b:
+                    elif self.tot_hp / 100 * 35 <= self.status["hp"] <= self.tot_hp / 100 * 65 and not mini_b:
                         if chance_skill_choice <= 50 and not self.healthy:
                             self.skill = "cura"
                         self.skill = choice(["veneno", "queimadura", "silencio", "fraquesa"])
@@ -556,7 +556,7 @@ class Entity(object):
                         if self.is_mini_boss and self.skill != "cura":
                             msg_return += f"`IREI DEBILITADO DE UMA FORMA OU OUTRA!`\n"
 
-                    elif self.status["hp"] <= self.tot_hp / 100 * 25:
+                    elif self.status["hp"] <= self.tot_hp / 100 * 35:
                         if 50 <= chance_skill_choice <= 75:
                             self.skill = choice(["stun", "gelo", "manadrain"])
                         if chance_skill_choice <= 50 and not self.healthy:
@@ -569,7 +569,7 @@ class Entity(object):
                         if self.is_mini_boss and self.skill != "cura":
                             msg_return += f"`MALDITOOOOOOO VAI PARA O INFERNO!!`\n"
 
-                    elif self.status["hp"] <= self.tot_hp / 100 * 10:
+                    elif self.status["hp"] <= self.tot_hp / 100 * 15:
                         if chance_skill_choice <= 50 and not self.is_combo:
                             self.skill = "SKILL-COMBO"
                         self.skill = choice(skills)
@@ -608,6 +608,9 @@ class Entity(object):
                 self.last_skill = self.skill
                 self.healthy = True if self.skill == "cura" else False
                 self.is_combo = True if self.skill == "SKILL-COMBO" else False
+
+                if self.skill is None:
+                    self.skill = "cura"
 
                 _text1 = f"**{self.name.upper()}** `ESCOLHEU O ATAQUE:` **{self.skill.upper()}**"
                 msg_return += f"{_text1}\n\n"
