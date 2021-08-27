@@ -739,7 +739,7 @@ class OpenClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @read.command(name='assemble', aliases=['a'])
+    @read.command(name='assemble')
     async def _assemble(self, ctx, amount: int = 1):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -826,7 +826,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 50
+        _INT = 75
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -893,7 +893,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 50
+        _INT = 25
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -960,7 +960,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 50
+        _INT = 100
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -1027,7 +1027,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 50
+        _INT = 150
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
