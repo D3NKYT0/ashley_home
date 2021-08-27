@@ -377,7 +377,7 @@ class Battle(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
-        if change < 10 and player[ctx.author.id].status['hp'] > 0:
+        if change <= 10 and player[ctx.author.id].status['hp'] > 0:
 
             equips_list = list()
             for ky in self.bot.config['equips'].keys():
@@ -407,7 +407,7 @@ class Battle(commands.Cog):
                 embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed, delete_after=30.0)
 
-        elif change < 25 and player[ctx.author.id].status['hp'] > 0:
+        elif change <= 25 and player[ctx.author.id].status['hp'] > 0:
 
             equips_list = list()
             for ky in self.bot.config['equips'].keys():
@@ -430,6 +430,17 @@ class Battle(commands.Cog):
             if rew is not None:
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU UM` ✨ **CONSUMABLE** ✨\n'
                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**', delete_after=5.0)
+
+        elif change <= 40 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
+
+            try:
+                update['inventory'][db_monster['quest']] += 1
+            except KeyError:
+                update['inventory'][db_monster['quest']] = 1
+
+            icon, name = self.bot.items[db_monster['quest']][0], self.bot.items[db_monster['quest']][1]
+            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **QUEST ITEM** ✨\n'
+                           f'{icon} **1** `{name}`')
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)

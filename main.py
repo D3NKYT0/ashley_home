@@ -93,6 +93,7 @@ class Ashley(commands.AutoShardedBot):
         self.staff = self.config['staff']['list']
         self.testers = self.config['staff']['testers'] + self.config['staff']['list']
         self.team = self.staff
+        self.admin = [416606375498481686, 300592580381376513]
         self.shortcut = self.config['attribute']['shortcut']
         self.block = self.config['attribute']['block']
 
@@ -321,9 +322,10 @@ class Ashley(commands.AutoShardedBot):
                     query_guild["$inc"]["data.commands"] = 1
 
                 if (data_guild['data']['commands'] // 1000) > 5 and data_guild['data']['ranking'] == "Bronze":
-                    min_ = 1 + (data_guild['data']['commands'] // 1000)
-                    chance = randint(min_, 200)
-                    if chance < min_:
+                    _min = int(1 + (data_guild['data']['commands'] / 1000))
+                    _max = _min + 1 if _min >= 200 else 200
+                    chance = randint(_min, _max)
+                    if chance < _min:
                         query_user["$inc"]["inventory.coins"] = 1000
                         data_guild['data']['ranking'] = "Silver"
                         perms = ctx.channel.permissions_for(ctx.me)
@@ -333,9 +335,10 @@ class Ashley(commands.AutoShardedBot):
                                            f'partir de agora e ` **+1000** `Fichas para jogar`')
 
                 elif (data_guild['data']['commands'] // 1000) > 10 and data_guild['data']['ranking'] == "Silver":
-                    min_ = 1 + (data_guild['data']['commands'] // 1000)
-                    chance = randint(min_, 200)
-                    if chance < min_:
+                    _min = int(1 + (data_guild['data']['commands'] / 1000))
+                    _max = _min + 1 if _min >= 200 else 200
+                    chance = randint(_min, _max)
+                    if chance < _min:
                         if "$set" not in query_guild.keys():
                             query_guild["$set"] = dict()
                         query_user["$inc"]["inventory.coins"] = 2000
@@ -367,8 +370,8 @@ class Ashley(commands.AutoShardedBot):
                     list_chests = []
                     for k, v in self.chests.items():
                         list_chests += [k] * v
-                    CHEST = choice(list_chests)
-                    chest_type = [k for k in self.chests.keys()].index(CHEST)
+                    _CHEST = choice(list_chests)
+                    chest_type = [k for k in self.chests.keys()].index(_CHEST)
 
                     if ctx.author.id not in self.chests_users:
                         self.chests_users[ctx.author.id] = {"quant": 1, "chests": [chest_type]}
@@ -404,8 +407,8 @@ class Ashley(commands.AutoShardedBot):
                     for k, v in self.boxes.items():
                         list_boxes += [k] * v
 
-                    BOX = choice(list_boxes)
-                    box_type = [k for k in self.boxes.keys()].index(BOX)
+                    _BOX = choice(list_boxes)
+                    box_type = [k for k in self.boxes.keys()].index(_BOX)
                     for _ in range(box_type + 1):
                         if ctx.guild.id not in self.box:
                             self.box[ctx.guild.id] = {"quant": 1, "boxes": [box_type]}
@@ -423,7 +426,7 @@ class Ashley(commands.AutoShardedBot):
                                     f"disponiveis!")
                     embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-                    embed.set_thumbnail(url=BOX)
+                    embed.set_thumbnail(url=_BOX)
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
@@ -495,8 +498,8 @@ class Ashley(commands.AutoShardedBot):
                     list_chests = []
                     for k, v in self.chests_m.items():
                         list_chests += [k] * v
-                    CHEST = choice(list_chests)
-                    chest_type = [k for k in self.chests_m.keys()].index(CHEST)
+                    _CHEST = choice(list_chests)
+                    chest_type = [k for k in self.chests_m.keys()].index(_CHEST)
 
                     if ctx.author.id not in self.chests_marry:
                         self.chests_marry[ctx.author.id] = {"quant": 1, "chests": [chest_type]}

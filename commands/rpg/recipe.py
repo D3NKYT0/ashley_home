@@ -1,3 +1,4 @@
+import copy
 import discord
 
 from discord.ext import commands
@@ -22,10 +23,14 @@ class RecipeClass(commands.Cog):
     async def craft(self, ctx, *, item=None):
         """Comando para criar itens de receitas, para fabricar suas armaduras."""
         global quant
-        recipes = self.bot.config['recipes']
-        query = {"_id": 0, "user_id": 1, "inventory": 1}
+        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1}
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         query_user = {"$inc": {}}
+
+        recipes = copy.deepcopy(self.bot.config['recipes'])
+        for k, v in self.bot.config['especial_recipes'].items():
+            if k in data_user["recipes"]:
+                recipes[k] = v
 
         if ctx.author.id in self.bot.comprando:
             return await ctx.send('<:alert:739251822920728708>│`VOCE JA ESTA EM PROCESSO DE COMPRA...`')
@@ -246,7 +251,11 @@ class RecipeClass(commands.Cog):
     @commands.command(name='recipe', aliases=['receita', 'recipes'])
     async def recipe(self, ctx, page: int = 0):
         """Lista de receitas disponiveis."""
-        recipes = self.bot.config['recipes']
+        recipes = copy.deepcopy(self.bot.config['recipes'])
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        for k, v in self.bot.config['especial_recipes'].items():
+            if k in data["recipes"]:
+                recipes[k] = v
         embed = ['Recipes', self.color, '`Para craftar um item use:`\n**ash craft nome_do_item**\n\n']
         num = page - 1 if page > 0 else None
         await paginator(self.bot, self.bot.items, recipes, embed, ctx, num)

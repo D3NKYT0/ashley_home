@@ -3,6 +3,7 @@ user_data_structure = {
             "guild_id": None,
             "vip_free": False,
             "version": [1.0, "ashley-db-user-04-2021"],
+            "recipes": list(),
             "user": {
                 "experience": 0,
                 "level": 1,

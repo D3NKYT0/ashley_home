@@ -56,10 +56,10 @@ def check_it(**kwargs):
 
         if ctx.author.id == data['config']['owner_id'] and kwargs.get('is_owner', False):
             pass
-        elif ctx.author.id in ctx.bot.staff and kwargs.get('is_owner', False):
+        elif ctx.author.id in ctx.bot.admin and kwargs.get('is_owner', False):
             pass
         elif ctx.author.id != data['config']['owner_id'] and kwargs.get('is_owner', False):
-            raise commands.CheckFailure("<:alert:739251822920728708>│`Apenas meu criador pode usar esse comando!`")
+            raise commands.CheckFailure("<:alert:739251822920728708>│`Apenas meus devs podem usar esse comando!`")
 
         if kwargs.get("check_role", False):
             role = discord.utils.find(lambda r: r.name in kwargs.get("roles", []), ctx.author.roles)

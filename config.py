@@ -32,6 +32,9 @@ with open("data/emojis.json", encoding="utf-8") as emojis:
 with open("data/equips.json", encoding="utf-8") as equips:
     equips = json.load(equips)
 
+with open("data/especial_recipes.json", encoding="utf-8") as especial_recipes:
+    especial_recipes = json.load(especial_recipes)
+
 with open("data/forca.json", encoding="utf-8") as forca:
     forca = json.load(forca)
 
@@ -97,6 +100,7 @@ data = {
     "ctf": ctf,
     "emojis": emojis,
     "equips": equips,
+    "especial_recipes": especial_recipes,
     "forca": forca,
     "icons": icons,
     "items": items,

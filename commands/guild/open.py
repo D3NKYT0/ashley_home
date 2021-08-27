@@ -20,6 +20,7 @@ class OpenClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.i = self.bot.items
+        self.st = []
 
         self.rewards_moon = self.bot.config['attribute']['moon']
 
@@ -51,6 +52,10 @@ class OpenClass(commands.Cog):
         self.list_stickers = list()
         for k, v in self.bot.stickers.items():
             self.list_stickers += [k] * v[1]
+
+    def status(self):
+        for v in self.bot.data_cog.values():
+            self.st.append(v)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -654,8 +659,28 @@ class OpenClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='frozen', aliases=['ler', 'leitura', 'letter'])
-    async def frozen(self, ctx, amount: int = 1):
+    @commands.group(name='read', aliases=["ler"])
+    async def read(self, ctx):
+        if ctx.invoked_subcommand is None:
+            self.status()
+            embed = discord.Embed(color=self.bot.color)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            embed.add_field(name="Read Commands:",
+                            value=f"{self.st[121]} `letter` Faça a leitura da carta: Frozen Letrer.\n"
+                                  f"{self.st[121]} `assemble` Faça a leitura do grimorio: Guide of Spells.\n"
+                                  f"{self.st[121]} `aungen` Faça a leitura do grimorio: Aungen’s Book.\n"
+                                  f"{self.st[121]} `soul` Faça a leitura do grimorio: Book of Soul.\n"
+                                  f"{self.st[121]} `nw` Faça a leitura do grimorio: Neverwinter Book.\n"
+                                  f"{self.st[121]} `waffen` Faça a leitura do grimorio: Waffen's Book.\n")
+            embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+            await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='letter', aliases=['l'])
+    async def _letter(self, ctx, amount: int = 1):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -675,14 +700,6 @@ class OpenClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
-
-        seconds = 10
-        text = f"<a:loading:520418506567843860>|`Lendo...` **{seconds * amount} segundos...**"
-        embed = discord.Embed(color=self.bot.color, description=text)
-        msg = await ctx.send(embed=embed)
-        await sleep(seconds * amount)
-        await msg.delete()
-
         db_player = extension.set_player(ctx.author, copy.deepcopy(data))
         data_xp = calc_xp(db_player['xp'], db_player['level'])
         ini, end = (1 * amount) + db_player["intelligence"], (5 * amount) + db_player["intelligence"]
@@ -696,6 +713,13 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.data.add_xp(ctx, xpr)
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`Lendo...` **{seconds * amount} segundos...**"
+        embed = discord.Embed(color=self.bot.color, description=text)
+        msg = await ctx.send(embed=embed)
+        await sleep(seconds * amount)
+        await msg.delete()
 
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
@@ -711,6 +735,341 @@ class OpenClass(commands.Cog):
         text = f"**XP:** {new_xp}\n`{'█' * percent[0]}{'-' * (50 - percent[0])}`"
         embed = discord.Embed(color=self.bot.color, description=text)
         await ctx.send(embed=embed, delete_after=5.0)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='assemble', aliases=['a'])
+    async def _assemble(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        _INT = 50
+        if data['rpg']['intelligence'] < _INT:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
+                  f'esse grimorio`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+
+        chance, msg_return, craft = randint(1, 100), False, None
+        if chance <= 25:
+            craft = choice(["potion_of_life", "potion_of_love"])
+            if craft not in update["recipes"]:
+                msg_return = True
+                update["recipes"].append(craft)
+        await self.bot.db.update_data(data, update, 'users')
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
+        file = discord.File('images/grimorios/Assemble Guide of Spells.jpg', filename="Assemble Guide of Spells.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="attachment://Assemble Guide of Spells.jpg")
+        msg = await ctx.send(file=file, embed=embed)
+
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        if chance <= 25:
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_thumbnail(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='aungen', aliases=['a'])
+    async def _aungen(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        _INT = 50
+        if data['rpg']['intelligence'] < _INT:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
+                  f'esse grimorio`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+
+        chance, msg_return, craft = randint(1, 100), False, None
+        if chance <= 25:
+            craft = choice(["potion_of_death", "potion_of_death"])
+            if craft not in update["recipes"]:
+                msg_return = True
+                update["recipes"].append(craft)
+        await self.bot.db.update_data(data, update, 'users')
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
+        file = discord.File('images/grimorios/Aungens Book.jpg', filename="Aungens Book.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="attachment://Aungens Book.jpg")
+        msg = await ctx.send(file=file, embed=embed)
+
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        if chance <= 25:
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_thumbnail(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='soul', aliases=['s'])
+    async def _soul(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        _INT = 50
+        if data['rpg']['intelligence'] < _INT:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
+                  f'esse grimorio`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+
+        chance, msg_return, craft = randint(1, 100), False, None
+        if chance <= 25:
+            craft = choice(["potion_of_soul", "potion_of_rejuvenation"])
+            if craft not in update["recipes"]:
+                msg_return = True
+                update["recipes"].append(craft)
+        await self.bot.db.update_data(data, update, 'users')
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
+        file = discord.File('images/grimorios/Book of Soul.jpg', filename="Book of Soul.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="attachment://Book of Soul.jpg")
+        msg = await ctx.send(file=file, embed=embed)
+
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        if chance <= 25:
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_thumbnail(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='nw', aliases=['n'])
+    async def _nw(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        _INT = 50
+        if data['rpg']['intelligence'] < _INT:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
+                  f'esse grimorio`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+
+        chance, msg_return, craft = randint(1, 100), False, None
+        if chance <= 25:
+            craft = choice(["potion_of_weakening", "potion_of_weakening"])
+            if craft not in update["recipes"]:
+                msg_return = True
+                update["recipes"].append(craft)
+        await self.bot.db.update_data(data, update, 'users')
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
+        file = discord.File('images/grimorios/Neverwinter Book.jpg', filename="Neverwinter Book.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="attachment://Neverwinter Book.jpg")
+        msg = await ctx.send(file=file, embed=embed)
+
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        if chance <= 25:
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_thumbnail(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
+
+    @check_it(no_pm=True, is_owner=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @read.command(name='waffen', aliases=['w'])
+    async def _waffen(self, ctx, amount: int = 1):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if ctx.author.id in self.bot.lendo:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "frozen_letter" not in data["inventory"].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if amount > data["inventory"]["frozen_letter"]:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        _INT = 50
+        if data['rpg']['intelligence'] < _INT:
+            msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
+                  f'esse grimorio`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.lendo.append(ctx.author.id)
+        update["inventory"]["frozen_letter"] -= amount
+        if update["inventory"]["frozen_letter"] < 1:
+            del update["inventory"]["frozen_letter"]
+
+        chance, msg_return, craft = randint(1, 100), False, None
+        if chance <= 25:
+            craft = choice(["celestial", "celestial"])
+            if craft not in update["recipes"]:
+                msg_return = True
+                # update["recipes"].append(craft)
+        await self.bot.db.update_data(data, update, 'users')
+
+        seconds = 10
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
+        file = discord.File('images/grimorios/Waffens Book.jpg', filename="Waffens Book.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed.set_thumbnail(url="attachment://Waffens Book.jpg")
+        msg = await ctx.send(file=file, embed=embed)
+
+        await sleep(seconds * amount)
+        await msg.delete()
+
+        if ctx.author.id in self.bot.lendo:
+            self.bot.lendo.remove(ctx.author.id)
+
+        if chance <= 25:
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_thumbnail(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
 
 
 def setup(bot):

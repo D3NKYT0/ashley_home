@@ -378,13 +378,6 @@ class Entity(object):
                     # verificador se esta sendo feito o combo
                     self.verify_combo(int(answer.content) - 1)
 
-                    if int(answer.content) == len(skills) + 4 and self.is_combo:
-                        self.skill = "SKILL-COMBO"
-                        self.is_combo = False
-                        self.status['mp'] = 0
-                        self.combo_cont = 0
-                        break
-
                     if int(answer.content) == len(skills) + 1:
                         # regeneração de MP
                         regen = int(((self.status['con'] * self.rate[1]) / 100) * 50)
@@ -418,7 +411,15 @@ class Entity(object):
                         break
 
                     if int(answer.content) == len(skills) + 3:
+                        # cancela ou foge da batalha
                         return "BATALHA-CANCELADA"
+
+                    if int(answer.content) == len(skills) + 4 and self.is_combo:
+                        self.skill = "SKILL-COMBO"
+                        self.is_combo = False
+                        self.status['mp'] = 0
+                        self.combo_cont = 0
+                        break
 
                     potion_msg = False
                     for c in attacks.keys():
@@ -759,7 +760,7 @@ class Entity(object):
             description = f'**{entity.name.upper()}** `não atacou nesse turno!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://uploads1.yugioh.com/card_images/2110/detail/2004.jpg?1385103024"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], entity.img, entity.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -767,7 +768,7 @@ class Entity(object):
             description = f'**{entity.name.upper()}** `passou o turno, usando a poção de MANA!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], entity.img, entity.name)
             await ctx.send(embed=embed_)
             return entity
 
@@ -775,7 +776,7 @@ class Entity(object):
             description = f'**{entity.name.upper()}** `passou o turno, usando a poção de VIDA!`'
             monster = not self.is_player if self.is_pvp else self.is_player
             img_ = "https://vignette.wikia.nocookie.net/yugioh/images/6/61/OfferingstotheDoomed-TF04-JP-VG.png"
-            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], self.img, self.name)
+            embed_ = embed_creator(description, img_, monster, self.tot_hp, self.status['hp'], entity.img, entity.name)
             await ctx.send(embed=embed_)
             return entity
 
