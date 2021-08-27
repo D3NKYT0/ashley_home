@@ -756,6 +756,8 @@ def equips(data_s):
             return "panel_star_4"
         if "hero" in name.lower():
             return "panel_star_5"
+        if "divine" in name.lower():
+            return "panel_pvp"
         return None
 
     # add equips to img

@@ -205,7 +205,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
     cont = 0
     cont_i = 0
     description = ''
-    jewel = ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '111', '112']
+    jewel = ['101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '111', '112', '113', '114', '115']
     soulshots = ['soushot_platinum_silver', 'soushot_platinum_mystic', 'soushot_platinum_inspiron',
                  'soushot_platinum_violet', 'soushot_platinum_hero', 'soushot_leather_silver',
                  'soushot_leather_mystic', 'soushot_leather_inspiron', 'soushot_leather_violet',

@@ -584,9 +584,11 @@ class Raid(commands.Cog):
                 update['inventory']['frozen_letter'] += 1
             except KeyError:
                 update['inventory']['frozen_letter'] = 1
+
             await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` **10+** `monstros,"
-                           f" voce dropou` ✨ <:bosskey:766048658470600714> ✨ `1` **Frozen Letter** "
-                           f"`adicionando ao seu inventario o item com sucesso...`")
+                           f" voce dropou` ✨ {self.bot.items['frozen_letter'][0]} ✨ `{1}`"
+                           f" **{self.bot.items['frozen_letter'][1]}** `adicionando ao seu inventario o item "
+                           f"com sucesso...`")
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)
