@@ -715,7 +715,7 @@ class OpenClass(commands.Cog):
         await self.bot.data.add_xp(ctx, xpr)
 
         seconds = 10
-        text = f"<a:loading:520418506567843860>|`Lendo...` **{seconds * amount} segundos...**"
+        text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
         embed = discord.Embed(color=self.bot.color, description=text)
         msg = await ctx.send(embed=embed)
         await sleep(seconds * amount)
@@ -759,7 +759,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 50
+        _INT = 50 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -772,7 +772,7 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             craft = choice(["potion_of_life", "potion_of_love"])
             if craft not in update["recipes"]:
                 msg_return = True
@@ -781,10 +781,10 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = discord.File('images/grimorios/Assemble Guide of Spells.jpg', filename="Assemble Guide of Spells.jpg")
+        file = discord.File('images/grimorios/Assemble Guide of Spells.jpg', filename="grimorio.jpg")
         embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_image(url="attachment://Assemble Guide of Spells.jpg")
+        embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
 
         await sleep(seconds * amount)
@@ -793,10 +793,10 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
-                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
                 file = discord.File('images/elements/success.jpg', filename="success.jpg")
                 embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
@@ -826,7 +826,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 75
+        _INT = 75 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -839,7 +839,7 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             craft = choice(["potion_of_death", "potion_of_death"])
             if craft not in update["recipes"]:
                 msg_return = True
@@ -848,10 +848,10 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = discord.File('images/grimorios/Aungens Book.jpg', filename="Aungens Book.jpg")
+        file = discord.File('images/grimorios/Aungens Book.jpg', filename="grimorio.jpg")
         embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_image(url="attachment://Aungens Book.jpg")
+        embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
 
         await sleep(seconds * amount)
@@ -860,10 +860,10 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
-                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
                 file = discord.File('images/elements/success.jpg', filename="success.jpg")
                 embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
@@ -893,7 +893,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 25
+        _INT = 25 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -906,19 +906,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             craft = choice(["potion_of_soul", "potion_of_rejuvenation"])
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
         await self.bot.db.update_data(data, update, 'users')
 
-        seconds = 10
+        seconds = 10 - (amount // 2)
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = discord.File('images/grimorios/Book of Soul.jpg', filename="Book of Soul.jpg")
+        file = discord.File('images/grimorios/Book of Soul.jpg', filename="grimorio.jpg")
         embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_image(url="attachment://Book of Soul.jpg")
+        embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
 
         await sleep(seconds * amount)
@@ -927,10 +927,10 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
-                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
                 file = discord.File('images/elements/success.jpg', filename="success.jpg")
                 embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
@@ -960,7 +960,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 100
+        _INT = 100 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -973,7 +973,7 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             craft = choice(["potion_of_weakening", "potion_of_weakening"])
             if craft not in update["recipes"]:
                 msg_return = True
@@ -982,10 +982,10 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = discord.File('images/grimorios/Neverwinter Book.jpg', filename="Neverwinter Book.jpg")
+        file = discord.File('images/grimorios/Neverwinter Book.jpg', filename="grimorio.jpg")
         embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_image(url="attachment://Neverwinter Book.jpg")
+        embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
 
         await sleep(seconds * amount)
@@ -994,10 +994,10 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
-                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
                 file = discord.File('images/elements/success.jpg', filename="success.jpg")
                 embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
@@ -1027,7 +1027,7 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _INT = 150
+        _INT = 150 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
@@ -1040,7 +1040,7 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             craft = choice(["celestial", "celestial"])
             if craft not in update["recipes"]:
                 msg_return = True
@@ -1049,10 +1049,10 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = discord.File('images/grimorios/Waffens Book.jpg', filename="Waffens Book.jpg")
+        file = discord.File('images/grimorios/Waffens Book.jpg', filename="grimorio.jpg")
         embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_image(url="attachment://Waffens Book.jpg")
+        embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
 
         await sleep(seconds * amount)
@@ -1061,10 +1061,10 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5:
+        if chance <= 5 + (amount // 2):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
-                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:` **{craft}**"
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
                 file = discord.File('images/elements/success.jpg', filename="success.jpg")
                 embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
