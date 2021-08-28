@@ -11,9 +11,20 @@ class RpgStart(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.c = "`Comando Cancelado`"
-        self.cl = ['paladin [hammer and shield]', 'necromancer [staffer and shield]', 'wizard [sword and shield]',
-                   'warrior [dual sword / no shield]', 'priest [bow and arrow]', 'warlock [spear / no shield]',
-                   'assassin [dagguer / no shield]']
+        self.cls = ['paladin [hammer and shield]',
+                    'necromancer [staffer and shield]',
+                    'wizard [sword and shield]',
+                    'warrior [dual sword / no shield]',
+                    'priest [bow and arrow]',
+                    'warlock [spear / no shield]',
+                    'assassin [dagguer / no shield]']
+        self.cl = ['paladin',
+                   'necromancer',
+                   'wizard',
+                   'warrior',
+                   'priest',
+                   'warlock',
+                   'assassin']
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -21,6 +32,7 @@ class RpgStart(commands.Cog):
     @commands.command(name='rpg', aliases=['start'])
     async def rpg(self, ctx):
         """Comando necessario para iniciar sua jornada no rpg da ashley"""
+
         def check_stone(m):
             return m.author == ctx.author and m.content == '0' or m.author == ctx.author and m.content == '1'
 
@@ -100,10 +112,10 @@ class RpgStart(commands.Cog):
                               description=f'<a:blue:525032762256785409>│`QUAL CLASSE VOCE DESEJA APRENDER?`\n'
                                           f'`As classes fazem voce aprender habilidades unicas de cada uma`\n'
                                           f'`USE OS NUMEROS PARA DIZER QUAL CLASSE VOCE DESEJA:`\n'
-                                          f'**1** para `{self.cl[0].upper()}`\n**2** para `{self.cl[1].upper()}`\n'
-                                          f'**3** para `{self.cl[2].upper()}`\n**4** para `{self.cl[3].upper()}`\n'
-                                          f'**5** para `{self.cl[4].upper()}`\n**6** para `{self.cl[5].upper()}`\n'
-                                          f'**7** para `{self.cl[6].upper()}`')
+                                          f'**1** para `{self.cls[0].upper()}`\n**2** para `{self.cls[1].upper()}`\n'
+                                          f'**3** para `{self.cls[2].upper()}`\n**4** para `{self.cls[3].upper()}`\n'
+                                          f'**5** para `{self.cls[4].upper()}`\n**6** para `{self.cls[5].upper()}`\n'
+                                          f'**7** para `{self.cls[6].upper()}`')
         msg = await ctx.send(embed=embed)
 
         try:
