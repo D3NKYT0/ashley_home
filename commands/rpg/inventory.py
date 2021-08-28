@@ -126,8 +126,8 @@ class InventoryClass(commands.Cog):
                 "name": ctx.author.name,
                 "class": str(data['rpg']['class_now']),
                 "set": full_armor,
-                "sex": "male",
-                "skin": "default",
+                "sex": data['rpg']['sex'],
+                "skin": data['rpg']['skin'],
 
                 "status_base": {
                     "atk": str(data['rpg']['status']['atk']),

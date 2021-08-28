@@ -11,7 +11,9 @@ class RpgStart(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.c = "`Comando Cancelado`"
-        self.cl = ['paladin', 'necromancer', 'wizard', 'warrior', 'priest', 'warlock', 'assassin']
+        self.cl = ['paladin [hammer and shield]', 'necromancer [staffer and shield]', 'wizard [sword and shield]',
+                   'warrior [dual sword / no shield]', 'priest [bow and arrow]', 'warlock [spear / no shield]',
+                   'assassin [dagguer / no shield]']
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -19,8 +21,11 @@ class RpgStart(commands.Cog):
     @commands.command(name='rpg', aliases=['start'])
     async def rpg(self, ctx):
         """Comando necessario para iniciar sua jornada no rpg da ashley"""
-        def check_battle(m):
+        def check_stone(m):
             return m.author == ctx.author and m.content == '0' or m.author == ctx.author and m.content == '1'
+
+        def check_sex(m):
+            return m.author == ctx.author and m.content == '1' or m.author == ctx.author and m.content == '2'
 
         def check_option(m):
             return m.author == ctx.author and m.content.isdigit()
@@ -33,8 +38,8 @@ class RpgStart(commands.Cog):
 
         if data['rpg']['active']:
             embed = discord.Embed(color=self.bot.color, description=f'<:alert:739251822920728708>│`VOCE JA INICIOU O '
-                                                                    f'RPG, SE VOCE DESEJA ALTERAR ALGO COMO: MODO DE '
-                                                                    f'IMAGEM E CLASSE, VAI GASTAR AS PEDRAS ABAIXO:`')
+                                                                    f'RPG, SE VOCE DESEJA ALTERAR A CLASSE, VAI GASTAR'
+                                                                    f' AS PEDRAS ABAIXO:`')
             await ctx.send(embed=embed)
             n_cost = [15000, 5000, 500]
             t = data['treasure']
@@ -53,10 +58,10 @@ class RpgStart(commands.Cog):
                                           ' de classe.`')
 
             msg = await ctx.send(f"<:alert:739251822920728708>│`VOCE JA TEM TODAS AS PEDRAS NECESSARIOS, "
-                                 f"DESEJA ALTERAR A CLASSE OU MODO DE IMAGEM AGORA?`"
+                                 f"DESEJA ALTERAR A CLASSE AGORA?`"
                                  f"\n**1** para `SIM` ou **0** para `NÃO`")
             try:
-                answer = await self.bot.wait_for('message', check=check_battle, timeout=30.0)
+                answer = await self.bot.wait_for('message', check=check_stone, timeout=30.0)
             except TimeoutError:
                 await msg.delete()
                 return await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
@@ -74,7 +79,22 @@ class RpgStart(commands.Cog):
             update_guild_native['data'][f"total_silver"] -= n_cost[1]
             update_guild_native['data'][f"total_gold"] -= n_cost[2]
 
-        asks = {'lower_net': False, 'class_now': None}
+        asks = {'sex': 'male', 'class_now': None}
+
+        embed = discord.Embed(color=self.bot.color,
+                              description=f'<a:blue:525032762256785409>│`QUAL O SEXO DO SEU PERSONAGEM?`\n'
+                                          f'`O sexo definirá a img que aparecera no comando (ash equip)`\n'
+                                          f'**1** para `HOMEM` ou **2** para `MULHER`')
+        msg = await ctx.send(embed=embed)
+
+        try:
+            answer = await self.bot.wait_for('message', check=check_sex, timeout=30.0)
+        except TimeoutError:
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│{self.c}')
+            return await ctx.send(embed=embed)
+
+        asks['sex'] = "male" if answer.content == "1" else "female"
+        await msg.delete()
 
         embed = discord.Embed(color=self.bot.color,
                               description=f'<a:blue:525032762256785409>│`QUAL CLASSE VOCE DESEJA APRENDER?`\n'
@@ -112,9 +132,11 @@ class RpgStart(commands.Cog):
             rpg = {
                 "class": 'default',
                 "active": True,
-                "lower_net": asks['lower_net'],
                 "class_now": asks['class_now'],
                 "vip": update['rpg']['vip'],
+                "sex": asks['sex'],
+                "skin": "default",
+                "skins": list(),
                 "sub_class": {
                     "paladin": {"level": 1, "xp": 0, "level_max": False},
                     "warrior": {"level": 1, "xp": 0, "level_max": False},
@@ -165,8 +187,10 @@ class RpgStart(commands.Cog):
             rpg = {
                 "active": True,
                 "class": 'default',
-                "lower_net": asks['lower_net'],
                 "class_now": asks['class_now'],
+                "sex": asks['sex'],
+                "skin": update['rpg']['skin'],
+                "skins": update['rpg']['skins'],
                 "vip": update['rpg']['vip'],
                 "sub_class": update['rpg']['sub_class'],
                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": pdh},

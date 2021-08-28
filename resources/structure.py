@@ -74,9 +74,11 @@ user_data_structure = {
             },
             "rpg": {
                 "vip": False,
-                "lower_net": False,
                 "class": 'default',
                 "class_now": None,
+                "sex": "male",
+                "skin": "default",
+                "skins": list(),
                 "sub_class": {
                     "paladin": {"level": 1, "xp": 0, "level_max": False},
                     "warrior": {"level": 1, "xp": 0, "level_max": False},
