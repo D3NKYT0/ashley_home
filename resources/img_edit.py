@@ -604,8 +604,13 @@ def equips(data_s):
     image = Image.open(f"{_PREFIX}images/dashboards/equip.png").convert('RGBA')
     show = ImageDraw.Draw(image)
 
-    skin = data_s['sex'] if data_s['skin'] == "default" else data_s['skin']
-    skin_define = Image.open(f"{_PREFIX}images/elements/{data_s['class']}/{skin}.png").convert('RGBA')
+    if not data_s['skin']:
+        skin_define = Image.open(f"{_PREFIX}images/elements/{data_s['class']}/{data_s['sex']}.png").convert('RGBA')
+    else:
+        if data_s['class'] in data_s['skin'] and data_s['sex'] in data_s['skin']:
+            skin_define = Image.open(f"{_PREFIX}images/elements/skins/{data_s['skin']}.png").convert('RGBA')
+        else:
+            skin_define = Image.open(f"{_PREFIX}images/elements/{data_s['class']}/{data_s['sex']}.png").convert('RGBA')
     image.paste(skin_define, (0, 0), skin_define)
 
     set_define = Image.open(f"{_PREFIX}images/elements/{'set' if data_s['set'] else 'no_set'}.png").convert('RGBA')
