@@ -65,7 +65,7 @@ class InventoryClass(commands.Cog):
                 for k, v in self.bot.config['equips'][ky].items():
                     eq[k] = v
 
-            set_armor = list()
+            set_armor, full_armor = list(), False
             sts = {"atk": 0, "agi": 0, "prec": 0, "con": 0, "luk": 0}
             set_value = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
             for key in data['rpg']["equipped_items"].keys():
@@ -80,6 +80,7 @@ class InventoryClass(commands.Cog):
 
             for kkk in self.bot.config["set_equips"].values():
                 if len([e for e in set_armor if e in kkk['set']]) == 5:
+                    full_armor = True
                     for name in sts.keys():
                         try:
                             sts[name] += kkk['modifier'][name]
@@ -124,6 +125,9 @@ class InventoryClass(commands.Cog):
             data_equips = {
                 "name": ctx.author.name,
                 "class": str(data['rpg']['class_now']),
+                "set": full_armor,
+                "sex": "male",
+                "skin": "default",
 
                 "status_base": {
                     "atk": str(data['rpg']['status']['atk']),

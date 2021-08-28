@@ -62,7 +62,8 @@ class SkillClass(commands.Cog):
                 "acc": str(data['rpg']['status']['prec']),
                 "con": str(data['rpg']['status']['con']),
                 "luk": str(data['rpg']['status']['luk']),
-                "pdh": str(data['rpg']['status']['pdh'])
+                "pdh": str(data['rpg']['status']['pdh']),
+                "int": str(data['rpg']['intelligence']),
             }
 
             await skill_points(db)

@@ -444,6 +444,8 @@ async def skill_points(database):
         "class": [166, 92, 329, 130],
         "name": [191, 152, 785, 190],
 
+        "int": [223, 50, 326, 85],
+
         "atk": [340, 85, 405, 137],
         "dex": [428, 85, 493, 137],
         "acc": [520, 85, 585, 137],
@@ -577,6 +579,11 @@ async def skill_points(database):
             x_, y_ = text_align(rectangles[k], database[k], font_text)
             show.text(xy=(x_ + 1, y_ + 1), text=database[k].upper(), fill=(0, 0, 0), font=font_text)
             show.text(xy=(x_, y_), text=database[k].upper(), fill=(255, 255, 255), font=font_text)
+        elif k == "int":
+            font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 34)
+            x_, y_ = text_align(rectangles[k], database[k], font_text)
+            show.text(xy=(x_ + 1, y_ + 1), text=database[k].upper(), fill=(0, 0, 0), font=font_text)
+            show.text(xy=(x_, y_), text=database[k].upper(), fill=(255, 255, 255), font=font_text)
         else:
             if cn == "necromancer":
                 font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 23)
@@ -594,8 +601,15 @@ async def skill_points(database):
 
 def equips(data_s):
     # load dashboard image
-    image = Image.open(f"{_PREFIX}images/dashboards/equip_{data_s['class']}.png").convert('RGBA')
+    image = Image.open(f"{_PREFIX}images/dashboards/equip.png").convert('RGBA')
     show = ImageDraw.Draw(image)
+
+    skin = data_s['sex'] if data_s['skin'] == "default" else data_s['skin']
+    skin_define = Image.open(f"{_PREFIX}images/elements/{data_s['class']}/{skin}.png").convert('RGBA')
+    image.paste(skin_define, (0, 0), skin_define)
+
+    set_define = Image.open(f"{_PREFIX}images/elements/{'set' if data_s['set'] else 'no_set'}.png").convert('RGBA')
+    image.paste(set_define, (0, 0), set_define)
 
     # Text Align
     def text_align(box, text, font_t):
