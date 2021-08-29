@@ -795,7 +795,11 @@ def equips(data_s):
             if k in armor:
                 f_t = f"{eq[data_s['equipped'][k][0]]['rarity']}/{data_s['equipped'][k][0]}"
             elif k == "sword" or k in jewel or k == "consumable":
-                f_t = f"{data_s['equipped'][k][0]}"
+                if k == "sword":
+                    end = data_s['equipped'][k][0].index("_")
+                    f_t = f"{data_s['equipped'][k][0][:end + 2]}"
+                else:
+                    f_t = f"{data_s['equipped'][k][0]}"
             else:
                 f_t = f"shield/{data_s['equipped'][k][0]}"
             equipped = Image.open(f"{_PREFIX}images/equips/{e_type}/{f_t}.jpg").convert('RGBA')

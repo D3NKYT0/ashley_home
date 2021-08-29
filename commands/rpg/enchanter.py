@@ -3,13 +3,12 @@ import discord
 from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
-from asyncio import TimeoutError, sleep
+from asyncio import TimeoutError
 from config import data as _data
 from random import randint
 from resources.utility import create_id, convert_item_name
-
-limit, limit_weapon = 16, 20
-_class = _data['skills']
+from resources.fight import Ext
+limit, limit_weapon, extension, _class = 16, 20, Ext(), _data['skills']
 levels = [5, 10, 15, 20, 25]
 
 
@@ -24,67 +23,6 @@ class EnchanterClass(commands.Cog):
         self.chance_weapon = self.bot.config['attribute']['chance_weapon_enchant']
         self.botmsg = {}
         self.he = self.bot.help_emoji
-
-    def config_player(self, user, data, lower_net):
-        # configuração do player
-        set_value = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
-        db_player = data
-        db_player["img"] = user.avatar_url_as(format="png")
-        db_player['name'] = user.name
-        db_player["pdef"] = 0
-        db_player["mdef"] = 0
-        db_player["lower_net"] = lower_net
-        set_e = list()
-
-        _classes = db_player["class_now"]
-        _db_class = db_player["sub_class"][_classes]
-        db_player["xp"] = _db_class["xp"]
-        db_player["level"] = _db_class["level"]
-
-        # bonus status player
-        eq = dict()
-        for ky in self.bot.config["equips"].keys():
-            for kk, vv in self.bot.config["equips"][ky].items():
-                eq[kk] = vv
-
-        for k in db_player["status"].keys():
-            try:
-                db_player["status"][k] += self.bot.config["skills"][db_player['class']]['modifier'][k]
-                if db_player['level'] > 25:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier'][k]
-                if db_player['level'] > 49:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier_50'][k]
-                if db_player['level'] > 79:
-                    db_player["status"][k] += self.bot.config["skills"][db_player['class_now']]['modifier_80'][k]
-            except KeyError:
-                pass
-
-        for c in db_player['equipped_items'].keys():
-            if db_player['equipped_items'][c] is None:
-                continue
-
-            if c in set_value:
-                set_e.append(str(c))
-
-            db_player["pdef"] += eq[db_player['equipped_items'][c]]['pdef']
-            db_player["mdef"] += eq[db_player['equipped_items'][c]]['mdef']
-            for name in db_player["status"].keys():
-                try:
-                    db_player["status"][name] += eq[db_player['equipped_items'][c]]['modifier'][name]
-                except KeyError:
-                    pass
-
-        for kkk in self.bot.config["set_equips"].values():
-            if len([e for e in set_e if e in kkk['set']]) == 5:
-                for name in db_player["status"].keys():
-                    try:
-                        db_player["status"][name] += kkk['modifier'][name]
-                    except KeyError:
-                        pass
-                db_player["pdef"] += kkk["pdef"]
-                db_player["mdef"] += kkk["mdef"]
-
-        return db_player
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -117,26 +55,13 @@ class EnchanterClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             self.atacks = {}
-            data_player = self.config_player(member, data['rpg'], data['rpg']['lower_net'])
+            data_player = extension.set_player(ctx.guild.get_member(ctx.author.id), data)
             rate = [_class[data_player['class']]['rate']['life'], _class[data_player['class']]['rate']['mana']]
             if data_player['level'] > 25:
                 rate[0] += _class[data_player['class_now']]['rate']['life']
                 rate[1] += _class[data_player['class_now']]['rate']['mana']
             data_player['status']['hp'] = data_player['status']['con'] * rate[0]
             data_player['status']['mp'] = data_player['status']['con'] * rate[1]
-
-            # sistema de enchants armors
-            _pdef, _mdef = 0, 0
-            for key in data_player['armors'].keys():
-                for k in data_player['armors'][key]:
-                    if key in ["necklace", "earring", "ring"]:
-                        _mdef += k * 0.25
-                    else:
-                        _pdef += k * 0.25
-                    if k == 16:
-                        data_player['status']['con'] += 1
-            data_player["pdef"] += _pdef
-            data_player["mdef"] += _mdef
 
             self.db = data_player
             for c in range(5):
@@ -189,10 +114,10 @@ class EnchanterClass(commands.Cog):
                                f"`Dano:` **{damage} + {bk}** | `Tipo:` **{skill_type.upper()}**\n" \
                                f"`Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
-            TM = int(self.db['status']['con'] * _class[self.db['class_now']]['rate']['mana'])
+            _TM = int(self.db['status']['con'] * _class[self.db['class_now']]['rate']['mana'])
             description += f"`MDEF:` **{int(data_player['mdef'])}**  |  `PDEF:` **{int(data_player['pdef'])}**"
 
-            embed = discord.Embed(title=f"ENCHANTER PANEL - TOTAL MANA: {TM}", description=description, color=0x000000)
+            embed = discord.Embed(title=f"ENCHANTER PANEL - TOTAL MANA: {_TM}", description=description, color=0x000000)
             embed.set_thumbnail(url=member.avatar_url)
 
             _id = create_id()
@@ -443,8 +368,8 @@ class EnchanterClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
-        tt = TIER.index(enchant.split()[-1])
+        _TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
+        tt = _TIER.index(enchant.split()[-1])
         if data['rpg']['armors'][armor][tt] >= limit:
             msg = '<:negate:721581573396496464>│`ESSA ARMADURA JA ATINGIU O ENCANTAMENTO MAXIMO!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
@@ -537,9 +462,9 @@ class EnchanterClass(commands.Cog):
             return await ctx.send(embed=embed)
         sword = [i[1]["name"] for i in equips_list if i[0] == sword_id][0]
 
-        TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
-        tt = TIER.index(sword.split()[-2 if "+" in sword.split()[-1] else -1])
-        tt_enchant = TIER.index(enchant.split()[-1])
+        _TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
+        tt = _TIER.index(sword.split()[-2 if "+" in sword.split()[-1] else -1])
+        tt_enchant = _TIER.index(enchant.split()[-1])
         if tt != tt_enchant:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA USAR UM ENCANTAMENTO DA MESMA RARIDADE DA SUA ARMA!`'
             embed = discord.Embed(color=self.bot.color, description=msg)

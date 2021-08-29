@@ -124,6 +124,10 @@ class Entity(object):
                     await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DO SEU LEVEL!`\n"
                                    "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
                     return "BATALHA-CANCELADA"
+                elif self._class not in equips_list[value]["class"]:
+                    await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DA SUA CLASSE!`\n"
+                                   "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
+                    return "BATALHA-CANCELADA"
         return None
 
     def verify_combo(self, response):
@@ -815,6 +819,9 @@ class Entity(object):
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
+
+        # verificação especial para que o EFFECT nao perca o seu primeiro turno
+        skull, drain, bluff, hit_kill = self.verify_effect(self.effects)
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
