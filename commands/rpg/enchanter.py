@@ -368,7 +368,7 @@ class EnchanterClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
+        _TIER = ["silver", "mystic", "inspiron", "violet", "hero", "divine"]
         tt = _TIER.index(enchant.split()[-1])
         if data['rpg']['armors'][armor][tt] >= limit:
             msg = '<:negate:721581573396496464>│`ESSA ARMADURA JA ATINGIU O ENCANTAMENTO MAXIMO!`'
@@ -462,7 +462,7 @@ class EnchanterClass(commands.Cog):
             return await ctx.send(embed=embed)
         sword = [i[1]["name"] for i in equips_list if i[0] == sword_id][0]
 
-        _TIER = ["silver", "mystic", "inspiron", "violet", "hero"]
+        _TIER = ["silver", "mystic", "inspiron", "violet", "hero", "divine"]
         tt = _TIER.index(sword.split()[-2 if "+" in sword.split()[-1] else -1])
         tt_enchant = _TIER.index(enchant.split()[-1])
         if tt != tt_enchant:

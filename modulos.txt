@@ -120,4 +120,6 @@ commands.rpg.wiki
 commands.member.stickers
 commands.utility.vote
 commands.rpg.trivia
+commands.member.genre
+commands.member.skins
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1
