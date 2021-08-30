@@ -215,7 +215,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
                  'soushot_leather_divine', 'soushot_platinum_divine', 'soushot_cover_divine']
     cons = ['summon_box_sr', 'summon_box_ur', 'summon_box_secret']
     shield = ["01", "02", "03", "001", "002", "003", "005", "006", "007", "008", "010", "011", "012", "013", "015",
-              "1D", "2C", "3B", "4A", "5S", "6R"]
+              "1D", "2C", "3B", "4A", "5S", "6R", "016", "017", "018"]
 
     if str(ctx.command) == "inventory":
         dict_ = dict()

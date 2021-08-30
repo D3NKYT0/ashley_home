@@ -163,15 +163,15 @@ class RpgStart(commands.Cog):
                 'items': set_ini,
                 'skills': [0, 0, 0, 0, 0],
                 "armors": {
-                    "shoulder": [0, 0, 0, 0, 0],
-                    "breastplate": [0, 0, 0, 0, 0],
-                    "gloves": [0, 0, 0, 0, 0],
-                    "leggings": [0, 0, 0, 0, 0],
-                    "boots": [0, 0, 0, 0, 0],
-                    "shield": [0, 0, 0, 0, 0],
-                    "necklace": [0, 0, 0, 0, 0],
-                    "earring": [0, 0, 0, 0, 0],
-                    "ring": [0, 0, 0, 0, 0]
+                    "shoulder": [0, 0, 0, 0, 0, 0],
+                    "breastplate": [0, 0, 0, 0, 0, 0],
+                    "gloves": [0, 0, 0, 0, 0, 0],
+                    "leggings": [0, 0, 0, 0, 0, 0],
+                    "boots": [0, 0, 0, 0, 0, 0],
+                    "shield": [0, 0, 0, 0, 0, 0],
+                    "necklace": [0, 0, 0, 0, 0, 0],
+                    "earring": [0, 0, 0, 0, 0, 0],
+                    "ring": [0, 0, 0, 0, 0, 0]
                 },
                 'equipped_items': {
                     "shoulder": None,
