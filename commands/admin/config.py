@@ -121,7 +121,7 @@ class ConfigClass(commands.Cog):
                            '<:6_:578617070309343281>', '<:7_:578615679041798144>', '<:8_:578617071521497088>',
                            '<:9_:578617070317469708>']
                 channel_ = self.bot.get_channel(resp_2.channel_mentions[0].id)
-                text = str(ctx.guild.member_count)
+                text = str(len(ctx.guild.members))
                 list_ = list()
                 for letter in text:
                     list_.append(numbers[int(letter)])
@@ -133,7 +133,7 @@ class ConfigClass(commands.Cog):
                                "nesse servidor!`", delete_after=5.0)
 
             update['func_config']["cont_users"] = True
-            update['func_config']["cont_users_id"] = resp_2.content
+            update['func_config']["cont_users_id"] = resp_2.channel_mentions[0].id
         else:
             await ctx.send('<:confirmed:721581574461587496>│`Contador de membros desativado!`')
             update['log_config']["log"] = False

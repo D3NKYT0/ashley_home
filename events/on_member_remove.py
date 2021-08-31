@@ -70,7 +70,7 @@ class OnMemberRemove(commands.Cog):
                     canal = self.bot.get_channel(data['func_config']['cont_users_id'])
                     if canal is None:
                         return
-                    text = str(member.guild.member_count)
+                    text = str(len(member.guild.members))
                     list_ = list()
                     for letter in text:
                         list_.append(numbers[int(letter)])

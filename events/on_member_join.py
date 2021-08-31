@@ -40,7 +40,8 @@ class OnMemberJoin(commands.Cog):
                                                      " CORRETAMENTE!**")
                                 else:
                                     try:
-                                        await canal.send(file=file, content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+                                        msg = "> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`"
+                                        await canal.send(file=file, content=msg)
                                     except discord.errors.HTTPException:
                                         pass
                         else:
@@ -78,7 +79,7 @@ class OnMemberJoin(commands.Cog):
                                '<:9_:578617070317469708>']
                     canal = self.bot.get_channel(data['func_config']['cont_users_id'])
                     if canal is not None:
-                        text = str(member.guild.member_count)
+                        text = str(len(member.guild.members))
                         list_ = list()
                         for letter in text:
                             list_.append(numbers[int(letter)])
