@@ -124,7 +124,7 @@ class Entity(object):
                     await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DO SEU LEVEL!`\n"
                                    "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
                     return "BATALHA-CANCELADA"
-                elif self._class not in equips_list[value]["class"]:
+                elif self.data['class_now'] not in equips_list[value]["class"]:
                     await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DA SUA CLASSE!`\n"
                                    "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
                     return "BATALHA-CANCELADA"
