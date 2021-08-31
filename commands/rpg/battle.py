@@ -321,7 +321,7 @@ class Battle(commands.Cog):
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
             await ctx.send(embed=embed, delete_after=5.0)
 
-            if change < 60:
+            if change < 60 or mini_boss:
                 if data['rpg']['vip']:
                     reward = [choice(db_monster['reward']) for _ in range(8)]
                 else:
@@ -347,6 +347,9 @@ class Battle(commands.Cog):
                     else:
                         reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
+                    if mini_boss:
+                        reward.append(choice(['herb_red', 'herb_green', 'herb_blue']))
+
                 if change < 15:
                     date_ = date.localtime()
                     item_event = choice(["soul_crystal_of_love", "soul_crystal_of_love", "soul_crystal_of_love",
@@ -369,6 +372,10 @@ class Battle(commands.Cog):
                         if self.bot.event_special:
                             reward.append(item_event)
                             await ctx.send(file=file, embed=embed)
+
+                    if mini_boss:
+                        reward.append(choice(['armor_divine', 'enchant_divine', 'feather_white',
+                                              'feather_gold', 'feather_black']))
 
                 response = await self.bot.db.add_reward(ctx, reward)
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
@@ -407,7 +414,7 @@ class Battle(commands.Cog):
                 embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed, delete_after=30.0)
 
-        elif change <= 25 and player[ctx.author.id].status['hp'] > 0:
+        if change <= 25 and player[ctx.author.id].status['hp'] > 0:
 
             equips_list = list()
             for ky in self.bot.config['equips'].keys():
@@ -431,7 +438,7 @@ class Battle(commands.Cog):
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU UM` ✨ **CONSUMABLE** ✨\n'
                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**', delete_after=5.0)
 
-        elif change <= 40 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
+        if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
 
             try:
                 update['inventory'][db_monster['quest']] += 1

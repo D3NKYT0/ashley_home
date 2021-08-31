@@ -32,6 +32,8 @@ class SystemMessage(commands.Cog):
                                                        '`para cadastrar sua guilda no meu` **banco de dados!**')
                 except IndexError:
                     pass
+                except discord.errors.Forbidden:
+                    pass
 
             if message.channel.id == 867509677402488872:
                 EMBED = message.embeds[0]

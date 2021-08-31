@@ -121,9 +121,14 @@ class VipSystem(commands.Cog):
             except KeyError:
                 pass
 
-            return await ctx.send('<:alert:739251822920728708>│`Você precisa colocar o ID da sua guilda!`')
+            return await ctx.send('<:alert:739251822920728708>│`Você precisa colocar o ID da sua guilda!`\n'
+                                  '**Obs:** `use o comando` **ash gi** `no servidor que voce quer ver o ID`')
 
-        if guild.owner_id != ctx.author.id:
+        author = guild.get_member(ctx.author.id)
+        if author is None:
+            return await ctx.send(f'<:alert:739251822920728708>│`Você não está em:` **{str(guild).upper()}**')
+
+        if not author.guild_permissions.manage_guild:
             try:
                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 update_ = data_
@@ -132,7 +137,7 @@ class VipSystem(commands.Cog):
             except KeyError:
                 pass
 
-            return await ctx.send('<:alert:739251822920728708>│`Apenas o dono da guilda pode comprar o vip dela!`')
+            return await ctx.send('<:alert:739251822920728708>│`Você não tem a permissão de:` **GERENCIAR SERVIDOR**')
 
         if ctx.guild.id != self.bot.config['config']['default_guild']:
             try:
