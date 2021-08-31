@@ -678,7 +678,8 @@ class Entity(object):
                 if chance:
                     if c in self.effects.keys():
                         if self.effects[c]['turns'] > 0:
-                            _text1 = f'**{self.name.upper()}** `ainda está sob o efeito de` **{c.upper()}**'
+                            # laranja
+                            _text1 = f'🟠 **{self.name.upper()}** `ainda está sob o efeito de` **{c.upper()}**'
                             msg_return += f"{_text1}\n\n"
                     else:
                         if test:
@@ -696,16 +697,19 @@ class Entity(object):
 
                         turns = self.effects[c]['turns']
                         _eff += turns
-                        _text2 = f'**{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
+                        # verde
+                        _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
                                  f'**{turns}** `turno{"s" if turns > 1 else ""}`'
                         msg_return += f"{_text2}\n\n"
                 else:
-                    _text3 = f'**{self.name.upper()}** `não recebeu o efeito de` **{c.upper()}**'
+                    # vermelho
+                    _text3 = f'🔴 **{self.name.upper()}** `não recebeu o efeito de` **{c.upper()}**'
                     msg_return += f"{_text3}\n\n"
 
         if skill['effs'] is not None and not act_eff:
-            _text_strike = f'**{self.name.upper()}** `não pode receber efeito dessa skill por que` **{entity.name}**' \
-                           f' `esta sob o efeito de` **STRIKE**'
+            # branco
+            _text_strike = f'⚪ **{self.name.upper()}** `não pode receber efeito dessa skill por que` ' \
+                           f'**{entity.name}** `esta sob o efeito de` **STRIKE**'
             msg_return += f"{_text_strike}\n\n"
 
         return entity, msg_return, _eff, chance

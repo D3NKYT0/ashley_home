@@ -14,12 +14,12 @@ class SkinsClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='skin', aliases=['skins'])
-    async def skin(self, ctx, skin=None):
+    async def skin(self, ctx, *, skin=None):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if skin is None:
-            skins = "`Voce nao tem skins disponiveis`"
+            skins = "**Voce nao tem skins disponiveis**"
             if len(data["rpg"]["skins"]) != 0:
-                skins = "\n".join(data["rpg"]["skins"])
+                skins = "\n".join([f"**{n.upper()}**" for n in data["rpg"]["skins"]])
             msg = f"<:confirmed:721581574461587496>│`Segue abaixo suas skins disponiveis:`\n{skins}"
             embed = discord.Embed(olor=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
