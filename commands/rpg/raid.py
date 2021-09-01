@@ -580,13 +580,15 @@ class Raid(commands.Cog):
                                f"**{raid_rank[ctx.author.id]}** `MONSTROS!` {msg if especial_m > 0 else ''}")
 
         if raid_rank[ctx.author.id] >= 10:
+            amount_raid = (raid_rank[ctx.author.id] // 5) - 1
             try:
-                update['inventory']['frozen_letter'] += 1
+                update['inventory']['frozen_letter'] += amount_raid
             except KeyError:
-                update['inventory']['frozen_letter'] = 1
+                update['inventory']['frozen_letter'] = amount_raid
 
-            await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` **10+** `monstros,"
-                           f" voce dropou` ✨ {self.bot.items['frozen_letter'][0]} ✨ `{1}`"
+            await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` "
+                           f"**{raid_rank[ctx.author.id]}** `monstros,"
+                           f" voce dropou` ✨ {self.bot.items['frozen_letter'][0]} ✨ `{amount_raid}`"
                            f" **{self.bot.items['frozen_letter'][1]}** `adicionando ao seu inventario o item "
                            f"com sucesso...`")
 
