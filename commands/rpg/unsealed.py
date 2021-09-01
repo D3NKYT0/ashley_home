@@ -36,6 +36,32 @@ class MeltedClass(commands.Cog):
             "Crystal_of_Energy": 10
         }
 
+        self.cost_celestial = {
+            "melted_artifact": 10,
+            "unsealed_stone": 50,
+
+            "golden_egg": 19,
+            "golden_apple": 14,
+            "gold_cube": 2,
+
+            "seed": 25,
+            "ore_bar": 25,
+            "debris": 25,
+            "coal": 25,
+            "claw": 25,
+            "charcoal": 25,
+            "branch": 25,
+            "braided_hemp": 25,
+
+            "feather_white": 50,
+            "feather_gold": 50,
+            "feather_black": 50,
+
+            "herb_red": 50,
+            "herb_green": 50,
+            "herb_blue": 50
+        }
+
         self.celestial = {
             "celestial necklace sealed": "116",
             "celestial earring sealed": "117",
@@ -58,7 +84,9 @@ class MeltedClass(commands.Cog):
         if equip.lower() not in [k.lower() for k in self.i.keys() if self.i[k][3] == 9]:
             return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER UM EQUIPAMENTO VALIDO!`")
 
-        msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
+        _COST = self.cost if equip not in self.celestial.keys() else self.cost_celestial
+
+        msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in _COST.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR OS COMANDOS` " \
                "**ASH MELTED, ASH STONE**  `E` **ASH BOX**"
 
@@ -77,12 +105,12 @@ class MeltedClass(commands.Cog):
                                   " `E O COMANDO` **ASH RECIPE** `PARA PEGAR AS RECEITAS DOS CRAFTS.`")
 
         cost = {}
-        for i_, amount in self.cost.items():
+        for i_, amount in _COST.items():
             if i_ in data['inventory']:
-                if data['inventory'][i_] < self.cost[i_]:
-                    cost[i_] = self.cost[i_]
+                if data['inventory'][i_] < _COST[i_]:
+                    cost[i_] = _COST[i_]
             else:
-                cost[i_] = self.cost[i_]
+                cost[i_] = _COST[i_]
 
         if len(cost) > 0:
             msg = f"\n".join([f"{self.i[key][0]} **{key.upper()}**" for key in cost.keys()])
@@ -112,7 +140,7 @@ class MeltedClass(commands.Cog):
         await sleep(2)
         await msg.edit(content=f"<a:loading:520418506567843860>│`removendo itens...`")
 
-        for i_, amount in self.cost.items():
+        for i_, amount in _COST.items():
             update['inventory'][i_] -= amount
             if update['inventory'][i_] < 1:
                 del update['inventory'][i_]
