@@ -116,11 +116,11 @@ class BrokenClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='essence', aliases=['essencia'])
-    async def essence(self, ctx, *, item=None):
+    @commands.command(name='fragrance', aliases=['fragrancia'])
+    async def fragrance(self, ctx, *, item=None):
         if item is None:
             return await ctx.send("<:negate:721581573396496464>│`Você precisa colocar o nome de um item que deseja "
-                                  "usar:` **ash essence <nome_do_item>** `voce consegue ver os itens "
+                                  "usar:` **ash fragrance <nome_do_item>** `voce consegue ver os itens "
                                   "usando o comando:` **ash i**")
 
         key = convert_item_name(item, self.bot.items)
@@ -142,7 +142,7 @@ class BrokenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if item not in data['inventory'].keys():
+        if key not in data['inventory'].keys():
             return await ctx.send("<:negate:721581573396496464>│`Voce não tem esse item no seu invetário...`\n"
                                   "**Obs:** `VOCE CONSEGUE AS ESSENCIA, USANDO O COMANDO` **ASH BROKEN**"
                                   " `E O COMANDO` **ASH ES** `PARA PEGAR OS NOMES DOS EQUIPAMENTOS.`")
