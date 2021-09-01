@@ -699,3 +699,117 @@ make_doc_blocked = [
     "UnBanClass",
     "VoiceClass"
 ]
+
+reward_broken = {
+            "leather": {
+                "breastplate": {
+                    "silver": [("breastplate_shards", 5), ("essence_leather", 1)],
+                    "mystic": [("breastplate_shards", 25), ("essence_leather", 2)],
+                    "inspiron": [("breastplate_shards", 75), ("essence_leather", 3)],
+                    "violet": [("breastplate_shards", 125), ("essence_leather", 4)],
+                    "hero": [("breastplate_shards", 250), ("essence_leather", 5)],
+                },
+                "leggings": {
+                    "silver": [("leggings_shards", 5), ("essence_leather", 1)],
+                    "mystic": [("leggings_shards", 25), ("essence_leather", 2)],
+                    "inspiron": [("leggings_shards", 75), ("essence_leather", 3)],
+                    "violet": [("leggings_shards", 125), ("essence_leather", 4)],
+                    "hero": [("leggings_shards", 250), ("essence_leather", 5)],
+                },
+                "boots": {
+                    "silver": [("boots_shards", 5), ("essence_leather", 1)],
+                    "mystic": [("boots_shards", 25), ("essence_leather", 2)],
+                    "inspiron": [("boots_shards", 75), ("essence_leather", 3)],
+                    "violet": [("boots_shards", 125), ("essence_leather", 4)],
+                    "hero": [("boots_shards", 250), ("essence_leather", 5)],
+                },
+                "gloves": {
+                    "silver": [("gloves_shards", 5), ("essence_leather", 1)],
+                    "mystic": [("gloves_shards", 25), ("essence_leather", 2)],
+                    "inspiron": [("gloves_shards", 75), ("essence_leather", 3)],
+                    "violet": [("gloves_shards", 125), ("essence_leather", 4)],
+                    "hero": [("gloves_shards", 250), ("essence_leather", 5)],
+                },
+                "shoulder": {
+                    "silver": [("shoulder_shards", 5), ("essence_leather", 1)],
+                    "mystic": [("shoulder_shards", 25), ("essence_leather", 2)],
+                    "inspiron": [("shoulder_shards", 75), ("essence_leather", 3)],
+                    "violet": [("shoulder_shards", 125), ("essence_leather", 4)],
+                    "hero": [("shoulder_shards", 250), ("essence_leather", 5)],
+                }
+            },
+            "platinum": {
+                "breastplate": {
+                    "silver": [("breastplate_shards", 5), ("essence_platinum", 1)],
+                    "mystic": [("breastplate_shards", 25), ("essence_platinum", 2)],
+                    "inspiron": [("breastplate_shards", 75), ("essence_platinum", 3)],
+                    "violet": [("breastplate_shards", 125), ("essence_platinum", 4)],
+                    "hero": [("breastplate_shards", 250), ("essence_platinum", 5)],
+                },
+                "leggings": {
+                    "silver": [("leggings_shards", 5), ("essence_platinum", 1)],
+                    "mystic": [("leggings_shards", 25), ("essence_platinum", 2)],
+                    "inspiron": [("leggings_shards", 75), ("essence_platinum", 3)],
+                    "violet": [("leggings_shards", 125), ("essence_platinum", 4)],
+                    "hero": [("leggings_shards", 250), ("essence_platinum", 5)],
+                },
+                "boots": {
+                    "silver": [("boots_shards", 5), ("essence_platinum", 1)],
+                    "mystic": [("boots_shards", 25), ("essence_platinum", 2)],
+                    "inspiron": [("boots_shards", 75), ("essence_platinum", 3)],
+                    "violet": [("boots_shards", 125), ("essence_platinum", 4)],
+                    "hero": [("boots_shards", 250), ("essence_platinum", 5)],
+                },
+                "gloves": {
+                    "silver": [("gloves_shards", 5), ("essence_platinum", 1)],
+                    "mystic": [("gloves_shards", 25), ("essence_platinum", 2)],
+                    "inspiron": [("gloves_shards", 75), ("essence_platinum", 3)],
+                    "violet": [("gloves_shards", 125), ("essence_platinum", 4)],
+                    "hero": [("gloves_shards", 250), ("essence_platinum", 5)],
+                },
+                "shoulder": {
+                    "silver": [("shoulder_shards", 5), ("essence_platinum", 1)],
+                    "mystic": [("shoulder_shards", 25), ("essence_platinum", 2)],
+                    "inspiron": [("shoulder_shards", 75), ("essence_platinum", 3)],
+                    "violet": [("shoulder_shards", 125), ("essence_platinum", 4)],
+                    "hero": [("shoulder_shards", 250), ("essence_platinum", 5)],
+                }
+            },
+            "cover": {
+                "breastplate": {
+                    "silver": [("breastplate_shards", 5), ("essence_cover", 1)],
+                    "mystic": [("breastplate_shards", 25), ("essence_cover", 2)],
+                    "inspiron": [("breastplate_shards", 75), ("essence_cover", 3)],
+                    "violet": [("breastplate_shards", 125), ("essence_cover", 4)],
+                    "hero": [("breastplate_shards", 250), ("essence_cover", 5)],
+                },
+                "leggings": {
+                    "silver": [("leggings_shards", 5), ("essence_cover", 1)],
+                    "mystic": [("leggings_shards", 25), ("essence_cover", 2)],
+                    "inspiron": [("leggings_shards", 75), ("essence_cover", 3)],
+                    "violet": [("leggings_shards", 125), ("essence_cover", 4)],
+                    "hero": [("leggings_shards", 250), ("essence_cover", 5)],
+                },
+                "boots": {
+                    "silver": [("boots_shards", 5), ("essence_cover", 1)],
+                    "mystic": [("boots_shards", 25), ("essence_cover", 2)],
+                    "inspiron": [("boots_shards", 75), ("essence_cover", 3)],
+                    "violet": [("boots_shards", 125), ("essence_cover", 4)],
+                    "hero": [("boots_shards", 250), ("essence_cover", 5)],
+                },
+                "gloves": {
+                    "silver": [("gloves_shards", 5), ("essence_cover", 1)],
+                    "mystic": [("gloves_shards", 25), ("essence_cover", 2)],
+                    "inspiron": [("gloves_shards", 75), ("essence_cover", 3)],
+                    "violet": [("gloves_shards", 125), ("essence_cover", 4)],
+                    "hero": [("gloves_shards", 250), ("essence_cover", 5)],
+                },
+                "shoulder": {
+                    "silver": [("shoulder_shards", 5), ("essence_cover", 1)],
+                    "mystic": [("shoulder_shards", 25), ("essence_cover", 2)],
+                    "inspiron": [("shoulder_shards", 75), ("essence_cover", 3)],
+                    "violet": [("shoulder_shards", 125), ("essence_cover", 4)],
+                    "hero": [("shoulder_shards", 250), ("essence_cover", 5)],
+                }
+            }
+        }

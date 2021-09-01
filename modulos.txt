@@ -122,4 +122,5 @@ commands.utility.vote
 commands.rpg.trivia
 commands.member.genre
 commands.member.skins
+commands.rpg.broken
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1
