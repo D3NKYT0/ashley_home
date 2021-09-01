@@ -36,6 +36,12 @@ class MeltedClass(commands.Cog):
             "Crystal_of_Energy": 10
         }
 
+        self.celestial = {
+            "celestial necklace sealed": "116",
+            "celestial earring sealed": "117",
+            "celestial ring sealed": "118"
+        }
+
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
@@ -56,14 +62,14 @@ class MeltedClass(commands.Cog):
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR OS COMANDOS` " \
                "**ASH MELTED, ASH STONE**  `E` **ASH BOX**"
 
-        Embed = discord.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE TIRAR O SELO DE UM EQUIPAMENTO:",
             color=self.bot.color,
             description=msg)
-        Embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        Embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
-        Embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-        await ctx.send(embed=Embed)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
+        embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
 
         if equip not in data['inventory'].keys():
             return await ctx.send("<:negate:721581573396496464>│`Voce não tem esse equipamento no seu invetário...`\n"
@@ -125,44 +131,60 @@ class MeltedClass(commands.Cog):
 
         await msg.edit(content=f"<a:loading:520418506567843860>│`Tirando o selo da sua armadura...`")
 
-        list_rarity = []
-        for i_, amount in self.rarity.items():
-            list_rarity += [i_] * amount
-        rarity = choice(list_rarity)
+        if equip not in self.celestial.keys():
 
-        legend = {
-            "uncommon": "silver",
-            "rare": "mystic",
-            "super rare": "inspiron",
-            "ultra rare": "violet",
-            "secret": "hero"
-        }
+            list_rarity = []
+            for i_, amount in self.rarity.items():
+                list_rarity += [i_] * amount
+            rarity = choice(list_rarity)
 
-        reward_equip = None
-        item_reward = equip.lower()
-        item_reward = item_reward.replace("sealed", legend[rarity])
+            legend = {
+                "uncommon": "silver",
+                "rare": "mystic",
+                "super rare": "inspiron",
+                "ultra rare": "violet",
+                "secret": "hero"
+            }
 
-        if "leather" in equip:
-            for k, v in self.se[f'set dynasty leather {rarity}'].items():
-                if v['name'] == item_reward:
-                    reward_equip = (k, v)
-        elif "platinum" in equip:
-            for k, v in self.se[f'set dynasty platinum {rarity}'].items():
-                if v['name'] == item_reward:
-                    reward_equip = (k, v)
-        elif "cover" in equip:
-            for k, v in self.se[f'set dynasty cover {rarity}'].items():
-                if v['name'] == item_reward:
-                    reward_equip = (k, v)
+            reward_equip = None
+            item_reward = equip.lower()
+            item_reward = item_reward.replace("sealed", legend[rarity])
 
-        try:
-            update['rpg']['items'][reward_equip[0]] += 1
-        except KeyError:
-            update['rpg']['items'][reward_equip[0]] = 1
+            if "leather" in equip:
+                for k, v in self.se[f'set dynasty leather {rarity}'].items():
+                    if v['name'] == item_reward:
+                        reward_equip = (k, v)
+            elif "platinum" in equip:
+                for k, v in self.se[f'set dynasty platinum {rarity}'].items():
+                    if v['name'] == item_reward:
+                        reward_equip = (k, v)
+            elif "cover" in equip:
+                for k, v in self.se[f'set dynasty cover {rarity}'].items():
+                    if v['name'] == item_reward:
+                        reward_equip = (k, v)
+
+            try:
+                update['rpg']['items'][reward_equip[0]] += 1
+            except KeyError:
+                update['rpg']['items'][reward_equip[0]] = 1
+
+            msg_return = f"<:confirmed:721581574461587496>│{reward_equip[1]['icon']} `1` " \
+                         f"**{reward_equip[1]['name']}** `adicionado ao seu inventario com sucesso...`"
+
+        else:
+
+            try:
+                update['rpg']['items'][self.celestial[equip]] += 1
+            except KeyError:
+                update['rpg']['items'][self.celestial[equip]] = 1
+
+            reward_equip = self.bot.config['equips']["jewels"][self.celestial[equip]]
+
+            msg_return = f"<:confirmed:721581574461587496>│{reward_equip['icon']} `1` " \
+                         f"**{reward_equip['name']}** `adicionado ao seu inventario com sucesso...`"
+
         await sleep(2)
-
-        await msg.edit(content=f"<:confirmed:721581574461587496>│{reward_equip[1]['icon']} `1` "
-                               f"**{reward_equip[1]['name']}** `adicionado ao seu inventario com sucesso...`")
+        await msg.edit(content=msg_return)
 
         img = choice(git)
         embed = discord.Embed(color=self.bot.color)

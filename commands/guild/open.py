@@ -1004,7 +1004,7 @@ class OpenClass(commands.Cog):
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
 
-    @check_it(no_pm=True, is_owner=True)
+    @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='waffen', aliases=['w'])
@@ -1041,10 +1041,10 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            craft = choice(["celestial", "celestial"])
+            craft = choice(["celestial_necklace_sealed", "celestial_earring_sealed", "celestial_ring_sealed"])
             if craft not in update["recipes"]:
                 msg_return = True
-                # update["recipes"].append(craft)
+                update["recipes"].append(craft)
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10
