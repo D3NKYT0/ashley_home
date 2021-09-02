@@ -438,6 +438,14 @@ class Battle(commands.Cog):
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU UM` ✨ **CONSUMABLE** ✨\n'
                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**', delete_after=5.0)
 
+        if mini_boss and "the_eight_evils_of_the_moon" in update['rpg']['quest'].keys():
+            _QUEST = update['rpg']['quest']["the_eight_evils_of_the_moon"]
+            if _QUEST["status"] == "in progress":
+                if db_monster["name"] not in update['rpg']['quest']["the_eight_evils_of_the_moon"]["mini-boss"]:
+                    update['rpg']['quest']["the_eight_evils_of_the_moon"]["mini-boss"].append(db_monster["name"])
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                   f'✨ **[The 8 Evils of the Moon]** ✨')
+
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
 
             try:

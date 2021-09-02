@@ -120,7 +120,7 @@ class OpenClass(commands.Cog):
                                   f'seu inventario.` **COMANDO CANCELADO**')
 
         update_user['inventory']["moon_bag"] -= amount_test
-        if update_user['inventory']["moon_bag"] < 0:
+        if update_user['inventory']["moon_bag"] < 1:
             del update_user['inventory']["moon_bag"]
         await self.bot.db.update_data(data_user, update_user, 'users')
 
