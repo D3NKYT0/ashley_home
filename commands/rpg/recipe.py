@@ -16,6 +16,13 @@ class RecipeClass(commands.Cog):
         self.color = self.bot.color
         self.i = self.bot.items
 
+        equips_dict = dict()
+        for ky in self.bot.config['equips'].keys():
+            for k, v in self.bot.config['equips'][ky].items():
+                equips_dict[k] = v
+
+        self.eq = equips_dict
+
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
@@ -38,7 +45,6 @@ class RecipeClass(commands.Cog):
         self.bot.comprando.append(ctx.author.id)
 
         if item is not None:
-
             item = item.lower().replace(" ", "_")
             if item in recipes.keys():
 
@@ -56,11 +62,18 @@ class RecipeClass(commands.Cog):
                 description += '\n\n**Recompensa:**'
 
                 for c in recipe['reward']:
-                    try:
-                        quant = data_user['inventory'][c[0]]
-                    except KeyError:
-                        quant = 0
-                    description += f'\n{self.i[c[0]][0]} **{c[1]}**/`{quant}` `{self.i[c[0]][1]}`'
+                    if recipe["type"] == "etc_item":
+                        try:
+                            quant = data_user['inventory'][c[0]]
+                        except KeyError:
+                            quant = 0
+                        description += f'\n{self.i[c[0]][0]} **{c[1]}**/`{quant}` `{self.i[c[0]][1]}`'
+                    else:
+                        try:
+                            quant = data_user["rpg"]['items'][c[0]]
+                        except KeyError:
+                            quant = 0
+                        description += f'\n{self.eq[c[0]]["icon"]} **{c[1]}**/`{quant}` `{self.eq[c[0]]["name"]}`'
 
                 _msg = "`Itens faltantes:`\n"
                 for c in recipe['cost']:
@@ -133,7 +146,10 @@ class RecipeClass(commands.Cog):
                                               'necessarios.`')
 
                     for c in recipe['reward']:
-                        query_user["$inc"][f"inventory.{c[0]}"] = c[1]
+                        if recipe["type"] == "etc_item":
+                            query_user["$inc"][f"inventory.{c[0]}"] = c[1]
+                        else:
+                            query_user["$inc"][f"rpg.items.{c[0]}"] = c[1]
 
                 elif reaction[0].emoji == '⏩' and reaction[0].message.id == msg.id:
 
@@ -189,7 +205,10 @@ class RecipeClass(commands.Cog):
                                               'necessarios.`')
 
                     for c in recipe['reward']:
-                        query_user["$inc"][f"inventory.{c[0]}"] = c[1] * quant
+                        if recipe["type"] == "etc_item":
+                            query_user["$inc"][f"inventory.{c[0]}"] = c[1] * quant
+                        else:
+                            query_user["$inc"][f"rpg.items.{c[0]}"] = c[1] * quant
 
                 elif reaction[0].emoji == '⏭' and reaction[0].message.id == msg.id:
                     if maximo < 1:
@@ -219,7 +238,10 @@ class RecipeClass(commands.Cog):
                                               'necessarios.`')
 
                     for c in recipe['reward']:
-                        query_user["$inc"][f"inventory.{c[0]}"] = c[1] * maximo
+                        if recipe["type"] == "etc_item":
+                            query_user["$inc"][f"inventory.{c[0]}"] = c[1] * maximo
+                        else:
+                            query_user["$inc"][f"rpg.items.{c[0]}"] = c[1] * maximo
 
                 if reaction[0].emoji == "❌" and reaction[0].message.id == msg.id:
                     await msg.delete()
@@ -258,7 +280,7 @@ class RecipeClass(commands.Cog):
                 recipes[k] = v
         embed = ['Recipes', self.color, '`Para craftar um item use:`\n**ash craft nome_do_item**\n\n']
         num = page - 1 if page > 0 else None
-        await paginator(self.bot, self.bot.items, recipes, embed, ctx, num)
+        await paginator(self.bot, self.bot.items, recipes, embed, ctx, num, equips=self.eq)
 
 
 def setup(bot):

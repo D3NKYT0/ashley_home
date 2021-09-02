@@ -22,7 +22,8 @@ class CommandErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.color = self.bot.color
-        self.errors = [aiohttp.ClientOSError, ConnectionResetError,
+        self.read = ["read letter", "read assemble", "read aungen", "read soul", "read nw", "read waffen"]
+        self.errors = [aiohttp.ClientOSError, ConnectionResetError, aiohttp.client_exceptions.ClientOSError,
                        discord.errors.DiscordServerError, discord.errors.HTTPException]
         self.errors_str = [
             "Command raised an exception: HTTPException: 504 Gateway Time-out (error code: 0): <!DOCTYPE html>",
@@ -34,6 +35,7 @@ class CommandErrorHandler(commands.Cog):
             "Command raised an exception: DiscordServerError: 503 Service Unavailable (error code: 0): upstream"
             "connect error or disconnect/reset before headers. reset reason: connection failure",
             "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe",
+            "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer"
         ]
 
     def error_check(self, error):
@@ -116,7 +118,7 @@ class CommandErrorHandler(commands.Cog):
             if str(ctx.command) in ["pvp"]:
                 if ctx.author.id in self.bot.desafiado:
                     self.bot.desafiado.remove(ctx.author.id)
-            if str(ctx.command) in ["frozen"]:
+            if str(ctx.command) in self.read:
                 if ctx.author.id in self.bot.lendo:
                     self.bot.lendo.remove(ctx.author.id)
 
@@ -139,7 +141,7 @@ class CommandErrorHandler(commands.Cog):
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
                                        f"**{ctx.command}**, `no servidor:` **{ctx.guild}**, `no canal:` "
                                        f"**{ctx.channel}** `com o membro:` **{ctx.author}**  "
-                                       f"`com o id:` **{ctx.author.id}**")
+                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` {error.__str__()}")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)
@@ -151,8 +153,7 @@ class CommandErrorHandler(commands.Cog):
                       f"{cor['verm']}>> with the Member: "
                       f"{cor['azul']}{ctx.author} {cor['verm']}- {cor['amar']}ID: {ctx.author.id}\n"
                       f"{cor['verm']}>> with error:\n "
-                      f"{cor['roxo']}{error}"
-                      f"{cor['clear']}\n{cor['cian']}{error.__str__()}{cor['clear']}\n\n")
+                      f"{cor['roxo']}{error}\n\n")
 
                 # Permite verificar exceções originais geradas e enviadas para CommandInvokeError.
                 # Se nada for encontrado. Mantemos a exceção passada para on_command_error.

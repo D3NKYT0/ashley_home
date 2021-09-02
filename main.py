@@ -858,12 +858,13 @@ class Ashley(commands.AutoShardedBot):
                                 await message.guild.system_channel.send(embed=embed)
                             except discord.Forbidden:
                                 try:
-                                    if message.guild.owner is not None:
-                                        await message.guild.owner.send(embed=embed)
-                                    else:
-                                        await message.channel.send(embed=embed)
+                                    await message.channel.send(embed=embed)
                                 except discord.Forbidden:
-                                    pass
+                                    try:
+                                        if message.guild.owner is not None:
+                                            await message.guild.owner.send(embed=embed)
+                                    except discord.Forbidden:
+                                        pass
 
                 if str(ctx.command) in ['channel']:  # exceção dos comandos
                     run_command = True

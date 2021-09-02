@@ -200,7 +200,7 @@ def convert_item_name(item, db_items):
     return None
 
 
-async def paginator(bot, items, inventory, embed, ctx, page=None):
+async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
     descriptions = []
     cont = 0
     cont_i = 0
@@ -330,8 +330,12 @@ async def paginator(bot, items, inventory, embed, ctx, page=None):
                      f'`{items[key]["name"]}{(" " * (35 - len(items[key]["name"])))}` **{rarity.lower()}**\n'
 
         else:
-            icon = inventory[key]['reward'][0][0]
-            string = f"{items[icon][0]} **{key.upper()}**\n\n"
+            if inventory[key]['type'] == "etc_item":
+                icon = inventory[key]['reward'][0][0]
+                string = f"{items[icon][0]} **{key.upper()}**\n\n"
+            else:
+                icon = inventory[key]['reward'][0][0]
+                string = f"{equips[icon]['icon']} **{equips[icon]['name'].upper().replace(' ', '_')}**\n\n"
 
         cont += len(string)
         if cont <= 1500 and cont_i < 20:
