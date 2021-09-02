@@ -41,12 +41,12 @@ class QuestClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         completed = False
-        for quest in update['rpg']['quest'].keys():
-            if update['rpg']['quest'][quest]["status"] == "in progress":
+        for quest in update['rpg']['quests'].keys():
+            if update['rpg']['quests'][quest]["status"] == "in progress":
 
                 if quest == "the_eight_evils_of_the_moon":
-                    if len(update['rpg']['quest'][quest]["mini-boss"]) == 8:
-                        update['rpg']['quest'][quest]["status"], completed = "completed", True
+                    if len(update['rpg']['quests'][quest]["mini-boss"]) == 8:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
                         await self.bot.db.update_data(data, update, 'users')
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
@@ -114,8 +114,8 @@ class QuestClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if "the_eight_evils_of_the_moon" in update['rpg']['quest'].keys():
-            _QUEST = update['rpg']['quest']["the_eight_evils_of_the_moon"]
+        if "the_eight_evils_of_the_moon" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_eight_evils_of_the_moon"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 8 Evils of the Moon]** `já foi terminada!`'
                 embed = discord.Embed(color=self.bot.color, description=msg)
@@ -131,7 +131,7 @@ class QuestClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         the_eight_evils_of_the_moon = {"mini-boss": list(), "status": "in progress"}
-        update['rpg']['quest']["the_eight_evils_of_the_moon"] = the_eight_evils_of_the_moon
+        update['rpg']['quests']["the_eight_evils_of_the_moon"] = the_eight_evils_of_the_moon
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 8 Evils of the Moon]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
