@@ -355,7 +355,7 @@ class EnchanterClass(commands.Cog):
 
         enchants = ["armor_hero", "armor_violet", "armor_inspiron", "armor_mystic", "armor_silver",
                     "blessed_armor_hero", "blessed_armor_violet", "blessed_armor_inspiron",
-                    "blessed_armor_mystic", "blessed_armor_silver"]
+                    "blessed_armor_mystic", "blessed_armor_silver", "armor_divine", "blessed_armor_divine"]
 
         item_key = convert_item_name(enchant, self.bot.items)
         if item_key not in enchants:
@@ -442,7 +442,7 @@ class EnchanterClass(commands.Cog):
 
         enchants = ["enchant_hero", "enchant_violet", "enchant_inspiron", "enchant_mystic", "enchant_silver",
                     "blessed_enchant_hero", "blessed_enchant_violet", "blessed_enchant_inspiron",
-                    "blessed_enchant_mystic", "blessed_enchant_silver"]
+                    "blessed_enchant_mystic", "blessed_enchant_silver", "enchant_divine", "blessed_enchant_divine"]
 
         item_key = convert_item_name(enchant, self.bot.items)
         if item_key not in enchants:

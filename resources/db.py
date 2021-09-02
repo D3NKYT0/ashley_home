@@ -880,7 +880,7 @@ class DataInteraction(object):
         global cont
 
         f = {"_id": 0, "guild_id": 1, "event.points": 1}
-        dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("event.points", -1)]))]
+        dt = [_ async for _ in ((await self.bot.db.cd("guilds")).find({}, f).sort([("event.points", -1)]))]
         position = int([int(_["guild_id"]) for _ in dt].index(ctx.guild.id)) + 1
         cont['list'] = 0
 
