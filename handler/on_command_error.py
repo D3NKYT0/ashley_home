@@ -141,7 +141,7 @@ class CommandErrorHandler(commands.Cog):
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
                                        f"**{ctx.command}**, `no servidor:` **{ctx.guild}**, `no canal:` "
                                        f"**{ctx.channel}** `com o membro:` **{ctx.author}**  "
-                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` {error.__str__()}")
+                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)

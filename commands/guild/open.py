@@ -49,15 +49,6 @@ class OpenClass(commands.Cog):
                            ("blessed_fragment_of_crystal_fire", 7)],
         }
 
-        self.celestial = ["celestial_cover_breastplate_divine", "celestial_cover_leggings_divine",
-                          "celestial_cover_boots_divine", "celestial_cover_gloves_divine",
-                          "celestial_cover_helmet_divine", "celestial_platinum_breastplate_divine",
-                          "celestial_platinum_leggings_divine", "celestial_platinum_boots_divine",
-                          "celestial_platinum_gloves_divine", "celestial_platinum_helmet_divine",
-                          "celestial_leather_breastplate_divine", "celestial_leather_leggings_divine",
-                          "celestial_leather_boots_divine", "celestial_leather_gloves_divine",
-                          "celestial_leather_helmet_divine"]
-
         self.list_stickers = list()
         for k, v in self.bot.stickers.items():
             self.list_stickers += [k] * v[1]
@@ -782,7 +773,8 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_life", "potion_of_love"])
+            craft = choice(["potion_of_life", "potion_of_love", "celestial_cover_boots_divine",
+                            "celestial_platinum_boots_divine", "celestial_leather_boots_divine"])
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
@@ -849,7 +841,8 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_death", "potion_of_death"])
+            craft = choice(["potion_of_death", "potion_of_death", "celestial_cover_gloves_divine",
+                            "celestial_platinum_gloves_divine", "celestial_leather_gloves_divine"])
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
@@ -916,7 +909,8 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_soul", "potion_of_rejuvenation"])
+            craft = choice(["potion_of_soul", "potion_of_rejuvenation", "celestial_cover_helmet_divine",
+                            "celestial_platinum_helmet_divine", "celestial_leather_helmet_divine"])
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
@@ -983,7 +977,8 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_weakening", "potion_of_weakening"])
+            craft = choice(["potion_of_weakening", "potion_of_weakening", "celestial_cover_leggings_divine",
+                            "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine"])
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
@@ -1050,9 +1045,9 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            celestial = choice(self.celestial)
             recipes_especial = ["celestial_necklace_sealed", "celestial_earring_sealed",
-                                "celestial_ring_sealed", celestial]
+                                "celestial_ring_sealed", "celestial_cover_breastplate_divine",
+                                "celestial_platinum_breastplate_divine", "celestial_leather_breastplate_divine"]
             craft = choice(recipes_especial)
             if craft not in update["recipes"]:
                 msg_return = True
