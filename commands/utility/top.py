@@ -37,7 +37,8 @@ class TopClass(commands.Cog):
                                 f"{self.st[67]} `top wave` Top 20 dos usuarios com maiores WAVES do RPG.\n"
                                 f"{self.st[67]} `top fragment` Top 20 dos usuarios com mais FRAGMENTOS.\n"
                                 f"{self.st[67]} `top blessed` Top 20 dos usuarios com mais BLESSEDS.\n"
-                                f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.")
+                                f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.\n"
+                                f"{self.st[67]} `top pvp` Top 20 dos melhores jogadores de PVP.")
             top.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             top.set_thumbnail(url=self.bot.user.avatar_url)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -202,6 +203,18 @@ class TopClass(commands.Cog):
 
         top = await self.bot.data.get_rank_event(20, ctx)
         await ctx.send(f'<:rank:519896825411665930>|**TOP EVENT**```py\n{top}```')
+        await msg.delete()
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @top.group(name='pvp')
+    async def _pvp(self, ctx):
+        msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                             "**mesmo que demore, aguarde o fim do processamento...**")
+
+        top = await self.bot.data.get_rank_pvp(20, ctx)
+        await ctx.send(f'<:rank:519896825411665930>|**TOP PVP**```py\n{top}```')
         await msg.delete()
 
 

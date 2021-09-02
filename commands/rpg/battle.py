@@ -438,13 +438,23 @@ class Battle(commands.Cog):
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU UM` ✨ **CONSUMABLE** ✨\n'
                                f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**', delete_after=5.0)
 
-        if mini_boss and "the_eight_evils_of_the_moon" in update['rpg']['quests'].keys():
+        player_life = player[ctx.author.id].status['hp'] > 0
+        if mini_boss and "the_eight_evils_of_the_moon" in update['rpg']['quests'].keys() and player_life:
             _QUEST = update['rpg']['quests']["the_eight_evils_of_the_moon"]
             if _QUEST["status"] == "in progress":
                 if db_monster["name"] not in update['rpg']['quests']["the_eight_evils_of_the_moon"]["mini-boss"]:
                     update['rpg']['quests']["the_eight_evils_of_the_moon"]["mini-boss"].append(db_monster["name"])
                     await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                    f'✨ **[The 8 Evils of the Moon]** ✨')
+
+        if "the_three_sacred_scrolls" in update['rpg']['quests'].keys() and player_life:
+            _QUEST = update['rpg']['quests']["the_three_sacred_scrolls"]
+            quest_item = choice(["lost_parchment", "royal_parchment", "sages_scroll"])
+            if _QUEST["status"] == "in progress" and change <= 25 and data['config']['provinces'] is not None:
+                if quest_item not in update['rpg']['quests']["the_three_sacred_scrolls"]["scroll"]:
+                    update['rpg']['quests']["the_three_sacred_scrolls"]["scroll"].append(quest_item)
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                   f'✨ **[The 3 Holy Scrolls]** ✨')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
 

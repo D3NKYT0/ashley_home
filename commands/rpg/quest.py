@@ -74,6 +74,36 @@ class QuestClass(commands.Cog):
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
                                        f'{response}')
 
+                if quest == "the_three_sacred_scrolls":
+                    if len(update['rpg']['quests'][quest]["scroll"]) == 3:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 3 Holy Scrolls]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(10):
+                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
+                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
+                                                  "soul_crystal_of_hope", "soul_crystal_of_hope",  "fused_diamond",
+                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
+                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
+                                                  "fused_sapphire",  "fused_emerald", "fused_emerald", "golden_apple",
+                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
+                        reward.append("blessed_enchant_skill")
+                        reward.append("enchant_divine")
+                        reward.append("armor_divine")
+                        reward.append("blessed_enchant_hero")
+                        reward.append("blessed_armor_hero")
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
+                                       f'{response}')
+
         if not completed:
             msg = '<:alert:739251822920728708>│`VOCE NAO TEM NENHUMA QUEST PARA COMPLETAR!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
@@ -90,7 +120,8 @@ class QuestClass(commands.Cog):
             self.status()
             embed = discord.Embed(color=self.color)
             embed.add_field(name="Quest Commands:",
-                            value=f"{self.st[117]} `quest eight` [The 8 Evils of the Moon]")
+                            value=f"{self.st[117]} `quest eight` [The 8 Evils of the Moon]\n"
+                                  f"{self.st[117]} `quest three` [The 3 Holy Scrolls]")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -133,6 +164,45 @@ class QuestClass(commands.Cog):
         the_eight_evils_of_the_moon = {"mini-boss": list(), "status": "in progress"}
         update['rpg']['quests']["the_eight_evils_of_the_moon"] = the_eight_evils_of_the_moon
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 8 Evils of the Moon]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @quest.group(name='three', aliases=['tres'])
+    async def _three(self, ctx):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_three_sacred_scrolls" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_three_sacred_scrolls"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 3 Holy Scrolls]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            _MB, status = "\n".join([f"**{b.upper()}**" for b in _QUEST["scroll"]]), _QUEST["status"]
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 3 Holy Scrolls]**\n' \
+                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["scroll"])}/3**\n'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_three_sacred_scrolls = {"scroll": list(), "status": "in progress"}
+        update['rpg']['quests']["the_three_sacred_scrolls"] = the_three_sacred_scrolls
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 3 Holy Scrolls]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)

@@ -1045,7 +1045,7 @@ class OpenClass(commands.Cog):
 
         chance, msg_return, craft = randint(1, 100), False, None
         if chance <= 5 + (amount // 2):
-            recipes_especial = ["celestial_necklace_sealed", "celestial_earring_sealed",
+            recipes_especial = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation",
                                 "celestial_ring_sealed", "celestial_cover_breastplate_divine",
                                 "celestial_platinum_breastplate_divine", "celestial_leather_breastplate_divine"]
             craft = choice(recipes_especial)
