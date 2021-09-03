@@ -110,7 +110,7 @@ class BrokenClass(commands.Cog):
         rarity = self.legend[data_item["rarity"]]
         slot = data_item["slot"]
         reward = self.reward[equip_type][slot][rarity]
-        _class = update["rpg"]["class_now"]
+        _class = data_item["name"].split()[0]
 
         msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por quebrar o item` **{item}** `voce recebeu:`\n"
 
