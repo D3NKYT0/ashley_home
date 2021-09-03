@@ -50,18 +50,8 @@ class RpgStart(commands.Cog):
 
         if data['rpg']['active']:
             embed = discord.Embed(color=self.bot.color, description=f'<:alert:739251822920728708>│`VOCE JA INICIOU O '
-                                                                    f'RPG, SE VOCE DESEJA ALTERAR A CLASSE, VAI GASTAR'
-                                                                    f' AS PEDRAS ABAIXO:`')
+                                                                    f'RPG, SE VOCE DESEJA ALTERAR A CLASSE:`')
             await ctx.send(embed=embed)
-            n_cost = [15000, 5000, 500]
-            t = data['treasure']
-            await ctx.send(f"{self.bot.money[0]} `Custa:` **{n_cost[0]}**| "
-                           f"{self.bot.money[1]} `Custa:` **{n_cost[1]}**| "
-                           f"{self.bot.money[2]} `Custa:` **{n_cost[2]}**.")
-
-            if t["bronze"] < n_cost[0] or t["silver"] < n_cost[1] or t["gold"] < n_cost[2]:
-                return await ctx.send('<:negate:721581573396496464>│`Desculpe, você não tem pedras suficientes.` '
-                                      '**COMANDO CANCELADO**')
 
             for key in update['rpg']["equipped_items"].keys():
                 if update['rpg']["equipped_items"][key] is not None:
@@ -69,8 +59,7 @@ class RpgStart(commands.Cog):
                                           'com itens equipados, use o comando:` **ASH EQUIP RESET** `antes de mudar'
                                           ' de classe.`')
 
-            msg = await ctx.send(f"<:alert:739251822920728708>│`VOCE JA TEM TODAS AS PEDRAS NECESSARIOS, "
-                                 f"DESEJA ALTERAR A CLASSE AGORA?`"
+            msg = await ctx.send(f"<:alert:739251822920728708>│`VOCE DESEJA ALTERAR A CLASSE AGORA?`"
                                  f"\n**1** para `SIM` ou **0** para `NÃO`")
             try:
                 answer = await self.bot.wait_for('message', check=check_stone, timeout=30.0)
@@ -81,15 +70,6 @@ class RpgStart(commands.Cog):
                 await msg.delete()
                 return await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
             await msg.delete()
-
-            # DATA DO MEMBRO
-            update['treasure']["bronze"] -= n_cost[0]
-            update['treasure']["silver"] -= n_cost[1]
-            update['treasure']["gold"] -= n_cost[2]
-            # DATA NATIVA DO SERVIDOR
-            update_guild_native['data'][f"total_bronze"] -= n_cost[0]
-            update_guild_native['data'][f"total_silver"] -= n_cost[1]
-            update_guild_native['data'][f"total_gold"] -= n_cost[2]
 
         asks = {'sex': 'male', 'class_now': None}
 

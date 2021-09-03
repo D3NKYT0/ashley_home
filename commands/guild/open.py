@@ -726,9 +726,9 @@ class OpenClass(commands.Cog):
         self.bot.lendo.append(ctx.author.id)
         db_player = extension.set_player(ctx.author, copy.deepcopy(data))
         data_xp = calc_xp(db_player['xp'], db_player['level'])
-        ini, end = (1 * amount) + (db_player["intelligence"] // 15), (5 * amount) + (db_player["intelligence"] // 15)
-        perc = randint(1, end)
-        if perc > 50 and amount <= 5:
+        ini, end = amount + (db_player["intelligence"] // 15), (5 * amount) + (db_player["intelligence"] // 15)
+        perc = randint(ini, end)
+        if perc > 50 and amount < 5:
             perc = 50
         xpm = data_xp[1] - data_xp[2]
         xpr = int(xpm / 100 * perc)

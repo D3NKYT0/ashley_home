@@ -465,6 +465,26 @@ class Battle(commands.Cog):
                                f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
+            msg_return = False
+            craft = choice(["assassin_celestial_slayer_divine", "necromancer_celestial_staff_divine",
+                            "paladin_celestial_hammer_divine", "priest_celestial_bow_divine",
+                            "warlock_celestial_saint_divine", "warrior_celestial_tallum_divine",
+                            "wizard_celestial_mace_divine"])
+
+            if craft not in update["recipes"]:
+                msg_return = True
+                update["recipes"].append(craft)
+
+            if msg_return:
+                craft = craft.replace("_", " ").upper()
+                text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_image(url="attachment://success.jpg")
+                await ctx.send(file=file, embed=embed)
+
+        if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
 
             try:
                 update['inventory'][db_monster['quest']] += 1

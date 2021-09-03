@@ -17,7 +17,7 @@ class BrokenClass(commands.Cog):
                 equips_list.append((k, v))
 
         self.equips = equips_list
-        self.slots = ["breastplate", "leggings", "boots", "gloves", "shoulder"]
+        self.slots = ["breastplate", "leggings", "boots", "gloves", "shoulder", "sword"]
         self.rarities = ["silver", "mystic", "inspiron", "violet", "hero"]
         self.legend = {
             "uncommon": "silver",
@@ -32,6 +32,15 @@ class BrokenClass(commands.Cog):
             "essence_platinum": "jewel_platinum",
         }
         self.reward = reward_broken
+        self.class_legend = {
+            "assassin": 1,
+            "necromancer": 2,
+            "paladin": 3,
+            "priest": 4,
+            "warlock": 5,
+            "warrior": 6,
+            "wizard": 7
+        }
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -99,15 +108,21 @@ class BrokenClass(commands.Cog):
             equip_type = "cover"
 
         rarity = self.legend[data_item["rarity"]]
-        reward = self.reward[equip_type][data_item["slot"]][rarity]
+        slot = data_item["slot"]
+        reward = self.reward[equip_type][slot][rarity]
+        _class = update["rpg"]["class_now"]
 
         msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por quebrar o item` **{item}** `voce recebeu:`\n"
+
+        cont = 1
         for key, amount in reward:
-            msg += f"✨ {self.bot.items[key][0]} ✨ `{amount}` **{self.bot.items[key][1]}**\n"
-            try:
-                update['inventory'][key] += amount
-            except KeyError:
-                update['inventory'][key] = amount
+            if slot != "sword" or self.class_legend[_class] == cont:
+                msg += f"✨ {self.bot.items[key][0]} ✨ `{amount}` **{self.bot.items[key][1]}**\n"
+                try:
+                    update['inventory'][key] += amount
+                except KeyError:
+                    update['inventory'][key] = amount
+            cont += 1
 
         await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
