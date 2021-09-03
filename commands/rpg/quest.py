@@ -183,7 +183,7 @@ class QuestClass(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-            _MB, status = "\n".join([f"**{b.upper()}**" for b in _QUEST["mini-boss"]]), _QUEST["status"]
+            _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["mini-boss"]]), _QUEST["status"]
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 8 Evils of the Moon]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["mini-boss"])}/8**\n' \
@@ -225,7 +225,7 @@ class QuestClass(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-            _MB, status = "\n".join([f"**{b.upper()}**" for b in _QUEST["scroll"]]), _QUEST["status"]
+            _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["scroll"]]), _QUEST["status"]
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 3 Holy Scrolls]**\n' \
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["scroll"])}/3**\n'
             embed = discord.Embed(color=self.bot.color, description=msg)
@@ -264,7 +264,7 @@ class QuestClass(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-            _MB, status = "\n".join([f"**{b.upper()}**" for b in _QUEST["souls"]]), _QUEST["status"]
+            _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["souls"]]), _QUEST["status"]
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 7 Lost Souls]**\n' \
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n'
             embed = discord.Embed(color=self.bot.color, description=msg)
