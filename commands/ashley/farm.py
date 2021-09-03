@@ -186,7 +186,7 @@ class FarmClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='teleport', aliases=['teletransportar'])
+    @commands.command(name='teleport', aliases=['teletransportar', 'tp'])
     async def teleport(self, ctx):
         """Comando usado pra acessar certas areas do servidor da ashley
         Use ash teleport e reaja pra no emoji correspondente"""

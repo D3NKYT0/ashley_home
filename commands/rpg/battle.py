@@ -8,6 +8,7 @@ from resources.fight import Entity, Ext
 from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import calc_xp
+from resources.utility import include
 from datetime import datetime
 player, monster, extension = {}, {}, Ext()
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
@@ -413,6 +414,36 @@ class Battle(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed, delete_after=30.0)
+
+                if "the_seven_lost_souls" in update['rpg']['quests'].keys():
+                    _QUEST = update['rpg']['quests']["the_seven_lost_souls"]
+                    souls = {
+                        "assassin": 1,
+                        "necromancer": 2,
+                        "paladin": 3,
+                        "priest": 4,
+                        "warlock": 5,
+                        "warrior": 6,
+                        "wizard": 7
+                    }
+                    if _QUEST["status"] == "in progress" and change <= 50 and data['config']['provinces'] is not None:
+                        if include(rew["name"], souls.keys()):
+                            quest_item = souls[rew["name"].split()[0]]
+                            if quest_item not in update['rpg']['quests']["the_seven_lost_souls"]["souls"]:
+                                update['rpg']['quests']["the_seven_lost_souls"]["souls"].append(quest_item)
+                                await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                               f'✨ **[The 7 Lost Souls]** ✨')
+                    elif _QUEST["status"] == "completed" and change <= 50 and data['config']['provinces'] is not None:
+                        quest_item = choice(["assassin_gem", "necromancer_gem", "paladin_gem", "priest_gem",
+                                             "warlock_gem", "warrior_gem", "wizard_gem"])
+                        try:
+                            update['inventory'][quest_item] += 1
+                        except KeyError:
+                            update['inventory'][quest_item] = 1
+                        icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
+                        await ctx.send(
+                            f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 3 Holy Scrolls]** ✨\n'
+                            f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0:
 
