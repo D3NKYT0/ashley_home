@@ -270,7 +270,7 @@ class QuestClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        the_seven_lost_souls = {"scroll": list(), "status": "in progress"}
+        the_seven_lost_souls = {"souls": list(), "status": "in progress"}
         update['rpg']['quests']["the_seven_lost_souls"] = the_seven_lost_souls
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 7 Lost Souls]** ' \
               '`foi ativada na sua conta com sucesso!`'

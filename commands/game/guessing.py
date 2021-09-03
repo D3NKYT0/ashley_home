@@ -17,7 +17,8 @@ class GameThinker(commands.Cog):
                          'soushot_platinum_violet', 'soushot_platinum_hero', 'soushot_leather_silver',
                          'soushot_leather_mystic', 'soushot_leather_inspiron', 'soushot_leather_violet',
                          'soushot_leather_hero', 'soushot_cover_silver', 'soushot_cover_mystic',
-                         'soushot_cover_inspiron', 'soushot_cover_violet', 'soushot_cover_hero']
+                         'soushot_cover_inspiron', 'soushot_cover_violet', 'soushot_cover_hero',
+                         'soushot_platinum_divine', 'soushot_leather_divine', 'soushot_cover_divine']
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
