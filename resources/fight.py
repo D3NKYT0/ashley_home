@@ -240,7 +240,7 @@ class Entity(object):
         embed.set_author(name=user.name, icon_url=user.avatar_url)
         return embed, attacks, hate_no_mana
 
-    def effects_resolve(self, effects, msg_return):
+    async def effects_resolve(self, ctx, effects, msg_return):
         type_effects = ["cegueira", "strike", "reflect", "confusion", "hold", "bluff"]
         if effects is not None:
             for c in effects:
@@ -297,6 +297,13 @@ class Entity(object):
                         del self.effects[c]
                 except KeyError:
                     pass
+
+        if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
+            self.data["salvation"] = False
+            self.status['hp'] = self.tot_hp
+            self.status['mp'] = self.tot_mp
+            await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
+                           f' reviveu!`')
 
         return effects, msg_return
 
@@ -628,7 +635,7 @@ class Entity(object):
             msg_return += f"{_text2}\n\n"
 
         msg_return = self.health_effect_resolve(msg_return)
-        effects, msg_return = self.effects_resolve(effects, msg_return)
+        effects, msg_return = await self.effects_resolve(ctx, effects, msg_return)
         hp_max, monster, img_ = self.status['con'] * self.rate[0], not self.is_player, None
         embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.name)
 
@@ -803,6 +810,13 @@ class Entity(object):
             embed_ = embed_creator(description, img, monster, self.tot_hp, self.status['hp'], self.img, self.name)
             await ctx.send(embed=embed_)
 
+            if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
+                self.data["salvation"] = False
+                self.status['hp'] = self.tot_hp
+                self.status['mp'] = self.tot_mp
+                await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
+                               f' reviveu!`')
+
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
@@ -932,6 +946,13 @@ class Entity(object):
         if msg_return != "":
             await ctx.send(embed=bed_)
 
+        if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
+            self.data["salvation"] = False
+            self.status['hp'] = self.tot_hp
+            self.status['mp'] = self.tot_mp
+            await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
+                           f' reviveu!`')
+
         return entity
 
 
@@ -1020,9 +1041,13 @@ class Ext(object):
             except KeyError:
                 pass
 
+        salvation = False
         # configurando os equipamentos
         for c in db_player['equipped_items'].keys():
             if db_player["equipped_items"][c] is not None:
+
+                if c == "consumable" and db_player["equipped_items"][c] == "salvation":
+                    salvation = True
 
                 if c in SET_ARMOR:
                     set_e.append(str(db_player['equipped_items'][c]))
@@ -1061,5 +1086,6 @@ class Ext(object):
         db_player["pdef"] += int(_pdef)
         db_player["mdef"] += int(_mdef)
         db_player["soulshot"] = [soul, amount]
+        db_player["salvation"] = salvation
 
         return db_player

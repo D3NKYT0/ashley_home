@@ -426,14 +426,14 @@ class Battle(commands.Cog):
                         "warrior": 6,
                         "wizard": 7
                     }
-                    if _QUEST["status"] == "in progress" and change <= 50 and data['config']['provinces'] is not None:
+                    if _QUEST["status"] == "in progress" and data['config']['provinces'] is not None:
                         if include(rew["name"], souls.keys()):
                             quest_item = souls[rew["name"].split()[0]]
                             if quest_item not in update['rpg']['quests']["the_seven_lost_souls"]["souls"]:
                                 update['rpg']['quests']["the_seven_lost_souls"]["souls"].append(quest_item)
                                 await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                                f'✨ **[The 7 Lost Souls]** ✨')
-                    elif _QUEST["status"] == "completed" and change <= 50 and data['config']['provinces'] is not None:
+                    elif _QUEST["status"] == "completed" and data['config']['provinces'] is not None:
                         quest_item = choice(["assassin_gem", "necromancer_gem", "paladin_gem", "priest_gem",
                                              "warlock_gem", "warrior_gem", "wizard_gem"])
                         try:
@@ -442,7 +442,7 @@ class Battle(commands.Cog):
                             update['inventory'][quest_item] = 1
                         icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
                         await ctx.send(
-                            f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 3 Holy Scrolls]** ✨\n'
+                            f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 7 Lost Souls]** ✨\n'
                             f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0:
