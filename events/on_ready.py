@@ -340,8 +340,9 @@ class OnReady(commands.Cog):
                     _boss = choice(self.m)
                     db_boss = copy.deepcopy(_boss)
                     db_boss['enemy'] = None
-                    db_boss["pdef"] += randint(50, 150)
-                    db_boss["mdef"] += randint(50, 150)
+                    db_boss["pdef"] += randint(75, 150)
+                    db_boss["mdef"] += randint(75, 150)
+                    db_boss["salvation"] = False
                     self.bot.boss_now = Entity(db_boss, False, is_boss=True)
                     self.bot.boss_per_day[str(date_[3])] = True
                     self.bot.boss_live = True
