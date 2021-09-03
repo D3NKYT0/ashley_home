@@ -984,6 +984,7 @@ class Ext(object):
                 db_monster["status"]['atk'] += randint(0, 2)
                 db_monster["status"]['con'] += randint(0, 2)
 
+        db_monster["salvation"] = False
         return db_monster
 
     def set_monster_raid(self, db_player, rr):
@@ -1008,6 +1009,7 @@ class Ext(object):
                 _monster_now["status"]["con"] += randint(0, 2)
                 _monster_now["status"]["luk"] += randint(0, 2)
 
+        _monster_now["salvation"] = False
         return _monster_now
 
     def set_player(self, user, data):
