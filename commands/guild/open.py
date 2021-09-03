@@ -534,32 +534,56 @@ class OpenClass(commands.Cog):
 
         msg, items = "", dict()
         for _ in range(amount):
-            item_discovered = choice(self.discover_items[item_key])
-            quant = randint(1, item_discovered[1])
+            for _ in range(3):
+                item_discovered = choice(self.discover_items[item_key])
+                quant = randint(1, item_discovered[1])
+
+                try:
+                    items[item_discovered[0]] += quant
+                except KeyError:
+                    items[item_discovered[0]] = quant
+
+                try:
+                    update_user['inventory'][item_discovered[0]] += quant
+                except KeyError:
+                    update_user['inventory'][item_discovered[0]] = quant
+
+            # item especial
+            try:
+                items["frozen_letter"] += 1
+            except KeyError:
+                items["frozen_letter"] = 1
 
             try:
-                items[item_discovered[0]] += quant
+                update_user['inventory']["frozen_letter"] += 1
             except KeyError:
-                items[item_discovered[0]] = quant
-
-            try:
-                update_user['inventory'][item_discovered[0]] += quant
-            except KeyError:
-                update_user['inventory'][item_discovered[0]] = quant
+                update_user['inventory']["frozen_letter"] = 1
 
             if item_key == "marry_pink":
-                item_discovered_2 = choice(self.discover_items[item_key])
-                amount_2 = randint(1, item_discovered_2[1])
+                for _ in range(3):
+                    item_discovered_2 = choice(self.discover_items[item_key])
+                    amount_2 = randint(1, item_discovered_2[1])
+
+                    try:
+                        items[item_discovered_2[0]] += amount_2
+                    except KeyError:
+                        items[item_discovered_2[0]] = amount_2
+
+                    try:
+                        update_user['inventory'][item_discovered_2[0]] += amount_2
+                    except KeyError:
+                        update_user['inventory'][item_discovered_2[0]] = amount_2
+
+                # item especial
+                try:
+                    items["frozen_letter"] += 1
+                except KeyError:
+                    items["frozen_letter"] = 1
 
                 try:
-                    items[item_discovered_2[0]] += amount_2
+                    update_user['inventory']["frozen_letter"] += 1
                 except KeyError:
-                    items[item_discovered_2[0]] = amount_2
-
-                try:
-                    update_user['inventory'][item_discovered_2[0]] += amount_2
-                except KeyError:
-                    update_user['inventory'][item_discovered_2[0]] = amount_2
+                    update_user['inventory']["frozen_letter"] = 1
 
         for it in items.keys():
             msg += f"\n{self.i[it][0]} **{items[it]}** `{self.i[it][1].upper()}`\n"
@@ -702,12 +726,16 @@ class OpenClass(commands.Cog):
         self.bot.lendo.append(ctx.author.id)
         db_player = extension.set_player(ctx.author, copy.deepcopy(data))
         data_xp = calc_xp(db_player['xp'], db_player['level'])
-        ini, end = (1 * amount) + db_player["intelligence"], (5 * amount) + db_player["intelligence"]
+        ini, end = (1 * amount) + (db_player["intelligence"] // 15), (5 * amount) + (db_player["intelligence"] // 15)
         perc = randint(1, end)
+        if perc > 50 and amount <= 5:
+            perc = 50
         xpm = data_xp[1] - data_xp[2]
         xpr = int(xpm / 100 * perc)
 
-        update["rpg"]["intelligence"] += 1
+        if update["rpg"]["intelligence"] < 300:
+            update["rpg"]["intelligence"] += 1
+
         update["inventory"]["frozen_letter"] -= amount
         if update["inventory"]["frozen_letter"] < 1:
             del update["inventory"]["frozen_letter"]

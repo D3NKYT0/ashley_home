@@ -450,11 +450,19 @@ class Battle(commands.Cog):
         if "the_three_sacred_scrolls" in update['rpg']['quests'].keys() and player_life:
             _QUEST = update['rpg']['quests']["the_three_sacred_scrolls"]
             quest_item = choice(["lost_parchment", "royal_parchment", "sages_scroll"])
-            if _QUEST["status"] == "in progress" and change <= 25 and data['config']['provinces'] is not None:
+            if _QUEST["status"] == "in progress" and change <= 15 and data['config']['provinces'] is not None:
                 if quest_item not in update['rpg']['quests']["the_three_sacred_scrolls"]["scroll"]:
                     update['rpg']['quests']["the_three_sacred_scrolls"]["scroll"].append(quest_item)
                     await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                    f'✨ **[The 3 Holy Scrolls]** ✨')
+            elif _QUEST["status"] == "completed" and change <= 15 and data['config']['provinces'] is not None:
+                try:
+                    update['inventory'][quest_item] += 1
+                except KeyError:
+                    update['inventory'][quest_item] = 1
+                icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 3 Holy Scrolls]** ✨\n'
+                               f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
 
