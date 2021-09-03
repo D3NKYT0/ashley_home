@@ -443,7 +443,7 @@ class Battle(commands.Cog):
                         icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
                         await ctx.send(
                             f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 7 Lost Souls]** ✨\n'
-                            f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
+                            f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.upper()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0:
 
@@ -493,7 +493,7 @@ class Battle(commands.Cog):
                     update['inventory'][quest_item] = 1
                 icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
                 await ctx.send(f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 3 Holy Scrolls]** ✨\n'
-                               f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.UPPER()}`')
+                               f'`POR BATALHAR VOCE GANHOU:` {icon} **1** `{name.upper()}`')
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
             msg_return = False
