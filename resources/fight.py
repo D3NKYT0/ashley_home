@@ -302,6 +302,7 @@ class Entity(object):
             self.data["salvation"] = False
             self.status['hp'] = self.tot_hp
             self.status['mp'] = self.tot_mp
+            self.potion = 0
             await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
                            f' reviveu!`')
 
@@ -814,6 +815,7 @@ class Entity(object):
                 self.data["salvation"] = False
                 self.status['hp'] = self.tot_hp
                 self.status['mp'] = self.tot_mp
+                self.potion = 0
                 await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
                                f' reviveu!`')
 
@@ -950,6 +952,7 @@ class Entity(object):
             self.data["salvation"] = False
             self.status['hp'] = self.tot_hp
             self.status['mp'] = self.tot_mp
+            self.potion = 0
             await ctx.send(f'**{self.name.upper()}** `por esta equipado com` **SALVATION** `na hora da sua morte'
                            f' reviveu!`')
 

@@ -80,12 +80,12 @@ class RecipeClass(commands.Cog):
                     try:
                         tempmax = data_user['inventory'][c[0]] // c[1]
                         if tempmax == 0:
-                            _msg += f'<:alert:739251822920728708>|`Você não tem o item` **{c[0]}** ' \
+                            _msg += f'<:alert:739251822920728708>|`Você não tem o item` **{self.i[c[0]][1]}** ' \
                                     f'`suficiente no seu inventario.`\n'
 
                     except KeyError:
                         tempmax = 0
-                        _msg += f'<:alert:739251822920728708>|`Você não tem o item` **{c[0]}** ' \
+                        _msg += f'<:alert:739251822920728708>|`Você não tem o item` **{self.i[c[0]][1]}** ' \
                                 f'`suficiente no seu inventario.`\n'
                     if maximo is None or maximo > tempmax:
                         maximo = tempmax

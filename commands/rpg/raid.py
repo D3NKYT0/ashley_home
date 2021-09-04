@@ -8,7 +8,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import calc_xp
 from datetime import datetime
-raid_rank, p_raid, m_raid, money, xp_tot, xp_off, extension = {}, {}, {}, {}, {}, {}, Ext()
+raid_rank, p_raid, m_raid, money, xp_tot, xp_off, extension, reward = {}, {}, {}, {}, {}, {}, Ext(), {}
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -30,8 +30,8 @@ class Raid(commands.Cog):
     async def wave(self, ctx, extra=None):
         """Comando usado pra batalhar no rpg da ashley
         Use ash wave"""
-        global raid_rank, m_raid, p_raid, money, xp_tot, xp_off
-        xp_off[ctx.author.id], raid_rank[ctx.author.id], especial_m = False, 0, 0
+        global raid_rank, m_raid, p_raid, money, xp_tot, xp_off, reward
+        xp_off[ctx.author.id], raid_rank[ctx.author.id], especial_m, reward[ctx.author.id] = False, 0, 0, dict()
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -129,6 +129,12 @@ class Raid(commands.Cog):
         if ctx.author.id in m_raid.keys():
             del m_raid[ctx.author.id]
 
+        for rew in self.db_monster[ctx.author.id]["reward"]:
+            try:
+                reward[ctx.author.id][rew] += 1
+            except KeyError:
+                reward[ctx.author.id][rew] = 1
+
         m_raid[ctx.author.id] = Entity(self.db_monster[ctx.author.id], False, is_wave=True)
         money[ctx.author.id] = self.db_monster[ctx.author.id]['ethernya']
         xp_tot[ctx.author.id] = [(self.db_monster[ctx.author.id]['xp'], self.db_monster[ctx.author.id]['level'])]
@@ -144,6 +150,13 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
+
+                for rew in self.db_monster[ctx.author.id]["reward"]:
+                    try:
+                        reward[ctx.author.id][rew] += 1
+                    except KeyError:
+                        reward[ctx.author.id][rew] = 1
+
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -172,6 +185,13 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
+
+                for rew in self.db_monster[ctx.author.id]["reward"]:
+                    try:
+                        reward[ctx.author.id][rew] += 1
+                    except KeyError:
+                        reward[ctx.author.id][rew] = 1
+
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -257,6 +277,13 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
+
+                for rew in self.db_monster[ctx.author.id]["reward"]:
+                    try:
+                        reward[ctx.author.id][rew] += 1
+                    except KeyError:
+                        reward[ctx.author.id][rew] = 1
+
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -285,6 +312,13 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
+
+                for rew in self.db_monster[ctx.author.id]["reward"]:
+                    try:
+                        reward[ctx.author.id][rew] += 1
+                    except KeyError:
+                        reward[ctx.author.id][rew] = 1
+
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = discord.Embed(color=self.bot.color, title=msg)
@@ -439,10 +473,9 @@ class Raid(commands.Cog):
                              icon_url=f"{self.db_monster[ctx.author.id]['img']}")
             await ctx.send(embed=embed)
 
-            if data['rpg']['vip']:
-                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(8)]
-            else:
-                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(4)]
+            _reward = []
+            for i_, amount in reward[ctx.author.id].items():
+                _reward += [i_] * amount
 
             raid_reward = ["soul_crystal_of_love", "soul_crystal_of_hope", "soul_crystal_of_hate",
                            "fused_diamond", "fused_ruby", "fused_sapphire", "fused_emerald", "unsealed_stone",
@@ -455,51 +488,37 @@ class Raid(commands.Cog):
             msg = "\n"
 
             if raid_rank[ctx.author.id] >= 5:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **5** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 10:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **10** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 15:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **15** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 20:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **20** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 25:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **25** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 30:
-                reward.append(choice(raid_reward))
+                _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **30** `monstros`\n"
-
-            if self.db_player[ctx.author.id]['level'] > 25:
-                bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
-                         'stone_crystal_blue', 'stone_crystal_yellow']
-
-                if data['rpg']['vip']:
-                    reward[0] = choice(bonus)
-                    reward[1] = choice(bonus)
-                    reward[2] = choice(bonus)
-                    reward[3] = choice(bonus)
-
-                else:
-                    reward[0] = choice(bonus)
-                    reward[1] = choice(bonus)
 
             if change < 50:
                 if data['rpg']['vip']:
-                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
-                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
                 else:
-                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-            response = await self.bot.db.add_reward(ctx, reward, True)
+            response = await self.bot.db.add_reward(ctx, _reward, True)
             await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
                            f'{response}\n{msg}')
 

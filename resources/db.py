@@ -262,11 +262,18 @@ class Database(object):
         if not data_user['security']['status']:
             return '`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'
 
-        response = '`Caiu pra você:` \n'
+        response, items = '`Caiu pra você:` \n\n', dict()
         for item in list_:
             amount = randint(1, 3) if not one else 1
             query_user["$inc"][f"inventory.{item}"] = amount
-            response += f"{self.bot.items[item][0]} `{amount}` `{self.bot.items[item][1]}`\n"
+
+            try:
+                items[item] += amount
+            except KeyError:
+                items[item] = amount
+
+        for it in items.keys():
+            response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
 
         cl = await self.bot.db.cd("users")
         await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
