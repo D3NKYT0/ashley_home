@@ -22,6 +22,7 @@ from resources.utility import date_format, patent_calculator, guild_info, rank_d
 from resources.db import Database, DataInteraction
 from resources.verify_cooldown import verify_cooldown
 from resources.boosters import Booster
+from resources.push import OneSignal
 from config import data as config
 from adlink.adfly_api_instance import api as api_adfly
 from discord import Webhook, AsyncWebhookAdapter
@@ -62,7 +63,9 @@ class Ashley(commands.AutoShardedBot):
         self.minerando = list()  # status de um jogador (OK)
         self.desafiado = list()  # status de um jogador (OK)
         self.lendo = list()  # status de um jogador (OK)
+        self.recovery = list()  # status de um jogador (OK)
         # -----------================------------
+
         self.session = self.loop.run_until_complete(self.create_session())
 
         # haw_data
@@ -135,6 +138,7 @@ class Ashley(commands.AutoShardedBot):
         self.db: Database = Database(self)
         self.data: DataInteraction = DataInteraction(self)
         self.booster: Booster = Booster(self.items)
+        self.push: OneSignal = OneSignal()
 
         # system adfly reward
         self.adfly = api_adfly
@@ -157,7 +161,7 @@ class Ashley(commands.AutoShardedBot):
 
     # create link adfly
     def adlinks(self, code):
-        _link = self.adfly.shorten(f"https://ashley-new.herokuapp.com/adfly/{code}")
+        _link = self.adfly.shorten(f"https://ashleypro.herokuapp.com/adfly/{code}")
         return _link["data"][0]["id"], _link["data"][0]["short_url"]
 
     # delete link adfly
@@ -961,15 +965,14 @@ class Ashley(commands.AutoShardedBot):
         await webhook.send(embed=embed, username=wh_name, avatar_url=_url)
 
 
-if __name__ == "__main__":
-
-    description_ashley = f"Um bot de assistencia para servidores criado por: Denky#5960\n" \
-                         f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
-                         f"**Servidor de Origem**: {config['config']['default_invite']}\n"
+def main_bot():
+    desc = f"Um bot de assistencia para servidores criado por: Denky#5960\n" \
+           f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
+           f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
     intents = discord.Intents.default()
     intents.members = True
-    bot = Ashley(command_prefix=_auth['prefix'], description=description_ashley, pm_help=True, intents=intents)
+    bot = Ashley(command_prefix=_auth['prefix'], description=desc, pm_help=True, intents=intents)
     bot.remove_command('help')
     cont = 0
     emojis = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}
@@ -1005,4 +1008,9 @@ if __name__ == "__main__":
     f.close()
 
     print(f"\033[1;35m( ✔ ) | {cont}/{len(bot.data_cog.keys())} extensões foram carregadas!\033[m")
-    bot.run(_auth['_t__ashley'])
+    return bot, _auth['_t__ashley']
+
+
+if __name__ == "__main__":
+    ashley, token = main_bot()
+    ashley.run(token)

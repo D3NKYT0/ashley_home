@@ -31,7 +31,10 @@ class Raid(commands.Cog):
         """Comando usado pra batalhar no rpg da ashley
         Use ash wave"""
         global raid_rank, m_raid, p_raid, money, xp_tot, xp_off, reward
-        xp_off[ctx.author.id], raid_rank[ctx.author.id], especial_m, reward[ctx.author.id] = False, 0, 0, dict()
+        especial_m = 0
+
+        if ctx.author.id not in self.bot.recovery:
+            xp_off[ctx.author.id], raid_rank[ctx.author.id], reward[ctx.author.id] = False, 0, dict()
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -56,21 +59,24 @@ class Raid(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        _ESPECIAL = False
-        if extra is not None:
-            if extra in ["especial", 'e']:
-                if 'pass_royal' in update['inventory'].keys():
-                    if update['inventory']['pass_royal'] > 0:
-                        _ESPECIAL = True
-                        update['inventory']['pass_royal'] -= 1
-                        if update['inventory']['pass_royal'] < 1:
-                            del update['inventory']['pass_royal']
+        if ctx.author.id not in self.bot.recovery:
+            _ESPECIAL = False
+            if extra is not None:
+                if extra in ["especial", 'e']:
+                    if 'pass_royal' in update['inventory'].keys():
+                        if update['inventory']['pass_royal'] > 0:
+                            _ESPECIAL = True
+                            update['inventory']['pass_royal'] -= 1
+                            if update['inventory']['pass_royal'] < 1:
+                                del update['inventory']['pass_royal']
 
-            if extra in ["especial", 'e'] and not _ESPECIAL:
-                return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
-                                      f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}` "
-                                      f"**no seu inventario para lutar com os monstros especiais!**\n"
-                                      f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
+                if extra in ["especial", 'e'] and not _ESPECIAL:
+                    return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
+                                          f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}`"
+                                          f" **no seu inventario para lutar com os monstros especiais!**\n"
+                                          f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
+        else:
+            _ESPECIAL = self.db_player[ctx.author.id]["ESPECIAL"]
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
@@ -80,64 +86,69 @@ class Raid(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        ct = 50
-        if data['rpg']['active']:
-            date_old = data['rpg']['activated_at']
-            date_now = datetime.today()
-            days = abs((date_old - date_now).days)
-            if days <= 10:
-                ct = 5
+        if ctx.author.id not in self.bot.recovery:
+            ct = 50
+            if data['rpg']['active']:
+                date_old = data['rpg']['activated_at']
+                date_now = datetime.today()
+                days = abs((date_old - date_now).days)
+                if days <= 10:
+                    ct = 5
 
-        try:
-            if data['inventory']['coins'] < ct:
-                msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
-                      f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
+            try:
+                if data['inventory']['coins'] < ct:
+                    msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
+                          f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
+                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    return await ctx.send(embed=embed)
+
+            except KeyError:
+                msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-        except KeyError:
-            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
+            update['inventory']['coins'] -= ct
+            if update['inventory']['coins'] < 1:
+                del update['inventory']['coins']
 
-        update['inventory']['coins'] -= ct
-        if update['inventory']['coins'] < 1:
-            del update['inventory']['coins']
         self.bot.batalhando.append(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
 
-        # configuração do player
-        self.db_player[ctx.author.id] = extension.set_player(ctx.author, data)
-        # adição de uma chave especial para o modo de wave especial
-        self.db_player[ctx.author.id]["ESPECIAL"] = _ESPECIAL
+        if ctx.author.id not in self.bot.recovery:
+            # configuração do player
+            self.db_player[ctx.author.id] = extension.set_player(ctx.author, data)
+            # adição de uma chave especial para o modo de wave especial
+            self.db_player[ctx.author.id]["ESPECIAL"] = _ESPECIAL
 
-        if ctx.author.id in p_raid.keys():
-            del p_raid[ctx.author.id]
+            if ctx.author.id in p_raid.keys():
+                del p_raid[ctx.author.id]
 
-        p_raid[ctx.author.id] = Entity(self.db_player[ctx.author.id], True, is_wave=True)
+            p_raid[ctx.author.id] = Entity(self.db_player[ctx.author.id], True, is_wave=True)
 
         # ======================================================================================================
         # ----------------------------------- SYSTEM RAID MONSTERS / BOSS --------------------------------------
         # ======================================================================================================
 
-        _USER = ctx.author.id
-        self.db_monster[_USER] = extension.set_monster_raid(self.db_player[_USER], raid_rank[_USER])
+        if ctx.author.id not in self.bot.recovery:
 
-        if "quest" in self.db_monster[ctx.author.id]["name"].lower():
-            especial_m += 1
+            _USER = ctx.author.id
+            self.db_monster[_USER] = extension.set_monster_raid(self.db_player[_USER], raid_rank[_USER])
 
-        if ctx.author.id in m_raid.keys():
-            del m_raid[ctx.author.id]
+            if "quest" in self.db_monster[ctx.author.id]["name"].lower():
+                especial_m += 1
 
-        for rew in self.db_monster[ctx.author.id]["reward"]:
-            try:
-                reward[ctx.author.id][rew] += 1
-            except KeyError:
-                reward[ctx.author.id][rew] = 1
+            if ctx.author.id in m_raid.keys():
+                del m_raid[ctx.author.id]
 
-        m_raid[ctx.author.id] = Entity(self.db_monster[ctx.author.id], False, is_wave=True)
-        money[ctx.author.id] = self.db_monster[ctx.author.id]['ethernya']
-        xp_tot[ctx.author.id] = [(self.db_monster[ctx.author.id]['xp'], self.db_monster[ctx.author.id]['level'])]
+            for rew in self.db_monster[ctx.author.id]["reward"]:
+                try:
+                    reward[ctx.author.id][rew] += 1
+                except KeyError:
+                    reward[ctx.author.id][rew] = 1
+
+            m_raid[ctx.author.id] = Entity(self.db_monster[ctx.author.id], False, is_wave=True)
+            money[ctx.author.id] = self.db_monster[ctx.author.id]['ethernya']
+            xp_tot[ctx.author.id] = [(self.db_monster[ctx.author.id]['xp'], self.db_monster[ctx.author.id]['level'])]
 
         # durante a batalha
         while not self.bot.is_closed():
@@ -518,7 +529,7 @@ class Raid(commands.Cog):
                 else:
                     _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-            response = await self.bot.db.add_reward(ctx, _reward, True)
+            response = await self.bot.db.add_reward(ctx, _reward, False)
             await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
                            f'{response}\n{msg}')
 
@@ -649,6 +660,9 @@ class Raid(commands.Cog):
             await self.bot.data.add_sts(ctx.author, ['raid_total', 'raid_max'])
         else:  # ia ganhou
             await self.bot.data.add_sts(ctx.author, ['raid_total', 'raid_lose'])
+
+        if ctx.author.id in self.bot.recovery:
+            self.bot.recovery.remove(ctx.author.id)
 
 
 def setup(bot):

@@ -7,7 +7,7 @@ from resources.db import Database
 from random import choice, randint
 from resources.giftmanage import register_gift, open_gift, open_chest
 from resources.img_edit import gift as gt
-from resources.utility import convert_item_name
+from resources.utility import convert_item_name, include
 from resources.moon import get_moon
 
 from asyncio import sleep
@@ -733,7 +733,7 @@ class OpenClass(commands.Cog):
         xpm = data_xp[1] - data_xp[2]
         xpr = int(xpm / 100 * perc)
 
-        if update["rpg"]["intelligence"] < 300:
+        if update["rpg"]["intelligence"] < 500:  # max 500
             update["rpg"]["intelligence"] += 1
 
         update["inventory"]["frozen_letter"] -= amount
@@ -787,6 +787,14 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        recipes = ["potion_of_life", "potion_of_love", "celestial_cover_boots_divine",
+                   "celestial_platinum_boots_divine", "celestial_leather_boots_divine"]
+
+        if include(recipes, update["recipes"]):
+            msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         _INT = 50 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
@@ -800,12 +808,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_life", "potion_of_love", "celestial_cover_boots_divine",
-                            "celestial_platinum_boots_divine", "celestial_leather_boots_divine"])
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
+            craft = choice(recipes)
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
+            else:
+                try:
+                    update['inventory']["unsealed_stone"] += 1
+                except KeyError:
+                    update['inventory']["unsealed_stone"] = 1
+                icon, name = self.bot.items["unsealed_stone"][0], self.bot.items["unsealed_stone"][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCE NAO CONSEGUIU UM CRAFT, MAS ACHOU UM` '
+                               f'{icon} ✨ **1 {name.upper()}** ✨ `NO MEIO DO LIVRO`')
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10
@@ -822,7 +837,7 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5 + (amount // 2):
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
@@ -855,6 +870,14 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        recipes = ["potion_of_death", "potion_of_death", "celestial_cover_gloves_divine",
+                   "celestial_platinum_gloves_divine", "celestial_leather_gloves_divine"]
+
+        if include(recipes, update["recipes"]):
+            msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         _INT = 75 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
@@ -868,12 +891,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_death", "potion_of_death", "celestial_cover_gloves_divine",
-                            "celestial_platinum_gloves_divine", "celestial_leather_gloves_divine"])
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
+            craft = choice(recipes)
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
+            else:
+                try:
+                    update['inventory']["unsealed_stone"] += 1
+                except KeyError:
+                    update['inventory']["unsealed_stone"] = 1
+                icon, name = self.bot.items["unsealed_stone"][0], self.bot.items["unsealed_stone"][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCE NAO CONSEGUIU UM CRAFT, MAS ACHOU UM` '
+                               f'{icon} ✨ **1 {name.upper()}** ✨ `NO MEIO DO LIVRO`')
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10
@@ -890,7 +920,7 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5 + (amount // 2):
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
@@ -923,6 +953,14 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        recipes = ["potion_of_soul", "potion_of_rejuvenation", "celestial_cover_helmet_divine",
+                   "celestial_platinum_helmet_divine", "celestial_leather_helmet_divine"]
+
+        if include(recipes, update["recipes"]):
+            msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         _INT = 25 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
@@ -936,12 +974,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_soul", "potion_of_rejuvenation", "celestial_cover_helmet_divine",
-                            "celestial_platinum_helmet_divine", "celestial_leather_helmet_divine"])
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
+            craft = choice(recipes)
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
+            else:
+                try:
+                    update['inventory']["unsealed_stone"] += 1
+                except KeyError:
+                    update['inventory']["unsealed_stone"] = 1
+                icon, name = self.bot.items["unsealed_stone"][0], self.bot.items["unsealed_stone"][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCE NAO CONSEGUIU UM CRAFT, MAS ACHOU UM` '
+                               f'{icon} ✨ **1 {name.upper()}** ✨ `NO MEIO DO LIVRO`')
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10 - (amount // 2)
@@ -958,7 +1003,7 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5 + (amount // 2):
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
@@ -991,6 +1036,14 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        recipes = ["potion_of_weakening", "potion_of_weakening", "celestial_cover_leggings_divine",
+                   "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine"]
+
+        if include(recipes, update["recipes"]):
+            msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         _INT = 100 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
@@ -1004,12 +1057,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5 + (amount // 2):
-            craft = choice(["potion_of_weakening", "potion_of_weakening", "celestial_cover_leggings_divine",
-                            "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine"])
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
+            craft = choice(recipes)
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
+            else:
+                try:
+                    update['inventory']["unsealed_stone"] += 1
+                except KeyError:
+                    update['inventory']["unsealed_stone"] = 1
+                icon, name = self.bot.items["unsealed_stone"][0], self.bot.items["unsealed_stone"][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCE NAO CONSEGUIU UM CRAFT, MAS ACHOU UM` '
+                               f'{icon} ✨ **1 {name.upper()}** ✨ `NO MEIO DO LIVRO`')
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10
@@ -1026,7 +1086,7 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5 + (amount // 2):
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
@@ -1059,6 +1119,15 @@ class OpenClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        recipes = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation", "celestial_ring_sealed",
+                   "celestial_cover_breastplate_divine", "celestial_platinum_breastplate_divine",
+                   "celestial_leather_breastplate_divine"]
+
+        if include(recipes, update["recipes"]):
+            msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         _INT = 150 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
@@ -1072,14 +1141,19 @@ class OpenClass(commands.Cog):
             del update["inventory"]["frozen_letter"]
 
         chance, msg_return, craft = randint(1, 100), False, None
-        if chance <= 5 + (amount // 2):
-            recipes_especial = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation",
-                                "celestial_ring_sealed", "celestial_cover_breastplate_divine",
-                                "celestial_platinum_breastplate_divine", "celestial_leather_breastplate_divine"]
-            craft = choice(recipes_especial)
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
+            craft = choice(recipes)
             if craft not in update["recipes"]:
                 msg_return = True
                 update["recipes"].append(craft)
+            else:
+                try:
+                    update['inventory']["unsealed_stone"] += 1
+                except KeyError:
+                    update['inventory']["unsealed_stone"] = 1
+                icon, name = self.bot.items["unsealed_stone"][0], self.bot.items["unsealed_stone"][1]
+                await ctx.send(f'<a:fofo:524950742487007233>│`VOCE NAO CONSEGUIU UM CRAFT, MAS ACHOU UM` '
+                               f'{icon} ✨ **1 {name.upper()}** ✨ `NO MEIO DO LIVRO`')
         await self.bot.db.update_data(data, update, 'users')
 
         seconds = 10
@@ -1096,7 +1170,7 @@ class OpenClass(commands.Cog):
         if ctx.author.id in self.bot.lendo:
             self.bot.lendo.remove(ctx.author.id)
 
-        if chance <= 5 + (amount // 2):
+        if chance <= 5 + (amount // 2) + (data['rpg']['intelligence'] // 50):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"

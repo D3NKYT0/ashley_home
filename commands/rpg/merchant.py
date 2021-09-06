@@ -61,6 +61,9 @@ class MerchantClass(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você esqueceu de falar o nome do item para colocar "
                                   "na loja!`")
 
+        if value >= 5000000000:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia menor que 5 Bilhões.`")
+
         if item.lower() in ["medalhas", "rank points", "vote coin", "medalha", "rank point"]:
             return await ctx.send("<:alert:739251822920728708>│`Você não pode vender esse tipo de item.`")
 

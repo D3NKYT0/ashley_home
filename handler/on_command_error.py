@@ -23,8 +23,8 @@ class CommandErrorHandler(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
         self.read = ["read letter", "read assemble", "read aungen", "read soul", "read nw", "read waffen"]
-        self.errors = [aiohttp.ClientOSError, ConnectionResetError, aiohttp.client_exceptions.ClientOSError,
-                       discord.errors.DiscordServerError, discord.errors.HTTPException]
+        self.errors = [aiohttp.ClientOSError, ConnectionResetError, discord.errors.DiscordServerError,
+                       discord.errors.HTTPException]
         self.errors_str = [
             "Command raised an exception: HTTPException: 504 Gateway Time-out (error code: 0): <!DOCTYPE html>",
             "Command raised an exception: DiscordServerError: 500 Internal Server Error (error code: 0): 500: "
@@ -100,6 +100,9 @@ class CommandErrorHandler(commands.Cog):
 
         # Check de Erros fora de CTX
         if self.error_check(error):
+            if str(ctx.command) in ["wave"]:
+                if ctx.author.id not in self.bot.recovery:
+                    self.bot.recovery.append(ctx.author.id)
             if str(ctx.command) in ["battle", "boss", "wave", "pvp"]:
                 if ctx.author.id in self.bot.batalhando:
                     self.bot.batalhando.remove(ctx.author.id)
@@ -141,7 +144,7 @@ class CommandErrorHandler(commands.Cog):
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
                                        f"**{ctx.command}**, `no servidor:` **{ctx.guild}**, `no canal:` "
                                        f"**{ctx.channel}** `com o membro:` **{ctx.author}**  "
-                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()}**")
+                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()[:3000]}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)

@@ -17,15 +17,13 @@ class LoadCog(commands.Cog):
     async def load(self, ctx, cog):
         """apenas desenvolvedores"""
         try:
-            self.bot.load_extension('{}'.format(cog))
-            embed = discord.Embed(
-                color=self.color,
-                description=f'<:confirmed:721581574461587496>│Extenção **{cog}**, carregada com sucesso!')
+            self.bot.load_extension(cog)
+            msg = f'<:confirmed:721581574461587496>│Extenção **{cog}**, carregada com sucesso!'
+            embed = discord.Embed(color=self.color, description=msg)
             await ctx.send(embed=embed)
         except ModuleNotFoundError as e:
-            embed = discord.Embed(
-                color=discord.Color.red(),
-                description=f'<:negate:721581573396496464>│Falha ao carregar a extenção **{cog}**. \n```{e}```')
+            msg = f'<:negate:721581573396496464>│Falha ao carregar a extenção **{cog}**. \n```{e}```'
+            embed = discord.Embed(color=discord.Color.red(), description=msg)
             await ctx.send(embed=embed)
 
 

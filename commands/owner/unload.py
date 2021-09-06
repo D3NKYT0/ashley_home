@@ -17,15 +17,13 @@ class UnloadCog(commands.Cog):
     async def unload(self, ctx, cog):
         """apenas desenvolvedores"""
         try:
-            self.bot.unload_extension('{}'.format(cog))
-            embed = discord.Embed(
-                color=self.color,
-                description=f'<:confirmed:721581574461587496>│Extenção **{cog}**, parada com sucesso!')
+            self.bot.unload_extension(cog)
+            msg = f'<:confirmed:721581574461587496>│Extenção **{cog}**, parada com sucesso!'
+            embed = discord.Embed(color=self.color, description=msg)
             await ctx.send(embed=embed)
-        except ModuleNotFoundError as e:
-            embed = discord.Embed(
-                color=discord.Color.red(),
-                description=f'<:negate:721581573396496464>│Falha ao parar a extenção **{cog}**. \n```{e}```')
+        except discord.ext.commands.errors.ExtensionNotLoaded as e:
+            msg = f'<:negate:721581573396496464>│Falha ao parar a extenção **{cog}**. \n```{e}```'
+            embed = discord.Embed(color=discord.Color.red(), description=msg)
             await ctx.send(embed=embed)
 
 

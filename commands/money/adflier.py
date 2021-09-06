@@ -1,5 +1,4 @@
 import discord
-import base64
 
 from random import choice, randint
 from discord.ext import commands
@@ -8,7 +7,6 @@ from resources.db import Database
 from resources.giftmanage import register_code, generate_gift
 from resources.utility import convert_item_name
 from resources.crypto import encrypt_text, decrypt_text
-
 
 
 class Adflier(commands.Cog):

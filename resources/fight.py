@@ -646,7 +646,7 @@ class Entity(object):
         return self.skill
 
     def verify_effect(self, effects):
-        skull, drain, bluff, hit_kill = False, False, False, False
+        skull, drain, bluff, hit_kill, hold = False, False, False, False, False
         if effects is not None:
             if "skull" in effects.keys():
                 if effects["skull"]["turns"] > 0:
@@ -660,12 +660,15 @@ class Entity(object):
             if "bluff" in effects.keys():
                 if effects["bluff"]["turns"] > 0:
                     bluff = True
+            if "hold" in effects.keys():
+                if effects["hold"]["turns"] > 0 and not self.is_mini_boss:
+                    hold = True
             if "lethal" in effects.keys():
                 if effects["lethal"]["turns"] > 0 and not self.is_boss:
                     if "bluff" in effects.keys() and "cegueira" in effects.keys():
                         if effects["bluff"]["turns"] > 0 and effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return skull, drain, bluff, hit_kill
+        return skull, drain, bluff, hit_kill, hold
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
         if skill['effs'] is not None and act_eff:
@@ -822,7 +825,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        skull, drain, bluff, hit_kill = self.verify_effect(self.effects)
+        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects)
         lvs = entity.level_skill[int(skill['skill']) - 1] if test else entity.level_skill[0]
         self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
@@ -841,7 +844,7 @@ class Entity(object):
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        skull, drain, bluff, hit_kill = self.verify_effect(self.effects)
+        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects)
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
@@ -864,6 +867,12 @@ class Entity(object):
             entity.effects['reflect']['damage'] = damage
 
         armor_now = _defense if _defense > 0 else 1
+        armor_now = randint(int(armor_now * 0.75), armor_now)
+
+        # efeito da hold
+        if hold:
+            armor_now = 0
+
         percent = abs(int(armor_now / (damage / 100)))
 
         if percent < 50:

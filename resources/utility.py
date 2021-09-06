@@ -16,9 +16,14 @@ legend = {"-": -1, "Comum": 0, "Incomum": 1, "Raro": 2, "Super Raro": 3, "Ultra 
 
 
 def include(string_, list_):
-    for i in list_:
-        if i.lower() in string_.lower():
+    if isinstance(string_, list):
+        test = list(set(string_).intersection(list_))
+        if test == string_:
             return True
+    else:
+        for i in list_:
+            if i.lower() in string_.lower():
+                return True
     return False
 
 

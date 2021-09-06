@@ -1,7 +1,7 @@
 import discord
 
 import time as date
-from asyncio import sleep
+from asyncio import sleep, TimeoutError
 from discord.ext import commands
 from random import randint, choice
 from resources.fight import Entity, Ext
@@ -10,6 +10,7 @@ from resources.db import Database
 from resources.img_edit import calc_xp
 from resources.utility import include
 from datetime import datetime
+
 player, monster, extension = {}, {}, Ext()
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -24,6 +25,8 @@ class Battle(commands.Cog):
         self.w_s = self.bot.config['attribute']['chance_weapon']
         self.e = self.bot.d_event
         self.xp_off = {}
+        self._emojis = ["<a:_y:774697621997486090>", "<a:_x:774697621867724862>",
+                        "<a:_b:774697621683044392>", "<a:_a:774697620500906005>"]
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -560,6 +563,63 @@ class Battle(commands.Cog):
             await self.bot.data.add_sts(ctx.author, ['battle_total', 'battle_win'])
         else:  # ia ganhou
             await self.bot.data.add_sts(ctx.author, ['battle_total', 'battle_lose'])
+
+        # -----------------------------------------------------------------------------
+        # BLOCO DE PROGRAMAÇAO REFERENTE AO SISTEMA DE SPOIL
+        # -----------------------------------------------------------------------------
+
+        if "the_seven_lost_souls" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_seven_lost_souls"]
+            if _QUEST["status"] == "completed" and data['config']['provinces'] is not None:
+                embed = discord.Embed(description=f"`{monster[ctx.author.id].name.upper()} MORTO!`", color=0x000000)
+                embed.set_thumbnail(url=db_monster['img'])
+                embed.set_author(name=db_player['name'], icon_url=db_player['img'])
+                msg = await ctx.send(embed=embed)
+                for emo in self._emojis:
+                    await msg.add_reaction(emo)
+                _EMOJI = choice(self._emojis)
+                emoji, reaction = _EMOJI.replace('<a:', '').replace(_EMOJI[_EMOJI.rfind(':'):], ''), None
+
+                def check_reaction(react, member):
+                    try:
+                        if react.message.id == msg.id:
+                            if not member.bot:
+                                return True
+                        return False
+                    except AttributeError:
+                        return False
+
+                try:
+                    reaction = await self.bot.wait_for('reaction_add', timeout=10.0, check=check_reaction)
+                except TimeoutError:
+                    try:
+                        await msg.delete()
+                    except (discord.errors.NotFound, discord.errors.Forbidden):
+                        pass
+                try:
+                    _reaction = reaction[0].emoji.name
+                except AttributeError:
+                    _reaction = reaction[0].emoji
+
+                if _reaction == emoji and reaction[0].message.id == msg.id:
+                    try:
+                        await msg.delete()
+                    except discord.errors.NotFound:
+                        pass
+                    quest_item = choice(["assassin_gem", "necromancer_gem", "paladin_gem", "priest_gem",
+                                         "warlock_gem", "warrior_gem", "wizard_gem"])
+                    icon, name = self.bot.items[quest_item][0], self.bot.items[quest_item][1]
+                    cl = await self.bot.db.cd("users")
+                    data = await cl.find_one({"user_id": reaction[1].id}, {"_id": 0, "user_id": 1})
+                    await cl.update_one({"user_id": data["user_id"]}, {"$inc": {f"inventory.{quest_item}": 1}})
+                    await ctx.send(f'<a:fofo:524950742487007233>│`POR COMPLETAR A QUEST` ✨ **[The 7 Lost Souls]** ✨\n'
+                                   f'`E ACERTAR O SPOIL, VOCE GANHOU:` {icon} **1** `{name.upper()}`')
+                else:
+                    try:
+                        await msg.delete()
+                    except discord.errors.NotFound:
+                        pass
+                    await ctx.send("<:alert:739251822920728708>│`SPOIL FAIL!`", delete_after=5.0)
 
 
 def setup(bot):
