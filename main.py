@@ -532,6 +532,16 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
+                if "the_ten_provinces" in data_user['rpg']['quests'].keys() and str(ctx.command) == "create":
+                    _QUEST = data_user['rpg']['quests']["the_ten_provinces"]
+                    if _QUEST["status"] == "in progress" and data_user['config']['provinces'] is not None:
+                        if ctx.channel.id not in data_user['rpg']['quests']["the_ten_provinces"]["provinces"]:
+                            data_user['rpg']['quests']["the_ten_provinces"]["provinces"].append(ctx.channel.id)
+                            _PROVINCES = data_user['rpg']['quests']["the_ten_provinces"]["provinces"]
+                            query_user["$set"]["rpg.quests.the_ten_provinces.provinces"] = _PROVINCES
+                            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                           f'✨ **[The 10 - Provinces]** ✨')
+
                 patent = patent_calculator(data_user['inventory']['rank_point'], data_user['inventory']['medal'])
                 if patent > data_user['user']['patent']:
                     query_user["$set"]["user.patent"] = patent

@@ -203,6 +203,8 @@ class MeltedClass(commands.Cog):
             msg_return = f"<:confirmed:721581574461587496>│{reward_equip[1]['icon']} `1` " \
                          f"**{reward_equip[1]['name']}** `adicionado ao seu inventario com sucesso...`"
 
+            reward_equip = reward_equip[1]
+
         else:
 
             try:
@@ -222,6 +224,16 @@ class MeltedClass(commands.Cog):
         embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
+
+        if "the_one_release" in update['rpg']['quests'].keys() and str(ctx.command) == "create":
+            _QUEST, _NAME = update['rpg']['quests']["the_one_release"], reward_equip["name"]
+            if _QUEST["status"] == "in progress" and update['config']['provinces'] is not None:
+                if len(update['rpg']['quests']["the_ten_provinces"]["unsealed"]) == 0:
+                    if "violet" in _NAME or "hero" in _NAME or "divine" in _NAME:
+                        update['rpg']['quests']["the_ten_provinces"]["unsealed"].append(True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                       f'✨ **[The 1 Release]** ✨')
+
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.data.add_sts(ctx.author, "unsealed", 1)
 
