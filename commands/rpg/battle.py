@@ -583,7 +583,7 @@ class Battle(commands.Cog):
                 def check_reaction(react, member):
                     try:
                         if react.message.id == msg.id:
-                            if not member.bot and member.ir == ctx.author.id:
+                            if not member.bot and member.id == ctx.author.id:
                                 return True
                         return False
                     except AttributeError:
@@ -593,9 +593,10 @@ class Battle(commands.Cog):
                     reaction = await self.bot.wait_for('reaction_add', timeout=10.0, check=check_reaction)
                 except TimeoutError:
                     try:
-                        await msg.delete()
+                        return await msg.delete()
                     except (discord.errors.NotFound, discord.errors.Forbidden):
-                        pass
+                        return
+
                 try:
                     _reaction = reaction[0].emoji.name
                 except AttributeError:
