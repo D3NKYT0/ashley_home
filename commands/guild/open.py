@@ -70,7 +70,6 @@ class OpenClass(commands.Cog):
                                           f"\n`TODAS AS MOON BAG FORAM PEGAS, AGUARDE UMA NOVA MOON BAG DROPAR E FIQUE"
                                           f" ATENTO!`")
 
-                data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 self.bot.moon_bag[ctx.guild.id] -= 1
                 cl = await self.bot.db.cd("users")
                 query = {"$inc": {f"inventory.moon_bag": 1}}
@@ -192,29 +191,29 @@ class OpenClass(commands.Cog):
 
             data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             self.bot.sticker[ctx.guild.id] -= 1
-            STICKER = choice(self.list_stickers)
-            NAME = self.bot.stickers[STICKER][0]
-            RARITY = self.bot.stickers[STICKER][1]
-            TYPE = self.bot.stickers[STICKER][2]
-            OBS = "" if RARITY >= 10 else "\n<a:confet:853247252998389763> `E AINDA FOI UMA FIGURINHA PREMIADA!`" \
-                                          "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
-                                          "<a:stars:853247252389429278>"
-            TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{NAME.upper()}**{OBS}" \
-                    f"\n```\nAproveite e olhe seus albuns\n com o comando: ash sticker```"
+            _STICKER = choice(self.list_stickers)
+            _NAME = self.bot.stickers[_STICKER][0]
+            _RARITY = self.bot.stickers[_STICKER][1]
+            _TYPE = self.bot.stickers[_STICKER][2]
+            _OBS = "" if _RARITY >= 10 else "\n<a:confet:853247252998389763> `E AINDA FOI UMA FIGURINHA PREMIADA!`" \
+                                            "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
+                                            "<a:stars:853247252389429278>"
+            _TITLE = f"🎊 **PARABENS** 🎉 \n**VOCÊ GANHOU A FIGURINHA:**\n**{_NAME.upper()}**{_OBS}" \
+                     f"\n```\nAproveite e olhe seus albuns\n com o comando: ash sticker```"
 
-            if STICKER in data_user["stickers"].keys():
+            if _STICKER in data_user["stickers"].keys():
                 await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "
-                               f"**{NAME.upper()}**")
+                               f"**{_NAME.upper()}**")
             else:
-                file = discord.File(f"images/stickers/{TYPE}/{STICKER}.jpg", filename="reward.png")
-                embed = discord.Embed(description=TITLE, color=self.bot.color)
+                file = discord.File(f"images/stickers/{_TYPE}/{_STICKER}.jpg", filename="reward.png")
+                embed = discord.Embed(description=_TITLE, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
                 embed.set_image(url="attachment://reward.png")
                 await ctx.send(file=file, embed=embed)
 
             cl = await self.bot.db.cd("users")
-            query = {"$inc": {f"stickers.{STICKER}": 1, "user.stickers": 1}}
-            if RARITY < 10 and STICKER not in data_user["stickers"].keys():
+            query = {"$inc": {f"stickers.{_STICKER}": 1, "user.stickers": 1}}
+            if _RARITY < 10 and _STICKER not in data_user["stickers"].keys():
                 query["$inc"]["true_money.blessed"] = 5
             await cl.update_one({"user_id": ctx.author.id}, query)
 
@@ -231,13 +230,13 @@ class OpenClass(commands.Cog):
         """Abra um presente para liberar seu giftcard."""
         if ctx.guild.id in self.bot.box:
             try:
-                BOX = choice(self.bot.box[ctx.guild.id]['boxes'])
+                _BOX = choice(self.bot.box[ctx.guild.id]['boxes'])
             except IndexError:
                 return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem presentes disponiveis!`\n"
                                       f"`TODOS OS PRESENTES FORAM UTILIZADOS, AGUARDE UM NOVO PRESENTE DROPAR E FIQUE "
                                       f"ATENTO!`")
-            I_BOX = self.bot.box[ctx.guild.id]['boxes'].index(BOX)
-            del (self.bot.box[ctx.guild.id]['boxes'][I_BOX])
+            _I_BOX = self.bot.box[ctx.guild.id]['boxes'].index(_BOX)
+            del (self.bot.box[ctx.guild.id]['boxes'][_I_BOX])
             self.bot.box[ctx.guild.id]['quant'] -= 1
             time = randint(90, 600)
             gift = await register_gift(self.bot, time)
@@ -353,21 +352,21 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.chests_users:
             try:
-                CHEST = choice(self.bot.chests_users[ctx.author.id]['chests'])
+                _CHEST = choice(self.bot.chests_users[ctx.author.id]['chests'])
             except IndexError:
                 return await ctx.send(f"<:negate:721581573396496464>│`Você nao tem mais baus disponiveis...`\n"
                                       f"`TODOS OS BAUS FORAM UTILIZADOS, DROPE UM NOVO BÁU UTILIZANDO O MAXIMO DE "
                                       f"COMANDOS DIFERENTES POSSIVEIS!`")
 
-            I_CHEST = self.bot.chests_users[ctx.author.id]['chests'].index(CHEST)
-            del (self.bot.chests_users[ctx.author.id]['chests'][I_CHEST])
+            _I_CHEST = self.bot.chests_users[ctx.author.id]['chests'].index(_CHEST)
+            del (self.bot.chests_users[ctx.author.id]['chests'][_I_CHEST])
             self.bot.chests_users[ctx.author.id]['quant'] -= 1
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             if not data['security']['status']:
                 return await ctx.send("<:negate:721581573396496464>│'`USUARIO DE MACRO / OU USANDO COMANDOS "
                                       "RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'")
 
-            reward = open_chest(self.bot.chests_l[str(CHEST)])
+            reward = open_chest(self.bot.chests_l[str(_CHEST)])
             await ctx.send("🎊 **PARABENS** 🎉 `VC ABRIU O SEU BAU COM SUCESSO!!`")
             answer_ = await self.bot.db.add_money(ctx, reward['money'], True)
             await ctx.send(f'<:rank:519896825411665930>│`você GANHOU:`\n {answer_}')
@@ -452,21 +451,21 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.chests_marry:
             try:
-                CHEST = choice(self.bot.chests_marry[ctx.author.id]['chests'])
+                _CHEST = choice(self.bot.chests_marry[ctx.author.id]['chests'])
             except IndexError:
                 return await ctx.send(f"<:negate:721581573396496464>│`Você nao tem mais baus disponiveis...`\n"
                                       f"`TODOS OS BAUS FORAM UTILIZADOS, DROPE UM NOVO BÁU UTILIZANDO O MAXIMO DE "
                                       f"COMANDOS DIFERENTES POSSIVEIS!`")
 
-            I_CHEST = self.bot.chests_marry[ctx.author.id]['chests'].index(CHEST)
-            del (self.bot.chests_marry[ctx.author.id]['chests'][I_CHEST])
+            _I_CHEST = self.bot.chests_marry[ctx.author.id]['chests'].index(_CHEST)
+            del (self.bot.chests_marry[ctx.author.id]['chests'][_I_CHEST])
             self.bot.chests_marry[ctx.author.id]['quant'] -= 1
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             if not data['security']['status']:
                 return await ctx.send("<:negate:721581573396496464>│'`USUARIO DE MACRO / OU USANDO COMANDOS "
                                       "RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'")
 
-            key = self.bot.chests_lm[str(CHEST)]
+            key = self.bot.chests_lm[str(_CHEST)]
             item = self.chest_choice[key]
 
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")

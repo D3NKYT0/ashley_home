@@ -583,7 +583,7 @@ class Battle(commands.Cog):
                 def check_reaction(react, member):
                     try:
                         if react.message.id == msg.id:
-                            if not member.bot:
+                            if not member.bot and member.ir == ctx.author.id:
                                 return True
                         return False
                     except AttributeError:
