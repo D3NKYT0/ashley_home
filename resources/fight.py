@@ -34,6 +34,8 @@ class Entity(object):
         self.is_mini_boss = is_mini_boss
         self.is_strike = False
         self.is_combo = False
+        self.is_hold = False
+        self.is_bluff = False
 
         # informações gerais
         self.name = self.data['name']
@@ -680,8 +682,18 @@ class Entity(object):
                 rate_chance -= entity.status['luk'] * 0.5 if entity.status['luk'] > 0 else 0
 
                 chance = True if chance_effect > rate_chance else False
+
+                # o primeiro strike sempre vai funcionar
                 if c == "strike" and not entity.is_strike:
                     entity.is_strike, chance = True, True
+
+                # o primeiro hold sempre vai funcionar
+                if c == "hold" and not entity.is_hold:
+                    entity.is_hold, chance = True, True
+
+                # o primeiro bluff sempre vai funcionar
+                if c == "bluff" and not entity.is_bluff:
+                    entity.is_bluff, chance = True, True
 
                 if confusion:
                     chance = False
@@ -918,7 +930,9 @@ class Entity(object):
                         ctx.bot.boss_players[self.data["_id"]]["dano"] += dn
 
             if drain:
-                recovery = int(dn / 100 * self.effects["drain"]["damage"])
+                dr = self.effects["drain"]["damage"]
+                _dr = dr if dr == 50 else randint(50, dr)
+                recovery = int(dn / 100 * _dr)
                 entity.status['hp'] += recovery
                 if entity.status['hp'] > entity.status['con'] * entity.rate[0]:
                     entity.status['hp'] = entity.status['con'] * entity.rate[0]

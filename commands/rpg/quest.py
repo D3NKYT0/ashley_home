@@ -11,6 +11,16 @@ class QuestClass(commands.Cog):
         self.bot = bot
         self.st = []
         self.color = self.bot.color
+        self.reward = ["soul_crystal_of_love", "soul_crystal_of_hate", "soul_crystal_of_hope", "moon_bag",
+                       "fused_diamond", "fused_sapphire", "fused_ruby", "fused_sapphire", "frozen_letter",
+                       "stone_of_moon", "unsealed_stone", "melted_artifact", "pass_royal", "teleport_scroll",
+                       "gold_cube", "golden_apple", "golden_egg", "lost_parchment", "royal_parchment", "sages_scroll",
+                       "seed", "ore_bar", "debris", "coal", "claw", "charcoal", "branch", "braided_hemp",
+                       "feather_white", "feather_gold", "feather_black", "herb_red", "herb_green", "herb_blue"]
+
+        self.reward_especial = ["blessed_enchant_skill", "enchant_divine", "armor_divine", "blessed_enchant_hero",
+                                "blessed_armor_hero", "blessed_armor_violet", "blessed_armor_inspiron",
+                                "blessed_armor_mystic", "blessed_armor_silver"]
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -56,18 +66,11 @@ class QuestClass(commands.Cog):
 
                         reward = list()
                         for _ in range(8):
-                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
-                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hope", "soul_crystal_of_hope",  "fused_diamond",
-                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
-                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
-                                                  "fused_sapphire",  "fused_emerald", "fused_emerald", "golden_apple",
-                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
-                        reward.append("blessed_enchant_skill")
-                        reward.append("enchant_divine")
-                        reward.append("armor_divine")
-                        reward.append("blessed_enchant_hero")
-                        reward.append("blessed_armor_hero")
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
                         response = await self.bot.db.add_reward(ctx, reward)
                         answer = await self.bot.db.add_money(ctx, 25000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
@@ -86,23 +89,15 @@ class QuestClass(commands.Cog):
 
                         reward = list()
                         for _ in range(3):
-                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
-                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hope", "soul_crystal_of_hope",  "fused_diamond",
-                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
-                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
-                                                  "fused_sapphire",  "fused_emerald", "fused_emerald", "golden_apple",
-                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
-                        reward.append("blessed_enchant_skill")
-                        reward.append("enchant_divine")
-                        reward.append("armor_divine")
-                        reward.append("blessed_enchant_hero")
-                        reward.append("blessed_armor_hero")
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
                         response = await self.bot.db.add_reward(ctx, reward)
                         answer = await self.bot.db.add_money(ctx, 15000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                                       f'{response}')
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 if quest == "the_ten_provinces":
                     if len(update['rpg']['quests'][quest]["provinces"]) == 10:
@@ -116,23 +111,15 @@ class QuestClass(commands.Cog):
 
                         reward = list()
                         for _ in range(10):
-                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
-                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hope", "soul_crystal_of_hope",  "fused_diamond",
-                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
-                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
-                                                  "fused_sapphire",  "fused_emerald", "fused_emerald", "golden_apple",
-                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
-                        reward.append("blessed_enchant_skill")
-                        reward.append("enchant_divine")
-                        reward.append("armor_divine")
-                        reward.append("blessed_enchant_hero")
-                        reward.append("blessed_armor_hero")
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
                         response = await self.bot.db.add_reward(ctx, reward)
                         answer = await self.bot.db.add_money(ctx, 18000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                                       f'{response}')
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 if quest == "the_one_release":
                     if len(update['rpg']['quests'][quest]["unsealed"]) == 1:
@@ -146,23 +133,15 @@ class QuestClass(commands.Cog):
 
                         reward = list()
                         for _ in range(1):
-                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
-                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hope", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
-                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
-                                                  "fused_sapphire", "fused_emerald", "fused_emerald", "golden_apple",
-                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
-                        reward.append("blessed_enchant_skill")
-                        reward.append("enchant_divine")
-                        reward.append("armor_divine")
-                        reward.append("blessed_enchant_hero")
-                        reward.append("blessed_armor_hero")
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
                         response = await self.bot.db.add_reward(ctx, reward)
                         answer = await self.bot.db.add_money(ctx, 10000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                                       f'{response}')
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 if quest == "the_seven_lost_souls":
                     if len(update['rpg']['quests'][quest]["souls"]) == 7:
@@ -176,23 +155,15 @@ class QuestClass(commands.Cog):
 
                         reward = list()
                         for _ in range(7):
-                            reward.append(choice(["soul_crystal_of_love", "soul_crystal_of_love", "fused_sapphire",
-                                                  "soul_crystal_of_love", "soul_crystal_of_hope", "fused_diamond",
-                                                  "soul_crystal_of_hope", "soul_crystal_of_hope",  "fused_diamond",
-                                                  "soul_crystal_of_hate", "soul_crystal_of_hate", "fused_ruby",
-                                                  "soul_crystal_of_hate", "fused_ruby", "fused_sapphire", "gold_cube",
-                                                  "fused_sapphire",  "fused_emerald", "fused_emerald", "golden_apple",
-                                                  "unsealed_stone", "melted_artifact", "golden_egg", "stone_of_moon"]))
-                        reward.append("blessed_enchant_skill")
-                        reward.append("enchant_divine")
-                        reward.append("armor_divine")
-                        reward.append("blessed_enchant_hero")
-                        reward.append("blessed_armor_hero")
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
                         response = await self.bot.db.add_reward(ctx, reward)
                         answer = await self.bot.db.add_money(ctx, 15000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                                       f'{response}')
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
         if not completed:
             msg = '<:alert:739251822920728708>│`VOCE NAO TEM NENHUMA QUEST PARA COMPLETAR!`'
