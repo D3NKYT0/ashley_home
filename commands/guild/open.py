@@ -1036,7 +1036,8 @@ class OpenClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         recipes = ["potion_of_weakening", "potion_of_weakening", "celestial_cover_leggings_divine",
-                   "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine"]
+                   "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine",
+                   "herb_red", "herb_green", "herb_blue"]
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
@@ -1120,7 +1121,7 @@ class OpenClass(commands.Cog):
 
         recipes = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation", "celestial_ring_sealed",
                    "celestial_cover_breastplate_divine", "celestial_platinum_breastplate_divine",
-                   "celestial_leather_breastplate_divine"]
+                   "celestial_leather_breastplate_divine", "feather_white", "feather_gold", "feather_black"]
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'

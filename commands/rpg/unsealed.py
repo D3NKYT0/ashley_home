@@ -37,6 +37,10 @@ class MeltedClass(commands.Cog):
         }
 
         self.cost_celestial = {
+            "Discharge_Crystal": 125,
+            "Acquittal_Crystal": 125,
+            "Crystal_of_Energy": 125,
+
             "melted_artifact": 10,
             "unsealed_stone": 50,
 
@@ -53,13 +57,13 @@ class MeltedClass(commands.Cog):
             "branch": 25,
             "braided_hemp": 25,
 
-            "feather_white": 50,
-            "feather_gold": 50,
-            "feather_black": 50,
+            "feather_white": 35,
+            "feather_gold": 35,
+            "feather_black": 35,
 
-            "herb_red": 50,
-            "herb_green": 50,
-            "herb_blue": 50
+            "herb_red": 35,
+            "herb_green": 35,
+            "herb_blue": 35
         }
 
         self.celestial = {
