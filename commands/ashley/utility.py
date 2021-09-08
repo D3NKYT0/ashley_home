@@ -20,6 +20,7 @@ git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.g
 class UtilityClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.skins = self.bot.config['attribute']['skins']
 
     @staticmethod
     def format_num(num):
@@ -141,6 +142,42 @@ class UtilityClass(commands.Cog):
         await self.bot.db.update_data(data_guild_native_member, update_guild_native_member, 'guilds')
         return await ctx.send(f'<a:hack:525105069994278913>│`PARABENS, VC CRIOU R$ {self.format_num(amount)},00 '
                               f'DE ETHERNYAS PARA` **{member.name}** `COM SUCESSO!`')
+
+    @check_it(no_pm=True, is_owner=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='add_skin', aliases=['as'])
+    async def add_skin(self, ctx, member: discord.Member = None, *, skin: str = None):
+        """
+        Comando usado apelas por DEVS para criar money para usuarios doadores
+        """
+        if member is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
+
+        if skin is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma skin.`")
+
+        if skin not in self.skins:
+            msg = f"<:negate:721581573396496464>│`Essa skin nao existe`"
+            embed = discord.Embed(olor=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        data_member = await self.bot.db.get_data("user_id", member.id, "users")
+        update_member = data_member
+
+        if data_member is None:
+            return await ctx.send('<:alert:739251822920728708>│**ATENÇÃO** : '
+                                  '`esse usuário não está cadastrado!`', delete_after=5.0)
+
+        if skin in update_member["rpg"]["skins"]:
+            msg = f"<:negate:721581573396496464>│`Esse membro ja tem essa skin!`"
+            embed = discord.Embed(olor=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        update_member["rpg"]["skins"].append(skin)
+        await self.bot.db.update_data(data_member, update_member, 'users')
+        return await ctx.send(f'<a:hack:525105069994278913>│`PARABENS, VC DEU A SKIN {skin.upper()} '
+                              f'PARA` **{member.name}** `COM SUCESSO!`')
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

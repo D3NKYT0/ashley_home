@@ -186,10 +186,12 @@ class MeltedClass(commands.Cog):
                 for k, v in self.se[f'set dynasty leather {rarity}'].items():
                     if v['name'] == item_reward:
                         reward_equip = (k, v)
+
             elif "platinum" in equip:
                 for k, v in self.se[f'set dynasty platinum {rarity}'].items():
                     if v['name'] == item_reward:
                         reward_equip = (k, v)
+
             elif "cover" in equip:
                 for k, v in self.se[f'set dynasty cover {rarity}'].items():
                     if v['name'] == item_reward:
@@ -219,7 +221,6 @@ class MeltedClass(commands.Cog):
 
         await sleep(2)
         await msg.edit(content=msg_return)
-
         img = choice(git)
         embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
@@ -228,9 +229,9 @@ class MeltedClass(commands.Cog):
         if "the_one_release" in update['rpg']['quests'].keys() and str(ctx.command) == "create":
             _QUEST, _NAME = update['rpg']['quests']["the_one_release"], reward_equip["name"]
             if _QUEST["status"] == "in progress" and update['config']['provinces'] is not None:
-                if len(update['rpg']['quests']["the_ten_provinces"]["unsealed"]) == 0:
+                if len(update['rpg']['quests']["the_one_release"]["unsealed"]) == 0:
                     if "violet" in _NAME or "hero" in _NAME or "divine" in _NAME:
-                        update['rpg']['quests']["the_ten_provinces"]["unsealed"].append(True)
+                        update['rpg']['quests']["the_one_release"]["unsealed"].append(reward_equip["name"])
                         await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                        f'✨ **[The 1 Release]** ✨')
 

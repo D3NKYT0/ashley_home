@@ -426,10 +426,15 @@ class QuestClass(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
+            names = ""
+            for pro in _QUEST["provinces"]:
+                names += f"**{str(self.bot.get_channel(pro))}**\n"
+
             status = _QUEST["status"]
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 10 - Provinces]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
-                  f'`[PROGRESS]:` **{len(_QUEST["provinces"])}/10**'
+                  f'`[PROGRESS]:` **{len(_QUEST["provinces"])}/10**\n' \
+                  f'`[PROVINCES]`:\n{names}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
