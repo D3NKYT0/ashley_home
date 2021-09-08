@@ -24,18 +24,18 @@ class SkinsClass(commands.Cog):
             embed = discord.Embed(olor=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if skin not in self.skins:
+        if skin not in self.skins and skin.lower() != "default":
             msg = f"<:negate:721581573396496464>│`Essa skin nao existe`"
             embed = discord.Embed(olor=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if skin not in data["rpg"]["skins"]:
+        if skin not in data["rpg"]["skins"] and skin.lower() != "default":
             msg = f"<:alert:739251822920728708>│`Essa skin nao esta disponivel pra voce`"
             embed = discord.Embed(olor=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update = data
-        update['rpg']['skin'] = skin
+        update['rpg']['skin'] = skin.lower()
         await self.bot.db.update_data(data, update, "users")
         msg = f"<:confirmed:721581574461587496>│`Sua skin foi mudada para:` **{skin.upper()}**"
         embed = discord.Embed(color=self.bot.color, description=msg)
