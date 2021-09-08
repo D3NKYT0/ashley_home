@@ -73,6 +73,92 @@ class Booket(commands.Cog):
         else:
             return await ctx.send('<:alert:739251822920728708>│`Você precisa mencionar alguem.`')
 
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
+    @commands.command(name='love')
+    async def love(self, ctx, member: discord.Member = None):
+        if member is not None:
+
+            query = {"_id": 0, "user_id": 1, "user": 1}
+            data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
+
+            query = {"_id": 0, "user_id": 1, "user": 1}
+            data_member = await (await self.bot.db.cd("users")).find_one({"user_id": member.id}, query)
+
+            if data_member is None:
+                try:
+                    data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                    update_ = data_
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
+                return await ctx.send('<:alert:739251822920728708>│**ATENÇÃO** : '
+                                      '`esse usuário não está cadastrado!`', delete_after=5.0)
+
+            if member.id == ctx.author.id:
+                try:
+                    data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                    update_ = data_
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
+                return await ctx.send('<:alert:739251822920728708>│`VOCE SO PODE USAR ESSE COMANDO NO(A) SEU(A) '
+                                      'PARCEIRO(A)!`')
+
+            if data_user['user']['married'] is True and data_member['user']['married'] is True:
+                if data_user['user']['married_at'] == member.id and data_member['user']['married_at'] == ctx.author.id:
+
+                    reward = choice(["heart_left", "heart_right"])
+                    cl = await self.bot.db.cd("users")
+                    query = {"$inc": {f"inventory.{reward}": 1}}
+                    await cl.update_one({"user_id": data_user["user_id"]}, query, upsert=False)
+                    icon, name = self.bot.items[reward][0], self.bot.items[reward][1]
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **LOVE ITEM** ✨\n'
+                                   f'{icon} **1** `{name}`')
+
+                else:
+                    try:
+                        data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                        update_ = data_
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
+                    return await ctx.send("<:alert:739251822920728708>│`VOCÊ NÃO ESTÁ CASADO COM ESSA PESSOA!`")
+
+            elif data_member['user']['married'] is False:
+                try:
+                    data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                    update_ = data_
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
+                return await ctx.send('<:alert:739251822920728708>│`ELE(A) NÃO ESTA CASADO(A)!`')
+
+            else:
+                try:
+                    data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                    update_ = data_
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
+                return await ctx.send('<:alert:739251822920728708>│`VOCE NÃO ESTA CASADO(A)!`')
+
+        else:
+            try:
+                data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                update_ = data_
+                del data_['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_, update_, 'users')
+            except KeyError:
+                pass
+            return await ctx.send('<:alert:739251822920728708>│`Você precisa mencionar alguem.`')
+
 
 def setup(bot):
     bot.add_cog(Booket(bot))

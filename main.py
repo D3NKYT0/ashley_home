@@ -542,13 +542,42 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                            f'✨ **[The 10 - Provinces]** ✨')
 
-                if "the_nine_villages" in data_user['rpg']['quests'].keys() and randint(1, 200) <= 5:
+                if str(ctx.command) in ["dance", "hug", "kick", "kiss", "lick", "punch", "push", "slap"]:
+                    if "the_two_loves" in data_user['rpg']['quests'].keys():
+                        _QUEST = data_user['rpg']['quests']["the_two_loves"]
+                        if _QUEST["status"] == "in progress":
+                            _NEXT, _INV = False, data_user["inventory"].keys()
+                            if "heart_left" in _INV and "heart_right" in _INV:
+                                data_user["inventory"]["heart_left"] -= 1
+                                if data_user["inventory"]["heart_left"] < 1:
+                                    if "$unset" not in query_user.keys():
+                                        query_user["$unset"] = {}
+                                    query_user["$unset"]["inventory.heart_left"] = ""
+                                else:
+                                    query_user["$inc"]["inventory.heart_left"] = -1
+                                data_user["inventory"]["heart_right"] -= 1
+                                if data_user["inventory"]["heart_right"] < 1:
+                                    if "$unset" not in query_user.keys():
+                                        query_user["$unset"] = {}
+                                    query_user["$unset"]["inventory.heart_right"] = ""
+                                else:
+                                    query_user["$inc"]["inventory.heart_right"] = -1
+                                _NEXT = True
+                            reward = choice(["LADO A", "LADO B"])
+                            if reward not in data_user['rpg']['quests']["the_two_loves"]["loves"] and _NEXT:
+                                data_user['rpg']['quests']["the_two_loves"]["loves"].append(reward)
+                                _LOVES = data_user['rpg']['quests']["the_two_loves"]["loves"]
+                                query_user["$set"]["rpg.quests.the_two_loves.loves"] = _LOVES
+                                await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                               f'✨ **[The 2 Loves]** ✨')
+
+                if "the_nine_villages" in data_user['rpg']['quests'].keys() and randint(1, 200) <= 4:
                     _QUEST = data_user['rpg']['quests']["the_nine_villages"]
-                    if _QUEST["status"] == "in progress" and data_user['config']['villages'] is not None:
+                    if _QUEST["status"] == "in progress" and len([m for m in ctx.guild.members if not m.bot]) >= 50:
                         if ctx.guild.id not in data_user['rpg']['quests']["the_nine_villages"]["villages"]:
                             data_user['rpg']['quests']["the_nine_villages"]["villages"].append(ctx.guild.id)
-                            _PROVINCES = data_user['rpg']['quests']["the_nine_villages"]["villages"]
-                            query_user["$set"]["rpg.quests.the_nine_villages.villages"] = _PROVINCES
+                            _VILLAGES = data_user['rpg']['quests']["the_nine_villages"]["villages"]
+                            query_user["$set"]["rpg.quests.the_nine_villages.villages"] = _VILLAGES
                             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                            f'✨ **[The 9 Villages]** ✨')
 

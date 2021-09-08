@@ -54,6 +54,100 @@ class QuestClass(commands.Cog):
         for quest in update['rpg']['quests'].keys():
             if update['rpg']['quests'][quest]["status"] == "in progress":
 
+                if quest == "the_one_release":
+                    if len(update['rpg']['quests'][quest]["unsealed"]) == 1:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 1 Release]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(1):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 10000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
+
+                if quest == "the_two_loves":
+                    if len(update['rpg']['quests'][quest]["loves"]) == 2:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 2 Loves]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(2):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 12000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
+
+                if quest == "the_three_sacred_scrolls":
+                    if len(update['rpg']['quests'][quest]["scroll"]) == 3:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 3 Holy Scrolls]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(3):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
+
+                # a quarta aqui
+
+                # a quinta aqui
+
+                # a sexta aqui
+
+                if quest == "the_seven_lost_souls":
+                    if len(update['rpg']['quests'][quest]["souls"]) == 7:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 7 Lost Souls]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(7):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
+
                 if quest == "the_eight_evils_of_the_moon":
                     if len(update['rpg']['quests'][quest]["mini-boss"]) == 8:
                         update['rpg']['quests'][quest]["status"], completed = "completed", True
@@ -77,25 +171,25 @@ class QuestClass(commands.Cog):
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
                                        f'{response}')
 
-                if quest == "the_three_sacred_scrolls":
-                    if len(update['rpg']['quests'][quest]["scroll"]) == 3:
+                if quest == "the_nine_villages":
+                    if len(update['rpg']['quests'][quest]["villages"]) == 9:
                         update['rpg']['quests'][quest]["status"], completed = "completed", True
                         await self.bot.db.update_data(data, update, 'users')
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
-                              '**[The 3 Holy Scrolls]** `foi terminada com sucesso!`'
+                              '**[The 9 Villages]** `foi terminada com sucesso!`'
                         embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
-                        for _ in range(3):
+                        for _ in range(9):
                             reward.append(choice(self.reward))
 
                         for _ in range(5):
                             reward.append(choice(self.reward_especial))
 
                         response = await self.bot.db.add_reward(ctx, reward)
-                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        answer = await self.bot.db.add_money(ctx, 20000, True)
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
@@ -121,72 +215,6 @@ class QuestClass(commands.Cog):
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
-                if quest == "the_nine_villages":
-                    if len(update['rpg']['quests'][quest]["villages"]) == 9:
-                        update['rpg']['quests'][quest]["status"], completed = "completed", True
-                        await self.bot.db.update_data(data, update, 'users')
-
-                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
-                              '**[The 9 Villages]** `foi terminada com sucesso!`'
-                        embed = discord.Embed(color=self.bot.color, description=msg)
-                        await ctx.send(embed=embed)
-
-                        reward = list()
-                        for _ in range(9):
-                            reward.append(choice(self.reward))
-
-                        for _ in range(5):
-                            reward.append(choice(self.reward_especial))
-
-                        response = await self.bot.db.add_reward(ctx, reward)
-                        answer = await self.bot.db.add_money(ctx, 20000, True)
-                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
-
-                if quest == "the_one_release":
-                    if len(update['rpg']['quests'][quest]["unsealed"]) == 1:
-                        update['rpg']['quests'][quest]["status"], completed = "completed", True
-                        await self.bot.db.update_data(data, update, 'users')
-
-                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
-                              '**[The 1 Release]** `foi terminada com sucesso!`'
-                        embed = discord.Embed(color=self.bot.color, description=msg)
-                        await ctx.send(embed=embed)
-
-                        reward = list()
-                        for _ in range(1):
-                            reward.append(choice(self.reward))
-
-                        for _ in range(5):
-                            reward.append(choice(self.reward_especial))
-
-                        response = await self.bot.db.add_reward(ctx, reward)
-                        answer = await self.bot.db.add_money(ctx, 10000, True)
-                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
-
-                if quest == "the_seven_lost_souls":
-                    if len(update['rpg']['quests'][quest]["souls"]) == 7:
-                        update['rpg']['quests'][quest]["status"], completed = "completed", True
-                        await self.bot.db.update_data(data, update, 'users')
-
-                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
-                              '**[The 7 Lost Souls]** `foi terminada com sucesso!`'
-                        embed = discord.Embed(color=self.bot.color, description=msg)
-                        await ctx.send(embed=embed)
-
-                        reward = list()
-                        for _ in range(7):
-                            reward.append(choice(self.reward))
-
-                        for _ in range(5):
-                            reward.append(choice(self.reward_especial))
-
-                        response = await self.bot.db.add_reward(ctx, reward)
-                        answer = await self.bot.db.add_money(ctx, 15000, True)
-                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
-                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
-
         if not completed:
             msg = '<:alert:739251822920728708>│`VOCE NAO TEM NENHUMA QUEST PARA COMPLETAR!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
@@ -204,14 +232,14 @@ class QuestClass(commands.Cog):
             embed = discord.Embed(color=self.color)
             embed.add_field(name="Quest Commands:",
                             value=f"{self.st[117]} `quest one` [The 1 Release]\n"
-                                  f"🔴 `quest two` [The 2 - ...]\n"
+                                  f"{self.st[117]} `quest two` [The 2 Loves]\n"
                                   f"{self.st[117]} `quest three` [The 3 Holy Scrolls]\n"
                                   f"🔴 `quest four` [The 4 - ...]\n"
                                   f"🔴 `quest five` [The 5 - ...]\n"
                                   f"🔴 `quest six` [The 6 - ...]\n"
                                   f"{self.st[117]} `quest seven` [The 7 Lost Souls]\n"
                                   f"{self.st[117]} `quest eight` [The 8 Evils of the Moon]\n"
-                                  f"🔴 `quest nine` [The 9 - ...]\n"
+                                  f"{self.st[117]} `quest nine` [The 9 Villages]\n"
                                   f"{self.st[117]} `quest ten` [The 10 - Provinces]\n")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
@@ -263,9 +291,39 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='two', aliases=['dois'])
     async def _two(self, ctx):
-        msg = "<:negate:721581573396496464>│`COMANDO EM CONSTRUÇÃO...`"
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_two_loves" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_two_loves"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 2 Loves]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            status = _QUEST["status"]
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 2 Loves]**\n' \
+                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["loves"])}/2**'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_two_loves = {"loves": list(), "status": "in progress"}
+        update['rpg']['quests']["the_two_loves"] = the_two_loves
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 2 Loves]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -447,7 +505,7 @@ class QuestClass(commands.Cog):
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 9 Villages]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["villages"])}/9**\n' \
-                  f'`[PROVINCES]`:\n{names}'
+                  f'`[VILLAGES]`:\n{names}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 

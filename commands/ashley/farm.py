@@ -62,16 +62,22 @@ class FarmClass(commands.Cog):
                 else:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_
-                    del data_['cooldown'][str(ctx.command)]
-                    await self.bot.db.update_data(data_, update_, 'users')
+                    try:
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
                     await ctx.send("<:alert:739251822920728708>│`VOCE NAO TEM CARGOS NO BANCO DE "
                                    "DADOS!`\n**Obs:** `Se voce estiver preso sem poder retornar, saia do servidor"
                                    " e entre novamente.`")
         else:
             data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update_ = data_
-            del data_['cooldown'][str(ctx.command)]
-            await self.bot.db.update_data(data_, update_, 'users')
+            try:
+                del data_['cooldown'][str(ctx.command)]
+                await self.bot.db.update_data(data_, update_, 'users')
+            except KeyError:
+                pass
             await ctx.send("<:negate:721581573396496464>│`Desculpe, mas apenas os` **Membros do meu servidor** "
                            "`podem usar esse comando!`")
 
@@ -118,21 +124,30 @@ class FarmClass(commands.Cog):
                     else:
                         data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                         update_ = data_
-                        del data_['cooldown'][str(ctx.command)]
-                        await self.bot.db.update_data(data_, update_, 'users')
+                        try:
+                            del data_['cooldown'][str(ctx.command)]
+                            await self.bot.db.update_data(data_, update_, 'users')
+                        except KeyError:
+                            pass
                         await ctx.send("<:negate:721581573396496464>│`Desculpe, mas apenas os` **Membros do meu "
                                        "servidor** `podem usar esse comando!`")
                 else:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_
-                    del data_['cooldown'][str(ctx.command)]
-                    await self.bot.db.update_data(data_, update_, 'users')
+                    try:
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
                     await ctx.send(f'<:negate:721581573396496464>│`Você já está no inferno!`')
             else:
                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 update_ = data_
-                del data_['cooldown'][str(ctx.command)]
-                await self.bot.db.update_data(data_, update_, 'users')
+                try:
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
                 await ctx.send(f'<:negate:721581573396496464>│`Você está numa provincia! '
                                f'Retorne usando` **(ash respawn)** `para conseguir '
                                f'ir para o sub-mundo primeiro`')
@@ -158,27 +173,39 @@ class FarmClass(commands.Cog):
                     else:
                         data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                         update_ = data_
-                        del data_['cooldown'][str(ctx.command)]
-                        await self.bot.db.update_data(data_, update_, 'users')
+                        try:
+                            del data_['cooldown'][str(ctx.command)]
+                            await self.bot.db.update_data(data_, update_, 'users')
+                        except KeyError:
+                            pass
                         await ctx.send("<:negate:721581573396496464>│`Desculpe, mas apenas os` **Membros do meu "
                                        "servidor** `podem usar esse comando!`")
                 elif "👺Mobrau👺" not in _roles:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_
-                    del data_['cooldown'][str(ctx.command)]
-                    await self.bot.db.update_data(data_, update_, 'users')
+                    try:
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
                     await ctx.send(f'<:negate:721581573396496464>│`Você precisa está no inferno para virar santinho!`')
                 else:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_
-                    del data_['cooldown'][str(ctx.command)]
-                    await self.bot.db.update_data(data_, update_, 'users')
+                    try:
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
                     await ctx.send(f'<:negate:721581573396496464>│`Você já tem o cargo Santinho!`')
             else:
                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 update_ = data_
-                del data_['cooldown'][str(ctx.command)]
-                await self.bot.db.update_data(data_, update_, 'users')
+                try:
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
                 await ctx.send(f'<:negate:721581573396496464>│`Você está numa provincia! '
                                f'Retorne usando` **(ash respawn)** `para conseguir '
                                f'ir para o sub-mundo primeiro!`')
@@ -252,8 +279,11 @@ class FarmClass(commands.Cog):
                             if area >= 30:
                                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                                 update_ = data_
-                                del data_['cooldown'][str(ctx.command)]
-                                await self.bot.db.update_data(data_, update_, 'users')
+                                try:
+                                    del data_['cooldown'][str(ctx.command)]
+                                    await self.bot.db.update_data(data_, update_, 'users')
+                                except KeyError:
+                                    pass
                                 await ctx.send("<:negate:721581573396496464>│`Você demorou demais pra "
                                                "escolher` **COMANDO CANCELADO!**")
                                 break
@@ -276,23 +306,32 @@ class FarmClass(commands.Cog):
                     else:
                         data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                         update_ = data_
-                        del data_['cooldown'][str(ctx.command)]
-                        await self.bot.db.update_data(data_, update_, 'users')
+                        try:
+                            del data_['cooldown'][str(ctx.command)]
+                            await self.bot.db.update_data(data_, update_, 'users')
+                        except KeyError:
+                            pass
                         await ctx.send("<:negate:721581573396496464>│`Desculpe, mas apenas os` **Membros do meu "
                                        "servidor** `podem usar esse comando!`")
                 else:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_
-                    del data_['cooldown'][str(ctx.command)]
-                    await self.bot.db.update_data(data_, update_, 'users')
+                    try:
+                        del data_['cooldown'][str(ctx.command)]
+                        await self.bot.db.update_data(data_, update_, 'users')
+                    except KeyError:
+                        pass
                     await ctx.send(f'<:negate:721581573396496464>│`Você já está numa provincia! '
                                    f'Retorne usando` **(ash respawn)** `para conseguir '
                                    f'ir para outra provincia primeiro`')
             else:
                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 update_ = data_
-                del data_['cooldown'][str(ctx.command)]
-                await self.bot.db.update_data(data_, update_, 'users')
+                try:
+                    del data_['cooldown'][str(ctx.command)]
+                    await self.bot.db.update_data(data_, update_, 'users')
+                except KeyError:
+                    pass
                 await ctx.send(f'<:negate:721581573396496464>│`Você está no sub-mundo! '
                                f'Retorne usando` **(ash respawn)** `para conseguir '
                                f'ir para uma provincia primeiro`')
