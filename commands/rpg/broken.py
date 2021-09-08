@@ -167,7 +167,9 @@ class BrokenClass(commands.Cog):
             del update['inventory'][key]
 
         chance, msg = randint(1, 1000), '<:negate:721581573396496464>│`INFELIZMENTE SUA ESSENCIA ESCAPOU`'
-        if chance <= 50 + update["rpg"]["intelligence"]:
+        _END = (update["rpg"]["intelligence"] // 50)
+        bonus = randint(1, _END) if _END > 1 else 1
+        if chance <= 50 + (bonus * 50):
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `voce recebeu:` " \
                   f"✨ {self.bot.items[self.jewel[key]][0]} ✨ `1` **{self.bot.items[self.jewel[key]][1]}**\n"
             try:
