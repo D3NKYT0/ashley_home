@@ -568,7 +568,7 @@ class Battle(commands.Cog):
         # BLOCO DE PROGRAMAÇAO REFERENTE AO SISTEMA DE SPOIL
         # -----------------------------------------------------------------------------
 
-        if "the_seven_lost_souls" in update['rpg']['quests'].keys():
+        if "the_seven_lost_souls" in update['rpg']['quests'].keys() and player[ctx.author.id].status['hp'] > 0:
             _QUEST = update['rpg']['quests']["the_seven_lost_souls"]
             if _QUEST["status"] == "completed" and data['config']['provinces'] is not None:
                 embed = discord.Embed(description=f"`{monster[ctx.author.id].name.upper()} MORTO!`", color=0x000000)

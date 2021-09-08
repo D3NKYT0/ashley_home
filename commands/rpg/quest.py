@@ -121,6 +121,28 @@ class QuestClass(commands.Cog):
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
+                if quest == "the_nine_villages":
+                    if len(update['rpg']['quests'][quest]["villages"]) == 9:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 9 Villages]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(9):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 20000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
+
                 if quest == "the_one_release":
                     if len(update['rpg']['quests'][quest]["unsealed"]) == 1:
                         update['rpg']['quests'][quest]["status"], completed = "completed", True
@@ -397,9 +419,45 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='nine', aliases=['nove'])
     async def _nine(self, ctx):
-        msg = "<:negate:721581573396496464>│`COMANDO EM CONSTRUÇÃO...`"
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_nine_villages" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_nine_villages"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 9 Villages]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            names = ""
+            for gui in _QUEST["villages"]:
+                names += f"**{str(self.bot.get_guild(gui))}**\n"
+
+            status = _QUEST["status"]
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 9 Villages]**\n' \
+                  f'`[STATUS]:` **{status}**\n' \
+                  f'`[PROGRESS]:` **{len(_QUEST["villages"])}/9**\n' \
+                  f'`[PROVINCES]`:\n{names}'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_nine_villages = {"villages": list(), "status": "in progress"}
+        update['rpg']['quests']["the_nine_villages"] = the_nine_villages
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 9 Villages]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

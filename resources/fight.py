@@ -647,7 +647,7 @@ class Entity(object):
 
         return self.skill
 
-    def verify_effect(self, effects):
+    def verify_effect(self, effects, entity):
         skull, drain, bluff, hit_kill, hold = False, False, False, False, False
         if effects is not None:
             if "skull" in effects.keys():
@@ -663,10 +663,10 @@ class Entity(object):
                 if effects["bluff"]["turns"] > 0:
                     bluff = True
             if "hold" in effects.keys():
-                if effects["hold"]["turns"] > 0 and not self.is_mini_boss:
+                if effects["hold"]["turns"] > 0 and entity.is_player:
                     hold = True
             if "lethal" in effects.keys():
-                if effects["lethal"]["turns"] > 0 and not self.is_boss:
+                if effects["lethal"]["turns"] > 0 and not self.is_boss and not self.is_mini_boss:
                     if "bluff" in effects.keys() and "cegueira" in effects.keys():
                         if effects["bluff"]["turns"] > 0 and effects["cegueira"]["turns"] > 0:
                             hit_kill = True
@@ -837,7 +837,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects)
+        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
         lvs = entity.level_skill[int(skill['skill']) - 1] if test else entity.level_skill[0]
         self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
@@ -856,7 +856,7 @@ class Entity(object):
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects)
+        skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:

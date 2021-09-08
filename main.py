@@ -542,6 +542,16 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                            f'✨ **[The 10 - Provinces]** ✨')
 
+                if "the_nine_villages" in data_user['rpg']['quests'].keys() and randint(1, 200) <= 5:
+                    _QUEST = data_user['rpg']['quests']["the_nine_villages"]
+                    if _QUEST["status"] == "in progress" and data_user['config']['villages'] is not None:
+                        if ctx.guild.id not in data_user['rpg']['quests']["the_nine_villages"]["villages"]:
+                            data_user['rpg']['quests']["the_nine_villages"]["villages"].append(ctx.guild.id)
+                            _PROVINCES = data_user['rpg']['quests']["the_nine_villages"]["villages"]
+                            query_user["$set"]["rpg.quests.the_nine_villages.villages"] = _PROVINCES
+                            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                           f'✨ **[The 9 Villages]** ✨')
+
                 patent = patent_calculator(data_user['inventory']['rank_point'], data_user['inventory']['medal'])
                 if patent > data_user['user']['patent']:
                     query_user["$set"]["user.patent"] = patent
