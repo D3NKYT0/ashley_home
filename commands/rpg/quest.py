@@ -120,7 +120,27 @@ class QuestClass(commands.Cog):
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
-                # a quarta aqui
+                if quest == "the_four_crowns":
+                    if len(update['rpg']['quests'][quest]["crowns"]) == 4:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 4 Crowns]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(4):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 # a quinta aqui
 
@@ -234,7 +254,7 @@ class QuestClass(commands.Cog):
                             value=f"{self.st[117]} `quest one` [The 1 Release]\n"
                                   f"{self.st[117]} `quest two` [The 2 Loves]\n"
                                   f"{self.st[117]} `quest three` [The 3 Holy Scrolls]\n"
-                                  f"🔴 `quest four` [The 4 - ...]\n"
+                                  f"{self.st[117]} `quest four` [The 4 Crowns]\n"
                                   f"🔴 `quest five` [The 5 - ...]\n"
                                   f"🔴 `quest six` [The 6 - ...]\n"
                                   f"{self.st[117]} `quest seven` [The 7 Lost Souls]\n"
@@ -369,9 +389,40 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='four', aliases=['quatro'])
     async def _four(self, ctx):
-        msg = "<:negate:721581573396496464>│`COMANDO EM CONSTRUÇÃO...`"
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_four_crowns" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_four_crowns"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 4 Crowns]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            status = _QUEST["status"]
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 4 Crowns]**\n' \
+                  f'`[STATUS]:` **{status}**\n' \
+                  f'`[PROGRESS]:` **{len(_QUEST["crowns"])}/4**'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_four_crowns = {"crowns": list(), "status": "in progress"}
+        update['rpg']['quests']["the_four_crowns"] = the_four_crowns
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 4 Crowns]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

@@ -571,6 +571,27 @@ class Ashley(commands.AutoShardedBot):
                                 await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                                f'✨ **[The 2 Loves]** ✨')
 
+                if "the_four_crowns" in data_user['rpg']['quests'].keys():
+                    _QUEST = data_user['rpg']['quests']["the_four_crowns"]
+                    if _QUEST["status"] == "in progress":
+                        _NEXT, _INV = False, data_user["inventory"].keys()
+                        reward = choice(["dark_magician", "obelisk", "slifer", "white_dragon"])
+                        if reward in _INV:
+                            data_user["inventory"][reward] -= 1
+                            if data_user["inventory"][reward] < 1:
+                                if "$unset" not in query_user.keys():
+                                    query_user["$unset"] = {}
+                                query_user["$unset"][f"inventory.{reward}"] = ""
+                            else:
+                                query_user["$inc"][f"inventory.{reward}"] = -1
+                            _NEXT = True
+                        if reward not in data_user['rpg']['quests']["the_four_crowns"]["crowns"] and _NEXT:
+                            data_user['rpg']['quests']["the_four_crowns"]["crowns"].append(reward)
+                            _CROWNS = data_user['rpg']['quests']["the_four_crowns"]["crowns"]
+                            query_user["$set"]["rpg.quests.the_four_crowns.crowns"] = _CROWNS
+                            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                           f'✨ **[The 4 Crowns]** ✨')
+
                 if "the_nine_villages" in data_user['rpg']['quests'].keys() and randint(1, 200) <= 4:
                     _QUEST = data_user['rpg']['quests']["the_nine_villages"]
                     if _QUEST["status"] == "in progress" and len([m for m in ctx.guild.members if not m.bot]) >= 50:
