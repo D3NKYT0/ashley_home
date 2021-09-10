@@ -142,7 +142,27 @@ class QuestClass(commands.Cog):
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
-                # a quinta aqui
+                if quest == "the_five_shirts":
+                    if len(update['rpg']['quests'][quest]["shirts"]) == 5:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 5 Shirts]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(5):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 # a sexta aqui
 
@@ -262,6 +282,10 @@ class QuestClass(commands.Cog):
                         three = True
                     if quest == "the_four_crowns":
                         four = True
+                    if quest == "the_five_shirts":
+                        five = True
+                    if quest == "...":
+                        six = True
                     if quest == "the_seven_lost_souls":
                         seven = True
                     if quest == "the_eight_evils_of_the_moon":
@@ -278,7 +302,7 @@ class QuestClass(commands.Cog):
                                   f"{self.st[117]} `quest two` [The 2 Loves] {emoji if two else ''}\n"
                                   f"{self.st[117]} `quest three` [The 3 Holy Scrolls] {emoji if three else ''}\n"
                                   f"{self.st[117]} `quest four` [The 4 Crowns] {emoji if four else ''}\n"
-                                  f"🔴 `quest five` [The 5 - ...] {emoji if five else ''}\n"
+                                  f"{self.st[117]} `quest five` [The 5 Shirts] {emoji if five else ''}\n"
                                   f"🔴 `quest six` [The 6 - ...] {emoji if six else ''}\n"
                                   f"{self.st[117]} `quest seven` [The 7 Lost Souls] {emoji if seven else ''}\n"
                                   f"{self.st[117]} `quest eight` [The 8 Evils of the Moon] {emoji if eight else ''}\n"
@@ -452,9 +476,40 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='five', aliases=['cinco'])
     async def _five(self, ctx):
-        msg = "<:negate:721581573396496464>│`COMANDO EM CONSTRUÇÃO...`"
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_five_shirts" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_five_shirts"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 5 Shirts]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            status = _QUEST["status"]
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 5 Shirts]**\n' \
+                  f'`[STATUS]:` **{status}**\n' \
+                  f'`[PROGRESS]:` **{len(_QUEST["shirts"])}/5**'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_five_shirts = {"shirts": list(), "status": "in progress"}
+        update['rpg']['quests']["the_five_shirts"] = the_five_shirts
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 5 Shirts]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

@@ -165,10 +165,16 @@ class FarmClass(commands.Cog):
                 _roles = [r.name for r in ctx.author.roles if r.name != "@everyone"]
                 if "🌈Santinho🌈" not in _roles and "👺Mobrau👺" in _roles:
                     if ctx.guild.id == self.bot.config['config']['default_guild']:
-                        await ctx.send("<:alert:739251822920728708>│ `AGORA VOCÊ É SANTINHO!`", delete_after=30.0)
+
+                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", ctx.guild.roles)
+                        await ctx.author.remove_roles(role)
+
+                        await sleep(1)
 
                         role = discord.utils.find(lambda r: r.name == "🌈Santinho🌈", ctx.guild.roles)
                         await ctx.author.add_roles(role)
+
+                        await ctx.send("<:alert:739251822920728708>│ `AGORA VOCÊ É SANTINHO!`", delete_after=30.0)
 
                     else:
                         data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
@@ -188,7 +194,7 @@ class FarmClass(commands.Cog):
                         await self.bot.db.update_data(data_, update_, 'users')
                     except KeyError:
                         pass
-                    await ctx.send(f'<:negate:721581573396496464>│`Você precisa está no inferno para virar santinho!`')
+                    await ctx.send(f'<:negate:721581573396496464>│`Você precisa está no inferno para ir pro paraiso!`')
                 else:
                     data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                     update_ = data_

@@ -529,6 +529,34 @@ class Battle(commands.Cog):
             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **QUEST ITEM** ✨\n'
                            f'{icon} **1** `{name}`')
 
+        if change <= 10 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 832652416457244684:
+
+            try:
+                update['inventory']["scroll_of_shirt"] += 1
+            except KeyError:
+                update['inventory']["scroll_of_shirt"] = 1
+
+            icon, name = self.bot.items["scroll_of_shirt"][0], self.bot.items["scroll_of_shirt"][1]
+            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **ITEM ESPECIAL** ✨\n'
+                           f'{icon} **1** `{name}`')
+
+        if change <= 5 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 576795574783705104:
+            if "scroll_of_shirt" in update['inventory'].keys():
+                _item = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul", "shirt_of_water", "shirt_of_wind"])
+
+                update['inventory']["scroll_of_shirt"] -= 1
+                if update['inventory']["scroll_of_shirt"] < 1:
+                    del update['inventory']["scroll_of_shirt"]
+
+                try:
+                    update['inventory'][_item] += 1
+                except KeyError:
+                    update['inventory'][_item] = 1
+
+                icon, name = self.bot.items[_item][0], self.bot.items[_item][1]
+                await ctx.send(f'<:confirmed:721581574461587496>│`VOCE CONSEGUIU TRANSFORMAR O` '
+                               f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
+
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
