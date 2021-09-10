@@ -226,7 +226,7 @@ class MeltedClass(commands.Cog):
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
-        if "the_one_release" in update['rpg']['quests'].keys() and str(ctx.command) == "create":
+        if "the_one_release" in update['rpg']['quests'].keys():
             _QUEST, _NAME = update['rpg']['quests']["the_one_release"], reward_equip["name"]
             if _QUEST["status"] == "in progress" and update['config']['provinces'] is not None:
                 if len(update['rpg']['quests']["the_one_release"]["unsealed"]) == 0:

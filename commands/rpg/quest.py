@@ -249,18 +249,41 @@ class QuestClass(commands.Cog):
                 Use ash quest"""
         if ctx.invoked_subcommand is None:
             self.status()
+            data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            one, two, three, four, five = False, False, False, False, False
+            six, seven, eight, nine, ten = False, False, False, False, False
+            for quest in data['rpg']['quests'].keys():
+                if data['rpg']['quests'][quest]["status"] == "completed":
+                    if quest == "the_one_release":
+                        one = True
+                    if quest == "the_two_loves":
+                        two = True
+                    if quest == "the_three_sacred_scrolls":
+                        three = True
+                    if quest == "the_four_crowns":
+                        four = True
+                    if quest == "the_seven_lost_souls":
+                        seven = True
+                    if quest == "the_eight_evils_of_the_moon":
+                        eight = True
+                    if quest == "the_nine_villages":
+                        nine = True
+                    if quest == "the_ten_provinces":
+                        ten = True
+
+            emoji = "<:confirmado:519896822072999937>"
             embed = discord.Embed(color=self.color)
             embed.add_field(name="Quest Commands:",
-                            value=f"{self.st[117]} `quest one` [The 1 Release]\n"
-                                  f"{self.st[117]} `quest two` [The 2 Loves]\n"
-                                  f"{self.st[117]} `quest three` [The 3 Holy Scrolls]\n"
-                                  f"{self.st[117]} `quest four` [The 4 Crowns]\n"
-                                  f"🔴 `quest five` [The 5 - ...]\n"
-                                  f"🔴 `quest six` [The 6 - ...]\n"
-                                  f"{self.st[117]} `quest seven` [The 7 Lost Souls]\n"
-                                  f"{self.st[117]} `quest eight` [The 8 Evils of the Moon]\n"
-                                  f"{self.st[117]} `quest nine` [The 9 Villages]\n"
-                                  f"{self.st[117]} `quest ten` [The 10 - Provinces]\n")
+                            value=f"{self.st[117]} `quest one` [The 1 Release] {emoji if one else ''}\n"
+                                  f"{self.st[117]} `quest two` [The 2 Loves] {emoji if two else ''}\n"
+                                  f"{self.st[117]} `quest three` [The 3 Holy Scrolls] {emoji if three else ''}\n"
+                                  f"{self.st[117]} `quest four` [The 4 Crowns] {emoji if four else ''}\n"
+                                  f"🔴 `quest five` [The 5 - ...] {emoji if five else ''}\n"
+                                  f"🔴 `quest six` [The 6 - ...] {emoji if six else ''}\n"
+                                  f"{self.st[117]} `quest seven` [The 7 Lost Souls] {emoji if seven else ''}\n"
+                                  f"{self.st[117]} `quest eight` [The 8 Evils of the Moon] {emoji if eight else ''}\n"
+                                  f"{self.st[117]} `quest nine` [The 9 Villages] {emoji if nine else ''}\n"
+                                  f"{self.st[117]} `quest ten` [The 10 - Provinces] {emoji if ten else ''}")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
