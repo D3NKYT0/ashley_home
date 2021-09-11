@@ -152,6 +152,31 @@ class CreateClass(commands.Cog):
         embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
+
+        if "the_ten_provinces" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_ten_provinces"]
+            if _QUEST["status"] == "in progress" and update['config']['provinces'] is not None:
+                if ctx.channel.id not in update['rpg']['quests']["the_ten_provinces"]["provinces"]:
+                    update['rpg']['quests']["the_ten_provinces"]["provinces"].append(ctx.channel.id)
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                   f'✨ **[The 10 - Provinces]** ✨')
+
+        if "the_five_shirts" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_five_shirts"]
+            if _QUEST["status"] == "in progress":
+                _NEXT, _INV = False, update["inventory"].keys()
+                reward = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul",
+                                 "shirt_of_water", "shirt_of_wind"])
+                if reward in _INV:
+                    update["inventory"][reward] -= 1
+                    if update["inventory"][reward] < 1:
+                        del update["inventory"][reward]
+                    _NEXT = True
+                if reward not in update['rpg']['quests']["the_five_shirts"]["shirts"] and _NEXT:
+                    update['rpg']['quests']["the_five_shirts"]["shirts"].append(reward)
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                   f'✨ **[The 5 Shirts]** ✨')
+
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.data.add_sts(ctx.author, "create", 1)
 

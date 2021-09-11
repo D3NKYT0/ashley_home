@@ -104,7 +104,7 @@ commands.rpg.mine
 commands.rpg.jewel
 commands.rpg.trade
 commands.bot.lover
-commands.rpg.raid
+commands.rpg.wave
 commands.rpg.pvp
 commands.rpg.enchanter
 commands.money.adflier

@@ -117,6 +117,23 @@ class IdentifierClass(commands.Cog):
         await sleep(2)
         await msg.edit(content=f"<:confirmed:721581574461587496>│{self.i[bollash][0]} `1`"
                                f"**{self.i[bollash][1]}** `adicionado ao seu inventario com sucesso...`")
+
+        if "the_five_shirts" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_five_shirts"]
+            if _QUEST["status"] == "in progress":
+                _NEXT, _INV = False, update["inventory"].keys()
+                reward = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul",
+                                 "shirt_of_water", "shirt_of_wind"])
+                if reward in _INV:
+                    update["inventory"][reward] -= 1
+                    if update["inventory"][reward] < 1:
+                        del update["inventory"][reward]
+                    _NEXT = True
+                if reward not in update['rpg']['quests']["the_five_shirts"]["shirts"] and _NEXT:
+                    update['rpg']['quests']["the_five_shirts"]["shirts"].append(reward)
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                   f'✨ **[The 5 Shirts]** ✨')
+
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.data.add_sts(ctx.author, "identifier", 1)
 

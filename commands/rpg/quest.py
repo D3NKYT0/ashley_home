@@ -545,9 +545,20 @@ class QuestClass(commands.Cog):
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-            _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["souls"]]), _QUEST["status"]
+            souls = {
+                "1": "assassin",
+                "2": "necromancer",
+                "3": "paladin",
+                "4": "priest",
+                "5": "warlock",
+                "6": "warrior",
+                "7": "wizard"
+            }
+
+            _MB, status = "\n".join([f"**{str(souls[str(b)]).upper()}**" for b in _QUEST["souls"]]), _QUEST["status"]
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 7 Lost Souls]**\n' \
-                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n'
+                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n' \
+                  f'[SOULS]:\n{_MB}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 

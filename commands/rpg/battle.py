@@ -309,7 +309,7 @@ class Battle(commands.Cog):
             img = "https://media1.tenor.com/images/09b085a6b0b33a9a9c8529a3d2ee1914/tenor.gif?itemid=5648908"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
-            await ctx.send(embed=embed, delete_after=5.0)
+            await ctx.send(embed=embed)
         else:
             # premiação
             if data['rpg']['vip']:
@@ -323,7 +323,7 @@ class Battle(commands.Cog):
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
-            await ctx.send(embed=embed, delete_after=5.0)
+            await ctx.send(embed=embed)
 
             if change < 60 or mini_boss:
                 if data['rpg']['vip']:
@@ -540,13 +540,14 @@ class Battle(commands.Cog):
             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **ITEM ESPECIAL** ✨\n'
                            f'{icon} **1** `{name}`')
 
-        if change <= 5 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 576795574783705104:
+        if change <= 15 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 576795574783705104:
             if "scroll_of_shirt" in update['inventory'].keys():
-                _item = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul", "shirt_of_water", "shirt_of_wind"])
 
                 update['inventory']["scroll_of_shirt"] -= 1
                 if update['inventory']["scroll_of_shirt"] < 1:
                     del update['inventory']["scroll_of_shirt"]
+
+                _item = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul", "shirt_of_water", "shirt_of_wind"])
 
                 try:
                     update['inventory'][_item] += 1

@@ -265,12 +265,14 @@ class Database(object):
         response, items = '`Caiu pra você:` \n\n', dict()
         for item in list_:
             amount = randint(1, 3) if not one else 1
-            query_user["$inc"][f"inventory.{item}"] = amount
 
             try:
                 items[item] += amount
             except KeyError:
                 items[item] = amount
+
+        for k, v in items.items():
+            query_user["$inc"][f"inventory.{k}"] = v
 
         for it in items.keys():
             response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
@@ -378,6 +380,7 @@ class Database(object):
                                 raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
                                                             f'esperar` **{minutes} minuto{s}** `para usar esse comando'
                                                             f' novamente!`')
+
                             raise commands.CheckFailure(f'<:alert:739251822920728708>│**Aguarde**: `Você deve '
                                                         f'esperar` **{{}}** `para usar esse comando '
                                                         f'novamente!`'.format(parse_duration(int(time_left))))
@@ -385,7 +388,8 @@ class Database(object):
                     gc = self.bot.guilds_commands[ctx.guild.id]
                     if gc > 50 and str(ctx.command) == "daily work" or str(ctx.command) != "daily work":
 
-                        t1, t2 = str(ctx.command) == "pick", (data_user["user"]["stickers"] + 1) % 10 == 0
+                        limit = 20 if data_user["config"]["vip"] else 10
+                        t1, t2 = str(ctx.command) == "pick", (data_user["user"]["stickers"] + 1) % limit == 0
                         t3 = str(ctx.command) != "pick"
 
                         if t1 and t2 or t3:

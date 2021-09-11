@@ -532,16 +532,6 @@ class Ashley(commands.AutoShardedBot):
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
-                if "the_ten_provinces" in data_user['rpg']['quests'].keys() and str(ctx.command) == "create":
-                    _QUEST = data_user['rpg']['quests']["the_ten_provinces"]
-                    if _QUEST["status"] == "in progress" and data_user['config']['provinces'] is not None:
-                        if ctx.channel.id not in data_user['rpg']['quests']["the_ten_provinces"]["provinces"]:
-                            data_user['rpg']['quests']["the_ten_provinces"]["provinces"].append(ctx.channel.id)
-                            _PROVINCES = data_user['rpg']['quests']["the_ten_provinces"]["provinces"]
-                            query_user["$set"]["rpg.quests.the_ten_provinces.provinces"] = _PROVINCES
-                            await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
-                                           f'✨ **[The 10 - Provinces]** ✨')
-
                 if str(ctx.command) in ["dance", "hug", "kick", "kiss", "lick", "punch", "push", "slap"]:
                     if "the_two_loves" in data_user['rpg']['quests'].keys():
                         _QUEST = data_user['rpg']['quests']["the_two_loves"]
@@ -570,29 +560,6 @@ class Ashley(commands.AutoShardedBot):
                                 query_user["$set"]["rpg.quests.the_two_loves.loves"] = _LOVES
                                 await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
                                                f'✨ **[The 2 Loves]** ✨')
-
-                if str(ctx.command) in ["merge", "unsealed", "jewel", "melted", "create", "identifier"]:
-                    if "the_five_shirts" in data_user['rpg']['quests'].keys():
-                        _QUEST = data_user['rpg']['quests']["the_five_shirts"]
-                        if _QUEST["status"] == "in progress":
-                            _NEXT, _INV = False, data_user["inventory"].keys()
-                            reward = choice(["shirt_of_earth", "shirt_of_fire", "shirt_of_soul",
-                                             "shirt_of_water", "shirt_of_wind"])
-                            if reward in _INV:
-                                data_user["inventory"][reward] -= 1
-                                if data_user["inventory"][reward] < 1:
-                                    if "$unset" not in query_user.keys():
-                                        query_user["$unset"] = {}
-                                    query_user["$unset"][f"inventory.{reward}"] = ""
-                                else:
-                                    query_user["$inc"][f"inventory.{reward}"] = -1
-                                _NEXT = True
-                            if reward not in data_user['rpg']['quests']["the_five_shirts"]["shirts"] and _NEXT:
-                                data_user['rpg']['quests']["the_five_shirts"]["shirts"].append(reward)
-                                _SHIRTS = data_user['rpg']['quests']["the_five_shirts"]["shirts"]
-                                query_user["$set"]["rpg.quests.the_five_shirts.shirts"] = _SHIRTS
-                                await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
-                                               f'✨ **[The 5 Shirts]** ✨')
 
                 if "the_four_crowns" in data_user['rpg']['quests'].keys():
                     _QUEST = data_user['rpg']['quests']["the_four_crowns"]
