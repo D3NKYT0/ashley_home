@@ -84,7 +84,7 @@ class MerchantClass(commands.Cog):
         if item_key_craft is not None:
             _type = "craft"
             if self.bot.items[item_key_craft][2] is False:
-                if self.bot.items[item_key_craft][3] in [8, 12, 14]:
+                if self.bot.items[item_key_craft][3] in [8, 12]:
                     return await ctx.send("<:alert:739251822920728708>│`Você não pode vender esse tipo de item.`")
 
         equips_list = list()
