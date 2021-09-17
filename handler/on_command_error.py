@@ -57,6 +57,7 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.BadArgument):
             perms = ctx.channel.permissions_for(ctx.me)
             if perms.send_messages and perms.read_messages:
+                ctx.command.reset_cooldown(ctx)
                 return await ctx.send(f'<:alert:739251822920728708>│`VOCE INSERIU UMA INFORMAÇÃO INVALIDA! POR FAVOR '
                                       f'TENTE NOVAMENTE OU USE O COMANDO:` **ASH HELP {str(ctx.command).upper()}**'
                                       f' `PARA MAIORES INFORMAÇÕES.`')
