@@ -24,20 +24,18 @@ class WikiClass(commands.Cog):
                 equips_list.append((k, v))
 
         if item is not None:
-            item = item.replace("_", " ")
-            item = item.lower()
+            item = item.replace("_", " ").lower()
             if item in wiki.keys():
                 wiki = wiki[item]
                 desc, rare, how, typew = wiki['description'], wiki['rare'], wiki['how'], wiki['type']
+                why = wiki['why']
                 try:
                     emoji = wiki['emoji']
                 except KeyError:
                     pass
                 img = wiki['image']
-                if emoji is not None:
-                    item = f"{emoji} {item.title()}"
-                if item == "exodia":
-                    item = "exódia, o proibido"
+                item = f"{emoji} {item.title()}" if emoji is not None else item
+                item = "exódia, o proibido" if item == "exodia" else item
                 if rare == "Enchant":
                     srare = item.split()[-1]
                     if not srare == "Skill":
@@ -47,26 +45,26 @@ class WikiClass(commands.Cog):
                               f'**Descrição**: {desc}\n' \
                               f'**Tipo**: {typew}\n' \
                               f'**Raridade**: {rare}\n' \
-                              f'**Como Adquirir**: {how}'
+                              f'**Como adquirir**: {how}\n' \
+                              f'**Como usar**: {why}'
                 embed = discord.Embed(
                     title=f"Wikipedia",
                     color=self.bot.color,
                     description=description
                 )
-                embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
+                embed.set_thumbnail(url = "http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
+                embed.set_footer(text = "Ashley ® Todos os direitos reservados.")
                 if img:
                     file = discord.File(img, filename="image.png")
-                    embed.set_image(url=f'attachment://image.png')
-                await ctx.send(embed=embed, file=file)
+                    embed.set_image(url = f'attachment://image.png')
+                await ctx.send(embed = embed, file = file)
             elif item in [i[1]["name"] for i in equips_list]:
                 equip = [i[1] for i in equips_list if i[1]['name'] == item][0]
                 modifier = equip['modifier']
-                icon = equip['icon']
-                name = equip['name'].split()
+                icon, name = equip['icon'], equip['name'].split()
                 mdef, pdef = equip['mdef'], equip['pdef']
                 con, prec, agi, atk = modifier['con'], modifier['prec'], modifier['agi'], modifier['atk']
                 rare, classe = equip['rarity'], equip['class']
-
                 if "silver" in name:
                     requisito = "11"
                 elif "mystic" in name:
@@ -95,9 +93,9 @@ class WikiClass(commands.Cog):
                               f'**Tier**: {tier.title()}\n' \
                               f'**Requisito:** Level `{requisito}` ou maior\n' \
                               f'```Markdown\n' \
-                              f'=== Defesa ===\n' \
+                              f'{"="*5} Defesa {"="*5}\n' \
                               f'MDEF:⠀⠀{mdef}⠀⠀PDEF:⠀⠀{pdef}\n' \
-                              f'=== Status ===\n' \
+                              f'{"="*5} Status {"="*5}\n' \
                               f'ACC: {prec}\nCON: {con}\n' \
                               f'ATK: {atk}\nDEX: {agi}```'
                 embed = discord.Embed(
@@ -106,9 +104,10 @@ class WikiClass(commands.Cog):
                     description=description
                 )
                 embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
+                embed.set_footer(text = "Ashley ® Todos os direitos reservados.")
                 await ctx.send(embed=embed)
             else:
-                await ctx.send('<:negate:721581573396496464>|`DIGITE UM NOME DE UM ITEM VÁLIDO.`')
+                await ctx.send('<:negate:721581573396496464>|`DIGITE UM NOME DE UM ITEM OU EQUIPAMENTO VÁLIDO.`')
         else:
             await ctx.send('<:negate:721581573396496464>|`Digite um nome de um item ou equipamento.`')
 

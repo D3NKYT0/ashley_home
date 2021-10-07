@@ -385,7 +385,7 @@ class Entity(object):
                         return False
 
                     try:
-                        answer = await ctx.bot.wait_for('message', check=check, timeout=60.0)
+                        answer = await ctx.bot.wait_for('message', check=check, timeout=120.0)
                     except TimeoutError:
                         return "COMANDO-CANCELADO"
 
@@ -546,7 +546,7 @@ class Entity(object):
                                 self.skill = choice(["luz divina", "ataque supremo"])
 
                             else:
-                                self.skill = choice(["magia negra", "ataque direto"])
+                                self.skill = choice(["luz divina", "ataque supremo"])
 
                             self.ultimate = True
                         else:
