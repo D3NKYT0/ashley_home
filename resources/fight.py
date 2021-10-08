@@ -546,7 +546,7 @@ class Entity(object):
                                 self.skill = choice(["luz divina", "ataque supremo"])
 
                             else:
-                                self.skill = choice(["luz divina", "ataque supremo"])
+                                self.skill = choice([list(self.skills)[-2], list(self.skills)[-1]])
 
                             self.ultimate = True
                         else:
