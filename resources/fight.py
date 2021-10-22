@@ -522,7 +522,7 @@ class Entity(object):
                     f"`HA HA HA HA! QUEM FOI O LOUCO QUE DISSE QUE VOCE ERA UM` **HEROI**\n",
                     f"`HA HA HA HA! SE VOCE NAO BATER MAIS FORTE EU` **IREI**\n",
                     f"`HA HA HA HA! DEPOIS DESSE ATAQUE VAI PRECISAR FAZER UMA ARMADURA` **NOVA**\n",
-                    f"`HA HA HA HA! TALVES EU DEVESSE EMPRESTAR A ARMA DO MEU SERVO,` **SEU FRACOTE**\n",
+                    f"`HA HA HA HA! TALVEZ EU DEVESSE EMPRESTAR A ARMA DO MEU SERVO,` **SEU FRACOTE**\n",
                     f"`HA HA HA HA! NAO ME SUBESTIME` **INSOLENTE**\n"
                 ]
                 try:
@@ -593,7 +593,7 @@ class Entity(object):
                             msg_return += f"`HA HA HA HA! VOCE ACHA QUE VAI SOBREVIVER DEPOIS` **DISSO**\n"
 
                         if self.is_mini_boss and self.skill != "SKILL-COMBO":
-                            msg_return += f"`HA HA HA HA! TALVES EU DEVA MANDAR FAZER SEU` **CAIXAO**\n"
+                            msg_return += f"`HA HA HA HA! TALVEZ EU DEVA MANDAR FAZER SEU` **CAIXAO**\n"
 
                     else:
                         new_skills_other = list(skills)
