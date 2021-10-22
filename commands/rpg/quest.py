@@ -339,7 +339,6 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
-            Emoji = choice(['<:afs:530031864350507028>', '<:ash:834120294469730315>'])
             Description = "Olá caro(a) aventureiro(a), um ferreiro mestre está precisando de um equipamento muito raro " \
                           "de ser conseguido para um grande guerreiro nobre do reino. **Preciso que você vá para qualquer província e " \
                           "tire o selamento de algum equipamento e que venha com alguma das seguintes raridades: Violet e Hero.**" 
@@ -384,7 +383,6 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
-            Emoji = choice(['<:afs:530031864350507028>', '<:ash:834120294469730315>'])
             Description = "Olá caro(a) casado(a), uma feiticeira da capital está querendo fazer uma poção muito difícil de ser criada, " \
                           "mas infelizmente não possui os dois últimos ingredientes para terminar. **Para isso, preciso que você obtenha os seguintes itens:" \
                           " _Heart Right_ e _Heart Left_. Esses dois itens são obtidos a partir do `ash love` com cônjuge, caso você consiga esses itens, " \
