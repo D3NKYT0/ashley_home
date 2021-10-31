@@ -181,8 +181,6 @@ class Ashley(commands.AutoShardedBot):
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mBLACKLIST\033[1;32m foi feita sucesso!\33[m')
         self.shutdowns = dumps(await self.db.get_all_data("shutdown"))
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mSHUTDOWN\033[1;32m foi feita sucesso!\33[m')
-        self.mails = await self.db.cd("mails")
-        print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mMAILS\033[1;32m foi feita sucesso!\33[m')
         _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
         _ev_db = False if _event is None else True if _event["status"] else False
         self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
@@ -825,14 +823,17 @@ class Ashley(commands.AutoShardedBot):
                         await ctx.send(f"{_f}`Por usar um comando, {_name} tambem ganhou` {msg}{_i}", delete_after=5.0)
 
                 chance = randint(1, 100)
-                if chance <= 25:
-                    all_data = [data async for data in self.mails.find()]
+                if chance <= 15:
+                    mail_collection = await self.db.cd("mails")
+                    all_data = [data async for data in mail_collection.find()]
                     mail = 0
                     for data in all_data:
                         if data['global'] == True and ctx.author.id not in data['received']:
                             mail += 1
                     if mail > 0:
-                        await ctx.send(f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} MAILS NÃO LIDOS.`")
+                        msg = f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} CORRESPONDÊNCIA(S) NÃO LIDOS. PARA " \
+                              f"LER SUAS CORRESPONDÊNCIAS, USE O COMANDO ASH MAIL READ.`"
+                        await ctx.send(msg)
 
     async def on_guild_join(self, guild):
         if str(guild.id) in self.blacklist:
