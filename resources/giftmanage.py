@@ -98,7 +98,7 @@ async def open_gift(bot, gift):
 
 def choice_chest(chest, event):
     if chest == "Baú de Evento - Incomum":
-        chance_relic = 5
+        chance_relic = 4
         max_money = 250 if event else 100
         max_coin = 100 if event else 50
         max_energy = 75 if event else 50
@@ -127,7 +127,7 @@ def choice_chest(chest, event):
         }
 
     elif chest == "Baú de Evento - Raro":
-        chance_relic = 15
+        chance_relic = 8
         max_money = 300 if event else 100
         max_coin = 150 if event else 50
         max_energy = 100 if event else 50
@@ -156,7 +156,7 @@ def choice_chest(chest, event):
         }
 
     elif chest == "Baú de Evento - Super Raro":
-        chance_relic = 25
+        chance_relic = 12
         max_money = 350 if event else 100
         max_coin = 200 if event else 50
         max_energy = 125 if event else 50
@@ -192,7 +192,7 @@ def choice_chest(chest, event):
         }
 
     else:
-        chance_relic = 35
+        chance_relic = 16
         max_money = 400 if event else 100
         max_coin = 250 if event else 50
         max_energy = 150 if event else 50
