@@ -103,15 +103,23 @@ def choice_chest(chest, event):
         max_coin = 100 if event else 50
         max_energy = 75 if event else 50
         bonus = choice(['Unearthly', 'Surpassing', 'Hurricane', 'Heavenly', 'Blazing', 'Augur'])
+        bonus_1 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
+        items.append(bonus_1)
+        items.append(bonus_2)
+        items.append(bonus_3)
 
         relics = {
-            "halloween1": 1,
-            "halloween2": 1,
-            "halloween3": 1,
-            "halloween4": 1,
-            "halloween5": 1,
-            "halloween6": 1,
+            "WrathofNatureCapsule": 1,
+            "UltimateSpiritCapsule": 1,
+            "SuddenDeathCapsule": 1,
+            "InnerPeacesCapsule": 1,
+            "EternalWinterCapsule": 1,
+            "EssenceofAsuraCapsule": 1,
+            "DivineCalderaCapsule": 1,
+            "DemoniacEssenceCapsule": 1,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "angel_stone": 1,
@@ -124,15 +132,23 @@ def choice_chest(chest, event):
         max_coin = 150 if event else 50
         max_energy = 100 if event else 50
         bonus = choice(["crystal_fragment_light", "crystal_fragment_energy", "crystal_fragment_dark"])
+        bonus_1 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
+        items.append(bonus_1)
+        items.append(bonus_2)
+        items.append(bonus_3)
 
         relics = {
-            "halloween1": 3,
-            "halloween2": 3,
-            "halloween3": 3,
-            "halloween4": 3,
-            "halloween5": 3,
-            "halloween6": 3,
+            "WrathofNatureCapsule": 3,
+            "UltimateSpiritCapsule": 3,
+            "SuddenDeathCapsule": 3,
+            "InnerPeacesCapsule": 3,
+            "EternalWinterCapsule": 3,
+            "EssenceofAsuraCapsule": 3,
+            "DivineCalderaCapsule": 3,
+            "DemoniacEssenceCapsule": 3,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "angel_stone": 1,
@@ -145,6 +161,9 @@ def choice_chest(chest, event):
         max_coin = 200 if event else 50
         max_energy = 125 if event else 50
         bonus = choice(["solution_agent_green", "solution_agent_blue", "nucleo_z", "nucleo_y", "nucleo_x"])
+        bonus_1 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
 
         if randint(1, 100) < 60:
             bb = choice(["crystal_fragment_light", "crystal_fragment_energy", "crystal_fragment_dark"])
@@ -152,13 +171,19 @@ def choice_chest(chest, event):
         else:
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
+        items.append(bonus_1)
+        items.append(bonus_2)
+        items.append(bonus_3)
+
         relics = {
-            "halloween1": 5,
-            "halloween2": 5,
-            "halloween3": 5,
-            "halloween4": 5,
-            "halloween5": 5,
-            "halloween6": 5,
+            "WrathofNatureCapsule": 5,
+            "UltimateSpiritCapsule": 5,
+            "SuddenDeathCapsule": 5,
+            "InnerPeacesCapsule": 5,
+            "EternalWinterCapsule": 5,
+            "EssenceofAsuraCapsule": 5,
+            "DivineCalderaCapsule": 5,
+            "DemoniacEssenceCapsule": 5,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "boss_key": 1,
@@ -172,6 +197,9 @@ def choice_chest(chest, event):
         max_coin = 250 if event else 50
         max_energy = 150 if event else 50
         bonus = choice(["solution_agent_green", "solution_agent_blue", "nucleo_z", "nucleo_y", "nucleo_x"])
+        bonus_1 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
+        bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
 
         if randint(1, 100) < 80:
             bb = choice(["crystal_fragment_light", "crystal_fragment_energy", "crystal_fragment_dark"])
@@ -179,13 +207,19 @@ def choice_chest(chest, event):
         else:
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
+        items.append(bonus_1)
+        items.append(bonus_2)
+        items.append(bonus_3)
+
         relics = {
-            "halloween1": 1,
-            "halloween2": 1,
-            "halloween3": 1,
-            "halloween4": 1,
-            "halloween5": 1,
-            "halloween6": 1
+        "WrathofNatureCapsule": 1,
+            "UltimateSpiritCapsule": 1,
+            "SuddenDeathCapsule": 1,
+            "InnerPeacesCapsule": 1,
+            "EternalWinterCapsule": 1,
+            "EssenceofAsuraCapsule": 1,
+            "DivineCalderaCapsule": 1,
+            "DemoniacEssenceCapsule": 1
         }
 
     return chance_relic, max_money, max_coin, max_energy, items, relics

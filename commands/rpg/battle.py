@@ -372,10 +372,9 @@ class Battle(commands.Cog):
                     embed.set_thumbnail(url="attachment://reward.gif")
 
                     # config do evento atual.
-                    if date_[0] == self.e[0] and date_[1] == self.e[1] and self.e[2][0] < date_[2] < self.e[2][1]:
-                        if self.bot.event_special:
-                            reward.append(item_event)
-                            await ctx.send(file=file, embed=embed)
+                    if self.bot.event_special:
+                        reward.append(item_event)
+                        await ctx.send(file=file, embed=embed)
 
                     if mini_boss:
                         reward.append(choice(['armor_divine', 'enchant_divine', 'feather_white',

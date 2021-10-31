@@ -421,7 +421,8 @@ class OpenClass(commands.Cog):
 
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update = data
-            relics = ["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"]
+            relics = ["WrathofNatureCapsule", "UltimateSpiritCapsule", "SuddenDeathCapsule", "InnerPeacesCapsule",
+                      "EternalWinterCapsule", "EssenceofAsuraCapsule", "DivineCalderaCapsule", "DemoniacEssenceCapsule"]
             cr = 0
             for relic in relics:
                 if relic in data['inventory'].keys():
