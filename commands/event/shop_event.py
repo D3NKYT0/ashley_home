@@ -2,6 +2,7 @@ import discord
 import copy
 
 from random import choice
+from asyncio import TimeoutError
 from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
