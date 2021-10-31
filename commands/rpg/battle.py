@@ -529,7 +529,9 @@ class Battle(commands.Cog):
             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **QUEST ITEM** ✨\n'
                            f'{icon} **1** `{name}`')
 
-        if change <= 10 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 832652416457244684:
+        channels = [832652416457244684, 886394721562411048, 8863947597054116151, 886394785538134097,
+                    886394815288320020, 886394837518135326]
+        if change <= 10 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id in channels:
 
             try:
                 update['inventory']["scroll_of_shirt"] += 1
@@ -540,7 +542,9 @@ class Battle(commands.Cog):
             await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR GANHAR O` ✨ **ITEM ESPECIAL** ✨\n'
                            f'{icon} **1** `{name}`')
 
-        if change <= 15 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id == 576795574783705104:
+        channels = [576795574783705104, 886394897953869834, 886394947136258098, 886394971689730128,
+                    886394995458850826, 886395017776750663]
+        if change <= 15 and player[ctx.author.id].status['hp'] > 0 and ctx.channel.id in channels:
             if "scroll_of_shirt" in update['inventory'].keys():
 
                 update['inventory']["scroll_of_shirt"] -= 1

@@ -89,6 +89,9 @@ with open("data/thinker.json", encoding="utf-8") as thinker:
 with open("data/wiki.json", encoding="utf-8") as wiki:
     wiki = json.load(wiki)
 
+with open("data/events.json", encoding="utf-8") as events:
+    events = json.load(events)
+
 data = {
     "achievements": achievements,
     "answers": answers,
@@ -118,5 +121,6 @@ data = {
     "staff": staff,
     "sticker_book": sticker_book,
     "thinker": thinker,
-    "wiki": wiki
+    "wiki": wiki,
+    "events": events
 }

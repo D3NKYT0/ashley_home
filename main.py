@@ -113,15 +113,15 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 8, (15, 30)]  # ANO / MES / DIA INI e DIA END
-        self.event_now = "AGUARDANDO NOVO EVENTO..."  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 10, 31, (11, 7)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "HALLOWEEN"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
 
         # inicio automatico do evento
         _DATE, _EVENT = date.localtime(), self.d_event
-        if _DATE[0] == _EVENT[0] and _DATE[1] == _EVENT[1] and _EVENT[2][0] < _DATE[2] < _EVENT[2][1]:
+        if _DATE[0] == _EVENT[0] and (_DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]) and (_EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]):
             self.event_special = True
         else:
             self.event_special = False
@@ -181,6 +181,8 @@ class Ashley(commands.AutoShardedBot):
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mBLACKLIST\033[1;32m foi feita sucesso!\33[m')
         self.shutdowns = dumps(await self.db.get_all_data("shutdown"))
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mSHUTDOWN\033[1;32m foi feita sucesso!\33[m')
+        self.mails = await self.db.cd("mails")
+        print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mMAILS\033[1;32m foi feita sucesso!\33[m')
         _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
         _ev_db = False if _event is None else True if _event["status"] else False
         self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
@@ -821,6 +823,16 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         await ctx.send(f"{_f}`Por usar um comando, {_name} tambem ganhou` {msg}{_i}", delete_after=5.0)
+
+                chance = randint(1, 100)
+                if chance <= 25:
+                    all_data = [data async for data in self.mails.find()]
+                    mail = 0
+                    for data in all_data:
+                        if data['global'] == True and ctx.author.id not in data['received']:
+                            mail += 1
+                    if mail > 0:
+                        await ctx.send(f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} MAILS NÃO LIDOS.`")
 
     async def on_guild_join(self, guild):
         if str(guild.id) in self.blacklist:

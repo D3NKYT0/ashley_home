@@ -235,6 +235,9 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
     elif str(ctx.command) in ["shop", "shopping", "shop_vote"]:
         list_i = inventory
 
+    elif str(ctx.command) in ["mail", "email"]:
+        list_i = inventory
+
     elif str(ctx.command) == "equips":
         dict_ = dict()
         for _ in inventory.keys():
@@ -334,13 +337,24 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             string = f'{items[key]["icon"]} `{inventory[key]}{("⠀" * (5 - len(str(inventory[key]))))}` ' \
                      f'`{items[key]["name"]}{(" " * (35 - len(items[key]["name"])))}` **{rarity.lower()}**\n'
 
+        elif str(ctx.command) in ["mail", "email"]:
+            string = f'**`{items[key]["_id"]}`** - **`{key}{(" " * (35 - len(key)))}`**\n'
+
+        elif str(ctx.command) in ["halloween", "hallo"]:
+            if "quest" in key:
+                name = inventory[key]["name"]
+            else:
+                name = key.replace(' ', '_')
+            string = f"{items[name][0]} **{key.upper()}**\n"
+
         else:
             if inventory[key]['type'] == "etc_item":
                 icon = inventory[key]['reward'][0][0]
                 string = f"{items[icon][0]} **{key.upper()}**\n\n"
             else:
                 icon = inventory[key]['reward'][0][0]
-                string = f"{equips[icon]['icon']} **{equips[icon]['name'].upper().replace(' ', '_')}**\n\n"
+                name = equips[icon]['name'].upper().replace(' - ', ' ').replace(' ', '_') if equips[icon]['slot'] == "sword" else equips[icon]['name'].upper().replace(' ', '_')
+                string = f"{equips[icon]['icon']} **{name}**\n\n"
 
         cont += len(string)
         if cont <= 1500 and cont_i < 20:

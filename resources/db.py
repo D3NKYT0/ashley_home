@@ -389,6 +389,7 @@ class Database(object):
                     if gc > 50 and str(ctx.command) == "daily work" or str(ctx.command) != "daily work":
 
                         limit = 20 if data_user["config"]["vip"] else 10
+                        limit += 20 if self.bot.event_special else limit
                         t1, t2 = str(ctx.command) == "pick", (data_user["user"]["stickers"] + 1) % limit == 0
                         t3 = str(ctx.command) != "pick"
 

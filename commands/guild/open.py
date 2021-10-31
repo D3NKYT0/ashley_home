@@ -133,6 +133,9 @@ class OpenClass(commands.Cog):
         for n in numbers:
             bonus += n
 
+        if self.bot.event_special:
+            bonus += 15
+
         if randint(1, 100) + amount_test + bonus > 95:  # 5% + bonus + amount
 
             msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
@@ -170,6 +173,8 @@ class OpenClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
         msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
                f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`"
+        if self.bot.event_special:
+            msg += f"\n`BONUS ESPECIAL:` **15%** ({self.bot.event_now})"
         title = f"MOON BAG DE: {data[0].upper()}"
         embed = discord.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
@@ -416,8 +421,7 @@ class OpenClass(commands.Cog):
 
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update = data
-            relics = ["WrathofNatureCapsule", "UltimateSpiritCapsule", "SuddenDeathCapsule", "InnerPeacesCapsule",
-                      "EternalWinterCapsule", "EssenceofAsuraCapsule", "DivineCalderaCapsule", "DemoniacEssenceCapsule"]
+            relics = ["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"]
             cr = 0
             for relic in relics:
                 if relic in data['inventory'].keys():

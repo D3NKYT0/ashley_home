@@ -106,14 +106,12 @@ def choice_chest(chest, event):
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
         relics = {
-            "WrathofNatureCapsule": 1,
-            "UltimateSpiritCapsule": 1,
-            "SuddenDeathCapsule": 1,
-            "InnerPeacesCapsule": 1,
-            "EternalWinterCapsule": 1,
-            "EssenceofAsuraCapsule": 1,
-            "DivineCalderaCapsule": 1,
-            "DemoniacEssenceCapsule": 1,
+            "halloween1": 1,
+            "halloween2": 1,
+            "halloween3": 1,
+            "halloween4": 1,
+            "halloween5": 1,
+            "halloween6": 1,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "angel_stone": 1,
@@ -129,14 +127,12 @@ def choice_chest(chest, event):
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
         relics = {
-            "WrathofNatureCapsule": 3,
-            "UltimateSpiritCapsule": 3,
-            "SuddenDeathCapsule": 3,
-            "InnerPeacesCapsule": 3,
-            "EternalWinterCapsule": 3,
-            "EssenceofAsuraCapsule": 3,
-            "DivineCalderaCapsule": 3,
-            "DemoniacEssenceCapsule": 3,
+            "halloween1": 3,
+            "halloween2": 3,
+            "halloween3": 3,
+            "halloween4": 3,
+            "halloween5": 3,
+            "halloween6": 3,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "angel_stone": 1,
@@ -157,14 +153,12 @@ def choice_chest(chest, event):
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
         relics = {
-            "WrathofNatureCapsule": 5,
-            "UltimateSpiritCapsule": 5,
-            "SuddenDeathCapsule": 5,
-            "InnerPeacesCapsule": 5,
-            "EternalWinterCapsule": 5,
-            "EssenceofAsuraCapsule": 5,
-            "DivineCalderaCapsule": 5,
-            "DemoniacEssenceCapsule": 5,
+            "halloween1": 5,
+            "halloween2": 5,
+            "halloween3": 5,
+            "halloween4": 5,
+            "halloween5": 5,
+            "halloween6": 5,
             "unsealed_stone": 1,
             "melted_artifact": 1,
             "boss_key": 1,
@@ -186,14 +180,12 @@ def choice_chest(chest, event):
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
         relics = {
-            "WrathofNatureCapsule": 1,
-            "UltimateSpiritCapsule": 1,
-            "SuddenDeathCapsule": 1,
-            "InnerPeacesCapsule": 1,
-            "EternalWinterCapsule": 1,
-            "EssenceofAsuraCapsule": 1,
-            "DivineCalderaCapsule": 1,
-            "DemoniacEssenceCapsule": 1
+            "halloween1": 1,
+            "halloween2": 1,
+            "halloween3": 1,
+            "halloween4": 1,
+            "halloween5": 1,
+            "halloween6": 1
         }
 
     return chance_relic, max_money, max_coin, max_energy, items, relics
