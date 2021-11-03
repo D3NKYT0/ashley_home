@@ -600,7 +600,10 @@ class QuestClass(commands.Cog):
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["potions"]]), _QUEST["status"]
 
-            description = "..."
+            description = "Olá caro(a) aventureiro(a), precisamos urgentemente da sua ajuda. Estamos querendo criar " \
+                          "6 poções paginas afim de conseguirmos o item de defesa máxima, o lendario (SALVATION)." \
+                          " Vá ate uma provincia e crafte todas as 6 poções que necessitamos para criar esse item " \
+                          "DIVINO!"
 
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 6 Potions]**\n' \
                   f'`[STATUS]:` **{status}**\n' \

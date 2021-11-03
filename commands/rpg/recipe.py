@@ -15,6 +15,8 @@ class RecipeClass(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
         self.i = self.bot.items
+        self.potion = ["potion_of_soul", "potion_of_death", "potion_of_life",
+                  "potion_of_weakening", "potion_of_love", "potion_of_rejuvenation"]
 
         equips_dict = dict()
         for ky in self.bot.config['equips'].keys():
@@ -30,7 +32,7 @@ class RecipeClass(commands.Cog):
     async def craft(self, ctx, *, item=None):
         """Comando para criar itens de receitas, para fabricar suas armaduras."""
         global quant
-        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1}
+        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1, "rpg": 1}
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         query_user = {"$inc": {}}
 
@@ -253,6 +255,19 @@ class RecipeClass(commands.Cog):
                     quantidade = quant
                 if reaction[0].emoji == '⏭' and reaction[0].message.id == msg.id:
                     quantidade = maximo
+
+                if "the_six_potions" in data_user['rpg']['quests'].keys():
+                    _QUEST = data_user['rpg']['quests']["the_six_potions"]
+                    if _QUEST["status"] == "in progress" and data_user['config']['provinces'] is not None:
+                        if item in self.potion:
+                            if item not in data_user['rpg']['quests']["the_six_potions"]["provinces"]:
+                                data_user['rpg']['quests']["the_six_potions"]["potions"].append(item)
+                                the_six_potions = data_user['rpg']['quests']["the_six_potions"]
+                                if "$set" not in query_user.keys():
+                                    query_user["$set"] = dict()
+                                query_user["$set"][f"rpg.quests.the_six_potions"] = the_six_potions
+                                await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
+                                               f'✨ **[The 6 Potions]** ✨')
 
                 await msg.delete()
                 cl = await self.bot.db.cd("users")
