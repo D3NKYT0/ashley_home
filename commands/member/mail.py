@@ -1,11 +1,9 @@
-from typing import ItemsView
 import discord
 
 from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
-from resources.img_edit import equips
 from asyncio import sleep, TimeoutError
 from resources.utility import create_id
 from zlib import compress, decompress
@@ -27,7 +25,7 @@ class MailClass(commands.Cog):
             mails = list()
             item_mails = dict()
             for data in all_data:
-                if data['global'] == True and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
+                if data['global'] and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
                     mail += 1
                     for k, v in data.items():
                         if k == 'title':
@@ -53,14 +51,12 @@ class MailClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @mail.command(name='read', aliases=['ler'])
-    async def _readmail(self, ctx, *, id: str = None):
-        id = id.upper() if id else None
-        mails = list()
-        item_mails = dict()
-        items = list()
-        mail = 0
-        if id is None:
-            return await ctx.send(f'<:negate:721581573396496464>|`VOCÊ PRECISA INSERIR UM ID DE UMA CORRESPONDÊNCIA PARA VOCÊ LER')
+    async def _read_mail(self, ctx, *, id_mail: str = None):
+        id_mail = id_mail.upper() if id_mail else None
+        mails, item_mails, items, mail, original_id, find_id = list(), dict(), list(), 0, "0", False
+        if id_mail is None:
+            msg = f'<:negate:721581573396496464>|`VOCÊ PRECISA INSERIR UM ID DE UMA CORRESPONDÊNCIA PARA VOCÊ LER`'
+            return await ctx.send(msg)
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
         mail_collection = await self.bot.db.cd("mails")
@@ -69,8 +65,9 @@ class MailClass(commands.Cog):
             mail += 1
             original_id = data['_id']
             data['_id'] = str(mail)
-            if id in data['_id']:
-                if data['global'] is True and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
+            if id_mail in data['_id']:
+                find_id = True
+                if data['global'] and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
@@ -78,27 +75,33 @@ class MailClass(commands.Cog):
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
-                    item_mails[id]['title'] = f"{item_mails[id]['title']} [Lido]"
+                    item_mails[id_mail]['title'] = f"{item_mails[id_mail]['title']} [Lido]"
                 else:
                     return await ctx.send(f'<:negate:721581573396496464>|`VOCÊ NÃO POSSUI ESSA CORRESPONDÊNCIA.`')
 
-        embed = discord.Embed(title = item_mails[id]["title"], color=self.bot.color)
-        embed.description = decompress(item_mails[id]["text"]).decode('utf-8')
+        if not find_id:
+            return await ctx.send(f'<:negate:721581573396496464>|`ID INVALIDO!`')
+
+        embed = discord.Embed(title=item_mails[id_mail]["title"], color=self.bot.color)
+        embed.description = decompress(item_mails[id_mail]["text"]).decode('utf-8')
         a = "\n"
-        if item_mails[id]['gift']:
-            for item in item_mails[id]['gift']:
+        if item_mails[id_mail]['gift']:
+            for item in item_mails[id_mail]['gift']:
                 if item[0] in self.bot.items:
                     items.append(f'{self.bot.items[item[0]][0]} `{item[1]}` `{self.bot.items[item[0]][1]}`')
             embed.description += f'\n\n**__PRESENTES ANEXADOS:__**\n{a.join(items)}'
 
-        issuer = await self.bot.fetch_user(item_mails[id]['issuer'])
+        issuer = await self.bot.fetch_user(item_mails[id_mail]['issuer'])
         embed.set_footer(text=f'Enviado por: {issuer} | {original_id}', icon_url=issuer.avatar_url)
         message = await ctx.send(embed=embed)
-        if item_mails[id]['global'] is True and ctx.author.id not in item_mails[id]['received'] or ctx.author.id in item_mails[id]['benefited']:
+
+        received, benefited = item_mails[id_mail]['received'], item_mails[id_mail]['benefited']
+        if item_mails[id_mail]['global'] and ctx.author.id not in received or ctx.author.id in benefited:
             await message.add_reaction('📬')    
 
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=lambda r, u: u.id == ctx.author.id)
+            user_id = ctx.author.id
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=lambda r, u: u.id == user_id)
         except TimeoutError:
             return await message.delete()
 
@@ -106,22 +109,24 @@ class MailClass(commands.Cog):
             await message.delete()
             loading = await ctx.send(f'<a:loading:520418506567843860>│`LENDO CORRESPONDÊNCIA...`')
             await sleep(3)
-            if ctx.author.id in item_mails[id]["received"]:
+            if ctx.author.id in item_mails[id_mail]["received"]:
                 return await loading.edit(content=f'<:negate:721581573396496464>│`VOCÊ JÁ LEU ESSA CORRESPONDÊNCIA !!`')
             for data in all_data:
-                if id in data['_id']:
-                    if data['global'] is True and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
+                if id_mail in data['_id']:
+                    if data['global'] and ctx.author.id not in data['received'] or ctx.author.id in data['benefited']:
                         if data['global'] is False:
                             data['benefited'].remove(ctx.author.id)
                         data['received'].append(ctx.author.id)
-                        await mail_collection.update_one({"_id": original_id}, {"$set": {"received": data['received'], "benefited": data['benefited']}})
+                        record = {"$set": {"received": data['received'], "benefited": data['benefited']}}
+                        await mail_collection.update_one({"_id": original_id}, record)
                         break
                     else:
-                        return await loading.edit(content=f'<:negate:721581573396496464>│`VOCÊ JÁ RESGATOU OS PRESENTES DESSA CORRESPONDÊNCIA !!`')
-            if item_mails[id]['gift']:
+                        msg = f'<:negate:721581573396496464>│`VOCÊ JÁ RESGATOU OS PRESENTES DESSA CORRESPONDÊNCIA !!`'
+                        return await loading.edit(content=msg)
+            if item_mails[id_mail]['gift']:
                 await loading.edit(content=f'<a:loading:520418506567843860>│`ADICIONANDO ITENS A SUA CONTA...`')
                 await sleep(3)
-                for item in item_mails[id]['gift']:
+                for item in item_mails[id_mail]['gift']:
                     if item[0] in self.bot.items:
                         try:
                             update_user['inventory'][item[0]] += item[1]
@@ -135,36 +140,32 @@ class MailClass(commands.Cog):
                 msg = f"🎊 **CORRESPONDÊNCIA LIDA COM SUCESSO !!**"
             await loading.delete()
             embed = discord.Embed(title='📄 CORRESPONDÊNCIA', color=self.bot.color, description=msg)
-            return await ctx.send(embed = embed)
-
+            return await ctx.send(embed=embed)
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @mail.command(name='create', aliases=['criar'])
-    async def _createmail(self, ctx):
-        asks = {'_id': None, 'issuer': ctx.author.id, 'title': None, 'text': None, 'gift': None, 'global': False, 'benefited': [], 'received': []}
+    async def _create_mail(self, ctx):
+        asks = {'_id': None, 'issuer': ctx.author.id, 'title': None, 'text': None, 'gift': None,
+                'global': False, 'benefited': [], 'received': []}
 
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<a:blue:525032762256785409>|`QUAL O TITULO DO E-MAIL ?`"
-                            )
-        msg = await ctx.send(embed=embed)
+        msg = f"<a:blue:525032762256785409>|`QUAL O TITULO DO E-MAIL ?`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
         try:
-            titulo = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
+            tittle = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
             embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
-        if titulo.content.lower() == 'cancelar':
+        if tittle.content.lower() == 'cancelar':
             embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
-        asks['title'] = titulo.content
-
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<a:blue:525032762256785409>|`QUAL O CONTEUDO DO E-MAIL ?`"
-                            )
-
-        msg = await ctx.send(embed=embed)
+        asks['title'] = tittle.content
+        msg = f"<a:blue:525032762256785409>|`QUAL O CONTEUDO DO E-MAIL ?`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
         try:
             text = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
@@ -178,10 +179,9 @@ class MailClass(commands.Cog):
 
         asks['text'] = compress(bytes(text.content, encoding='utf-8'))
 
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<a:blue:525032762256785409>|`QUAL O ITEM QUE DESEJA ADICIONAR AO PRESENTE ?`"
-                            )
-        msg = await ctx.send(embed=embed)
+        msg = f"<a:blue:525032762256785409>|`QUAL O ITEM QUE DESEJA ADICIONAR AO PRESENTE ?`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
         try:
             item = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
@@ -198,53 +198,47 @@ class MailClass(commands.Cog):
         else:
             asks['gift'] = eval(item.content)
 
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<a:blue:525032762256785409>|`QUAL OS ID DOS USUARIOS QUE RECEBERAM O PRESENTE ?`"
-                            )
-
-        msg = await ctx.send(embed=embed)
+        msg = f"<a:blue:525032762256785409>|`QUAL OS ID DOS USUARIOS QUE RECEBERAM O PRESENTE ?`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
         try:
-            id = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
+            resp = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
             embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
-        if id.content.lower() == 'cancelar':
+        if resp.content.lower() == 'cancelar':
             embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
-        if id.content.lower() == 'global':
+        if resp.content.lower() == 'global':
             asks['global'] = True
             asks['benefited'] = []
             asks['received'] = []
         else:
-            id = id.content.split(', ')
+            resp = resp.content.split(', ')
             ids = []
-            [ids.append(int(i)) for i in id]
+            [ids.append(int(i)) for i in resp]
             asks['benefited'] = ids
 
         asks['_id'] = create_id()
         mail_collection = await self.bot.db.cd("mails")
         await mail_collection.insert_one(asks)
 
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<:confirmed:721581574461587496>│`E-MAIL CRIADO COM SUCESSO !`"
-                            )
+        msg = f"<:confirmed:721581574461587496>│`E-MAIL CRIADO COM SUCESSO !`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
         return await ctx.send(embed=embed)
-
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @mail.command(name='delete', aliases=['excluir'])
-    async def _deletemail(self, ctx, id: str):
+    async def _delete_mail(self, ctx, id_mail: str):
         mail_collection = await self.bot.db.cd("mails")
-        await mail_collection.delete_one({'_id': id.upper()})
-        embed = discord.Embed(color=self.bot.color,
-                              description=f"<:confirmed:721581574461587496>│`E-MAIL EXCLUIDO COM SUCESSO !`"
-                            )
+        await mail_collection.delete_one({'_id': id_mail.upper()})
+        msg = f"<:confirmed:721581574461587496>│`E-MAIL EXCLUIDO COM SUCESSO !`"
+        embed = discord.Embed(color=self.bot.color, description=msg)
         return await ctx.send(embed=embed)    
-        
 
 
 def setup(bot):

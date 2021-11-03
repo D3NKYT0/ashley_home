@@ -174,7 +174,7 @@ class OpenClass(commands.Cog):
         msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
                f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`"
         if self.bot.event_special:
-            msg += f"\n`BONUS ESPECIAL:` **15%** ({self.bot.event_now})"
+            msg += f"\n`BONUS ESPECIAL:` **+15%** `({self.bot.event_now})`"
         title = f"MOON BAG DE: {data[0].upper()}"
         embed = discord.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
@@ -372,6 +372,7 @@ class OpenClass(commands.Cog):
                                       "RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'")
 
             reward = open_chest(self.bot.chests_l[str(_CHEST)])
+            _event = await (await self.bot.db.cd("events")).find_one({"_id": self.bot.event_now})
             await ctx.send("🎊 **PARABENS** 🎉 `VC ABRIU O SEU BAU COM SUCESSO!!`")
             answer_ = await self.bot.db.add_money(ctx, reward['money'], True)
             await ctx.send(f'<:rank:519896825411665930>│`você GANHOU:`\n {answer_}')
@@ -414,7 +415,7 @@ class OpenClass(commands.Cog):
             await self.bot.db.update_data(data, update, 'users')
             await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
-            if reward['relic'][0] is not None:
+            if reward['relic'][0] is not None and _event['capsules']:
                 response = await self.bot.db.add_reward(ctx, reward['relic'], True)
                 await ctx.send(f'<a:caralho:525105064873033764>│`VOCÊ TAMBEM GANHOU` ✨ **O ITEM SECRETO** ✨ '
                                f'{response}')
@@ -427,17 +428,17 @@ class OpenClass(commands.Cog):
             for relic in relics:
                 if relic in data['inventory'].keys():
                     cr += 1
+
             if cr == 8 and not update['event'][self.bot.event_now]:
-                update['event'][self.bot.event_now] = True
-                channel = self.bot.get_channel(543589223467450398)
-                if channel is not None:
-                    await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ **GANHOU O EVENTO** ✨')
-                    self.bot.event_special = False
-                await self.bot.db.update_data(data, update, 'users')
-                _event = await (await self.bot.db.cd("events")).find_one({"_id": self.bot.event_now})
-                _event_update = _event
-                _event_update["status"] = False
-                await self.bot.db.update_data(_event, _event_update, 'events')
+                if _event['capsules']:
+                    update['event'][self.bot.event_now] = True
+                    channel = self.bot.get_channel(543589223467450398)
+                    if channel is not None:
+                        await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ **GANHOU O EVENTO** ✨')
+                    await self.bot.db.update_data(data, update, 'users')
+                    _event_update = _event
+                    _event_update["capsules"] = False
+                    await self.bot.db.update_data(_event, _event_update, 'events')
 
         else:
             await ctx.send(f"<:negate:721581573396496464>│`Você nao tem mais baus disponiveis...`\n"

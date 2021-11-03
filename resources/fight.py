@@ -546,7 +546,7 @@ class Entity(object):
                                 self.skill = choice(["luz divina", "ataque supremo"])
 
                             else:
-                                self.skill = choice([list(self.skills)[-2], list(self.skills)[-1]])
+                                self.skill = choice(["luz divina", "ataque supremo"])
 
                             self.ultimate = True
                         else:
@@ -603,7 +603,7 @@ class Entity(object):
                         if self.is_mini_boss:
                             msg_return += choice(_FALAS)
 
-                except (ValueError, IndexError):
+                except (ValueError, IndexError, KeyError):
                     self.skill = choice(skills)
                     if self.is_mini_boss:
                         msg_return += choice(_FALAS)
@@ -615,7 +615,7 @@ class Entity(object):
                         self.skill = choice(new_skills)
                         if self.is_mini_boss:
                             msg_return += choice(_FALAS)
-                    except (ValueError, IndexError):
+                    except (ValueError, IndexError, KeyError):
                         self.skill = choice(skills)
                         if self.is_mini_boss:
                             msg_return += choice(_FALAS)

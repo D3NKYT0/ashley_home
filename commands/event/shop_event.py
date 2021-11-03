@@ -1,12 +1,12 @@
 import discord
 import copy
 
-from random import choice
 from asyncio import TimeoutError
 from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import paginator
+
 
 class ShopEvent(commands.Cog):
     def __init__(self, bot):
@@ -32,7 +32,8 @@ class ShopEvent(commands.Cog):
         if ctx.invoked_subcommand is None:
             recipes = copy.deepcopy(self.bot.config['events'])
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
-                            f"**EXEMPLO:** `USE` **ASH HALLOWEEN CRAFT MELTED ARTIFACT** `PARA COMPRAR UM MELTED ARTIFACT!`")
+                           f"**EXEMPLO:** `USE` **ASH HALLOWEEN CRAFT MELTED ARTIFACT** "
+                           f"`PARA COMPRAR UM MELTED ARTIFACT!`")
             embed = ['🎃 **LOJA HALLOWEEN** 🎃', self.bot.color, '']
             await paginator(self.bot, self.bot.items, recipes, embed, ctx)
 
@@ -46,9 +47,7 @@ class ShopEvent(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`VOCE JA ESTA EM PROCESSO DE COMPRA...`')
 
         self.bot.comprando.append(ctx.author.id)
-
         recipes = copy.deepcopy(self.bot.config['events'])
-        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1}
         query_user = {"$inc": {}}
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if item is not None:
@@ -57,6 +56,7 @@ class ShopEvent(commands.Cog):
                 recipe = recipes[item]
                 description = '**Custo:**'
                 maximo = None
+                quant = 0
 
                 for c in recipe['cost']:
                     try:
@@ -79,8 +79,8 @@ class ShopEvent(commands.Cog):
                     try:
                         tempmax = data['inventory'][c[0]] // c[1]
                         if tempmax == 0:
-                            _msg += f'<:alert:739251822920728708>|`Você não tem o item` **{self.bot.items[c[0]][1]}** ' \
-                                    f'`suficiente no seu inventario.`\n'
+                            _msg += f'<:alert:739251822920728708>|`Você não tem o item` ' \
+                                    f'**{self.bot.items[c[0]][1]}** `suficiente no seu inventario.`\n'
 
                     except KeyError:
                         tempmax = 0
