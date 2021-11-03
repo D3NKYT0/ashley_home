@@ -52,12 +52,12 @@ class WikiClass(commands.Cog):
                     color=self.bot.color,
                     description=description
                 )
-                embed.set_thumbnail(url = "http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
-                embed.set_footer(text = "Ashley ® Todos os direitos reservados.")
+                embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
+                embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                 if img:
                     file = discord.File(img, filename="image.png")
-                    embed.set_image(url = f'attachment://image.png')
-                await ctx.send(embed = embed, file = file)
+                    embed.set_image(url=f'attachment://image.png')
+                await ctx.send(embed=embed, file=file)
             elif item in [i[1]["name"] for i in equips_list]:
                 equip = [i[1] for i in equips_list if i[1]['name'] == item][0]
                 modifier = equip['modifier']
@@ -104,7 +104,7 @@ class WikiClass(commands.Cog):
                     description=description
                 )
                 embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
-                embed.set_footer(text = "Ashley ® Todos os direitos reservados.")
+                embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                 await ctx.send(embed=embed)
             else:
                 await ctx.send('<:negate:721581573396496464>|`DIGITE UM NOME DE UM ITEM OU EQUIPAMENTO VÁLIDO.`')

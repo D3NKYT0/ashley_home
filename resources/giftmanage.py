@@ -38,14 +38,14 @@ async def register_gift(bot, time):
 
 async def register_code(bot, _id, _code1, _code2, adlink1, adlink2, bonus, iv, key):
     data = {
-            "_id": _id,
-            "code": [_code1, _code2],
-            "key": key,
-            "iv": iv,
-            "adlink": [adlink1, adlink2],
-            "bonus": bonus,
-            "pending": True
-           }
+        "_id": _id,
+        "code": [_code1, _code2],
+        "key": key,
+        "iv": iv,
+        "adlink": [adlink1, adlink2],
+        "bonus": bonus,
+        "pending": True
+    }
     await bot.db.push_data(data, "adfly")
 
 
@@ -107,9 +107,11 @@ def choice_chest(chest, event):
         bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
-        items.append(bonus_1)
-        items.append(bonus_2)
-        items.append(bonus_3)
+
+        if event:
+            items.append(bonus_1)
+            items.append(bonus_2)
+            items.append(bonus_3)
 
         relics = {
             "WrathofNatureCapsule": 1,
@@ -136,9 +138,11 @@ def choice_chest(chest, event):
         bonus_2 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         bonus_3 = choice(["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"])
         items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
-        items.append(bonus_1)
-        items.append(bonus_2)
-        items.append(bonus_3)
+
+        if event:
+            items.append(bonus_1)
+            items.append(bonus_2)
+            items.append(bonus_3)
 
         relics = {
             "WrathofNatureCapsule": 3,
@@ -171,9 +175,10 @@ def choice_chest(chest, event):
         else:
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
-        items.append(bonus_1)
-        items.append(bonus_2)
-        items.append(bonus_3)
+        if event:
+            items.append(bonus_1)
+            items.append(bonus_2)
+            items.append(bonus_3)
 
         relics = {
             "WrathofNatureCapsule": 5,
@@ -207,12 +212,13 @@ def choice_chest(chest, event):
         else:
             items = ['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal', bonus]
 
-        items.append(bonus_1)
-        items.append(bonus_2)
-        items.append(bonus_3)
+        if event:
+            items.append(bonus_1)
+            items.append(bonus_2)
+            items.append(bonus_3)
 
         relics = {
-        "WrathofNatureCapsule": 1,
+            "WrathofNatureCapsule": 1,
             "UltimateSpiritCapsule": 1,
             "SuddenDeathCapsule": 1,
             "InnerPeacesCapsule": 1,
@@ -237,7 +243,7 @@ def open_chest(chest, event=True, amount=None):
 
     ethernyas = randint(200 if event else 50, max_money)
     coins = randint(50 if event else 5, max_coin)
-    Energy = randint(50 if event else 5, max_energy)
+    energy = randint(50 if event else 5, max_energy)
 
     if randint(1, 100) <= chance_relic and event:
         list_relic = list()
@@ -264,7 +270,7 @@ def open_chest(chest, event=True, amount=None):
 
                 ethernyas += randint(200 if event else 50, max_money)
                 coins += randint(50 if event else 5, max_coin)
-                Energy += randint(50 if event else 5, max_energy)
+                energy += randint(50 if event else 5, max_energy)
 
                 if randint(1, 100) <= chance_relic and event:
                     list_relic = list()
@@ -272,4 +278,4 @@ def open_chest(chest, event=True, amount=None):
                         list_relic += [k] * v
                     max_relics.append(choice(list_relic))
 
-    return {"money": ethernyas, "coins": coins, "Energy": Energy, "items": items, "relic": max_relics}
+    return {"money": ethernyas, "coins": coins, "Energy": energy, "items": items, "relic": max_relics}

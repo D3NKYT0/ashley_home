@@ -1,6 +1,5 @@
 import discord
 
-import time as date
 from asyncio import sleep, TimeoutError
 from discord.ext import commands
 from random import randint, choice
@@ -355,7 +354,6 @@ class Battle(commands.Cog):
                         reward.append(choice(['herb_red', 'herb_green', 'herb_blue']))
 
                 if change < 15:
-                    date_ = date.localtime()
                     item_event = choice(["soul_crystal_of_love", "soul_crystal_of_love", "soul_crystal_of_love",
                                          "soul_crystal_of_hope", "soul_crystal_of_hope", "soul_crystal_of_hope",
                                          "soul_crystal_of_hate", "soul_crystal_of_hate", "soul_crystal_of_hate",

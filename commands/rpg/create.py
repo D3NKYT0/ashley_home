@@ -159,7 +159,7 @@ class CreateClass(commands.Cog):
                 if ctx.channel.id not in update['rpg']['quests']["the_ten_provinces"]["provinces"]:
                     update['rpg']['quests']["the_ten_provinces"]["provinces"].append(ctx.channel.id)
                     await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS POR PROGREDIR NA QUEST:`\n'
-                                   f'✨ **[The 10 - Provinces]** ✨')
+                                   f'✨ **[The 10 Provinces]** ✨')
 
         if "the_five_shirts" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_five_shirts"]

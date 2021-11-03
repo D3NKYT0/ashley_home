@@ -228,7 +228,11 @@ class Booster(object):
         _reward = list()
         for k in gem.keys():
             _reward += [k] * gem[k]
-        _list = _reward if randint(1, 100) < 9 else _bonus
+
+        _list = _reward if randint(1, 100) <= 5 else _bonus
+
+        if bot.event_special and randint(1, 100) <= 5:
+            _list = ["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"]
 
         bonus_1 = choice(_list)
         bonus_2 = choice(["Melted_Bone", "Life_Crystal", "Death_Blow", "Stone_of_Soul", "Vital_Force", "Energy"])

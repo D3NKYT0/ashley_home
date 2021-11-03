@@ -4,7 +4,7 @@ from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import skill_points
-from asyncio import TimeoutError, sleep
+from asyncio import TimeoutError
 from resources.utility import create_id
 
 

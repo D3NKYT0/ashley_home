@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
-from asyncio import TimeoutError, sleep
+from asyncio import TimeoutError
 
 legend = {
     "Comum": [600, [0.01, 0.02, 0.07, 0.10, 0.20, 0.60]],

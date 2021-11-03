@@ -529,7 +529,7 @@ class Entity(object):
                     chance_skill_choice, mini_b = randint(1, 100), self.is_mini_boss
 
                     if self.tot_hp / 100 * 85 <= self.status["hp"] <= self.tot_hp or self.status["hp"] > self.tot_hp:
-                        if not self.ultimate:
+                        if not self.ultimate and self.is_boss or not self.ultimate and self.is_mini_boss:
                             if "quest" in self.name.lower() or self.is_mini_boss:
                                 if self.is_mini_boss and entity.is_player:
                                     if entity.get_class in ["warrior", "paladin"]:

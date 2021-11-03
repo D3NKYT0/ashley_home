@@ -121,7 +121,8 @@ class Ashley(commands.AutoShardedBot):
 
         # inicio automatico do evento
         _DATE, _EVENT = date.localtime(), self.d_event
-        if _DATE[0] == _EVENT[0] and (_DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]) and (_EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]):
+        if _DATE[0] == _EVENT[0] and (_DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]) \
+                and (_EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]):
             self.event_special = True
         else:
             self.event_special = False
@@ -828,7 +829,7 @@ class Ashley(commands.AutoShardedBot):
                     all_data = [data async for data in mail_collection.find()]
                     mail = 0
                     for data in all_data:
-                        if data['global'] == True and ctx.author.id not in data['received']:
+                        if data['global'] is True and ctx.author.id not in data['received']:
                             mail += 1
                     if mail > 0:
                         msg = f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} CORRESPONDÊNCIA(S) NÃO LIDOS. PARA " \

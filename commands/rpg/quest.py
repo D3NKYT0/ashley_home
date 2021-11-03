@@ -164,7 +164,27 @@ class QuestClass(commands.Cog):
                         await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
                                        f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
-                # a sexta aqui
+                if quest == "the_six_potions":
+                    if len(update['rpg']['quests'][quest]["potions"]) == 6:
+                        update['rpg']['quests'][quest]["status"], completed = "completed", True
+                        await self.bot.db.update_data(data, update, 'users')
+
+                        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
+                              '**[The 6 Potions]** `foi terminada com sucesso!`'
+                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        await ctx.send(embed=embed)
+
+                        reward = list()
+                        for _ in range(6):
+                            reward.append(choice(self.reward))
+
+                        for _ in range(5):
+                            reward.append(choice(self.reward_especial))
+
+                        response = await self.bot.db.add_reward(ctx, reward)
+                        answer = await self.bot.db.add_money(ctx, 15000, True)
+                        await ctx.send(f'<a:fofo:524950742487007233>│`{ctx.author.name.upper()} GANHOU!` {answer}\n'
+                                       f'`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ {response}')
 
                 if quest == "the_seven_lost_souls":
                     if len(update['rpg']['quests'][quest]["souls"]) == 7:
@@ -239,7 +259,7 @@ class QuestClass(commands.Cog):
                         await self.bot.db.update_data(data, update, 'users')
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
-                              '**[The 10 - Provinces]** `foi terminada com sucesso!`'
+                              '**[The 10 Provinces]** `foi terminada com sucesso!`'
                         embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
@@ -284,7 +304,7 @@ class QuestClass(commands.Cog):
                         four = True
                     if quest == "the_five_shirts":
                         five = True
-                    if quest == "...":
+                    if quest == "the_six_potions":
                         six = True
                     if quest == "the_seven_lost_souls":
                         seven = True
@@ -303,11 +323,11 @@ class QuestClass(commands.Cog):
                                   f"{self.st[117]} `quest three` [The 3 Holy Scrolls] {emoji if three else ''}\n"
                                   f"{self.st[117]} `quest four` [The 4 Crowns] {emoji if four else ''}\n"
                                   f"{self.st[117]} `quest five` [The 5 Shirts] {emoji if five else ''}\n"
-                                  f"🔴 `quest six` [The 6 - ...] {emoji if six else ''}\n"
+                                  f"{self.st[117]} `quest six` [The 6 Potions] {emoji if six else ''}\n"
                                   f"{self.st[117]} `quest seven` [The 7 Lost Souls] {emoji if seven else ''}\n"
                                   f"{self.st[117]} `quest eight` [The 8 Evils of the Moon] {emoji if eight else ''}\n"
                                   f"{self.st[117]} `quest nine` [The 9 Villages] {emoji if nine else ''}\n"
-                                  f"{self.st[117]} `quest ten` [The 10 - Provinces] {emoji if ten else ''}")
+                                  f"{self.st[117]} `quest ten` [The 10 Provinces] {emoji if ten else ''}")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             embed.set_thumbnail(url=self.bot.user.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -339,13 +359,16 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
-            Description = "Olá caro(a) aventureiro(a), um ferreiro mestre está precisando de um equipamento muito raro " \
-                          "de ser conseguido para um grande guerreiro nobre do reino. **Preciso que você vá para qualquer província e " \
-                          "tire o selamento de algum equipamento e que venha com alguma das seguintes raridades: Violet e Hero.**" 
+
+            description = "Olá caro(a) aventureiro(a), um ferreiro mestre está precisando de um equipamento muito " \
+                          "raro de ser conseguido para um grande guerreiro nobre do reino. **Preciso que você vá para" \
+                          " qualquer província e tire o selamento de algum equipamento e que venha com alguma das" \
+                          " seguintes raridades: Violet e Hero.**"
+
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 1 Release]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["unsealed"])}/1**\n' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -383,12 +406,18 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
-            Description = "Olá caro(a) casado(a), uma feiticeira da capital está querendo fazer uma poção muito difícil de ser criada, " \
-                          "mas infelizmente não possui os dois últimos ingredientes para terminar. **Para isso, preciso que você obtenha os seguintes itens:" \
-                          " _Heart Right_ e _Heart Left_. Esses dois itens são obtidos a partir do `ash love` com cônjuge, caso você consiga esses itens, " \
-                          "use algum dos comandos de membro para progredir na Quest. Exemplo: `ash dance`.**"
+
+            description = "Olá caro(a) casado(a), uma feiticeira da capital está querendo fazer uma poção muito" \
+                          " difícil de ser criada, mas infelizmente não possui os dois últimos ingredientes para" \
+                          " terminar. **Para isso, preciso que você obtenha os seguintes itens: _Heart Right_ e " \
+                          "_Heart Left_. Esses dois itens são obtidos a partir do `ash love` com cônjuge, caso você" \
+                          " consiga esses itens, use algum dos comandos de membro para progredir na Quest. Exemplo:" \
+                          " `ash dance`.**"
+
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 2 Loves]**\n' \
-                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["loves"])}/2**\n<:afs:530031864350507028> {Description}'
+                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` ' \
+                  f'**{len(_QUEST["loves"])}/2**\n<:afs:530031864350507028> {description}'
+
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -426,11 +455,16 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["scroll"]]), _QUEST["status"]
-            Description = "Olá caro(a) aventureiro(a), o rei do reino está precisando de sua ajuda. Recentemente, três pergaminhos importantes" \
-                          " e antigos foram roubados,  precisamos que você recupere eles para a gente ! " \
-                          "**Preciso que você vá para qualquer província e batalhe com monstros (`ash battle`), algum deles comeram cópias dos pergaminhos.**"
+
+            description = "Olá caro(a) aventureiro(a), o rei do reino está precisando de sua ajuda. Recentemente," \
+                          " três pergaminhos importantes e antigos foram roubados,  precisamos que você recupere" \
+                          " eles para a gente ! **Preciso que você vá para qualquer província e batalhe com monstros" \
+                          " (`ash battle`), algum deles comeram cópias dos pergaminhos.**"
+
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 3 Holy Scrolls]**\n' \
-                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["scroll"])}/3**\n<:afs:530031864350507028> {Description}'
+                  f'`[STATUS]:` **{status}**\n`[PROGRESS]:` ' \
+                  f'**{len(_QUEST["scroll"])}/3**\n<:afs:530031864350507028> {description}'
+
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -468,14 +502,17 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["crowns"]]), _QUEST["status"]
-            Description = "Olá  caro(a) guerreiro(a), o conselho de batalha do reino determinou que a capital e os cidadãos correm perigo" \
-                          " com os monstros poderosos que estão espalhados pelo reino. **Precisamos que você mate e pegue a Crown dos seguintes bosses: " \
+
+            description = "Olá  caro(a) guerreiro(a), o conselho de batalha do reino determinou que a capital e os" \
+                          " cidadãos correm perigo com os monstros poderosos que estão espalhados pelo reino. " \
+                          "**Precisamos que você mate e pegue a Crown dos seguintes bosses: " \
                           "_Dark Magician_, _Obelisk_, _Slifer_ e _White Dragon_.**"
+
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 4 Crowns]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["crowns"])}/4**\n' \
                   f'`[CROWNS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -513,15 +550,18 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["shirts"]]), _QUEST["status"]
-            Description = "Olá caro(a) aventureiro(a), precisamos urgentemente da sua ajuda. Estamos querendo criar um feitiço " \
-                          "para que os monstros não cheguem perto da capital, mas estão faltando 5 itens muito raros de serem conseguidos. " \
-                          "**Precisamos que você consiga as 5 Vestes Celestias, mas para conseguir elas, você precisará do _Scroll of Shirt_ " \
+
+            description = "Olá caro(a) aventureiro(a), precisamos urgentemente da sua ajuda. Estamos querendo criar" \
+                          " um feitiço para que os monstros não cheguem perto da capital, mas estão faltando 5 itens" \
+                          " muito raros de serem conseguidos. **Precisamos que você consiga as 5 Vestes Celestias," \
+                          " mas para conseguir elas, você precisará do _Scroll of Shirt_ " \
                           "e ir batalhar no inferno (`ash hell`).**"
+
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 5 Shirts]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["shirts"])}/5**\n' \
                   f'`[SHIRTS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -538,9 +578,45 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='six', aliases=['seis'])
     async def _six(self, ctx):
-        msg = "<:negate:721581573396496464>│`COMANDO EM CONSTRUÇÃO...`"
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "the_six_potions" in update['rpg']['quests'].keys():
+            _QUEST = update['rpg']['quests']["the_six_potions"]
+            if _QUEST["status"] == "completed":
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 6 Potions]** `já foi terminada!`'
+                embed = discord.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["potions"]]), _QUEST["status"]
+
+            description = "..."
+
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 6 Potions]**\n' \
+                  f'`[STATUS]:` **{status}**\n' \
+                  f'`[PROGRESS]:` **{len(_QUEST["potions"])}/6**\n' \
+                  f'`[POTIONS]:`\n{_MB}' \
+                  f'<:afs:530031864350507028> {description}'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        the_six_potions = {"potions": list(), "status": "in progress"}
+        update['rpg']['quests']["the_six_potions"] = the_six_potions
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 6 Potions]** ' \
+              '`foi ativada na sua conta com sucesso!`'
+        await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -578,15 +654,17 @@ class QuestClass(commands.Cog):
             }
 
             _MB, status = "\n".join([f"**{str(souls[str(b)]).upper()}**" for b in _QUEST["souls"]]), _QUEST["status"]
-            Description = "Olá caro(a) guerreiro(a), os melhores magos(a) e ferreiros(a) fizeram uma reunião " \
-                          "na capital, eles estavam pensando em uma maneira de fazer as armas terem mais durabilidade e " \
-                          "eficiência com magia, mas para isso eles precisam que todas as armas estejam reunidos no mesmo lugar " \
-                          "para serem analisados. **Para isso, preciso que você consiga uma arma no `ash battle` de cada classe existente**.\n" \
-                          "**`OBS:`** **As armas são a alma de um cavaleiro(a), então será um pouco difícil de conseguir, boa sorte guerreiro(a)**."
+            description = "Olá caro(a) guerreiro(a), os melhores magos(a) e ferreiros(a) fizeram uma reunião " \
+                          "na capital, eles estavam pensando em uma maneira de fazer as armas terem mais " \
+                          "durabilidade e eficiência com magia, mas para isso eles precisam que todas as armas " \
+                          "estejam reunidos no mesmo lugar para serem analisados. **Para isso, preciso que você " \
+                          "consiga uma arma no `ash battle` de cada classe existente**.\n" \
+                          "**`OBS:`** **As armas são a alma de um cavaleiro(a), então será um pouco difícil " \
+                          "de conseguir, boa sorte guerreiro(a)**."
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 7 Lost Souls]**\n' \
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n' \
                   f'`[SOULS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -624,16 +702,17 @@ class QuestClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["mini-boss"]]), _QUEST["status"]
-            Description = "Olá caro(a) cavaleiro(a), o nosso time de defesa do reino detectou 8 anomalias muito " \
-                          "poderosas dentro do reino. O nosso conselho de batalha teme que essas anomalias sejam monstros " \
-                          "muito fortes tentando destruir totalmente o reino. **Precisamos que você derrote todos esses 'Mini-bosses' " \
-                          "para que todo o reino não seja destruido.**\n**`OBS`**: **Para batalhar com os mini-bosses, basta usar o `ash battle moon`. " \
+            description = "Olá caro(a) cavaleiro(a), o nosso time de defesa do reino detectou 8 anomalias muito " \
+                          "poderosas dentro do reino. O nosso conselho de batalha teme que essas anomalias sejam " \
+                          "monstros muito fortes tentando destruir totalmente o reino. **Precisamos que você derrote" \
+                          " todos esses 'Mini-bosses' para que todo o reino não seja destruido.**\n" \
+                          "**`OBS`**: **Para batalhar com os mini-bosses, basta usar o `ash battle moon`. " \
                           "Você precisará ter uma `Stone of Moon`.**"
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 8 Evils of the Moon]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["mini-boss"])}/8**\n' \
                   f'`[MINI-BOSSES]:`\n{_MB}' \
-                  f'<:ash:834120294469730315> {Description}'
+                  f'<:ash:834120294469730315> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -675,15 +754,16 @@ class QuestClass(commands.Cog):
                 names += f"**{str(self.bot.get_guild(gui))}**\n"
 
             status = _QUEST["status"]
-            Description = "Olá caro(a) aventureiro(a), após a batalha com os mini-bosses, muitas vilas ficaram com muito prejuizo " \
-                          "e algumas foram totalmente destruidas e o rei ficou muito preocupado com isso. **Precisamos que você vá em 9 " \
-                          "servidores com mais de 50 membros e use comandos lá.** Isso será de suma importancia para que possamos " \
+            description = "Olá caro(a) aventureiro(a), após a batalha com os mini-bosses, muitas vilas ficaram com" \
+                          " muito prejuizo e algumas foram totalmente destruidas e o rei ficou muito preocupado" \
+                          " com isso. **Precisamos que você vá em 9 servidores com mais de 50 membros e use" \
+                          " comandos lá.** Isso será de suma importancia para que possamos " \
                           "calcular o tamanho do estrago feito no reino todo."
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 9 Villages]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["villages"])}/9**\n' \
                   f'`[VILLAGES]`:\n{names}' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -716,7 +796,7 @@ class QuestClass(commands.Cog):
         if "the_ten_provinces" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_ten_provinces"]
             if _QUEST["status"] == "completed":
-                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 10 - Provinces]** `já foi terminada!`'
+                msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 10 Provinces]** `já foi terminada!`'
                 embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
@@ -725,21 +805,23 @@ class QuestClass(commands.Cog):
                 names += f"**{str(self.bot.get_channel(pro))}**\n"
 
             status = _QUEST["status"]
-            Description = "Olá caro(a) guerreiro(a), um nobre estava querendo que seus equipamentos fossem mais poderosos " \
-                          "que outros no reino, mas o mago mestre que ele visitou, não possui todos os encantamentos possiveis para " \
-                          "realizar tal façanha. **Para isso, ele precisa que você vá em cada província e tente criar um encantamento " \
-                          "com o `ash create`**."
-            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 10 - Provinces]**\n' \
+
+            description = "Olá caro(a) guerreiro(a), um nobre estava querendo que seus equipamentos fossem mais " \
+                          "poderosos que outros no reino, mas o mago mestre que ele visitou, não possui todos os " \
+                          "encantamentos possiveis para realizar tal façanha. **Para isso, ele precisa que você vá " \
+                          "em cada província e tente criar um encantamento com o `ash create`**."
+
+            msg = f'<:alert:739251822920728708>│`QUEST:` **[The 10 Provinces]**\n' \
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["provinces"])}/10**\n' \
                   f'`[PROVINCES]`:\n{names}' \
-                  f'<:afs:530031864350507028> {Description}'
+                  f'<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_ten_provinces = {"provinces": list(), "status": "in progress"}
         update['rpg']['quests']["the_ten_provinces"] = the_ten_provinces
-        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 10 - Provinces]** ' \
+        msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 10 Provinces]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)
