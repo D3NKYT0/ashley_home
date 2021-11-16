@@ -180,6 +180,7 @@ user_data_structure = {
             },
             "reward": dict(),
             "cooldown": dict(),
+            "mails": dict(),
             "event": dict(),
             "research": dict(),
             "stickers": dict()

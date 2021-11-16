@@ -114,7 +114,7 @@ class Ashley(commands.AutoShardedBot):
         # status
         self.is_ashley = False  # Default: False
         self.d_event = [2021, 10, 31, (11, 7)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "HALLOWEEN"  # NOME DO EVENTO ATUAL
+        self.event_now = "NENHUM EVENTO OCORRENDO..."  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
@@ -259,7 +259,7 @@ class Ashley(commands.AutoShardedBot):
             query_g = {"_id": 0, "guild_id": 1, "data": 1, "vip": 1, "available": 1}
             data_guild = await (await self.db.cd("guilds")).find_one({"guild_id": ctx.guild.id}, query_g)
             query_u = {"_id": 0, "user_id": 1, "security": 1, "user": 1, "inventory": 1,
-                       "config": 1, "cooldown": 1, "treasure": 1, "rpg": 1, "guild_id": 1}
+                       "config": 1, "cooldown": 1, "treasure": 1, "rpg": 1, "guild_id": 1, "mails": 1}
             data_user = await (await self.db.cd("users")).find_one({"user_id": ctx.author.id}, query_u)
             query_user, query_guild = {"$set": {}, "$inc": {}}, {}
 
@@ -829,8 +829,11 @@ class Ashley(commands.AutoShardedBot):
                     all_data = [data async for data in mail_collection.find()]
                     mail = 0
                     for data in all_data:
-                        if data['global'] is True and ctx.author.id not in data['received']:
-                            mail += 1
+                        MAIL_GUILD = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
+                        MAIL_USER = data_user["mails"][data['_id']]
+                        if data['global'] and not MAIL_USER or ctx.author.id in data['benefited'] or MAIL_GUILD and not MAIL_USER:
+                            if not MAIL_USER:
+                                mail += 1
                     if mail > 0:
                         msg = f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} CORRESPONDÊNCIA(S) NÃO LIDOS. PARA " \
                               f"LER SUAS CORRESPONDÊNCIAS, USE O COMANDO ASH MAIL READ.`"
