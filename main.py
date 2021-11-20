@@ -829,10 +829,14 @@ class Ashley(commands.AutoShardedBot):
                     all_data = [data async for data in mail_collection.find()]
                     mail = 0
                     for data in all_data:
-                        MAIL_GUILD = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
-                        MAIL_USER = data_user["mails"][data['_id']]
-                        if data['global'] and not MAIL_USER or ctx.author.id in data['benefited'] or MAIL_GUILD and not MAIL_USER:
-                            if not MAIL_USER:
+                        _GB, _BN = data['guilds_benefited'], data['benefited']
+                        mail_guild = data_user["guild_id"] in _GB if _GB else None
+                        if data['_id'] in data_user["mails"].keys():
+                            mail_user = data_user["mails"][data['_id']]
+                        else:
+                            mail_user = False
+                        if data['global'] and not mail_user or ctx.author.id in _BN or mail_guild and not mail_user:
+                            if not mail_user:
                                 mail += 1
                     if mail > 0:
                         msg = f"<a:blue:525032762256785409> | `VOCÊ TEM {mail} CORRESPONDÊNCIA(S) NÃO LIDOS. PARA " \
