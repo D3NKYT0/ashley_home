@@ -32,7 +32,7 @@ class RecipeClass(commands.Cog):
     async def craft(self, ctx, *, item=None):
         """Comando para criar itens de receitas, para fabricar suas armaduras."""
         global quant
-        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1, "rpg": 1}
+        query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1, "rpg": 1, "config": 1}
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         query_user = {"$inc": {}}
 
@@ -260,7 +260,7 @@ class RecipeClass(commands.Cog):
                     _QUEST = data_user['rpg']['quests']["the_six_potions"]
                     if _QUEST["status"] == "in progress" and data_user['config']['provinces'] is not None:
                         if item in self.potion:
-                            if item not in data_user['rpg']['quests']["the_six_potions"]["provinces"]:
+                            if item not in data_user['rpg']['quests']["the_six_potions"]["potions"]:
                                 data_user['rpg']['quests']["the_six_potions"]["potions"].append(item)
                                 the_six_potions = data_user['rpg']['quests']["the_six_potions"]
                                 if "$set" not in query_user.keys():
