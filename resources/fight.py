@@ -210,7 +210,7 @@ class Entity(object):
             icon, skill_type = self.skills[c2]['icon'], self.skills[c2]['type']
             emojis.append(self.skills[c2]['icon'])
 
-            if self.limit[_] >= self.skills[attacks[_]]['limit'][ls]:
+            if self.limit[_] >= self.skills[attacks[_ + 1]]['limit'][ls]:
                 icon = "<:skill_limit:912156419527172107>"
 
             try:
@@ -918,14 +918,15 @@ class Entity(object):
 
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
-        _defense = randint(int(defense / 2), defense) if defense > 2 else defense
+            
+        _defense = randint(int(defense * 0.50), defense) if defense > 2 else defense
 
         if "reflect" in entity.effects.keys():
             reflect, damage = True, int(damage / 2)
             entity.effects['reflect']['damage'] = damage
 
         armor_now = _defense if _defense > 0 else 1
-        armor_now = randint(int(armor_now * 0.75), armor_now)
+        armor_now = randint(int(armor_now * 0.50), armor_now)
 
         # efeito da hold
         if hold:

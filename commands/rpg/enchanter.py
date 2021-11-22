@@ -209,6 +209,8 @@ class EnchanterClass(commands.Cog):
         Use ash enchant add numero_da_skill"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
+        
+        _class = update["rpg"]["class_now"]
 
         if not update['rpg']['active']:
             embed = discord.Embed(
@@ -250,12 +252,12 @@ class EnchanterClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if update['rpg']['skills'][int(skill) - 1] == limit:
+        if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] == limit:
             msg = '<:negate:721581573396496464>│`ESSA SKILL JA ATINGIU O ENCANTAMENTO MAXIMO!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if update['rpg']['skills'][int(skill) - 1] >= 10:
+        if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] >= 10:
             try:
                 if update['inventory']['angel_wing'] >= 1:
                     update['inventory']['angel_wing'] -= 1
@@ -304,7 +306,7 @@ class EnchanterClass(commands.Cog):
                 chance = 0
 
         if chance < self.up_chance:
-            update['rpg']['skills'][int(skill) - 1] += 1
+            update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] += 1
             await self.bot.db.update_data(data, update, "users")
 
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
@@ -321,9 +323,9 @@ class EnchanterClass(commands.Cog):
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
         else:
-            update['rpg']['skills'][int(skill) - 1] -= 1
-            if update['rpg']['skills'][int(skill) - 1] < 0:
-                update['rpg']['skills'][int(skill) - 1] = 0
+            update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] -= 1
+            if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] < 0:
+                update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] = 0
             await self.bot.db.update_data(data, update, "users")
 
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
