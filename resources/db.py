@@ -536,18 +536,20 @@ class DataInteraction(object):
             await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
     async def add_xp(self, ctx, exp):  # atualizado no banco de dados
+        _LEVEL_MAXIMO = 100  # para alterar o level maximo (apenas mude esse level)
+        _limit = _LEVEL_MAXIMO - 1
         query, query_user = {"_id": 0, "user_id": 1, "rpg": 1}, dict()
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         _name = data_user['rpg']["class_now"]
         _class = data_user["rpg"]["sub_class"][_name]
-        if _class['level'] < 81:
+        if _class['level'] < _LEVEL_MAXIMO:
             if "$inc" not in query_user.keys():
                 query_user["$inc"] = dict()
 
             _class['xp'] += exp
             query_user["$inc"][f"rpg.sub_class.{_name}.xp"] = exp
             lvl, xp = _class['level'], _class['xp']
-            _class['xp'] = ((lvl + 1) ** 5) - 1 if int(xp ** 0.2) == 81 else xp
+            _class['xp'] = ((lvl + 1) ** 5) - 1 if int(xp ** 0.2) == _LEVEL_MAXIMO else xp
             experience, lvl_anterior = _class['xp'], _class['level']
             lvl_now = int(experience ** 0.2) if lvl_anterior > 1 else 2
             if lvl_anterior < lvl_now and not _class['level_max']:
@@ -556,18 +558,18 @@ class DataInteraction(object):
 
                 pdh = lvl_now - lvl_anterior if lvl_now - lvl_anterior > 0 else 1
                 coins = pdh * 200
-                query_user["$set"][f"rpg.sub_class.{_name}.level"] = lvl_now if lvl_now < 81 else 80
-                query_user["$inc"]["rpg.status.pdh"] = pdh if lvl_now < 81 else 0
-                if lvl_now < 81:
+                query_user["$set"][f"rpg.sub_class.{_name}.level"] = lvl_now if lvl_now < _LEVEL_MAXIMO else _limit
+                query_user["$inc"]["rpg.status.pdh"] = pdh if lvl_now < _LEVEL_MAXIMO else 0
+                if lvl_now < _LEVEL_MAXIMO:
                     query_user["$inc"]["inventory.coins"] = coins
 
-                if lvl_now == 26 and lvl_now < 81:
+                if lvl_now == 26 and lvl_now < _LEVEL_MAXIMO:
                     msg = f'🎊 **PARABENS** 🎉 {ctx.author.mention} `você upou no RPG para o level` **{lvl_now},** ' \
                           f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`\n' \
                           f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
                     img = "https://i.gifer.com/143t.gif"
 
-                elif lvl_now < 81:
+                elif lvl_now < _LEVEL_MAXIMO:
                     msg = f'🎊 **PARABENS** 🎉 {ctx.author.mention} `você upou no RPG para o level` **{lvl_now},** ' \
                           f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`'
                     img = "https://i.pinimg.com/originals/7e/58/1c/7e581c87b8cf5cdae354258789b2fc32.gif"

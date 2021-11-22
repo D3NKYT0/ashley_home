@@ -130,11 +130,11 @@ class InventoryClass(commands.Cog):
                 "skin": data['rpg']['skin'],
 
                 "status_base": {
-                    "atk": str(data['rpg']['status']['atk']),
-                    "dex": str(data['rpg']['status']['agi']),
-                    "acc": str(data['rpg']['status']['prec']),
-                    "con": str(data['rpg']['status']['con']),
-                    "luk": str(data['rpg']['status']['luk'])
+                    "atk": str(data['rpg']["sub_class"][_class]['status']['atk']),
+                    "dex": str(data['rpg']["sub_class"][_class]['status']['agi']),
+                    "acc": str(data['rpg']["sub_class"][_class]['status']['prec']),
+                    "con": str(data['rpg']["sub_class"][_class]['status']['con']),
+                    "luk": str(data['rpg']["sub_class"][_class]['status']['luk'])
                 },
 
                 "status_class": {
@@ -399,7 +399,9 @@ class InventoryClass(commands.Cog):
         _classes = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_classes]
 
-        if "hero" in item and _db_class['level'] < 80:
+        if "divine" in item and _db_class['level'] < 99:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ SÓ PODE USAR ESSE ITEM NO LEVEL 99!`")
+        elif "hero" in item and _db_class['level'] < 80:
             return await ctx.send("<:negate:721581573396496464>│`VOCÊ SÓ PODE USAR ESSE ITEM NO LEVEL 80!`")
         elif "violet" in item and _db_class['level'] < 61:
             return await ctx.send("<:negate:721581573396496464>│`VOCÊ NÃO PODE USAR ESSE ITEM ABAIXO DO LEVEL 61!`")

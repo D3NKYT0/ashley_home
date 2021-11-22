@@ -57,12 +57,12 @@ class SkillClass(commands.Cog):
                 "avatar_member": member.avatar_url_as(format="png"),
                 "class_now": data['rpg']["class_now"],
                 "sub_class": data['rpg']["sub_class"],
-                "atk": str(data['rpg']['status']['atk']),
-                "dex": str(data['rpg']['status']['agi']),
-                "acc": str(data['rpg']['status']['prec']),
-                "con": str(data['rpg']['status']['con']),
-                "luk": str(data['rpg']['status']['luk']),
-                "pdh": str(data['rpg']['status']['pdh']),
+                "atk": str(data['rpg']["sub_class"][_class]['status']['atk']),
+                "dex": str(data['rpg']["sub_class"][_class]['status']['agi']),
+                "acc": str(data['rpg']["sub_class"][_class]['status']['prec']),
+                "con": str(data['rpg']["sub_class"][_class]['status']['con']),
+                "luk": str(data['rpg']["sub_class"][_class]['status']['luk']),
+                "pdh": str(data['rpg']["sub_class"][_class]['status']['pdh']),
                 "int": str(data['rpg']['intelligence']),
             }
 
@@ -188,38 +188,40 @@ class SkillClass(commands.Cog):
         if status.lower() == "dex":
             status = "agi"
 
-        if update['rpg']['status']['pdh'] < 0:
+        _class = update["rpg"]["class_now"]
+
+        if update['rpg']["sub_class"][_class]['status']['pdh'] < 0:
             return await ctx.send('<:negate:721581573396496464>│`Você não tem pontos de habilidades disponiveis!`')
-        if update['rpg']['status']['pdh'] < n:
+        if update['rpg']["sub_class"][_class]['status']['pdh'] < n:
             return await ctx.send(f'<:negate:721581573396496464>│`Você não {n} pontos de habilidades disponiveis!`')
 
-        if status.lower() == "con" and update['rpg']['status']['con'] + n > 40:
+        if status.lower() == "con" and update['rpg']["sub_class"][_class]['status']['con'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 40 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if status.lower() == "prec" and update['rpg']['status']['prec'] + n > 20:
+        if status.lower() == "prec" and update['rpg']["sub_class"][_class]['status']['prec'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if status.lower() == "agi" and update['rpg']['status']['agi'] + n > 20:
+        if status.lower() == "agi" and update['rpg']["sub_class"][_class]['status']['agi'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if status.lower() == "atk" and update['rpg']['status']['atk'] + n > 40:
+        if status.lower() == "atk" and update['rpg']["sub_class"][_class]['status']['atk'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 40 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if status.lower() == "luk" and update['rpg']['status']['luk'] + n > 20:
+        if status.lower() == "luk" and update['rpg']["sub_class"][_class]['status']['luk'] + n > 20:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        update['rpg']['status'][status.lower()] += n
-        update['rpg']['status']['pdh'] -= n
+        update['rpg']["sub_class"][_class]['status'][status.lower()] += n
+        update['rpg']["sub_class"][_class]['status']['pdh'] -= n
         await self.bot.db.update_data(data, update, "users")
 
         if status.lower() == "prec":
@@ -253,12 +255,12 @@ class SkillClass(commands.Cog):
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
 
-        update['rpg']['status']['con'] = 5
-        update['rpg']['status']['prec'] = 5
-        update['rpg']['status']['agi'] = 5
-        update['rpg']['status']['atk'] = 5
-        update['rpg']['status']['luk'] = 0
-        update['rpg']['status']['pdh'] = _db_class['level']
+        update['rpg']["sub_class"][_class]['status']['con'] = 5
+        update['rpg']["sub_class"][_class]['status']['prec'] = 5
+        update['rpg']["sub_class"][_class]['status']['agi'] = 5
+        update['rpg']["sub_class"][_class]['status']['atk'] = 5
+        update['rpg']["sub_class"][_class]['status']['luk'] = 0
+        update['rpg']["sub_class"][_class]['status']['pdh'] = _db_class['level']
 
         await self.bot.db.update_data(data, update, "users")
         await ctx.send('<:confirmed:721581574461587496>│`Status resetados com sucesso!`')

@@ -56,12 +56,17 @@ class EnchanterClass(commands.Cog):
 
             self.atacks = {}
             data_player = extension.set_player(ctx.guild.get_member(ctx.author.id), data)
-            rate = [_class[data_player['class']]['rate']['life'], _class[data_player['class']]['rate']['mana']]
+            rate = [_class["default"]['rate']['life'], _class["default"]['rate']['mana']]
             if data_player['level'] > 25:
                 rate[0] += _class[data_player['class_now']]['rate']['life']
                 rate[1] += _class[data_player['class_now']]['rate']['mana']
+
+            lvl = data_player['level']
+            tot_mp = _class[data_player['class_now']]['tot_mana'] if lvl > 25 else _class['default']['tot_mana']
+            tot_mp += (rate[1] + data_player['mana_bonus']) * 2
+
             data_player['status']['hp'] = data_player['status']['con'] * rate[0]
-            data_player['status']['mp'] = data_player['status']['con'] * rate[1]
+            data_player['status']['mp'] = tot_mp
 
             self.db = data_player
             for c in range(5):
@@ -78,21 +83,30 @@ class EnchanterClass(commands.Cog):
                 c2, ls, _att = atacks[c], lvs, self.db['status']['atk']
 
                 if self.db['class_now'] in ['necromancer', 'wizard', 'warlock']:
-                    tot_atk = _att * 1.75
+                    tot_atk = _att * 1.6
                 elif self.db['class_now'] in ['assassin', 'priest']:
-                    tot_atk = _att * 1.5
+                    tot_atk = _att * 1.4
                 else:
-                    tot_atk = _att * 1.25
+                    tot_atk = _att * 1.2
 
                 dado = self.atacks[c2]['damage'][lvl_skill]
-                d1 = int(dado[:dado.find('d')])
-                d2 = int(dado[dado.find('d') + 1:])
+                d1, d2 = int(dado[:dado.find('d')]), int(dado[dado.find('d') + 1:])
                 dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
                 dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
                 dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
                 _atk = [int(tot_atk / 100 * (50 + c)), int(tot_atk / 100 * (50 + (c * 10)))]
-                damage = f"{_atk[0]}-{_atk[1]}" if _atk[0] != _atk[1] else f"{_atk[0]}"
-                bk = f"{dd[0]}-{dd[1]}" if dd[0] != dd[1] else f"{dd[0]}"
+
+                if _atk[0] != _atk[1]:
+                    if dd[0] != dd[1]:
+                        damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[1]}"
+                    else:
+                        damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[0]}"
+                else:
+                    if dd[0] != dd[1]:
+                        damage = f"{_atk[0] + dd[0]}-{_atk[0] + dd[1]}"
+                    else:
+                        damage = f"{_atk[0] + dd[0]}"
+
                 icon, skill_type = self.atacks[c2]['icon'], self.atacks[c2]['type']
 
                 try:
@@ -102,19 +116,18 @@ class EnchanterClass(commands.Cog):
                 except TypeError:
                     effect_skill = "sem efeito"
 
-                rm = int(((self.db['status']['con'] * _class[self.db['class_now']]['rate']['mana']) / 100) * 35)
-                ru = int(((self.db['status']['con'] * _class[self.db['class_now']]['rate']['mana']) / 100) * 50)
-                a_mana = self.atacks[c2]['mana'][lvl_skill] + self.db['level']
-                if self.db['level'] > 25:
-                    a_mana = self.atacks[c2]['mana'][lvl_skill] + (self.db['level'] * 2)
+                lsv = self.db["skill_level"][c][0]
+                rm = int((tot_mp / 100) * 35)
+                ru = int((tot_mp / 100) * 50)
+                a_mana = self.atacks[c2]['mana'][lsv]
                 _mana = a_mana if effect_skill != "cura" else rm
                 _mana = ru if self.atacks[c2]['type'] == "especial" else _mana
+                lvn = lsv + 1
 
-                description += f"{icon} **{c2.upper()}** `+{ls}`\n" \
-                               f"`Dano:` **{damage} + {bk}** | `Tipo:` **{skill_type.upper()}**\n" \
-                               f"`Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
+                description += f"{icon} **{c2.upper()}** `+{lvl_skill}` | **{skill_type.upper()}** `Lv: {lvn}`\n" \
+                               f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
-            _TM = int(self.db['status']['con'] * _class[self.db['class_now']]['rate']['mana'])
+            _TM = int(tot_mp)
             description += f"`MDEF:` **{int(data_player['mdef'])}**  |  `PDEF:` **{int(data_player['pdef'])}**"
 
             embed = discord.Embed(title=f"ENCHANTER PANEL - TOTAL MANA: {_TM}", description=description, color=0x000000)

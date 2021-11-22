@@ -535,14 +535,14 @@ async def skill_points(database):
             show.text(xy=(x_, y_), text=_TEXT.upper(), fill=(255, 255, 255), font=font_text)
 
     # add text to img - skills
-    SK = 0
+    _SK = 0
     for k in desc.keys():
         font_text = ImageFont.truetype(f"{_PREFIX}fonts/bot.otf", 30)
-        _TEXT = f"{SKILLS[cn][str(SK)]['name'].upper()}"
+        _TEXT = f"{SKILLS[cn][str(_SK)]['name'].upper()}"
         x_, y_ = text_align(desc[k], _TEXT, font_text)
         show.text(xy=(x_ + 1, y_ + 1), text=_TEXT, fill=(0, 0, 0), font=font_text)
         show.text(xy=(x_, y_), text=_TEXT, fill=(50, 50, 150), font=font_text)
-        SK += 1
+        _SK += 1
 
     # add text to img
     for k in rectangles.keys():
@@ -565,7 +565,8 @@ async def skill_points(database):
             show.text(xy=(x_ + 1, y_ - 2), text=str(xp_lvl[k]).upper(), fill=(0, 0, 0), font=font_number)
             show.text(xy=(x_, y_ - 3), text=str(xp_lvl[k]).upper(), fill=(255, 255, 255), font=font_number)
         elif k in ['atk', 'dex', 'acc', 'con', 'luk']:
-            font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 50)
+            size_font = 50 if len(database[k]) <= 2 else 40
+            font_number = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", size_font)
             x_, y_ = text_align(rectangles[k], database[k], font_number)
             show.text(xy=(x_ + 1, y_ - 5), text=database[k].upper(), fill=(0, 0, 0), font=font_number)
             show.text(xy=(x_, y_ - 6), text=database[k].upper(), fill=(255, 255, 255), font=font_number)
@@ -758,7 +759,8 @@ def equips(data_s):
         if key in ['base', 'class', 'equip']:
             for k in mapped[key].keys():
                 if k in ['atk', 'dex', 'acc', 'con', 'luk']:
-                    font = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 50)
+                    size_font = 50 if len(data_s[f"status_{key}"][k]) <= 2 else 40
+                    font = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", size_font)
                     x_, y_ = text_align(mapped[key][k], data_s[f"status_{key}"][k], font)
                     show.text(xy=(x_ + 1, y_ - 5), text=data_s[f"status_{key}"][k].upper(), fill=(0, 0, 0), font=font)
                     show.text(xy=(x_, y_ - 6), text=data_s[f"status_{key}"][k].upper(), fill=(255, 255, 255), font=font)

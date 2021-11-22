@@ -130,18 +130,30 @@ class RpgStart(commands.Cog):
                 "skin": "default",
                 "skins": list(),
                 "sub_class": {
-                    "paladin": {"level": 1, "xp": 0, "level_max": False},
-                    "warrior": {"level": 1, "xp": 0, "level_max": False},
-                    "necromancer": {"level": 1, "xp": 0, "level_max": False},
-                    "wizard": {"level": 1, "xp": 0, "level_max": False},
-                    "warlock": {"level": 1, "xp": 0, "level_max": False},
-                    "assassin": {"level": 1, "xp": 0, "level_max": False},
-                    "priest": {"level": 1, "xp": 0, "level_max": False}
+                    "paladin": {"level": 1, "xp": 0, "level_max": False,
+                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "warrior": {"level": 1, "xp": 0, "level_max": False,
+                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "necromancer": {"level": 1, "xp": 0, "level_max": False,
+                                    "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                                    'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "wizard": {"level": 1, "xp": 0, "level_max": False,
+                               "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                               'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "warlock": {"level": 1, "xp": 0, "level_max": False,
+                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "assassin": {"level": 1, "xp": 0, "level_max": False,
+                                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                                 'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
+                    "priest": {"level": 1, "xp": 0, "level_max": False,
+                               "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
+                               'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]}
                 },
-                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
                 "intelligence": 0,
                 'items': set_ini,
-                'skills': [0, 0, 0, 0, 0],
                 "armors": {
                     "shoulder": [0, 0, 0, 0, 0, 0],
                     "breastplate": [0, 0, 0, 0, 0, 0],
@@ -175,7 +187,6 @@ class RpgStart(commands.Cog):
                     "`Qualquer duvida use os comandos:`\n**ash wiki <nome do que voce quer saber>** `e` **ash help**"
 
         else:
-            pdh = update['rpg']['sub_class'][asks['class_now']]["level"]
             rpg = {
                 "active": True,
                 "class": 'default',
@@ -185,10 +196,8 @@ class RpgStart(commands.Cog):
                 "skins": update['rpg']['skins'],
                 "vip": update['rpg']['vip'],
                 "sub_class": update['rpg']['sub_class'],
-                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": pdh},
                 "intelligence": update['rpg']['intelligence'],
                 'items': update['rpg']['items'],
-                'skills': update['rpg']['skills'],
                 "armors": update['rpg']['armors'],
                 'equipped_items': update['rpg']['equipped_items'],
                 "activated_at": update['rpg']['activated_at'],

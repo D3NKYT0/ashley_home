@@ -5,7 +5,6 @@ from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
 from asyncio import sleep, TimeoutError
-from resources.utility import create_id
 from zlib import compress, decompress
 
 
@@ -26,19 +25,26 @@ class MailClass(commands.Cog):
             mails = list()
             item_mails = dict()
             for data in all_data:
+
+                # verificação do mail
+                if "active" in data.keys():
+                    if not data["active"]:
+                        continue
+
                 try:
-                    MAIL_USER = data_user['mails'][data['_id']]
+                    mail_user = data_user['mails'][data['_id']]
                 except KeyError:
-                    MAIL_USER = None
-                MAIL_GUILD = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
-                if data['global'] and not MAIL_USER or ctx.author.id in data['benefited'] or MAIL_GUILD and not MAIL_USER:
+                    mail_user = None
+                mail_guild = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
+                _bn = data['benefited']
+                if data['global'] and not mail_user or ctx.author.id in _bn or mail_guild and not mail_user:
                     mail += 1
                     for k, v in data.items():
                         if k == 'title':
                             mails.append(v)
                             item_mails[v] = data
                             
-                elif MAIL_USER:
+                elif mail_user:
                     mail += 1
                     for k, v in data.items():
                         if k == 'title':
@@ -64,20 +70,23 @@ class MailClass(commands.Cog):
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
         mail_collection = await self.bot.db.cd("mails")
+        data, mail_user, mail_guild = dict(), dict(), dict()
         all_data = [data async for data in mail_collection.find()]
-        for data in all_data:
+        for d in all_data:
+            data = d
             try:
-                MAIL_USER = data_user['mails'][data['_id']]
+                mail_user = data_user['mails'][data['_id']]
             except KeyError:
-                MAIL_USER = None
-            MAIL_GUILD = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
+                mail_user = None
+            mail_guild = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
+            _bn = data['benefited']
             if id_mail in data['_id']:
                 find_id = True
-                if data['global'] and not MAIL_USER or ctx.author.id in data['benefited'] or MAIL_GUILD and not MAIL_USER:
+                if data['global'] and not mail_user or ctx.author.id in _bn or mail_guild and not mail_user:
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
-                elif MAIL_USER:
+                elif mail_guild:
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
@@ -102,7 +111,7 @@ class MailClass(commands.Cog):
         message = await ctx.send(embed=embed)
 
         benefited = item_mails[id_mail]['benefited']
-        if item_mails[id_mail]['global'] and not MAIL_USER or ctx.author.id in benefited:
+        if item_mails[id_mail]['global'] and not mail_user or ctx.author.id in benefited:
             await message.add_reaction('📬')    
 
         try:
@@ -115,11 +124,12 @@ class MailClass(commands.Cog):
             await message.delete()
             loading = await ctx.send(f'<a:loading:520418506567843860>│`LENDO CORRESPONDÊNCIA...`')
             await sleep(3)
-            if MAIL_USER:
+            if mail_user:
                 return await loading.edit(content=f'<:negate:721581573396496464>│`VOCÊ JÁ LEU ESSA CORRESPONDÊNCIA !!`')
             for data in all_data:
                 if id_mail in data['_id']:
-                    if data['global'] and not MAIL_USER or ctx.author.id in data['benefited'] or MAIL_GUILD and not MAIL_USER:
+                    _bn = data['benefited']
+                    if data['global'] and not mail_user or ctx.author.id in _bn or mail_guild and not mail_user:
                         if not data['global']:
                             data['benefited'].remove(ctx.author.id)
                             record = {"$set": {"benefited": data['benefited']}}
@@ -153,7 +163,7 @@ class MailClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @mail.command(name='create', aliases=['criar'])
     async def _create_mail(self, ctx):
-        asks = {'_id': None, 'issuer': ctx.author.id, 'title': None, 'text': None, 'gift': None,
+        asks = {'_id': None, "active": True, 'issuer': ctx.author.id, 'title': None, 'text': None, 'gift': None,
                 'global': False, 'benefited': [], 'guilds_benefited': []}
 
         msg = f"<a:blue:525032762256785409>|`QUAL O TITULO DO E-MAIL ?`"
@@ -243,17 +253,16 @@ class MailClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         if resp.content.lower() == 'global':
-            asks['guilds_benefited'] = None
+            asks['guilds_benefited'] = list()
         else:
             resp = resp.content.split(', ')
             ids = []
             [ids.append(int(i)) for i in resp]
             asks['guilds_benefited'] = ids
 
-
         mail_collection = await self.bot.db.cd("mails")
-        ID = await mail_collection.count_documents({}) + 1
-        asks["_id"] = str(ID)
+        _id = await mail_collection.count_documents({}) + 1
+        asks["_id"] = str(_id)
         await mail_collection.insert_one(asks)
 
         msg = f"<:confirmed:721581574461587496>│`E-MAIL CRIADO COM SUCESSO !`"
@@ -265,10 +274,15 @@ class MailClass(commands.Cog):
     @mail.command(name='delete', aliases=['excluir'])
     async def _delete_mail(self, ctx, id_mail: str):
         mail_collection = await self.bot.db.cd("mails")
-        await mail_collection.delete_one({'_id': id_mail.upper()})
-        msg = f"<:confirmed:721581574461587496>│`E-MAIL EXCLUIDO COM SUCESSO !`"
+        data = await mail_collection.find_one({'_id': id_mail.upper()})
+        if data is None:
+            msg = f"<:confirmed:721581574461587496>│`ID INVALIDO`"
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+        await mail_collection.update_one({'_id': id_mail.upper()}, {"$set": {"active": False}})
+        msg = f"<:confirmed:721581574461587496>│`E-MAIL DESABILITADO COM SUCESSO!`"
         embed = discord.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)    
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

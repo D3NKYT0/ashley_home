@@ -102,19 +102,19 @@ class Ashley(commands.AutoShardedBot):
 
         # definição do inicio e o fim da manutenção
         self.maintenance = False  # Default: False
-        self.maintenance_ini_end = ["19:00", "22:00"]  # inicio e fim da manutenção
+        self.maintenance_ini_end = ["13:00", "22:00"]  # inicio e fim da manutenção
         self.maintenance_msg = f"<a:xablau:525105065460105226>│`DESCULPE ESTOU EM MANUTENÇÃO. MAS DENTRO DE ALGUMAS" \
                                f" HORAS TUDO ESTARÁ NORMALIZADO. MANUTENÇÃO INICOU HOJE AS " \
                                f"({self.maintenance_ini_end[0]}) PREVISAO DE TERMINO " \
-                               f"({self.maintenance_ini_end[1]}) +1h-1h PODENDO DURAR UM POUCO MENOS OU MAIS`\n" \
+                               f"({self.maintenance_ini_end[1]}) +2h-2h PODENDO DURAR UM POUCO MENOS OU MAIS`\n" \
                                f"**OBS:** `ATUALMENTE APENAS PESSOAS AUTORIZADAS PODEM USAR OS RECURSOS DA ASHLEY," \
                                f" MAS LOGO TUDO ESTARÁ NORMALIZADO. A EQUIPE DA` **ASHLEY** `SENTE MUITO POR ESSE" \
                                f" TRANSTORNO!`"
 
         # status
         self.is_ashley = False  # Default: False
-        self.d_event = [2021, 10, 31, (11, 7)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "NENHUM EVENTO OCORRENDO..."  # NOME DO EVENTO ATUAL
+        self.d_event = [2021, 12, 1, (12, 31)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "NATAL / FIM DE ANO"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
@@ -401,13 +401,13 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(file=file, embed=embed)
+                            await ctx.send(file=file, embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # presente
-                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
+                elif randint(1, 200) <= self.rate_drop and user_status and cmd not in self.block:
                     list_boxes = []
                     for k, v in self.boxes.items():
                         list_boxes += [k] * v
@@ -435,13 +435,13 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed)
+                            await ctx.send(embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # figurinha
-                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
+                elif randint(1, 200) <= self.rate_drop and user_status and cmd not in self.block:
                     amount = randint(2, 5)
                     if ctx.guild.id not in self.sticker:
                         self.sticker[ctx.guild.id] = amount
@@ -461,13 +461,13 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed)
+                            await ctx.send(embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
                 # moon bag
-                elif randint(1, 100) <= self.rate_drop and user_status and cmd not in self.block:
+                elif randint(1, 200) <= self.rate_drop and user_status and cmd not in self.block:
                     amount = randint(1, 3)
                     if ctx.guild.id not in self.moon_bag:
                         self.moon_bag[ctx.guild.id] = amount
@@ -488,7 +488,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed)
+                            await ctx.send(embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -528,7 +528,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(file=file, embed=embed)
+                            await ctx.send(file=file, embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")

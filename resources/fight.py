@@ -55,6 +55,9 @@ class Entity(object):
         self.soulshot = self.data['soulshot'] if self.is_player else None
         self.evasion = 0
 
+        # limit de uso de skill
+        self.limit = [0, 0, 0, 0, 0]  # skill 1 a 5
+
         if self.is_player:
             self._class = self.data['class'] if self.level < 26 else self.data['class_now']
             self.combo = CLS[self._class]['combo']
@@ -67,7 +70,7 @@ class Entity(object):
                 else:
                     self.skills[CLS[self.data['class']][str(c)]['name']] = CLS[self.data['class']][str(c)]
 
-            self.rate = [CLS[self._class]['rate']['life'], CLS[self._class]['rate']['mana']]
+            self.rate = [CLS["default"]['rate']['life'], CLS["default"]['rate']['mana']]
             if self.data['level'] > 25:
                 self.rate[0] += CLS[self.data['class_now']]['rate']['life']
                 self.rate[1] += CLS[self.data['class_now']]['rate']['mana']
@@ -76,7 +79,9 @@ class Entity(object):
             self.combo_cont, self.next = 0, 0
 
             # definição do HP TOTAL e da MANA TOTAL
-            self.tot_hp, self.tot_mp = self.status['con'] * self.rate[0], self.status['con'] * self.rate[1]
+            self.tot_hp, lvl = self.status['con'] * self.rate[0], self.data['level']
+            self.tot_mp = CLS[self.data['class_now']]['tot_mana'] if lvl > 25 else CLS["default"]['tot_mana']
+            self.tot_mp += (self.rate[1] + self.data['mana_bonus']) * 2
             self.status['hp'], self.status['mp'] = self.tot_hp, self.tot_mp
 
         else:
@@ -106,7 +111,11 @@ class Entity(object):
     async def verify_equips(self, ctx):
         for value in self.data["equipped_items"].values():
             if value in equips_list.keys():
-                if "hero" in equips_list[value]["name"] and self.data['level'] < 80:
+                if "divine" in equips_list[value]["name"] and self.data['level'] < 99:
+                    await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DO SEU LEVEL!`\n"
+                                   "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
+                    return "BATALHA-CANCELADA"
+                elif "hero" in equips_list[value]["name"] and self.data['level'] < 80:
                     await ctx.send("<:negate:721581573396496464>│`VOCÊ TEM UM ITEM QUE NAO É DO SEU LEVEL!`\n"
                                    "`PARA CONCERTAR ISSO USE O COMANDO:` **ASH E RESET**")
                     return "BATALHA-CANCELADA"
@@ -152,11 +161,11 @@ class Entity(object):
     def calc_skill_attack(self, now, _att, lvs, c2):
 
         if self.cc[1] in ['necromancer', 'wizard', 'warlock']:
-            tot_atk = _att * 1.75
+            tot_atk = _att * 1.6
         elif self.cc[1] in ['assassin', 'priest']:
-            tot_atk = _att * 1.5
+            tot_atk = _att * 1.4
         else:
-            tot_atk = _att * 1.25
+            tot_atk = _att * 1.2
 
         self.ls = lvs if 0 <= lvs <= 9 else 9
         ls, dado = self.ls, self.skills[c2]['damage'][self.ls]
@@ -182,38 +191,44 @@ class Entity(object):
     def get_skill_menu(self, entity, user, skills, wave_now):
         hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
         _mp, ehp, econ, err = self.status['mp'], entity.status['hp'], entity.status['con'], entity.rate[0]
+        hate_no_limit = 0
 
         extra = f" | WAVE: {wave_now}" if self.is_wave else ""
 
         title = f"{_emo[1]}:  [ {_hp if _hp > 0 else 0} / {_con * rr[0]} ]  |  " \
-                f"{_emo[2]}:  [ {_mp if _mp > 0 else 0} / {_con * rr[1]} ]\n" \
+                f"{_emo[2]}:  [ {_mp if _mp > 0 else 0} / {self.tot_mp} ]\n" \
                 f"{_emo[0]}: {_ini} - [ {ehp if ehp > 0 else 0} / {econ * err} ] | LVL - {entity.level}{extra}"
 
-        description, tot, attacks = '', len(skills), dict()
+        description = f"**0** - <:skill_base:912134358813523989> **SKILL BASE** | **COMUM** \n" \
+                      f"`Dano:` **Base** | `Mana:` **0** | `Efeito(s):` **sem efeito**\n\n"
+        tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
             attacks[_ + 1], lvs, c2, _att = skills[_], self.level_skill[_], skills[_], self.status['atk']
+            ls = self.data["skill_level"][_][0]
 
             damage = self.calc_skill_attack(_, _att, lvs, c2)
             icon, skill_type = self.skills[c2]['icon'], self.skills[c2]['type']
             emojis.append(self.skills[c2]['icon'])
+
+            if self.limit[_] >= self.skills[attacks[_]]['limit'][ls]:
+                icon = "<:skill_limit:912156419527172107>"
 
             try:
                 effect_skill = ", ".join(list(self.skills[c2]['effs'][self.ls].keys()))
             except (KeyError, TypeError):
                 effect_skill = "sem efeito"
 
-            rm = int(((self.status['con'] * self.rate[1]) / 100) * 35)
-            ru = int(((self.status['con'] * self.rate[1]) / 100) * 50)
-            a_mana = self.skills[c2]['mana'][self.ls]
-            a_mana += self.level if 25 < self.level < 50 else a_mana
-            a_mana += self.level * 2 if self.level >= 50 else a_mana
+            rm = int((self.tot_mp / 100) * 35)
+            ru = int((self.tot_mp / 100) * 50)
+            a_mana = self.skills[c2]['mana'][ls]
             _mana = a_mana if effect_skill != "cura" else rm
             _mana = ru if self.skills[c2]['type'] == "especial" else _mana
+            lvn = ls + 1
 
-            description += f"**{_ + 1}** - {icon} **{c2.upper()}** `+{lvs}` | **{skill_type.lower()}**\n" \
+            description += f"**{_ + 1}** - {icon} **{c2.upper()}** `+{lvs}` | **{skill_type.lower()}** `Lv: {lvn}`\n" \
                            f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
-        regen = int(((self.status['con'] * self.rate[1]) / 100) * 50)
+        regen = int((self.tot_mp / 100) * 50)
         pl = 3 if not self.is_wave else 3 + (wave_now // 2)
 
         description += f'**{tot + 1}** - <:MP:774699585620672534> **{"Pass turn MP".upper()}**\n' \
@@ -240,7 +255,7 @@ class Entity(object):
             color=0x000000
         )
         embed.set_author(name=user.name, icon_url=user.avatar_url)
-        return embed, attacks, hate_no_mana
+        return embed, attacks, hate_no_mana, hate_no_limit
 
     async def effects_resolve(self, ctx, effects, msg_return):
         type_effects = ["cegueira", "strike", "reflect", "confusion", "hold", "bluff"]
@@ -268,7 +283,7 @@ class Entity(object):
                             msg_return += f"{_text5}\n\n"
 
                     elif 'manadrain' in self.effects[c]['type']:
-                        damage = int(((self.status['con'] * self.rate[1]) / 100) * self.effects[c]['damage'])
+                        damage = int((self.tot_mp / 100) * self.effects[c]['damage'])
 
                         self.status['mp'] -= damage
                         if self.status['mp'] < 0:
@@ -318,22 +333,22 @@ class Entity(object):
                     self.ls = lvs if 0 <= lvs <= 9 else 9
                     if self.skill['effs'][self.ls]['cura']['type'] == "cura":
                         percent = self.skill['effs'][self.ls]['cura']['damage']
-                        regen = int(((self.status['con'] * self.rate[0]) / 100) * percent)
-                        if (self.status['hp'] + regen) <= (self.status['con'] * self.rate[0]):
+                        regen = int((self.tot_hp / 100) * percent)
+                        if (self.status['hp'] + regen) <= self.tot_hp:
                             self.status['hp'] += regen
                         else:
-                            self.status['hp'] = (self.status['con'] * self.rate[0])
+                            self.status['hp'] = self.tot_hp
                         _text3 = f'**{self.name.upper()}** `recuperou` **{regen}** `de HP`'
                         msg_return += f"{_text3}\n\n"
                         self.skill = None
                 else:
                     if self.skill['effs']['cura']['type'] == "cura":
                         percent = self.skill['effs']['cura']['damage']
-                        regen = int(((self.status['con'] * self.rate[0]) / 100) * percent)
-                        if (self.status['hp'] + regen) <= (self.status['con'] * self.rate[0]):
+                        regen = int((self.tot_hp / 100) * percent)
+                        if (self.status['hp'] + regen) <= self.tot_hp:
                             self.status['hp'] += regen
                         else:
-                            self.status['hp'] = (self.status['con'] * self.rate[0])
+                            self.status['hp'] = self.tot_hp
                         _text4 = f'**{self.name.upper()}** `recuperou` **{regen}** `de HP`'
                         msg_return += f"{_text4}\n\n"
                         self.skill = None
@@ -374,13 +389,13 @@ class Entity(object):
         if stun is False and ice is False:
             if self.is_player:
                 response = self.get_skill_menu(entity, user, skills, wave_now)
-                embed, attacks, hate_no_mana = response[0], response[1], response[2]
+                embed, attacks, hate_no_mana, hate_no_limit = response[0], response[1], response[2], response[3]
                 await ctx.send(embed=embed)
 
                 while not ctx.bot.is_closed():
                     def check(m):
                         if m.author.id == user.id and m.channel.id == ctx.channel.id:
-                            if m.content in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                            if m.content in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                                 return True
                         return False
 
@@ -392,9 +407,18 @@ class Entity(object):
                     # verificador se esta sendo feito o combo
                     self.verify_combo(int(answer.content) - 1)
 
+                    # verificador de limit de skill
+                    skill_now, limit_now = int(answer.content), False
+                    if skill_now in [n + 1 for n in range(len(skills))]:
+                        ls = self.data["skill_level"][skill_now - 1][0]  # verificando o lvl atual da skill
+                        if self.limit[skill_now - 1] < self.skills[attacks[skill_now]]['limit'][ls]:
+                            self.limit[skill_now - 1] += 1
+                        else:
+                            limit_now = True
+
                     if int(answer.content) == len(skills) + 1:
                         # regeneração de MP
-                        regen = int(((self.status['con'] * self.rate[1]) / 100) * 50)
+                        regen = int((self.tot_mp / 100) * 50)
                         if (self.status['mp'] + regen) <= self.tot_mp:
                             self.status['mp'] += regen
                         else:
@@ -435,17 +459,21 @@ class Entity(object):
                         self.combo_cont = 0
                         break
 
+                    if int(answer.content) == 0:
+                        self.skill = {"name": "Basic Damage", "effs": None,
+                                      "damage": ["5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6"],
+                                      "type": "especial", "mana": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                      "limit": [99, 99, 99, 99, 99, 99, 99, 99, 99, 99], "skill": 0,
+                                      "icon": "", "img": "https://i.imgur.com/KJSLp0h.jpg"}
+                        break
+
                     potion_msg = False
                     for c in attacks.keys():
                         if int(c) == int(answer.content) or len(skills) + 2 == int(answer.content):
                             if int(c) == int(answer.content):
 
-                                lvs = self.level_skill[self.skills[attacks[c]]['skill'] - 1]
-                                self.ls = lvs if 0 <= lvs <= 9 else 9
-                                a_mana = self.skills[attacks[c]]['mana'][self.ls]
-                                a_mana += self.level if 25 < self.level < 50 else a_mana
-                                a_mana += self.level * 2 if self.level >= 50 else a_mana
-                                remove = a_mana
+                                ls = self.data["skill_level"][self.skills[attacks[c]]['skill'] - 1][0]
+                                remove = self.skills[attacks[c]]['mana'][ls]
 
                                 try:
                                     skill_effs = [k for k, v in self.skills[attacks[c]]['effs'][self.ls].items()]
@@ -490,6 +518,23 @@ class Entity(object):
                                                        f" cancelada e voce perdeu:` **{user.name.upper()}**")
 
                                         return "BATALHA-CANCELADA"
+
+                            elif limit_now:
+                                embed = discord.Embed(
+                                    description=f"`{user.name.upper()} VOCÊ ATINGIU O LIMITE DESSA HABILDIADE!`\n"
+                                                f"`ENTÃO ESCOLHA OUTRA SKILL OU PASSE A VEZ...`\n"
+                                                f"**Obs:** Passar a vez regenera a mana ou vida!",
+                                    color=0x000000
+                                )
+                                embed.set_author(name=user.name, icon_url=user.avatar_url)
+                                await ctx.send(embed=embed)
+                                self.next = 0  # possivel causa da perca do combo!
+                                hate_no_limit += 1
+                                if hate_no_limit > 5:
+                                    await ctx.send(f"`Ficar repetindo esse tipo de msg no mesmo turno é "
+                                                   f"considerado pratica` **ANTI-JOGO** `por isso a batalha foi"
+                                                   f" cancelada e voce perdeu:` **{user.name.upper()}**")
+                                    return "BATALHA-CANCELADA"
 
                             elif self.status['mp'] >= remove:
                                 self.status['mp'] -= remove
@@ -631,7 +676,8 @@ class Entity(object):
                 msg_return += f"{_text1}\n\n"
 
             if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
-                self.skill = self.skills[self.skill]
+                if not isinstance(self.skill, dict):
+                    self.skill = self.skills[self.skill]
 
         else:
             _text2 = f'**{self.name.upper()}** `esta` **{"STUNADO" if stun else "CONGELADO"}**'
@@ -639,7 +685,7 @@ class Entity(object):
 
         msg_return = self.health_effect_resolve(msg_return)
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return)
-        hp_max, monster, img_ = self.status['con'] * self.rate[0], not self.is_player, None
+        hp_max, monster, img_ = self.tot_hp, not self.is_player, None
         embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.name)
 
         if msg_return != "":
@@ -1045,6 +1091,14 @@ class Ext(object):
         db_player["img"] = user.avatar_url_as(format="png")
         db_player["pdef"], db_player["mdef"] = 0, 0
         _db_class = data["rpg"]["sub_class"][_class]
+
+        # novidades da atualização
+        db_player["mana_bonus"] = int(_db_class["status"]["con"])
+        db_player["atk_bonus"] = int(_db_class["status"]["atk"])
+        db_player["status"] = _db_class["status"]
+        db_player["skills"] = _db_class["skills"]
+        db_player["skill_level"] = _db_class["skill_level"]
+
         db_player["xp"], db_player["level"] = _db_class["xp"], _db_class["level"]
 
         # configurando soulshot
@@ -1079,6 +1133,19 @@ class Ext(object):
 
                 if c in SET_ARMOR:
                     set_e.append(str(db_player['equipped_items'][c]))
+
+                if c == "sword" and "silver" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 5
+                if c == "sword" and "mystic" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 10
+                if c == "sword" and "inspiron" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 20
+                if c == "sword" and "violet" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 40
+                if c == "sword" and "hero" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 60
+                if c == "sword" and "divine" in db_player["equipped_items"][c]:
+                    db_player["status"]["atk"] += db_player["atk_bonus"] * 120
 
                 db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
                 db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']

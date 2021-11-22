@@ -320,7 +320,7 @@ class UtilityClass(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         if lvl is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer um level!`")
-        if lvl <= 0 or lvl > 80:
+        if lvl <= 0 or lvl > 99:
             return await ctx.send("<:alert:739251822920728708>│`level invalido!`")
 
         data_member = await self.bot.db.get_data("user_id", member.id, "users")
@@ -347,12 +347,12 @@ class UtilityClass(commands.Cog):
         _class = update_member["rpg"]["class_now"]
         _db_class = update_member["rpg"]["sub_class"][_class]
 
-        update_member['rpg']['status']['con'] = 5
-        update_member['rpg']['status']['prec'] = 5
-        update_member['rpg']['status']['agi'] = 5
-        update_member['rpg']['status']['atk'] = 5
-        update_member['rpg']['status']['luk'] = 0
-        update_member['rpg']['status']['pdh'] = lvl
+        update_member['rpg']["sub_class"][_class]['status']['con'] = 5
+        update_member['rpg']["sub_class"][_class]['status']['prec'] = 5
+        update_member['rpg']["sub_class"][_class]['status']['agi'] = 5
+        update_member['rpg']["sub_class"][_class]['status']['atk'] = 5
+        update_member['rpg']["sub_class"][_class]['status']['luk'] = 0
+        update_member['rpg']["sub_class"][_class]['status']['pdh'] = lvl
         update_member['rpg']['sub_class'][_class]['xp'] = lvl ** 5
         update_member['rpg']['sub_class'][_class]['level'] = lvl
 
