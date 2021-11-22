@@ -298,7 +298,7 @@ class EnchanterClass(commands.Cog):
         update = data
 
         self.up_chance = 0
-        self.up_chance = self.chance_skill[skill][update['rpg']['skills'][int(skill) - 1]]
+        self.up_chance = self.chance_skill[skill][update['rpg']["sub_class"][_class]['skills'][int(skill) - 1]]
         chance = randint(1, 100)
 
         if enchant is not None:
@@ -310,7 +310,7 @@ class EnchanterClass(commands.Cog):
             await self.bot.db.update_data(data, update, "users")
 
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
-                  f"PARA` **+{update['rpg']['skills'][int(skill) - 1]}**"
+                  f"PARA` **+{update['rpg']['sub_class'][_class]['skills'][int(skill) - 1]}**"
             embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_win"])
@@ -329,7 +329,7 @@ class EnchanterClass(commands.Cog):
             await self.bot.db.update_data(data, update, "users")
 
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
-                  f'SEU ENCANTAMENTO REGREDIU PARA` **+{update["rpg"]["skills"][int(skill) - 1]}**'
+                  f'SEU ENCANTAMENTO REGREDIU PARA` **+{update["rpg"]["sub_class"][_class]["skills"][int(skill) - 1]}**'
             embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
