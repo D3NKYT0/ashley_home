@@ -626,6 +626,14 @@ class Raid(commands.Cog):
             self.bot.batalhando.remove(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
 
+        # sistema de level up das skills
+        query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
+        data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
+        _C1, _C2 = p_raid[ctx.author.id].data['class'], p_raid[ctx.author.id].data['class_now']
+        _class = _C1 if p_raid[ctx.author.id].level < 26 else _C2
+        query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = p_raid[ctx.author.id].data["skill_level"]
+        await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
+
         if p_raid[ctx.author.id].soulshot[0]:
             query = {"_id": 0, "user_id": 1, "rpg": 1}
             data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)

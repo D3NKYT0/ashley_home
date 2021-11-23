@@ -124,7 +124,7 @@ class EnchanterClass(commands.Cog):
                 _mana = ru if self.atacks[c2]['type'] == "especial" else _mana
                 lvn = lsv + 1
 
-                description += f"{icon} **{c2.upper()}** `+{lvl_skill}` | **{skill_type.upper()}** `Lv: {lvn}`\n" \
+                description += f"{icon} **{c2.upper()}** `+{lvs}` | **{skill_type.upper()}** `Lv: {lvn}`\n" \
                                f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
             _TM = int(tot_mp)

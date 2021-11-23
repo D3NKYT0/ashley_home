@@ -539,6 +539,18 @@ class Entity(object):
                             elif self.status['mp'] >= remove:
                                 self.status['mp'] -= remove
                                 self.skill = attacks[c]
+                                # sistema de level up das skills
+                                if skill_now in [n + 1 for n in range(len(skills))]:
+                                    _skill_number = int(answer.content) - 1
+                                    _skill_name = self.skills[self.skill]["name"]
+                                    self.data["skill_level"][_skill_number][1] += 1
+                                    if self.data["skill_level"][_skill_number][1] >= 100:
+                                        self.data["skill_level"][_skill_number][1] = 0
+                                        if self.data["skill_level"][_skill_number][0] < 9:
+                                            self.data["skill_level"][_skill_number][0] += 1
+                                            await ctx.send(f"**{user.name.upper()}** `Voce acabou de` **UPAR** "
+                                                           f"`a skill` **{_skill_name.upper()}** `para o level` "
+                                                           f"**{self.data['skill_level'][_skill_number][0] + 1}**")
                                 break
 
                             else:
