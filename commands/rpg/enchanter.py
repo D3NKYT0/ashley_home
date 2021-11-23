@@ -107,7 +107,7 @@ class EnchanterClass(commands.Cog):
                     else:
                         damage = f"{_atk[0] + dd[0]}"
 
-                icon, skill_type = self.atacks[c2]['icon'], self.atacks[c2]['type']
+                icon, sk_tp = self.atacks[c2]['icon'], self.atacks[c2]['type']
 
                 try:
                     effect_skill = ", ".join(list(self.atacks[c2]['effs'][lvl_skill].keys()))
@@ -116,21 +116,21 @@ class EnchanterClass(commands.Cog):
                 except TypeError:
                     effect_skill = "sem efeito"
 
-                lsv = self.db["skill_level"][c][0]
+                lsv, sk_xp = self.db["skill_level"][c][0], self.db["skill_level"][c][1]
                 rm = int((tot_mp / 100) * 35)
                 ru = int((tot_mp / 100) * 50)
                 a_mana = self.atacks[c2]['mana'][lsv]
                 _mana = a_mana if effect_skill != "cura" else rm
                 _mana = ru if self.atacks[c2]['type'] == "especial" else _mana
-                lvn = lsv + 1
+                lvn, name, _type = lsv + 1, c2.upper(), sk_tp.upper()
 
-                description += f"{icon} **{c2.upper()}** `+{lvs}` | **{skill_type.upper()}** `Lv: {lvn}`\n" \
+                description += f"{icon} **{name}** `+{lvs}` | **{_type}** `Lv: {lvn}` **({sk_xp}/100)**\n" \
                                f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
 
             _TM = int(tot_mp)
             description += f"`MDEF:` **{int(data_player['mdef'])}**  |  `PDEF:` **{int(data_player['pdef'])}**"
-
-            embed = discord.Embed(title=f"ENCHANTER PANEL - TOTAL MANA: {_TM}", description=description, color=0x000000)
+            title = f"ENCHANTER PANEL - TOTAL MANA: {_TM}"
+            embed = discord.Embed(title=title, description=description, color=0x000000)
             embed.set_thumbnail(url=member.avatar_url)
 
             _id = create_id()
@@ -210,7 +210,7 @@ class EnchanterClass(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
         
-        _class = update["rpg"]["class_now"]
+        _class_now = update["rpg"]["class_now"]
 
         if not update['rpg']['active']:
             embed = discord.Embed(
@@ -252,12 +252,12 @@ class EnchanterClass(commands.Cog):
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] == limit:
+        if update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] == limit:
             msg = '<:negate:721581573396496464>│`ESSA SKILL JA ATINGIU O ENCANTAMENTO MAXIMO!`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] >= 10:
+        if update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] >= 10:
             try:
                 if update['inventory']['angel_wing'] >= 1:
                     update['inventory']['angel_wing'] -= 1
@@ -298,7 +298,7 @@ class EnchanterClass(commands.Cog):
         update = data
 
         self.up_chance = 0
-        self.up_chance = self.chance_skill[skill][update['rpg']["sub_class"][_class]['skills'][int(skill) - 1]]
+        self.up_chance = self.chance_skill[skill][update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1]]
         chance = randint(1, 100)
 
         if enchant is not None:
@@ -306,11 +306,11 @@ class EnchanterClass(commands.Cog):
                 chance = 0
 
         if chance < self.up_chance:
-            update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] += 1
+            update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] += 1
             await self.bot.db.update_data(data, update, "users")
 
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
-                  f"PARA` **+{update['rpg']['sub_class'][_class]['skills'][int(skill) - 1]}**"
+                  f"PARA` **+{update['rpg']['sub_class'][_class_now]['skills'][int(skill) - 1]}**"
             embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_win"])
@@ -323,13 +323,14 @@ class EnchanterClass(commands.Cog):
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
         else:
-            update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] -= 1
-            if update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] < 0:
-                update['rpg']["sub_class"][_class]['skills'][int(skill) - 1] = 0
+            update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] -= 1
+            if update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] < 0:
+                update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] = 0
             await self.bot.db.update_data(data, update, "users")
 
+            amount = update["rpg"]["sub_class"][_class_now]["skills"][int(skill) - 1]
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
-                  f'SEU ENCANTAMENTO REGREDIU PARA` **+{update["rpg"]["sub_class"][_class]["skills"][int(skill) - 1]}**'
+                  f'SEU ENCANTAMENTO REGREDIU PARA` **+{amount}**'
             embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])

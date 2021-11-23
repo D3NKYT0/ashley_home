@@ -541,7 +541,7 @@ class Entity(object):
                                 self.skill = attacks[c]
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
-                                    _skill_number = int(answer.content) - 1
+                                    _skill_number = self.skills[self.skill]["skill"] - 1
                                     _skill_name = self.skills[self.skill]["name"]
                                     self.data["skill_level"][_skill_number][1] += 1
                                     if self.data["skill_level"][_skill_number][1] >= 100:
