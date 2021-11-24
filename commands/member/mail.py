@@ -70,14 +70,14 @@ class MailClass(commands.Cog):
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
         mail_collection = await self.bot.db.cd("mails")
-        data, mail_user, mail_guild = dict(), dict(), dict()
+        data, mail_user, mail_guild = dict(), False, dict()
         all_data = [data async for data in mail_collection.find()]
         for d in all_data:
             data = d
             try:
                 mail_user = data_user['mails'][data['_id']]
             except KeyError:
-                mail_user = None
+                mail_user = False
             mail_guild = data_user["guild_id"] in data['guilds_benefited'] if data['guilds_benefited'] else None
             _bn = data['benefited']
             if id_mail in data['_id']:
@@ -86,7 +86,7 @@ class MailClass(commands.Cog):
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
-                elif mail_guild:
+                elif mail_guild or mail_user:
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data

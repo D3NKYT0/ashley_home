@@ -512,7 +512,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["crowns"])}/4**\n' \
                   f'`[CROWNS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -561,7 +561,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["shirts"])}/5**\n' \
                   f'`[SHIRTS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -609,7 +609,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["potions"])}/6**\n' \
                   f'`[POTIONS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -667,7 +667,7 @@ class QuestClass(commands.Cog):
             msg = f'<:alert:739251822920728708>│`QUEST:` **[The 7 Lost Souls]**\n' \
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n' \
                   f'`[SOULS]:`\n{_MB}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -715,7 +715,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["mini-boss"])}/8**\n' \
                   f'`[MINI-BOSSES]:`\n{_MB}' \
-                  f'<:ash:834120294469730315> {description}'
+                  f'\n<:ash:834120294469730315> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -766,7 +766,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["villages"])}/9**\n' \
                   f'`[VILLAGES]`:\n{names}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -818,7 +818,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["provinces"])}/10**\n' \
                   f'`[PROVINCES]`:\n{names}' \
-                  f'<:afs:530031864350507028> {description}'
+                  f'\n<:afs:530031864350507028> {description}'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 

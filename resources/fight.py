@@ -203,8 +203,12 @@ class Entity(object):
         else:
             tot_atk = _att * 1.2
 
+        skills_now = self.skills
+        if self.is_passive and self.passive == "necromancer":
+            skills_now = self.skills_p
+
         self.ls = lvs if 0 <= lvs <= 9 else 9
-        ls, dado = self.ls, self.skills[c2]['damage'][self.ls]
+        ls, dado = self.ls, skills_now[c2]['damage'][self.ls]
         d1, d2 = int(dado[:dado.find('d')]), int(dado[dado.find('d') + 1:])
         dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
         dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
@@ -239,16 +243,17 @@ class Entity(object):
                       f"`Dano:` **Base** | `Mana:` **0** | `Efeito(s):` **sem efeito**\n\n"
 
         if passive_skill:
-            passive_name = CLS[self.data['class_now']]["passive"]['name']
-            passive_icon = CLS[self.data['class_now']]["passive"]['icon']
-            passive_amount = CLS[self.data['class_now']]["passive"]['amount']
+            if not self.is_passive:
+                passive_name = CLS[self.data['class_now']]["passive"]['name']
+                passive_icon = CLS[self.data['class_now']]["passive"]['icon']
+                passive_amount = CLS[self.data['class_now']]["passive"]['amount']
 
-            text_passive = ""
-            if self.data['class_now'] == "necromancer":
-                text_passive += f"`Progress:` **{self.progress}/{passive_amount}**"
+                text_passive = ""
+                if self.data['class_now'] == "necromancer":
+                    text_passive += f"`Progress:` **{self.progress}/{passive_amount}**"
 
-            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
-                          f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
+                description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
+                              f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
 
         tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
@@ -256,22 +261,27 @@ class Entity(object):
             ls = self.data["skill_level"][_][0]
 
             damage = self.calc_skill_attack(_, _att, lvs, c2)
-            icon, skill_type = self.skills[c2]['icon'], self.skills[c2]['type']
-            emojis.append(self.skills[c2]['icon'])
 
-            if self.limit[_] >= self.skills[attacks[_ + 1]]['limit'][ls]:
+            skills_now = self.skills
+            if self.is_passive and self.passive == "necromancer":
+                skills_now = self.skills_p
+
+            icon, skill_type = skills_now[c2]['icon'], skills_now[c2]['type']
+            emojis.append(skills_now[c2]['icon'])
+
+            if self.limit[_] >= skills_now[attacks[_ + 1]]['limit'][ls]:
                 icon = "<:skill_limit:912156419527172107>"
 
             try:
-                effect_skill = ", ".join(list(self.skills[c2]['effs'][self.ls].keys()))
+                effect_skill = ", ".join(list(skills_now[c2]['effs'][self.ls].keys()))
             except (KeyError, TypeError):
                 effect_skill = "sem efeito"
 
             rm = int((self.tot_mp / 100) * 35)
             ru = int((self.tot_mp / 100) * 50)
-            a_mana = self.skills[c2]['mana'][ls]
+            a_mana = skills_now[c2]['mana'][ls]
             _mana = a_mana if effect_skill != "cura" else rm
-            _mana = ru if self.skills[c2]['type'] == "especial" else _mana
+            _mana = ru if skills_now[c2]['type'] == "especial" else _mana
             lvn = ls + 1
 
             description += f"**{_ + 1}** - {icon} **{c2.upper()}** `+{lvs}` | **{skill_type.lower()}** `Lv: {lvn}`\n" \
@@ -415,7 +425,7 @@ class Entity(object):
     def self_drain_effect_resolve(self, msg_return):
         try:
             if self.skill['effs'] is not None:
-                if self.is_player:
+                if self.is_player and not self.is_passive:
                     active_passive = True
                     if "self_drain" in self.effects.keys():
                         if self.effects["self_drain"]["turns"] >= 1:
@@ -437,7 +447,9 @@ class Entity(object):
         msg_return, stun, ice, self.skill = "", False, False, None,
         skills, effects = list(self.skills.keys()), list(self.effects.keys())
 
+        skills_now = self.skills
         if self.is_passive and self.passive == "necromancer":
+            skills_now = self.skills_p
             skills = list(self.skills_p.keys())  # altera as skills do necro
 
         if self.is_player:
@@ -462,7 +474,7 @@ class Entity(object):
             if eff[0] in effects:
                 if self.effects[eff[0]]['turns'] > 0:
                     for sk in skills:
-                        if self.skills[sk]['type'] == eff[1]:
+                        if skills_now[sk]['type'] == eff[1]:
                             skills.remove(sk)
 
         if stun is False and ice is False:
@@ -498,7 +510,7 @@ class Entity(object):
                     skill_now, limit_now = int(answer.content), False
                     if skill_now in [n + 1 for n in range(len(skills))]:
                         ls = self.data["skill_level"][skill_now - 1][0]  # verificando o lvl atual da skill
-                        if self.limit[skill_now - 1] < self.skills[attacks[skill_now]]['limit'][ls]:
+                        if self.limit[skill_now - 1] < skills_now[attacks[skill_now]]['limit'][ls]:
                             self.limit[skill_now - 1] += 1
                         else:
                             limit_now = True
@@ -549,20 +561,26 @@ class Entity(object):
                     if int(answer.content) == 0:
                         self.skill = CLS[self._class]['base_skill']
                         if self_drain:
-                            drained = randint(5, 15)  # velocidade da progreção
+                            drained = randint(15, 30)  # velocidade da progreção
                             self.progress += drained
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
 
                             if not self.is_passive:
+                                especial = False
                                 if self.progress < 100:
                                     description = f"**{user.name.upper()}** `VOCÊ ABSORVEU` **{drained}** `ALMAS!`"
                                 else:
                                     description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **SENHOR DA MORTE!**"
-                                    self.is_passive = True
-                                embed = discord.Embed(description=description, color=0x000000)
-                                embed.set_author(name=user.name, icon_url=user.avatar_url)
-                                await ctx.send(embed=embed)
+                                    self.is_passive, especial = True, True
+                                    if "self_drain" in self.effects.keys():  # desabilita a passiva ad skill 0
+                                        del self.effects["self_drain"]
+                                embeds = discord.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                if self.is_passive and especial:
+                                    _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
+                                    embeds.set_image(url=_url)
+                                await ctx.send(embed=embeds)
                         break
 
                     potion_msg = False
@@ -570,11 +588,11 @@ class Entity(object):
                         if int(c) == int(answer.content) or len(skills) + 2 == int(answer.content):
                             if int(c) == int(answer.content):
 
-                                ls = self.data["skill_level"][self.skills[attacks[c]]['skill'] - 1][0]
-                                remove = self.skills[attacks[c]]['mana'][ls]
+                                ls = self.data["skill_level"][skills_now[attacks[c]]['skill'] - 1][0]
+                                remove = skills_now[attacks[c]]['mana'][ls]
 
                                 try:
-                                    skill_effs = [k for k, v in self.skills[attacks[c]]['effs'][self.ls].items()]
+                                    skill_effs = [k for k, v in skills_now[attacks[c]]['effs'][self.ls].items()]
                                 except TypeError:
                                     skill_effs = ['nenhum']
 
@@ -586,7 +604,7 @@ class Entity(object):
                                 if heal:
                                     remove = int(self.tot_mp / 100 * 35)
 
-                                if self.skills[attacks[c]]['type'] == "especial":
+                                if skills_now[attacks[c]]['type'] == "especial":
                                     remove = int(self.tot_mp / 100 * 50)
 
                             else:  # que desgraça é essa ?
@@ -639,8 +657,8 @@ class Entity(object):
                                 self.skill = attacks[c]
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
-                                    _skill_number = self.skills[self.skill]["skill"] - 1
-                                    _skill_name = self.skills[self.skill]["name"]
+                                    _skill_number = skills_now[self.skill]["skill"] - 1
+                                    _skill_name = skills_now[self.skill]["name"]
                                     self.data["skill_level"][_skill_number][1] += 1
                                     if self.data["skill_level"][_skill_number][1] >= 100:
                                         self.data["skill_level"][_skill_number][1] = 0
@@ -787,7 +805,7 @@ class Entity(object):
 
             if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
                 if not isinstance(self.skill, dict):
-                    self.skill = self.skills[self.skill]
+                    self.skill = skills_now[self.skill]
 
         else:
             _text2 = f'**{self.name.upper()}** `esta` **{"STUNADO" if stun else "CONGELADO"}**'
