@@ -196,22 +196,22 @@ class SkillClass(commands.Cog):
             return await ctx.send(f'<:negate:721581573396496464>│`Você não {n} pontos de habilidades disponiveis!`')
 
         if status.lower() == "con" and update['rpg']["sub_class"][_class]['status']['con'] + n > 50:
-            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 40 PONTOS NESSE ATRIBUTO`'
+            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "prec" and update['rpg']["sub_class"][_class]['status']['prec'] + n > 50:
-            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
+            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "agi" and update['rpg']["sub_class"][_class]['status']['agi'] + n > 50:
-            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
+            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "atk" and update['rpg']["sub_class"][_class]['status']['atk'] + n > 50:
-            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 40 PONTOS NESSE ATRIBUTO`'
+            msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
             embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
