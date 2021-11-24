@@ -503,9 +503,6 @@ class Entity(object):
                     except TimeoutError:
                         return "COMANDO-CANCELADO"
 
-                    # verificador se esta sendo feito o combo
-                    self.verify_combo(int(answer.content) - 1)
-
                     # verificador de limit de skill
                     skill_now, limit_now = int(answer.content), False
                     if skill_now in [n + 1 for n in range(len(skills))]:
@@ -626,7 +623,7 @@ class Entity(object):
 
                                 if not potion_msg:
                                     await ctx.send(embed=embed)
-                                    self.next, potion_msg = 0, True
+                                    potion_msg = True
                                     hate_no_mana += 1
                                     if hate_no_mana > 5:
                                         await ctx.send(f"`Ficar repetindo esse tipo de msg no mesmo turno é "
@@ -644,7 +641,6 @@ class Entity(object):
                                 )
                                 embed.set_author(name=user.name, icon_url=user.avatar_url)
                                 await ctx.send(embed=embed)
-                                self.next = 0  # possivel causa da perca do combo!
                                 hate_no_limit += 1
                                 if hate_no_limit > 5:
                                     await ctx.send(f"`Ficar repetindo esse tipo de msg no mesmo turno é "
@@ -655,6 +651,8 @@ class Entity(object):
                             elif self.status['mp'] >= remove:
                                 self.status['mp'] -= remove
                                 self.skill = attacks[c]
+                                # verificador se esta sendo feito o combo
+                                self.verify_combo(int(answer.content) - 1)
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
                                     _skill_number = skills_now[self.skill]["skill"] - 1
