@@ -285,18 +285,18 @@ class PVP(commands.Cog):
         # sistema de level up das skills PLAYER 1
         query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": _idp1}, query)
-        _C1, _C2 = player_1[_idp1].data['class'], player_1[_idp1].data['class_now']
-        _class = _C1 if player_1[_idp1].level < 26 else _C2
-        query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = player_1[_idp1].data["skill_level"]
-        await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
+        _class = player_1[_idp1].data['class_now']
+        if player_1[_idp1].level >= 26:
+            query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = player_1[_idp1].data["skill_level"]
+            await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
         # sistema de level up das skills PLAYER 2
         query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": _idp2}, query)
-        _C1, _C2 = player_2[_idp2].data['class'], player_2[_idp2].data['class_now']
-        _class = _C1 if player_2[_idp2].level < 26 else _C2
-        query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = player_2[_idp2].data["skill_level"]
-        await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
+        _class = player_2[_idp2].data['class_now']
+        if player_2[_idp2].level >= 26:
+            query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = player_2[_idp2].data["skill_level"]
+            await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
         if player_1[_idp1].soulshot[0]:
             query = {"_id": 0, "user_id": 1, "rpg": 1}

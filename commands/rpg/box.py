@@ -157,7 +157,14 @@ ITEMS:
                                     if data['rpg']["equipped_items"]['consumable'] == self.consumable[2]:
                                         summon = "Secret"
 
-                                    update['rpg']["equipped_items"]['consumable'] = None
+                                    if data['rpg']["equipped_items"]['consumable'] in update['rpg']['items'].keys():
+                                        _ID = data['rpg']["equipped_items"]['consumable']
+                                        update['rpg']['items'][_ID] -= 1
+                                        if update['rpg']['items'][_ID] < 1:
+                                            del update['rpg']['items'][_ID]
+                                    else:
+                                        update['rpg']["equipped_items"]['consumable'] = None
+
                                     await ctx.send(f"<:confirmed:721581574461587496>│`VOCE ACABOU DE USAR O SEU ITEM "
                                                    f"CONSUMIVEL!`")
                                 else:

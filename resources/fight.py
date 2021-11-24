@@ -44,6 +44,7 @@ class Entity(object):
         self.level = self.data['level']
         self.effects = {}
         self.skills = {}
+        self.skills_p = {}  # skills de passiva
         self.skill = None
         self.potion = 0
         self.ls = 0  # level da skill atual (ultima skill)
@@ -57,6 +58,10 @@ class Entity(object):
 
         # limit de uso de skill
         self.limit = [0, 0, 0, 0, 0]  # skill 1 a 5
+
+        # sistema de passiva
+        self.passive = ""
+        self.is_passive = False
 
         if self.is_player:
             self._class = self.data['class'] if self.level < 26 else self.data['class_now']
@@ -83,6 +88,37 @@ class Entity(object):
             self.tot_mp = CLS[self.data['class_now']]['tot_mana'] if lvl > 25 else CLS["default"]['tot_mana']
             self.tot_mp += (self.rate[1] + self.data['mana_bonus']) * 2
             self.status['hp'], self.status['mp'] = self.tot_hp, self.tot_mp
+
+            # sistema de passivas
+
+            if self.data['class_now'] == "paladin":
+                self.passive = self.data['class_now']
+
+            elif self.data['class_now'] == "warrior":
+                self.passive = self.data['class_now']
+
+            elif self.data['class_now'] == "necromancer":
+                self.passive = self.data['class_now']
+                self.progress = 0
+
+                for c in range(5):
+                    if self.level >= LVL[c]:
+                        _SK = f"T{c}"
+                        self.skills_p[CLS[self.data['class_now']][_SK]['name']] = CLS[self.data['class_now']][_SK]
+                    else:
+                        self.skills[CLS[self.data['class']][str(c)]['name']] = CLS[self.data['class']][str(c)]
+
+            elif self.data['class_now'] == "wizard":
+                self.passive = self.data['class_now']
+
+            elif self.data['class_now'] == "warlock":
+                self.passive = self.data['class_now']
+
+            elif self.data['class_now'] == "priest":
+                self.passive = self.data['class_now']
+
+            elif self.data['class_now'] == "assassin":
+                self.passive = self.data['class_now']
 
         else:
             self.is_enemy = False if self.data['enemy'] is None else True
@@ -188,7 +224,7 @@ class Entity(object):
 
         return damage
 
-    def get_skill_menu(self, entity, user, skills, wave_now):
+    def get_skill_menu(self, entity, user, skills, wave_now, passive_skill):
         hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
         _mp, ehp, econ, err = self.status['mp'], entity.status['hp'], entity.status['con'], entity.rate[0]
         hate_no_limit = 0
@@ -201,6 +237,19 @@ class Entity(object):
 
         description = f"**0** - <:skill_base:912134358813523989> **SKILL BASE** | **COMUM** \n" \
                       f"`Dano:` **Base** | `Mana:` **0** | `Efeito(s):` **sem efeito**\n\n"
+
+        if passive_skill:
+            passive_name = CLS[self.data['class_now']]["passive"]['name']
+            passive_icon = CLS[self.data['class_now']]["passive"]['icon']
+            passive_amount = CLS[self.data['class_now']]["passive"]['amount']
+
+            text_passive = ""
+            if self.data['class_now'] == "necromancer":
+                text_passive += f"`Progress:` **{self.progress}/{passive_amount}**"
+
+            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
+                          f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
+
         tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
             attacks[_ + 1], lvs, c2, _att = skills[_], self.level_skill[_], skills[_], self.status['atk']
@@ -241,6 +290,12 @@ class Entity(object):
 
         skill_combo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life** | **COMBO**\n" \
                       f"`Dano:` **50%** | `Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
+
+        if self.is_passive and self.data['class_now'] == "necromancer":
+            passive_combo_name = CLS[self.data['class_now']]["passive"]['combo_name']
+            passive_combo_icon = CLS[self.data['class_now']]["passive"]['combo_icon']
+            skill_combo = f"\n\n**{tot + 4}** - {passive_combo_icon} **[{passive_combo_name}]** | **COMBO**\n" \
+                          f"`Dano:` **-%** | `Mana:` **-%** | `Efeito(s):` **-**"
 
         if self.is_combo:
             description += skill_combo
@@ -357,9 +412,33 @@ class Entity(object):
 
         return msg_return
 
+    def self_drain_effect_resolve(self, msg_return):
+        try:
+            if self.skill['effs'] is not None:
+                if self.is_player:
+                    active_passive = True
+                    if "self_drain" in self.effects.keys():
+                        if self.effects["self_drain"]["turns"] >= 1:
+                            active_passive = False
+                    if active_passive:
+                        lvs = self.level_skill[self.skill['skill'] - 1]
+                        self.ls = lvs if 0 <= lvs <= 9 else 9
+                        if self.skill['effs'][self.ls]['drain']['type'] == "normal":
+                            self.effects["self_drain"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_drain"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
+        except (KeyError, TypeError):
+            pass
+
+        return msg_return
+
     async def turn(self, ctx, user, entity, wave_now=0):
         msg_return, stun, ice, self.skill = "", False, False, None,
         skills, effects = list(self.skills.keys()), list(self.effects.keys())
+
+        if self.is_passive and self.passive == "necromancer":
+            skills = list(self.skills_p.keys())  # altera as skills do necro
 
         if self.is_player:
             verify = await self.verify_equips(ctx)
@@ -388,7 +467,15 @@ class Entity(object):
 
         if stun is False and ice is False:
             if self.is_player:
-                response = self.get_skill_menu(entity, user, skills, wave_now)
+
+                # verificação da skill base do necro
+                self_drain = False
+                if effects is not None:
+                    if 'self_drain' in effects:
+                        if self.effects['self_drain']['turns'] > 0:
+                            self_drain = True
+
+                response = self.get_skill_menu(entity, user, skills, wave_now, self_drain)
                 embed, attacks, hate_no_mana, hate_no_limit = response[0], response[1], response[2], response[3]
                 await ctx.send(embed=embed)
 
@@ -460,11 +547,22 @@ class Entity(object):
                         break
 
                     if int(answer.content) == 0:
-                        self.skill = {"name": "Basic Damage", "effs": None,
-                                      "damage": ["5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6", "5d6"],
-                                      "type": "especial", "mana": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                      "limit": [99, 99, 99, 99, 99, 99, 99, 99, 99, 99], "skill": 0,
-                                      "icon": "", "img": "https://i.imgur.com/KJSLp0h.jpg"}
+                        self.skill = CLS[self._class]['base_skill']
+                        if self_drain:
+                            drained = randint(5, 15)  # velocidade da progreção
+                            self.progress += drained
+                            if self.progress >= 100 and not self.is_passive:
+                                self.progress = 100
+
+                            if not self.is_passive:
+                                if self.progress < 100:
+                                    description = f"**{user.name.upper()}** `VOCÊ ABSORVEU` **{drained}** `ALMAS!`"
+                                else:
+                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **SENHOR DA MORTE!**"
+                                    self.is_passive = True
+                                embed = discord.Embed(description=description, color=0x000000)
+                                embed.set_author(name=user.name, icon_url=user.avatar_url)
+                                await ctx.send(embed=embed)
                         break
 
                     potion_msg = False
@@ -696,6 +794,7 @@ class Entity(object):
             msg_return += f"{_text2}\n\n"
 
         msg_return = self.health_effect_resolve(msg_return)
+        msg_return = self.self_drain_effect_resolve(msg_return)
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return)
         hp_max, monster, img_ = self.tot_hp, not self.is_player, None
         embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.name)
