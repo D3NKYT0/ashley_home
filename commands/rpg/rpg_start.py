@@ -121,92 +121,21 @@ class RpgStart(commands.Cog):
             else:
                 set_ini = {"11": 1, "12": 1, "13": 1, "14": 1, "15": 1}
 
-            rpg = {
-                "class": 'default',
-                "active": True,
-                "class_now": asks['class_now'],
-                "vip": update['rpg']['vip'],
-                "sex": asks['sex'],
-                "skin": "default",
-                "skins": list(),
-                "sub_class": {
-                    "paladin": {"level": 1, "xp": 0, "level_max": False,
-                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "warrior": {"level": 1, "xp": 0, "level_max": False,
-                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "necromancer": {"level": 1, "xp": 0, "level_max": False,
-                                    "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                                    'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "wizard": {"level": 1, "xp": 0, "level_max": False,
-                               "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                               'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "warlock": {"level": 1, "xp": 0, "level_max": False,
-                                "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                                'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "assassin": {"level": 1, "xp": 0, "level_max": False,
-                                 "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                                 'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]},
-                    "priest": {"level": 1, "xp": 0, "level_max": False,
-                               "status": {"con": 5, "prec": 5, "agi": 5, "atk": 5, "luk": 0, "pdh": 1},
-                               'skills': [0, 0, 0, 0, 0], 'skill_level': [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]}
-                },
-                "intelligence": 0,
-                'items': set_ini,
-                "armors": {
-                    "shoulder": [0, 0, 0, 0, 0, 0],
-                    "breastplate": [0, 0, 0, 0, 0, 0],
-                    "gloves": [0, 0, 0, 0, 0, 0],
-                    "leggings": [0, 0, 0, 0, 0, 0],
-                    "boots": [0, 0, 0, 0, 0, 0],
-                    "shield": [0, 0, 0, 0, 0, 0],
-                    "necklace": [0, 0, 0, 0, 0, 0],
-                    "earring": [0, 0, 0, 0, 0, 0],
-                    "ring": [0, 0, 0, 0, 0, 0]
-                },
-                'equipped_items': {
-                    "shoulder": None,
-                    "breastplate": None,
-                    "gloves": None,
-                    "leggings": None,
-                    "boots": None,
-                    "consumable": None,
-                    "sword": None,
-                    "shield": None,
-                    "necklace": None,
-                    "earring": None,
-                    "ring": None
-                },
-                "activated_at": datetime.today(),
-                "quests": dict()
-            }
+            update['rpg']["class_now"] = asks['class_now']
+            update['rpg']["sex"] = asks['sex']
+            update['rpg']["items"] = set_ini
+            update['rpg']["items"] = datetime.today()
 
             bonus = "\n`Olá aventureiro! Bem vindo ao RPG, sua jornada será longa e é perigoso ir sozinho, então " \
                     "estou lhe dando um presente, olhe seu inventário de equipamentos com o comando:` **ash es**\n" \
                     "`Qualquer duvida use os comandos:`\n**ash wiki <nome do que voce quer saber>** `e` **ash help**"
 
         else:
-            rpg = {
-                "active": True,
-                "class": 'default',
-                "class_now": asks['class_now'],
-                "sex": asks['sex'],
-                "skin": update['rpg']['skin'],
-                "skins": update['rpg']['skins'],
-                "vip": update['rpg']['vip'],
-                "sub_class": update['rpg']['sub_class'],
-                "intelligence": update['rpg']['intelligence'],
-                'items': update['rpg']['items'],
-                "armors": update['rpg']['armors'],
-                'equipped_items': update['rpg']['equipped_items'],
-                "activated_at": update['rpg']['activated_at'],
-                "quests": update['rpg']['quests']
-            }
 
+            update['rpg']["class_now"] = asks['class_now']
+            update['rpg']["sex"] = asks['sex']
             bonus = ""
 
-        update['rpg'] = rpg
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
         msg = f'<:confirmed:721581574461587496>│`CONFIGURAÇÃO DO RPG FEITA COM SUCESSO!` {bonus}'

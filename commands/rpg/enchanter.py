@@ -338,6 +338,48 @@ class EnchanterClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @enchant.command(name='recovery', aliases=['recuperar', 'r'])
+    async def _recovery(self, ctx):
+        """Comando usado pra encantar suas habilidades no rpg da Ashley
+        Use ash enchant add numero_da_skill"""
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        _class_now = update["rpg"]["class_now"]
+
+        if not update['rpg']['active']:
+            embed = discord.Embed(
+                color=self.bot.color,
+                description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "skills" not in update['rpg'].keys():
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ENCHANTS PARA RECUPERAR!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "recovery" in update['rpg'].keys():
+            msg = '<:negate:721581573396496464>│`VOCE JA RECUPEROU SEUS ENCHANTS!`'
+            embed = discord.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        update['rpg']["sub_class"][_class_now]['skills'] = update['rpg']['skills']
+        update['rpg']["recovery"] = True  # comprovação da recuperação
+        await self.bot.db.update_data(data, update, "users")
+
+        msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEUS ENCANTAMENTOS FORAM " \
+              f"RECUPERADOS PARA A CLASSE:` **{_class_now.upper()}**"
+        embed = discord.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='enchanter_armor', aliases=['ena'])
     async def enchanter_armor(self, ctx, armor: str = None, *, enchant: str = None):
         """Comando usado pra encantar suas habilidades no rpg da Ashley
