@@ -99,19 +99,25 @@ class Battle(commands.Cog):
         self.xp_off[ctx.author.id] = False
         await self.bot.db.update_data(data, update, 'users')
 
-        min_max = None
+        min_max, is_xp, is_level = None, False, 0
         if ctx.channel.id in [911688232159301685, 911784419633811466]:
             min_max = [1, 11]  # lvl 1 a 11
+            is_xp, is_level = True, randint(1, 11)
         if ctx.channel.id in [911784453167271966, 911689145150234714]:
             min_max = [11, 21]  # lvl 11 a 21
+            is_xp, is_level = True, randint(11, 21)
         if ctx.channel.id in [911689195410563112, 911784469982236732]:
             min_max = [21, 41]  # lvl 21 a 41
+            is_xp, is_level = True, randint(21, 41)
         if ctx.channel.id in [911689231687090187, 911784517788905514]:
             min_max = [41, 61]  # lvl 41 a 61
+            is_xp, is_level = True, randint(41, 61)
         if ctx.channel.id in [911689266705367060, 911784553180434432]:
             min_max = [61, 81]  # lvl 61 a 81
+            is_xp, is_level = True, randint(61, 81)
         if ctx.channel.id in [911784615780446219, 911784631592964136]:
             min_max = [81, 99]  # lvl 81 a 99
+            is_xp, is_level = True, randint(81, 99)
 
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
@@ -279,7 +285,9 @@ class Battle(commands.Cog):
         xp, lp = db_monster['xp'], db_player['level']
         lm = db_monster['level']
         perc = xp if lp - lm <= 0 else xp + abs(0.15 * (db_player['level'] - db_monster['level']))
-        data_xp = calc_xp(db_player['xp'], db_player['level'])
+        if not is_xp:
+            is_level = db_player['level']
+        data_xp = calc_xp(db_player['xp'], is_level)
 
         # bonus de XP durante evento!
         if self.bot.event_special and perc < 10:
