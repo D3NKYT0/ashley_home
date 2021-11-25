@@ -543,47 +543,50 @@ class DataInteraction(object):
         _name = data_user['rpg']["class_now"]
         _class = data_user["rpg"]["sub_class"][_name]
         if _class['level'] < _LEVEL_MAXIMO:
-            if "$inc" not in query_user.keys():
-                query_user["$inc"] = dict()
+            if not data_user["rpg"]["sub_class"][_name]["level_max"]:  # verifica se o player esta no lvl maximo
+                if "$inc" not in query_user.keys():
+                    query_user["$inc"] = dict()
+                _class['xp'] += exp
+                query_user["$inc"][f"rpg.sub_class.{_name}.xp"] = exp
+                lvl, xp = _class['level'], _class['xp']
+                _class['xp'] = ((lvl + 1) ** 5) - 1 if int(xp ** 0.2) == _LEVEL_MAXIMO else xp
+                experience, lvl_anterior = _class['xp'], _class['level']
+                lvl_now = int(experience ** 0.2) if lvl_anterior > 1 else 2
+                if lvl_anterior < lvl_now and not _class['level_max']:
+                    if "$set" not in query_user.keys():
+                        query_user["$set"] = dict()
 
-            _class['xp'] += exp
-            query_user["$inc"][f"rpg.sub_class.{_name}.xp"] = exp
-            lvl, xp = _class['level'], _class['xp']
-            _class['xp'] = ((lvl + 1) ** 5) - 1 if int(xp ** 0.2) == _LEVEL_MAXIMO else xp
-            experience, lvl_anterior = _class['xp'], _class['level']
-            lvl_now = int(experience ** 0.2) if lvl_anterior > 1 else 2
-            if lvl_anterior < lvl_now and not _class['level_max']:
-                if "$set" not in query_user.keys():
-                    query_user["$set"] = dict()
+                    pdh = lvl_now - lvl_anterior if lvl_now - lvl_anterior > 0 else 1
+                    coins = pdh * 200
+                    query_user["$set"][f"rpg.sub_class.{_name}.level"] = lvl_now if lvl_now < _LEVEL_MAXIMO else _limit
+                    query_user["$inc"][f"rpg.sub_class.{_name}.status.pdh"] = pdh if lvl_now < _LEVEL_MAXIMO else 0
+                    if lvl_now < _LEVEL_MAXIMO:
+                        query_user["$inc"]["inventory.coins"] = coins
 
-                pdh = lvl_now - lvl_anterior if lvl_now - lvl_anterior > 0 else 1
-                coins = pdh * 200
-                query_user["$set"][f"rpg.sub_class.{_name}.level"] = lvl_now if lvl_now < _LEVEL_MAXIMO else _limit
-                query_user["$inc"][f"rpg.sub_class.{_name}.status.pdh"] = pdh if lvl_now < _LEVEL_MAXIMO else 0
-                if lvl_now < _LEVEL_MAXIMO:
-                    query_user["$inc"]["inventory.coins"] = coins
+                    if lvl_now == 26 and lvl_now < _LEVEL_MAXIMO:
+                        mention = ctx.author.mention
+                        msg = f'🎊 **PARABENS** 🎉 {mention} `você upou no RPG para o level` **{lvl_now},** ' \
+                              f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`\n' \
+                              f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
+                        img = "https://i.gifer.com/143t.gif"
 
-                if lvl_now == 26 and lvl_now < _LEVEL_MAXIMO:
-                    msg = f'🎊 **PARABENS** 🎉 {ctx.author.mention} `você upou no RPG para o level` **{lvl_now},** ' \
-                          f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`\n' \
-                          f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
-                    img = "https://i.gifer.com/143t.gif"
+                    elif lvl_now < _LEVEL_MAXIMO:
+                        mention = ctx.author.mention
+                        msg = f'🎊 **PARABENS** 🎉 {mention} `você upou no RPG para o level` **{lvl_now},** ' \
+                              f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`'
+                        img = "https://i.pinimg.com/originals/7e/58/1c/7e581c87b8cf5cdae354258789b2fc32.gif"
 
-                elif lvl_now < _LEVEL_MAXIMO:
-                    msg = f'🎊 **PARABENS** 🎉 {ctx.author.mention} `você upou no RPG para o level` **{lvl_now},** ' \
-                          f'`ganhou` **+{coins}** `Fichas e +{pdh} PDH (olhe o comando \"ash skill\")`'
-                    img = "https://i.pinimg.com/originals/7e/58/1c/7e581c87b8cf5cdae354258789b2fc32.gif"
+                    else:
+                        query_user["$set"][f"rpg.sub_class.{_name}.level_max"] = True
+                        mention = ctx.author.mention
+                        msg = f'🎊 **PARABENS** 🎉 {mention} `você upou no RPG para o level` **MAXIMO,** ' \
+                              f'`ganhou` **+{coins}** `Fichas (olhe o comando \"ash skill\")`\n' \
+                              f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
+                        img = "https://i.gifer.com/143t.gif"
 
-                else:
-                    query_user["$set"][f"rpg.sub_class.{_name}.level_max"] = True
-                    msg = f'🎊 **PARABENS** 🎉 {ctx.author.mention} `você upou no RPG para o level` **MAXIMO,** ' \
-                          f'`ganhou` **+{coins}** `Fichas (olhe o comando \"ash skill\")`\n' \
-                          f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
-                    img = "https://i.gifer.com/143t.gif"
-
-                embed = discord.Embed(color=self.bot.color, description=f'<:confirmed:721581574461587496>│{msg}')
-                embed.set_image(url=img)
-                await ctx.send(embed=embed)
+                    embed = discord.Embed(color=self.bot.color, description=f'<:confirmed:721581574461587496>│{msg}')
+                    embed.set_image(url=img)
+                    await ctx.send(embed=embed)
 
         if len(query_user.keys()) > 0:
             cl = await self.bot.db.cd("users")
