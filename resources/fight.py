@@ -1170,7 +1170,7 @@ class Ext(object):
         self.mini_boss = all_data['attribute']['moon_mini_boss']
         self.mb = all_data['battle']['miniboss']
 
-    def set_monster(self, db_player, mini_boss=False):
+    def set_monster(self, db_player, mini_boss=False, min_max=None):
         lvl = db_player['level']
         dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 5 if 10 <= lvl <= 30 else 10 if 31 <= lvl <= 50 else 15
         min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 99 else 99
@@ -1194,6 +1194,9 @@ class Ext(object):
 
         if lvl <= 99 and max_ > 99:
             max_ = 99
+
+        if min_max is not None:
+            min_, max_ = min_max[0], min_max[1]
 
         _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
         db_monster = copy.deepcopy(_monster) if not mini_boss else copy.deepcopy(mini_boss_monster)

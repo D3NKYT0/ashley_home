@@ -99,9 +99,23 @@ class Battle(commands.Cog):
         self.xp_off[ctx.author.id] = False
         await self.bot.db.update_data(data, update, 'users')
 
+        min_max = None
+        if ctx.channel.id in [911688232159301685, 911784419633811466]:
+            min_max = [1, 11]  # lvl 1 a 11
+        if ctx.channel.id in [911784453167271966, 911689145150234714]:
+            min_max = [11, 21]  # lvl 11 a 21
+        if ctx.channel.id in [911689195410563112, 911784469982236732]:
+            min_max = [21, 41]  # lvl 21 a 41
+        if ctx.channel.id in [911689231687090187, 911784517788905514]:
+            min_max = [41, 61]  # lvl 41 a 61
+        if ctx.channel.id in [911689266705367060, 911784553180434432]:
+            min_max = [61, 81]  # lvl 61 a 81
+        if ctx.channel.id in [911784615780446219, 911784631592964136]:
+            min_max = [81, 99]  # lvl 81 a 99
+
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
-        db_monster = extension.set_monster(db_player, mini_boss)
+        db_monster = extension.set_monster(db_player, mini_boss, min_max)
 
         # criando as entidades...
         if ctx.author.id in player.keys():
@@ -315,7 +329,12 @@ class Battle(commands.Cog):
                 await self.bot.data.add_xp(ctx, xp_reward[0])
             else:
                 await self.bot.data.add_xp(ctx, xp_reward[1])
-            answer_ = await self.bot.db.add_money(ctx, db_monster['ethernya'], True)
+
+            money = db_monster['ethernya']
+            if ctx.channel.id in [911689861898076210, 911689878784319548]:
+                money = money * 2  # bonus de ETHERNYA
+
+            answer_ = await self.bot.db.add_money(ctx, money, True)
             embed = discord.Embed(
                 description=f"`{ctx.author.name.upper()} GANHOU!` {answer_}",
                 color=0x000000)
@@ -329,6 +348,24 @@ class Battle(commands.Cog):
                     reward = [choice(db_monster['reward']) for _ in range(8)]
                 else:
                     reward = [choice(db_monster['reward']) for _ in range(4)]
+
+                if ctx.channel.id in [911689340084707388, 913510717808857098]:
+                    reward = ["Melted_Bone", "Life_Crystal", "Energy", "Death_Blow", "Stone_of_Soul", "Vital_Force"]
+                if ctx.channel.id in [911689368203313182, 913510750226612264]:
+                    reward = ["stone_crystal_white", "stone_crystal_red", "stone_crystal_green",
+                              "stone_crystal_blue", "stone_crystal_yellow"]
+                if ctx.channel.id in [911689413069766727, 913510775694458950]:
+                    reward = ["dust_wind", "dust_water", "dust_light", "dust_fire", "dust_earth", "dust_dark"]
+                if ctx.channel.id in [911689458632515644, 913510801644613652]:
+                    reward = ["stone_wind", "stone_water", "stone_light", "stone_fire", "stone_earth", "stone_dark"]
+                if ctx.channel.id in [911689491369058365, 913510825862512650]:
+                    reward = ["purified_stone_wind", "purified_stone_water", "purified_stone_light",
+                              "purified_stone_fire", "purified_stone_earth", "purified_stone_dark",
+                              "condense_stone_wind", "condense_stone_water", "condense_stone_light",
+                              "condense_stone_fire", "condense_stone_earth", "condense_stone_dark"]
+                if ctx.channel.id in [911689534700404796, 913510856237649921]:
+                    reward = ["SoulStoneYellow", "SoulStoneRed", "SoulStonePurple",
+                              "SoulStoneGreen", "SoulStoneDarkGreen", "SoulStoneBlue"]
 
                 bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
                          'stone_crystal_blue', 'stone_crystal_yellow']
