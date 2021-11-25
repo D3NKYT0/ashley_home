@@ -559,7 +559,7 @@ class DataInteraction(object):
                 pdh = lvl_now - lvl_anterior if lvl_now - lvl_anterior > 0 else 1
                 coins = pdh * 200
                 query_user["$set"][f"rpg.sub_class.{_name}.level"] = lvl_now if lvl_now < _LEVEL_MAXIMO else _limit
-                query_user["$inc"]["rpg.status.pdh"] = pdh if lvl_now < _LEVEL_MAXIMO else 0
+                query_user["$inc"][f"rpg.sub_class.{_name}.status.pdh"] = pdh if lvl_now < _LEVEL_MAXIMO else 0
                 if lvl_now < _LEVEL_MAXIMO:
                     query_user["$inc"]["inventory.coins"] = coins
 

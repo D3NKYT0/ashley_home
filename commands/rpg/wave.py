@@ -179,6 +179,9 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
+                p_raid[ctx.author.id].combo_cont = 0
+                if raid_rank[ctx.author.id] % 2 == 0:
+                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -214,6 +217,9 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
+                p_raid[ctx.author.id].combo_cont = 0
+                if raid_rank[ctx.author.id] % 2 == 0:
+                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -306,6 +312,9 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
+                p_raid[ctx.author.id].combo_cont = 0
+                if raid_rank[ctx.author.id] % 2 == 0:
+                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -341,6 +350,9 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
+                p_raid[ctx.author.id].combo_cont = 0
+                if raid_rank[ctx.author.id] % 2 == 0:
+                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))

@@ -269,7 +269,7 @@ class Entity(object):
             icon, skill_type = skills_now[c2]['icon'], skills_now[c2]['type']
             emojis.append(skills_now[c2]['icon'])
 
-            if self.limit[_] >= skills_now[attacks[_ + 1]]['limit'][ls]:
+            if self.limit[skills_now[c2]['skill'] - 1] >= skills_now[attacks[_ + 1]]['limit'][ls]:
                 icon = "<:skill_limit:912156419527172107>"
 
             try:
@@ -457,10 +457,6 @@ class Entity(object):
             if verify is not None:
                 return verify
 
-            if self.combo_cont >= 3:
-                self.is_combo = False
-                self.combo_cont = 0
-
         if effects is not None:
             if 'stun' in effects:
                 if self.effects['stun']['turns'] > 0:
@@ -506,9 +502,13 @@ class Entity(object):
                     # verificador de limit de skill
                     skill_now, limit_now = int(answer.content), False
                     if skill_now in [n + 1 for n in range(len(skills))]:
-                        ls = self.data["skill_level"][skill_now - 1][0]  # verificando o lvl atual da skill
-                        if self.limit[skill_now - 1] < skills_now[attacks[skill_now]]['limit'][ls]:
-                            self.limit[skill_now - 1] += 1
+                        skill_now_main = skills_now[attacks[skill_now]]["skill"]
+                        ls = self.data["skill_level"][skill_now_main - 1][0]  # verificando o lvl atual da skill
+                        if self.limit[skill_now_main - 1] < skills_now[attacks[skill_now]]['limit'][ls]:
+                            ls = self.data["skill_level"][skill_now_main - 1][0]
+                            remove = skills_now[attacks[skill_now]]['mana'][ls]
+                            if self.status['mp'] >= remove:
+                                self.limit[skill_now_main - 1] += 1
                         else:
                             limit_now = True
 
@@ -652,7 +652,13 @@ class Entity(object):
                                 self.status['mp'] -= remove
                                 self.skill = attacks[c]
                                 # verificador se esta sendo feito o combo
+
+                                if self.combo_cont >= 3:
+                                    self.is_combo = False
+                                    self.combo_cont = 0
+
                                 self.verify_combo(int(answer.content) - 1)
+
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
                                     _skill_number = skills_now[self.skill]["skill"] - 1
@@ -1170,6 +1176,16 @@ class Ext(object):
         min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 60 else 60
         min_, moon_data = min_ if min_ <= 55 else 55, get_moon()
         mini_boss_monster = self.mb[self.mini_boss[moon_data[0]]]
+
+        if lvl <= 10 and max_ > 10:
+            max_ = 10
+
+        if lvl <= 20 and max_ > 20:
+            max_ = 20
+
+        if lvl <= 40 and max_ > 40:
+            max_ = 40
+
         _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
         db_monster = copy.deepcopy(_monster) if not mini_boss else copy.deepcopy(mini_boss_monster)
         db_monster['enemy'], db_monster["pdef"], db_monster["mdef"] = db_player, lvl, lvl
