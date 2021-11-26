@@ -197,36 +197,43 @@ class Entity(object):
     def calc_skill_attack(self, now, _att, lvs, c2):
 
         if self.cc[1] in ['necromancer', 'wizard', 'warlock']:
-            tot_atk = _att * 1.6
+            tot_atk = int(_att * 1.6)
         elif self.cc[1] in ['assassin', 'priest']:
-            tot_atk = _att * 1.4
+            tot_atk = int(_att * 1.4)
         else:
-            tot_atk = _att * 1.2
+            tot_atk = int(_att * 1.2)
 
         skills_now = self.skills
         if self.is_passive and self.passive == "necromancer":
             skills_now = self.skills_p
 
-        self.ls = lvs if 0 <= lvs <= 9 else 9
-        ls, dado = self.ls, skills_now[c2]['damage'][self.ls]
-        d1, d2 = int(dado[:dado.find('d')]), int(dado[dado.find('d') + 1:])
+        self.ls = lvs if 0 <= lvs <= 9 else 9  # verificação de segurança para o limit (+10) de bonus
+        # as skills so tem bonus ate o limit do indice 9 (+10) apos isso so existe bonus de ataque
+        dado = skills_now[c2]['damage'][self.ls]  # define o valor variante do dano do enchant
+        d1, d2 = int(dado[:dado.find('d')]), int(dado[dado.find('d') + 1:])  # define os dados
         dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
-        dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
-        dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
-        _atk = [int(tot_atk / 100 * (50 + now)), int(tot_atk / 100 * (50 + (now * 10)))]
+        # dd = é a variante do valor maximo e minimo dos dados, onde o indice 0 e 1 correspondem a
+        # um RANDINT(dd[0], dd[1]) [valor minimo e maximo]
+        # d3 = é um valor bonus sobre a quantidade de encantamentos sobressalentes
+        # +11 ate +16 (adicionando x * 10, para cada encantamento adicional)
+        # esse valor de d3 é inserido no indice 0 da variavel dd
+        dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd  # adiciona d3 se o encantamento for maior do que +10
+        dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]  # verificação de segurança para quando o dd[0] for maior
+        # do que o dd[1] adicionando um variante para o "RANDINT()" function
+        skill_number = now + 1
+        _atk = [int(tot_atk / 100 * (50 + skill_number)), int(tot_atk / 100 * (50 + (skill_number * 10)))]
+        # _atk = é um variante da força total da skill junto com o bonus de encantamento e o atributo de atk
+        # o calculo consiste em 50% do valor do atak atual + x% da skill atual (1 a 5)
+        # no proximo valor se repente o calculo para o x% * 10 da variante do RANDINT()
 
-        if _atk[0] != _atk[1]:
-            if dd[0] != dd[1]:
-                damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[1]}"
-            else:
-                damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[0]}"
+        _damage = [_atk[0] + dd[0], _atk[1] + dd[1]]  # aqui ocorre a soma do dano de atk mais o bonus de enchant
+
+        if _damage[0] == _damage[1]:
+            damage = f"{_damage[0]}"  # se os valores sao iquais nao existe variação
         else:
-            if dd[0] != dd[1]:
-                damage = f"{_atk[0] + dd[0]}-{_atk[0] + dd[1]}"
-            else:
-                damage = f"{_atk[0] + dd[0]}"
+            damage = f"{_damage[0]}-{_damage[1]}"  # se os valores sao diferentes existe variação
 
-        return damage
+        return damage  # o retorno do dano estimado nao calcula efeitos ou soulshots
 
     def get_skill_menu(self, entity, user, skills, wave_now, passive_skill):
         hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
@@ -504,6 +511,7 @@ class Entity(object):
                     if skill_now in [n + 1 for n in range(len(skills))]:
                         skill_now_main = skills_now[attacks[skill_now]]["skill"]
                         ls = self.data["skill_level"][skill_now_main - 1][0]  # verificando o lvl atual da skill
+
                         if self.limit[skill_now_main - 1] < skills_now[attacks[skill_now]]['limit'][ls]:
                             ls = self.data["skill_level"][skill_now_main - 1][0]
                             remove = skills_now[attacks[skill_now]]['mana'][ls]
@@ -927,13 +935,15 @@ class Entity(object):
 
         if test:
             if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
-                tot_enemy_atk = enemy_atk * 1.6
+                tot_enemy_atk = int(enemy_atk * 1.6)
             elif enemy_cc[1] in ['assassin', 'priest']:
-                tot_enemy_atk = enemy_atk * 1.4
+                tot_enemy_atk = int(enemy_atk * 1.4)
             else:
-                tot_enemy_atk = enemy_atk * 1.2
+                tot_enemy_atk = int(enemy_atk * 1.2)
+
             damage_skill = int(tot_enemy_atk / 100 * (50 + randint(skill['skill'], skill['skill'] * 10)))
             damage = damage_skill + bk
+
         else:
             damage = enemy_atk + bk
 
@@ -957,7 +967,7 @@ class Entity(object):
 
         if critical:
             _cd = randint(int(critical_damage / 2), critical_damage)
-            damage = int(damage + (damage / 100 * _cd))
+            damage = int(damage + (damage / 100 * _cd))  # adiciona a % do critical
             embed = discord.Embed(title="CRITICAL", color=0x38105e)
             file = discord.File("images/elements/critical.gif", filename="critical.gif")
             embed.set_thumbnail(url="attachment://critical.gif")
@@ -1042,8 +1052,9 @@ class Entity(object):
                 entity.soulshot[1] -= 1
                 _soulshot = CLS[entity.data['class_now']]['soulshot']
                 bda = int(damage / 100 * _soulshot) if int(damage / 100 * _soulshot) < 100 else 99
+                # o limit de dano da soulshot é de 99 de damage
                 if skull:
-                    bda = 0
+                    bda = 0  # o efeito de skull elimita o adicional da soulshot
                 damage += bda
 
         res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage, lethal)
@@ -1059,20 +1070,32 @@ class Entity(object):
             entity.effects['reflect']['damage'] = damage
 
         armor_now = _defense if _defense > 0 else 1
-        armor_now = randint(int(armor_now * 0.50), armor_now)
+        armor_now = randint(int(armor_now * 0.50), armor_now)  # a defesa varia entre 50% a 100% da sua eficacia
 
         # efeito da hold
         if hold:
             armor_now = 0
 
-        percent = abs(int(armor_now / (damage / 100)))
-
-        if percent < 50:
-            dn = abs(int(damage - armor_now))
-
+        if armor_now > damage:  # se a defesa for maior que o dano
+            dn = randint(int(damage * 0.60), int(damage * 0.80))  # é defendido entre 60% a 80% do dano total
         else:
-            dn_chance = randint(1, 100)
-            dn = abs(int(damage - armor_now) if dn_chance < 25 else int(damage / 100 * randint(50, 70)))
+            if damage > 0:
+                one_percent = damage // 100  # 1% do dano
+                one_percent = 1 if one_percent < 1 else one_percent  # proteção contra divisão 0
+                defense_percent = armor_now // one_percent  # quantos % do dano tem na defesa
+            else:
+                defense_percent = 100
+
+            if defense_percent < 50:  # se a defesa for 50% ou manor do dano
+                dn = int(damage - armor_now)  # é retirado exatamente a defesa
+
+            elif defense_percent >= 100:
+                dn = damage  # defesa absoluta
+
+            else:  # se a defesa for entre 51% a 99%
+                dn = randint(int(damage * 0.50), int(damage * 0.60))  # é defendido entre 50% a 60% do dano total
+
+        defended = damage - dn  # verdadeira defesa.
 
         if reflect:
             _text4 = f'**{self.name.upper()}** `refletiu` **50%** `do dano que recebeu`'
@@ -1124,7 +1147,7 @@ class Entity(object):
                     self.status['hp'] = 0
                 bb = "" if bda == 0 else f"\n`e` **{_soulshot}%** `de dano a mais por causa da soulshot:` **{bda}**"
                 if defense > 0:
-                    descrip = f'**{self.name.upper()}** `absorveu` **{armor_now}** `de dano, recebendo` **{dn}** {bb}'
+                    descrip = f'**{self.name.upper()}** `absorveu` **{defended}** `de dano, recebendo` **{dn}** {bb}'
                 else:
                     descrip = f'**{self.name.upper()}** `recebeu` **{damage}** `de dano` {bb}'
 

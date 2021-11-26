@@ -94,19 +94,13 @@ class EnchanterClass(commands.Cog):
                 dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
                 dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
                 dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
-                _atk = [int(tot_atk / 100 * (50 + c)), int(tot_atk / 100 * (50 + (c * 10)))]
-
-                if _atk[0] != _atk[1]:
-                    if dd[0] != dd[1]:
-                        damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[1]}"
-                    else:
-                        damage = f"{_atk[0] + dd[0]}-{_atk[1] + dd[0]}"
+                skill_number = c + 1
+                _atk = [int(tot_atk / 100 * (50 + skill_number)), int(tot_atk / 100 * (50 + (skill_number * 10)))]
+                _damage = [_atk[0] + dd[0], _atk[1] + dd[1]]
+                if _damage[0] == _damage[1]:
+                    damage = f"{_damage[0]}"
                 else:
-                    if dd[0] != dd[1]:
-                        damage = f"{_atk[0] + dd[0]}-{_atk[0] + dd[1]}"
-                    else:
-                        damage = f"{_atk[0] + dd[0]}"
-
+                    damage = f"{_damage[0]}-{_damage[1]}"
                 icon, sk_tp = self.atacks[c2]['icon'], self.atacks[c2]['type']
 
                 try:
