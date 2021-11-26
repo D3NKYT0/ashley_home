@@ -62,6 +62,7 @@ class Entity(object):
         # sistema de passiva
         self.passive = ""
         self.is_passive = False
+        self.is_combo_passive = False
 
         if self.is_player:
             self._class = self.data['class'] if self.level < 26 else self.data['class_now']
@@ -312,7 +313,7 @@ class Entity(object):
             passive_combo_name = CLS[self.data['class_now']]["passive"]['combo_name']
             passive_combo_icon = CLS[self.data['class_now']]["passive"]['combo_icon']
             skill_combo = f"\n\n**{tot + 4}** - {passive_combo_icon} **[{passive_combo_name}]** | **COMBO**\n" \
-                          f"`Dano:` **-%** | `Mana:` **-%** | `Efeito(s):` **-**"
+                          f"`Dano:` **75%** | `Mana:` **100%** | `Efeito(s):` **fraquesa, silencio**"
 
         if self.is_combo:
             description += skill_combo
@@ -338,12 +339,22 @@ class Entity(object):
                         damage, burn = self.effects[c]['damage'], ""
 
                         if c == "queimadura" and randint(1, 2) == 2:
-                            damage += int(damage / 100 * 50)
-                            burn += "\n `levou 50% a mais por queimadura profunda`"
+                            bb = randint(50, 75)
+                            damage += int(damage / 100 * bb)
+                            burn += f"\n `levou {bb}% a mais por queimadura profunda`"
+                            _chance = randint(1, 100)
+                            if _chance <= 5:
+                                self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
+                                burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
                         if c == "veneno" and randint(1, 2) == 2:
-                            damage += int(damage / 100 * 50)
-                            burn += "\n `levou 50% a mais por intoxicação aguda`"
+                            bb = randint(50, 75)
+                            damage += int(damage / 100 * bb)
+                            burn += f"\n `levou {bb}% a mais por intoxicação aguda`"
+                            _chance = randint(1, 100)
+                            if _chance <= 5:
+                                self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
+                                burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
                         self.status['hp'] -= damage
                         if self.status['hp'] < 0:
@@ -561,6 +572,8 @@ class Entity(object):
                         self.is_combo = False
                         self.status['mp'] = 0
                         self.combo_cont = 0
+                        if self.is_passive and self.passive == "necromancer":
+                            self.is_combo_passive = True
                         break
 
                     if int(answer.content) == 0:
@@ -1001,7 +1014,15 @@ class Entity(object):
             return entity
 
         if skill == "SKILL-COMBO":
+
             _damage = self.status['hp'] // 2
+            if self.is_combo_passive:
+                self.is_combo_passive = False
+                _damage = (self.status['hp'] // 4) * 3
+
+                self.effects["silencio"] = {"type": "normal", "turns": randint(2, 5), "damage": None}
+                self.effects["fraquesa"] = {"type": "normal", "turns": randint(2, 5), "damage": None}
+
             _damage = _damage if not self.is_boss and not self.is_mini_boss else 0
 
             self.status['hp'] -= _damage

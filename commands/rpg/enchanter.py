@@ -83,11 +83,11 @@ class EnchanterClass(commands.Cog):
                 c2, ls, _att = atacks[c], lvs, self.db['status']['atk']
 
                 if self.db['class_now'] in ['necromancer', 'wizard', 'warlock']:
-                    tot_atk = _att * 1.6
+                    tot_atk = int(_att * 1.6)
                 elif self.db['class_now'] in ['assassin', 'priest']:
-                    tot_atk = _att * 1.4
+                    tot_atk = int(_att * 1.4)
                 else:
-                    tot_atk = _att * 1.2
+                    tot_atk = int(_att * 1.2)
 
                 dado = self.atacks[c2]['damage'][lvl_skill]
                 d1, d2 = int(dado[:dado.find('d')]), int(dado[dado.find('d') + 1:])
