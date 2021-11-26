@@ -927,9 +927,9 @@ class Entity(object):
 
         if test:
             if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
-                tot_enemy_atk = enemy_atk * 1.4
+                tot_enemy_atk = enemy_atk * 1.6
             elif enemy_cc[1] in ['assassin', 'priest']:
-                tot_enemy_atk = enemy_atk * 1.1
+                tot_enemy_atk = enemy_atk * 1.4
             else:
                 tot_enemy_atk = enemy_atk * 1.2
             damage_skill = int(tot_enemy_atk / 100 * (50 + randint(skill['skill'], skill['skill'] * 10)))
