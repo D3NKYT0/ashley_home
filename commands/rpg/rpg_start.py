@@ -121,10 +121,11 @@ class RpgStart(commands.Cog):
             else:
                 set_ini = {"11": 1, "12": 1, "13": 1, "14": 1, "15": 1}
 
+            update['rpg']["active"] = True
             update['rpg']["class_now"] = asks['class_now']
             update['rpg']["sex"] = asks['sex']
             update['rpg']["items"] = set_ini
-            update['rpg']["items"] = datetime.today()
+            update['rpg']["activated_at"] = datetime.today()
 
             bonus = "\n`Olá aventureiro! Bem vindo ao RPG, sua jornada será longa e é perigoso ir sozinho, então " \
                     "estou lhe dando um presente, olhe seu inventário de equipamentos com o comando:` **ash es**\n" \

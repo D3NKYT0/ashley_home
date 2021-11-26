@@ -395,6 +395,8 @@ class Entity(object):
 
                     if self.effects[c]['turns'] < 1:
                         del self.effects[c]
+                        and_effect = f"**{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
+                        msg_return += f"{and_effect}\n\n"
                 except KeyError:
                     pass
 
