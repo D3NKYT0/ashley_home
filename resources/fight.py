@@ -116,6 +116,7 @@ class Entity(object):
                 self.passive = self.data['class_now']
                 self.progress = 0
                 self.stack = 1
+                self.SPEAR_OF_DESTINY = False
 
             elif self.data['class_now'] == "priest":
                 self.passive = self.data['class_now']
@@ -659,6 +660,7 @@ class Entity(object):
 
                     if int(answer.content) == 0:
                         self.skill = CLS[self._class]['base_skill']
+                        not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
                         if self.is_passive and self.passive == "warlock":
                             self.skill = CLS[self._class]['passive'][f"{self.stack}"]
@@ -675,7 +677,7 @@ class Entity(object):
                                     description = f"**{user.name.upper()}** `VOCÊ STACOU` **{_action}** `DA SUA LANÇA!`"
                                 else:
                                     description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **SPEAR OF DESTINY!**"
-                                    self.is_passive, especial = True, True
+                                    self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva ad skill 0
                                         del self.effects["self_passive"]
                                 embeds = discord.Embed(description=description, color=0x000000)
@@ -732,8 +734,13 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "warlock":
+                        if self.is_passive and self.passive == "warlock" and not not_is_now:
                             self.is_passive, self.progress, self.stack = False, 0, 1
+                            self.SPEAR_OF_DESTINY = True
+                            description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **SPEAR OF DESTINY!**"
+                            embeds = discord.Embed(description=description, color=0x000000)
+                            embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                            await ctx.send(embed=embeds)
 
                         break
 
@@ -1055,6 +1062,10 @@ class Entity(object):
                 if confusion:
                     chance = False
 
+                if entity.SPEAR_OF_DESTINY and entity.passive == "warlock":
+                    if skill["skill"] == 0:
+                        chance = True
+
                 if chance:
                     if c in self.effects.keys():
                         if self.effects[c]['turns'] > 0:
@@ -1219,6 +1230,12 @@ class Entity(object):
                     act_eff = False
 
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
+
+        # desabilita a chance 100% do modo SPEAR_OF_DESTINY
+        if entity.SPEAR_OF_DESTINY and entity.passive == "warlock":
+            if skill["skill"] == 0:
+                entity.SPEAR_OF_DESTINY = False
+
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
 
