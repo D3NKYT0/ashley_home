@@ -501,9 +501,11 @@ class Entity(object):
             if self.skill['effs'] is not None:
                 if self.is_player and not self.is_passive:
                     active_passive = True
+
                     if "self_passive" in self.effects.keys():
                         if self.effects["self_passive"]["turns"] >= 1:
-                            active_passive = False
+                            active_passive = False  # nao ativa a passiva com ela ja ativa!
+
                     if active_passive:
                         lvs = self.level_skill[self.skill['skill'] - 1]
                         self.ls = lvs if 0 <= lvs <= 9 else 9
