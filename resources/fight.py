@@ -1128,7 +1128,7 @@ class Entity(object):
 
             if skill["skill"] == 0:
                 # nerf no dano da skill base
-                damage_skill = int(tot_enemy_atk / 100 * randint(1 + (lvs * 2), 2 + (lvs * 4)))
+                damage_skill = int(tot_enemy_atk / 100 * randint(1 + lvs, 2 + (lvs * 2)))
 
             damage = damage_skill + bk
 
@@ -1192,8 +1192,8 @@ class Entity(object):
 
             _damage = self.status['hp'] // 2
             is_combo_passive = ""
-            if self.is_combo_passive:
-                self.is_combo_passive = False
+            if entity.is_combo_passive:
+                entity.is_combo_passive = False
                 _damage = (self.status['hp'] // 4) * 3
 
                 self.effects["silencio"] = {"type": "normal", "turns": randint(2, 5), "damage": None}
@@ -1237,7 +1237,9 @@ class Entity(object):
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
         skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
-        lvs_skill = int(skill['skill']) if int(skill['skill']) != 0 else int(skill['skill']) + 1
+        lvs_skill = 1
+        if test:
+            lvs_skill = int(skill['skill']) if int(skill['skill']) != 0 else int(skill['skill']) + 1
         lvs = entity.level_skill[lvs_skill - 1] if test else entity.level_skill[0]
         self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
@@ -1412,7 +1414,7 @@ class Ext(object):
 
     def set_monster(self, db_player, mini_boss=False, min_max=None):
         lvl = db_player['level']
-        dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 5 if 10 <= lvl <= 30 else 10 if 31 <= lvl <= 50 else 15
+        dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 4 if 10 <= lvl <= 30 else 5 if 31 <= lvl <= 50 else 6
         min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 99 else 99
         min_, moon_data = min_ if min_ <= 55 else 55, get_moon()
         mini_boss_monster = self.mb[self.mini_boss[moon_data[0]]]
@@ -1457,7 +1459,7 @@ class Ext(object):
 
     def set_monster_raid(self, db_player, rr):
         # configuração do monstro
-        _min, _max = 20 + rr if rr + 20 < 95 else 95, 30 + rr if rr + 30 < 99 else 99
+        _min, _max = 25 + rr if rr + 20 < 95 else 95, 30 + rr if rr + 30 < 99 else 99
         m = [m for m in self.m if _min < self.m[self.m.index(m)]['level'] < _max]
         _monster = choice(m + self.q) if db_player["ESPECIAL"] else choice(m)
         _monster_now = copy.deepcopy(_monster)
