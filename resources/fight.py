@@ -1066,7 +1066,7 @@ class Entity(object):
 
                 if entity.passive == "warlock":
                     if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
-                        entity.SPEAR_OF_DESTINY = False
+                        chance = True
 
                 if chance:
                     if c in self.effects.keys():
@@ -1186,12 +1186,23 @@ class Entity(object):
         if skill == "SKILL-COMBO":
 
             _damage = self.status['hp'] // 2
+            is_combo_passive = ""
             if self.is_combo_passive:
                 self.is_combo_passive = False
                 _damage = (self.status['hp'] // 4) * 3
 
                 self.effects["silencio"] = {"type": "normal", "turns": randint(2, 5), "damage": None}
                 self.effects["fraquesa"] = {"type": "normal", "turns": randint(2, 5), "damage": None}
+
+                is_combo_passive = "\n\n"
+
+                turns = self.effects["silencio"]["turns"]
+                is_combo_passive += f'🟢 **{self.name.upper()}** `recebeu o efeito de` **SILENCIO** `por` ' \
+                                    f'**{turns}** `turno{"s" if turns > 1 else ""}`\n\n'
+
+                turns = self.effects["fraquesa"]["turns"]
+                is_combo_passive += f'🟢 **{self.name.upper()}** `recebeu o efeito de` **FRAQUESA** `por` ' \
+                                    f'**{turns}** `turno{"s" if turns > 1 else ""}`'
 
             _damage = _damage if not self.is_boss and not self.is_mini_boss else 0
 
@@ -1201,7 +1212,10 @@ class Entity(object):
 
             monster = not self.is_player if self.is_pvp else self.is_player
             bmsg = "\n`boss e mini boss são imune a combo!`" if self.is_boss or self.is_mini_boss else ""
-            description = f'**{self.name.upper()}** `recebeu` **{_damage}** `de dano, por levar um ` **combo!**{bmsg}'
+            type_combo = "combo" if not is_combo_passive else "combo especial"
+            description = f'**{self.name.upper()}** `recebeu` **{_damage}** `de dano, por levar um ` **{type_combo}!**'
+            description += bmsg
+            description += is_combo_passive
             img = "https://media.giphy.com/media/INEBdVgN59AbWhyZCk/giphy.gif"
             embed_ = embed_creator(description, img, monster, self.tot_hp, self.status['hp'], self.img, self.name)
             await ctx.send(embed=embed_)
