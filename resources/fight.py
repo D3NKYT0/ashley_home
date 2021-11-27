@@ -1125,6 +1125,11 @@ class Entity(object):
                 tot_enemy_atk = int(enemy_atk * 1.2)
 
             damage_skill = int(tot_enemy_atk / 100 * (50 + randint(skill['skill'], skill['skill'] * 10)))
+
+            if skill["skill"] == 0:
+                # nerf no dano da skill base
+                damage_skill = int(tot_enemy_atk / 100 * randint(1 + (lvs * 2), 2 + (lvs * 4)))
+
             damage = damage_skill + bk
 
         else:
@@ -1232,7 +1237,8 @@ class Entity(object):
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
         skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
-        lvs = entity.level_skill[int(skill['skill']) - 1] if test else entity.level_skill[0]
+        lvs_skill = int(skill['skill']) if int(skill['skill']) != 0 else int(skill['skill']) + 1
+        lvs = entity.level_skill[lvs_skill - 1] if test else entity.level_skill[0]
         self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
         if entity.effects is not None:
