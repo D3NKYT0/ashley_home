@@ -534,7 +534,8 @@ class Entity(object):
 
     async def turn(self, ctx, user, entity, wave_now=0):
         msg_return, stun, ice, self.skill = "", False, False, None,
-        skills, effects = list(self.skills.keys()), list(self.effects.keys())
+        skills, effects = list(self.skills.keys()), [eff.lower() for eff in self.effects.keys()]
+        skills_verify, skills_now_verify = [sk for sk in skills], dict(self.skills)
 
         skills_now = self.skills
         if self.is_passive and self.passive == "necromancer":
@@ -555,12 +556,19 @@ class Entity(object):
                 if self.effects['gelo']['turns'] > 0:
                     ice = True
 
-        for eff in [['fraquesa', 'fisico'], ['silencio', 'magico']]:
-            if eff[0] in effects:
-                if self.effects[eff[0]]['turns'] > 0:
-                    for sk in skills:
-                        if skills_now[sk]['type'] == eff[1]:
-                            skills.remove(sk)
+        # retirada as skills fisicas
+        if "fraquesa" in effects:
+            if self.effects["fraquesa"]['turns'] > 0:
+                for sk in skills_verify:
+                    if skills_now[sk]['type'] == "fisico":
+                        skills.remove(sk)
+
+        # retirada as skills magicas
+        if "silencio" in effects:
+            if self.effects["silencio"]['turns'] > 0:
+                for sk in skills_verify:
+                    if skills_now[sk]['type'] == "magico":
+                        skills.remove(sk)
 
         if stun is False and ice is False:
             if self.is_player:
