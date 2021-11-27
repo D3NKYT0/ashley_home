@@ -511,14 +511,14 @@ class Entity(object):
                         self.ls = lvs if 0 <= lvs <= 9 else 9
 
                         # habilita passiva do priest
-                        if self.skill['effs'][self.ls]['hold']['type'] == "normal":
+                        if "hold" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
 
                         # habilita passiva do warlock
-                        if self.skill['effs'][self.ls]['skull']['type'] == "damage":
+                        if "skull" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
