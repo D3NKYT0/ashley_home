@@ -118,6 +118,7 @@ class Entity(object):
             elif self.data['class_now'] == "priest":
                 self.passive = self.data['class_now']
                 self.type_skill_passive = 0
+                self.type_skill_await = 1
                 self.progress = 0
 
             elif self.data['class_now'] == "assassin":
@@ -542,7 +543,13 @@ class Entity(object):
                         if self.effects['self_passive']['turns'] > 0:
                             self_passive = True
 
-                response = self.get_skill_menu(entity, user, skills, wave_now, self_drain)
+                self_skill = False
+                if self_drain:
+                    self_skill = True
+                if self_passive:
+                    self_skill = True
+
+                response = self.get_skill_menu(entity, user, skills, wave_now, self_skill)
                 embed, attacks, hate_no_mana, hate_no_limit = response[0], response[1], response[2], response[3]
                 await ctx.send(embed=embed)
 
@@ -621,9 +628,9 @@ class Entity(object):
                         self.skill = CLS[self._class]['base_skill']
 
                         if self.is_passive and self.passive == "priest":
-                            if self.type_skill_passive == "0":
+                            if self.type_skill_passive == 0:
                                 self.skill = CLS[self._class]['passive']["0"]
-                            if self.type_skill_passive == "1":
+                            if self.type_skill_passive == 1:
                                 self.skill = CLS[self._class]['passive']["1"]
 
                         if self_passive and self.passive == "priest":
@@ -742,8 +749,16 @@ class Entity(object):
                             elif self.status['mp'] >= remove:
                                 self.status['mp'] -= remove
                                 self.skill = attacks[c]
-                                # verificador se esta sendo feito o combo
 
+                                # troca da passiva do priest
+                                if self.is_passive and self.passive == "priest":
+                                    if self.skill == "Devocional":  # verificação da skill de (hold)
+                                        skill_await = self.type_skill_passive
+                                        self.type_skill_passive = self.type_skill_await
+                                        self.type_skill_await = skill_await
+                                        await ctx.send(f"**{user.name.upper()}** `(DH MODE) ALTERADO COM SUCESSO!`")
+
+                                # verificador se esta sendo feito o combo
                                 if self.combo_cont >= 3:
                                     self.is_combo = False
                                     self.combo_cont = 0
@@ -950,6 +965,7 @@ class Entity(object):
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
         if skill['effs'] is not None and act_eff:
+
             key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
             for c in key:
 
