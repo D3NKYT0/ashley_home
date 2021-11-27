@@ -541,9 +541,15 @@ class Raid(commands.Cog):
                 else:
                     _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-            response = await self.bot.db.add_reward(ctx, _reward, False)
-            await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
-                           f'{response}\n{msg}')
+            response = await self.bot.db.add_reward(ctx, _reward, False, True)
+            desc = "<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨"
+            embed = discord.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
+            for texts in response:
+                embed.add_field(name="**Loot Aleatorio**", value=texts, inline=False)
+            embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
+            embed.set_thumbnail(url=ctx.author.avatar_url)
+            embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+            await ctx.send(embed=embed)
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data

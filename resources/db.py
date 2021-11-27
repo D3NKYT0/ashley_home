@@ -254,7 +254,7 @@ class Database(object):
                        f"**{answer['list'][2]}**  {self.bot.money[2]}\n"
             return msg
 
-    async def add_reward(self, ctx, list_, one=False):  # atualizado no banco de dados
+    async def add_reward(self, ctx, list_, one=False, wave=False):  # atualizado no banco de dados
         query = {"_id": 0, "user_id": 1, "security": 1}
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         query_user = {"$inc": {}}
@@ -262,7 +262,7 @@ class Database(object):
         if not data_user['security']['status']:
             return '`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'
 
-        response, items = '`Caiu pra você:` \n\n', dict()
+        response, items, reward_list = '`Caiu pra você:` \n\n', dict(), list()
         for item in list_:
             amount = randint(1, 3) if not one else 1
 
@@ -275,11 +275,20 @@ class Database(object):
             query_user["$inc"][f"inventory.{k}"] = v
 
         for it in items.keys():
-            response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
+            if wave:
+                if len(response) <= 1500:
+                    response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
+                else:
+                    reward_list.append(response)
+                    response = f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
+            else:
+                response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
 
         cl = await self.bot.db.cd("users")
         await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
         response += '```dê uma olhada no seu inventario com o comando: "ash i"```'
+        if wave:
+            return reward_list
         return response
 
     async def add_rpg(self, ctx, list_, one=False, amount=0):  # atualizado no banco de dados
