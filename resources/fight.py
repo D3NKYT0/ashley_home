@@ -429,6 +429,8 @@ class Entity(object):
 
                     if self.effects[c]['turns'] < 1:
                         del self.effects[c]
+                        if "self" in c:
+                            c = "PASSIVA"
                         and_effect = f"**{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
                         msg_return += f"{and_effect}\n\n"
                 except KeyError:
@@ -1062,9 +1064,9 @@ class Entity(object):
                 if confusion:
                     chance = False
 
-                if entity.SPEAR_OF_DESTINY and entity.passive == "warlock":
-                    if skill["skill"] == 0:
-                        chance = True
+                if entity.passive == "warlock":
+                    if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
+                        entity.SPEAR_OF_DESTINY = False
 
                 if chance:
                     if c in self.effects.keys():
@@ -1232,8 +1234,8 @@ class Entity(object):
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
 
         # desabilita a chance 100% do modo SPEAR_OF_DESTINY
-        if entity.SPEAR_OF_DESTINY and entity.passive == "warlock":
-            if skill["skill"] == 0:
+        if entity.passive == "warlock":
+            if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
                 entity.SPEAR_OF_DESTINY = False
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
