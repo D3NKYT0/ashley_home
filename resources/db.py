@@ -288,6 +288,7 @@ class Database(object):
         await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
         response += '```dê uma olhada no seu inventario com o comando: "ash i"```'
         if wave:
+            reward_list.append(response)
             return reward_list
         return response
 

@@ -114,6 +114,8 @@ class Entity(object):
 
             elif self.data['class_now'] == "warlock":
                 self.passive = self.data['class_now']
+                self.progress = 0
+                self.stack = 1
 
             elif self.data['class_now'] == "priest":
                 self.passive = self.data['class_now']
@@ -268,11 +270,30 @@ class Entity(object):
                 description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
                               f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
 
+            if not self.is_passive and self.passive == "warlock":
+                text_passive += f"`Progress:` **{self.progress}/{passive_amount}**"
+                description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
+                              f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
+
         if self.is_passive and self.passive == "priest":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['icon']
             text_passive = "veneno, queimadura" if self.type_skill_passive == 0 else "curse, queimadura"
             description = f"**0** - {passive_icon} **{passive_name.upper()}** | **DH MODE** \n" \
+                          f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
+
+        if self.is_passive and self.passive == "warlock":
+            passive_name = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['name']
+            passive_icon = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['icon']
+            if self.stack == 1:
+                text_passive = "silencio"
+            elif self.stack == 2:
+                text_passive = "silencio, fraquesa"
+            elif self.stack == 3:
+                text_passive = "silencio, fraquesa, strike"
+            else:
+                text_passive = "silencio, fraquesa, strike, skull"
+            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **SOD MODE** \n" \
                           f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
 
         tot, attacks = len(skills), dict()
@@ -486,11 +507,21 @@ class Entity(object):
                     if active_passive:
                         lvs = self.level_skill[self.skill['skill'] - 1]
                         self.ls = lvs if 0 <= lvs <= 9 else 9
+
+                        # habilita passiva do priest
                         if self.skill['effs'][self.ls]['hold']['type'] == "normal":
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
+
+                        # habilita passiva do warlock
+                        if self.skill['effs'][self.ls]['skull']['type'] == "damage":
+                            self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
+
         except (KeyError, TypeError):
             pass
 
@@ -536,7 +567,7 @@ class Entity(object):
                         if self.effects['self_drain']['turns'] > 0:
                             self_drain = True
 
-                # verificação da skill base do priest
+                # verificação da skill base do priest / warlock
                 self_passive = False
                 if effects is not None:
                     if 'self_passive' in effects:
@@ -627,11 +658,33 @@ class Entity(object):
                     if int(answer.content) == 0:
                         self.skill = CLS[self._class]['base_skill']
 
+                        if self.is_passive and self.passive == "warlock":
+                            self.skill = CLS[self._class]['passive'][f"{self.stack}"]
+
+                        if self_passive and self.passive == "warlock":
+                            _action = randint(15, 30)  # velocidade da progreção
+                            self.progress += _action
+                            if self.progress >= 100 and not self.is_passive:
+                                self.progress = 100
+
+                            if not self.is_passive:
+                                especial = False
+                                if self.progress < 100:
+                                    description = f"**{user.name.upper()}** `VOCÊ STACOU` **{_action}** `DA SUA LANÇA!`"
+                                else:
+                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **SPEAR OF DESTINY!**"
+                                    self.is_passive, especial = True, True
+                                    if "self_passive" in self.effects.keys():  # desabilita a passiva ad skill 0
+                                        del self.effects["self_passive"]
+                                embeds = discord.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                if self.is_passive and especial:
+                                    _url = CLS[self._class]['passive']["gif"]
+                                    embeds.set_image(url=_url)
+                                await ctx.send(embed=embeds)
+
                         if self.is_passive and self.passive == "priest":
-                            if self.type_skill_passive == 0:
-                                self.skill = CLS[self._class]['passive']["0"]
-                            if self.type_skill_passive == 1:
-                                self.skill = CLS[self._class]['passive']["1"]
+                            self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
 
                         if self_passive and self.passive == "priest":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -676,6 +729,10 @@ class Entity(object):
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
+
+                        if self.is_passive and self.passive == "warlock":
+                            self.is_passive, self.progress, self.stack = False, 0, 1
+
                         break
 
                     potion_msg = False
@@ -749,6 +806,12 @@ class Entity(object):
                             elif self.status['mp'] >= remove:
                                 self.status['mp'] -= remove
                                 self.skill = attacks[c]
+
+                                if self.is_passive and self.passive == "warlock":
+                                    if self.skill == "Tudo do Po":  # verificação da skill de (skull)
+                                        if self.stack < 4:
+                                            self.stack += 1
+                                            await ctx.send(f"**{user.name.upper()}** `(SOD MODE) STACADO COM SUCESSO!`")
 
                                 # troca da passiva do priest
                                 if self.is_passive and self.passive == "priest":
@@ -926,7 +989,7 @@ class Entity(object):
         if not self.is_passive and self.passive == "necromancer":
             msg_return = self.self_drain_effect_resolve(msg_return)
 
-        if not self.is_passive and self.passive == "priest":
+        if not self.is_passive and self.passive in ["priest", "warlock"]:
             msg_return = self.self_passive_effect_resolve(msg_return)
 
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return)
