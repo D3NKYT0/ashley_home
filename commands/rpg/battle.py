@@ -616,7 +616,7 @@ class Battle(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
 
         # sistema de skin dos champions
-        if champion:
+        if champion and player[ctx.author.id].status['hp'] > 0:
             chance_drop_skin = randint(1, 100)
             if chance_drop_skin <= 5:
                 data_member = await self.bot.db.get_data("user_id", ctx.author.id, "users")
