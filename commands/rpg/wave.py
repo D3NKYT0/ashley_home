@@ -508,9 +508,10 @@ class Raid(commands.Cog):
                            "enchant_silver", "armor_hero", "armor_violet", "armor_inspiron", "armor_mystic",
                            "armor_silver"]
 
-            msg = "\n"
+            msg, send_message = "\n", False
 
             if raid_rank[ctx.author.id] >= 5:
+                send_message = True
                 _reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **5** `monstros`\n"
 
@@ -546,7 +547,8 @@ class Raid(commands.Cog):
             embed = discord.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
             for texts in response:
                 embed.add_field(name="**Loot Aleatorio**", value=texts, inline=False)
-            embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
+            if send_message:
+                embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
             embed.set_thumbnail(url=ctx.author.avatar_url)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)

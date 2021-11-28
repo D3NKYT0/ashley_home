@@ -22,7 +22,7 @@ for ky in all_data['equips'].keys():
 
 
 class Entity(object):
-    def __init__(self, data, is_player, is_pvp=False, is_wave=False, is_boss=False, is_mini_boss=False):
+    def __init__(self, data, is_player, is_pvp=False, is_wave=False, is_boss=False, is_mini_boss=False, is_champ=False):
         # data da entidade
         self.data = data
 
@@ -32,6 +32,7 @@ class Entity(object):
         self.is_wave = is_wave
         self.is_boss = is_boss
         self.is_mini_boss = is_mini_boss
+        self.is_champion = is_champ
         self.is_strike = False
         self.is_combo = False
         self.is_hold = False
@@ -1052,6 +1053,13 @@ class Entity(object):
         return skull, drain, bluff, hit_kill, hold
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
+
+        if entity.passive == "warlock":
+            if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
+                if skill["name"] == "SoD Stack [4]":
+                    # se o stack da passiva do warlock for 4 (o efeito sobrepoe o strike)
+                    act_eff = True
+
         if skill['effs'] is not None and act_eff:
 
             key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
@@ -1464,8 +1472,9 @@ class Ext(object):
         self.q = MONSTERS_QUEST
         self.mini_boss = all_data['attribute']['moon_mini_boss']
         self.mb = all_data['battle']['miniboss']
+        self.champions = all_data['battle']['champions']
 
-    def set_monster(self, db_player, mini_boss=False, min_max=None):
+    def set_monster(self, db_player, mini_boss=False, min_max=None, champion=False):
         lvl = db_player['level']
         dif = 2 if lvl < 2 else 3 if 2 <= lvl <= 9 else 4 if 10 <= lvl <= 30 else 5 if 31 <= lvl <= 50 else 6
         min_, max_ = lvl - 5 if lvl - 5 > 1 else 1, lvl + dif if lvl + dif <= 99 else 99
@@ -1494,6 +1503,10 @@ class Ext(object):
             min_, max_ = min_max[0], min_max[1]
 
         _monster = choice([m for m in self.m if min_ < self.m[self.m.index(m)]['level'] < max_])
+
+        if champion:
+            _monster = choice(self.champions)
+
         db_monster = copy.deepcopy(_monster) if not mini_boss else copy.deepcopy(mini_boss_monster)
         db_monster['enemy'], db_monster["pdef"], db_monster["mdef"] = db_player, lvl, lvl
 

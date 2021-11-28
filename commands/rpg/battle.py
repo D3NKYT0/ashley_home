@@ -121,7 +121,14 @@ class Battle(commands.Cog):
 
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
-        db_monster = extension.set_monster(db_player, mini_boss, min_max)
+
+        # config CHAMPIONS
+        champion = False
+        chance_champion = randint(1, 100)
+        if chance_champion <= 5:
+            champion = True
+
+        db_monster = extension.set_monster(db_player, mini_boss, min_max, champion)
 
         # criando as entidades...
         if ctx.author.id in player.keys():
@@ -130,7 +137,7 @@ class Battle(commands.Cog):
             del monster[ctx.author.id]
 
         player[ctx.author.id] = Entity(db_player, True)
-        monster[ctx.author.id] = Entity(db_monster, False, is_mini_boss=mini_boss)
+        monster[ctx.author.id] = Entity(db_monster, False, is_mini_boss=mini_boss, is_champ=champion)
 
         # durante a batalha
         while not self.bot.is_closed():
@@ -607,6 +614,19 @@ class Battle(commands.Cog):
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
+
+        # sistema de skin dos champions
+        if champion:
+            chance_drop_skin = randint(1, 100)
+            if chance_drop_skin <= 5:
+                data_member = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+                update_member = data_member
+                skin = choice(db_monster["skins"])
+                if skin not in update_member["rpg"]["skins"]:
+                    update_member["rpg"]["skins"].append(skin)
+                    await self.bot.db.update_data(data_member, update_member, 'users')
+                    await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS,` **{ctx.author.name}**  `A'
+                                          f' SKIN` **{skin.upper()}** `CAIU PRA VOCE!`')
 
         # sistema de level up das skills
         query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
