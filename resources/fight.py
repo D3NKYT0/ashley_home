@@ -560,15 +560,21 @@ class Entity(object):
         if "fraquesa" in effects:
             if self.effects["fraquesa"]['turns'] > 0:
                 for sk in skills_verify:
-                    if skills_now[sk]['type'] == "fisico":
-                        skills.remove(sk)
+                    try:
+                        if skills_now[sk]['type'] == "fisico":
+                            skills.remove(sk)
+                    except KeyError:
+                        pass
 
         # retirada as skills magicas
         if "silencio" in effects:
             if self.effects["silencio"]['turns'] > 0:
                 for sk in skills_verify:
-                    if skills_now[sk]['type'] == "magico":
-                        skills.remove(sk)
+                    try:
+                        if skills_now[sk]['type'] == "magico":
+                            skills.remove(sk)
+                    except KeyError:
+                        pass
 
         if stun is False and ice is False:
             if self.is_player:
@@ -1069,12 +1075,18 @@ class Entity(object):
                 if c == "bluff" and not entity.is_bluff:
                     entity.is_bluff, chance = True, True
 
-                if confusion:
-                    chance = False
-
                 if entity.passive == "warlock":
                     if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
                         chance = True
+
+                negate_fisico = False
+                if "target" in entity.effects.keys():
+                    if entity.effects["target"]['turns'] > 0:
+                        if skill["type"] == "fisico":
+                            negate_fisico = True
+
+                if confusion or negate_fisico:
+                    chance = False
 
                 if chance:
                     if c in self.effects.keys():
@@ -1103,8 +1115,12 @@ class Entity(object):
                                  f'**{turns}** `turno{"s" if turns > 1 else ""}`'
                         msg_return += f"{_text2}\n\n"
                 else:
+                    negate = ""
+                    if negate_fisico:
+                        negate += f" `por que` **{entity.name.upper()}** `está sob o feito de` **TARGET**"
                     # vermelho
                     _text3 = f'🔴 **{self.name.upper()}** `não recebeu o efeito de` **{c.upper()}**'
+                    _text3 += negate
                     msg_return += f"{_text3}\n\n"
 
         if skill['effs'] is not None and not act_eff:
@@ -1115,13 +1131,20 @@ class Entity(object):
 
         return entity, msg_return, _eff, chance
 
-    def calc_damage_skill(self, skill, test, lvs, enemy_cc, enemy_atk):
+    def calc_damage_skill(self, skill, test, lvs, enemy_cc, enemy_atk, half_life_priest, stack_2):
         damage_enchant = skill['damage'][self.ls] if test else skill['damage']
         d1 = int(damage_enchant[:damage_enchant.find('d')])
         d2 = int(damage_enchant[damage_enchant.find('d') + 1:])
         dd, d3 = [d2, d2 * d1] if d2 != d2 * d1 else [d2, d2], int((lvs - 10) * 10)
         dd = [d2 + d3, d2 * d1] if lvs >= 11 else dd
         dd[1] = dd[0] + 1 if dd[0] > dd[1] else dd[1]
+
+        if stack_2 and int(skill["skill"]) in [1, 2, 3, 4, 5]:
+            if dd[0] != dd[1]:
+                dd[0] = dd[0] * 2
+                if dd[0] > dd[1]:
+                    dd[0] -= 1
+
         bk = randint(dd[0], dd[1]) if dd[0] != dd[1] else dd[0]
 
         if test:
@@ -1132,7 +1155,11 @@ class Entity(object):
             else:
                 tot_enemy_atk = int(enemy_atk * 1.2)
 
-            damage_skill = int(tot_enemy_atk / 100 * (50 + randint(skill['skill'], skill['skill'] * 10)))
+            variacao = (50 + randint(skill['skill'], skill['skill'] * 10))
+            if stack_2 and int(skill["skill"]) in [1, 2, 3, 4, 5]:
+                variacao = (50 + randint(skill['skill'] * 5, skill['skill'] * 10))
+
+            damage_skill = int(tot_enemy_atk / 100 * variacao)
 
             if skill["skill"] == 0:
                 # nerf no dano da skill base
@@ -1142,6 +1169,9 @@ class Entity(object):
 
         else:
             damage = enemy_atk + bk
+
+        if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
+            damage = self.status['hp'] // 2
 
         return damage
 
@@ -1246,6 +1276,9 @@ class Entity(object):
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
         skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
         lvs_skill = 1
+        # combo do priest (effect)
+        half_life_priest, stack_1, stack_2 = False, False, False
+
         if test:
             lvs_skill = int(skill['skill']) if int(skill['skill']) != 0 else int(skill['skill']) + 1
         lvs = entity.level_skill[lvs_skill - 1] if test else entity.level_skill[0]
@@ -1261,6 +1294,17 @@ class Entity(object):
                 if entity.effects["strike"]['turns'] > 0:
                     act_eff = False
 
+            if "target" in self.effects.keys():
+                if self.effects["target"]['turns'] > 0:
+                    stack_1 = True
+
+            if "headshot" in self.effects.keys():
+                if self.effects["headshot"]['turns'] > 0:
+                    stack_2 = True
+
+        if stack_1 and stack_2:
+            half_life_priest = True
+
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
 
         # desabilita a chance 100% do modo SPEAR_OF_DESTINY
@@ -1269,7 +1313,7 @@ class Entity(object):
                 entity.SPEAR_OF_DESTINY = False
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
-        damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'])
+        damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stack_2)
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
         skull, drain, bluff, hit_kill, hold = self.verify_effect(self.effects, entity)
