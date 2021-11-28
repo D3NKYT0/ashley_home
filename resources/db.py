@@ -262,7 +262,7 @@ class Database(object):
         if not data_user['security']['status']:
             return '`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'
 
-        response, items, reward_list = '`Caiu pra você:` \n\n', dict(), list()
+        response, items, reward_list = '', dict(), list()
         for item in list_:
             amount = randint(1, 3) if not one else 1
 
@@ -276,7 +276,7 @@ class Database(object):
 
         for it in items.keys():
             if wave:
-                if len(response) <= 1500:
+                if len(response) <= 950:
                     response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
                 else:
                     reward_list.append(response)
