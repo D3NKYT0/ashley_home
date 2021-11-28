@@ -1171,7 +1171,8 @@ class Entity(object):
             damage = enemy_atk + bk
 
         if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
-            damage = self.status['hp'] // 2
+            if not self.is_boss and not self.is_mini_boss:
+                damage = self.status['hp'] // 2
 
         return damage
 
