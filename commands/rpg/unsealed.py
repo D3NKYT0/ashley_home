@@ -20,6 +20,14 @@ class MeltedClass(commands.Cog):
         self.i = self.bot.items
         self.se = self.bot.config['equips']
 
+        self.rarity_gem = {
+            "silver": "gem_of_silver",
+            "mystic": "gem_of_mystic",
+            "inspiron": "gem_of_inspiron",
+            "violet": "gem_of_violet",
+            "hero": "gem_of_hero"
+        }
+
         self.rarity = {
             "uncommon": 100,
             "rare": 50,
@@ -83,6 +91,19 @@ class MeltedClass(commands.Cog):
 
         if equip is None:
             return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER O NOME DE UM EQUIPAMENTO!`")
+
+        gem_rarity, rarity_now = False, None
+        if "$" in equip:
+            rarity_and_equip = equip.split("$")
+            rarity_now = rarity_and_equip[0].strip()
+            equip = rarity_and_equip[1].strip()
+            if rarity_now not in ["silver", "mystic", "inspiron", "violet", "hero"]:
+                return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER UMA RARIDADE VALIDA!`")
+            gem_rarity = True
+
+        if gem_rarity:  # adiciona a gema da raridade
+            rarity_equip = self.rarity_gem[rarity_now]
+            self.cost[rarity_equip] = 3
 
         equip = equip.replace("_", " ")
         if equip.lower() not in [k.lower() for k in self.i.keys() if self.i[k][3] == 9]:
@@ -177,6 +198,9 @@ class MeltedClass(commands.Cog):
                 "ultra rare": "violet",
                 "secret": "hero"
             }
+
+            if gem_rarity and rarity_now is not None:
+                rarity = rarity_now  # altera a raridade do item para a da gema
 
             reward_equip = None
             item_reward = equip.lower()

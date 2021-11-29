@@ -19,9 +19,18 @@ class JewelClass(commands.Cog):
         self.bot = bot
         self.i = self.bot.items
         self.w_s = self.bot.config['attribute']['chance_jewel']
+        self.w_r = self.bot.config['attribute']['jewel_rarity']
         self.art = ["braço_direito", "braço_esquerdo", "perna_direita", "perna_esquerda", "the_one", "anel", "balança",
                     "chave", "colar", "enigma", "olho", "vara", "aquario", "aries", "cancer", "capricornio",
                     "escorpiao", "gemeos", "leao", "peixes", "sargitario", "libra", "touro", "virgem"]
+
+        self.rarity_gem = {
+            "silver": "gem_of_silver",
+            "mystic": "gem_of_mystic",
+            "inspiron": "gem_of_inspiron",
+            "violet": "gem_of_violet",
+            "hero": "gem_of_hero"
+        }
 
         self.cost = {
             "fused_diamond": 1,
@@ -32,22 +41,26 @@ class JewelClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='jewel', aliases=['joia'])
-    async def jewel(self, ctx):
+    async def jewel(self, ctx, rarity=None):
         """Comando especial usado para craftar joias para seu personagem"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
+        if rarity not in ["silver", "mystic", "inspiron", "violet", "hero"] and rarity is not None:
+            return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER UMA RARIDADE VALIDA!`")
+
+        if rarity:  # adiciona a gema da raridade
+            rarity_equip = self.rarity_gem[rarity]
+            self.cost[rarity_equip] = 3
+
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE DEVE USAR OS COMANDOS` **ASH RECIPE** `E` **ASH CRAFT**"
 
-        Embed = discord.Embed(
-            title="O CUSTO PARA VOCE CRIAR UMA JOIA:",
-            color=self.bot.color,
-            description=msg)
-        Embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        Embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
-        Embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-        await ctx.send(embed=Embed)
+        embed = discord.Embed(title="O CUSTO PARA VOCE CRIAR UMA JOIA:", color=self.bot.color, description=msg)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
+        embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
 
         artifacts = []
         for i_, amount in data['inventory'].items():
@@ -140,7 +153,11 @@ class JewelClass(commands.Cog):
 
         list_items = []
         for i_, amount in self.w_s.items():
-            list_items += [i_] * amount
+            if rarity is not None:
+                if self.w_r[i_] == rarity:
+                    list_items += [i_] * amount
+            else:
+                list_items += [i_] * amount
         armor_or_shield = choice(list_items)
 
         await msg.edit(content=f"<:confirmed:721581574461587496>│`joia sorteada com sucesso...`")

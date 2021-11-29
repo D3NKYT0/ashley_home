@@ -41,6 +41,21 @@ class BrokenClass(commands.Cog):
             "warrior": 6,
             "wizard": 7
         }
+        self.rarity_gem = {
+            "silver": "gem_of_silver",
+            "mystic": "gem_of_mystic",
+            "inspiron": "gem_of_inspiron",
+            "violet": "gem_of_violet",
+            "hero": "gem_of_hero"
+        }
+
+        self.next_rarity = {
+            "silver": "mystic",
+            "mystic": "inspiron",
+            "inspiron": "violet",
+            "violet": "hero",
+            "hero": None
+        }
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -123,6 +138,14 @@ class BrokenClass(commands.Cog):
                 except KeyError:
                     update['inventory'][key] = amount
             cont += 1
+
+        rarity_now = self.next_rarity[rarity]
+        gem_now = self.rarity_gem[rarity_now]
+        if gem_now is not None:
+            try:
+                update['inventory'][gem_now] += randint(1, 3)
+            except KeyError:
+                update['inventory'][gem_now] = randint(1, 3)
 
         await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)

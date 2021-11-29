@@ -626,7 +626,7 @@ class Battle(commands.Cog):
                     update_member["rpg"]["skins"].append(skin)
                     await self.bot.db.update_data(data_member, update_member, 'users')
                     await ctx.send(f'<a:fofo:524950742487007233>│`PARABENS,` **{ctx.author.name}**  `A'
-                                          f' SKIN` **{skin.upper()}** `CAIU PRA VOCE!`')
+                                   f' SKIN` **{skin.upper()}** `CAIU PRA VOCE!`')
 
         # sistema de level up das skills
         query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")

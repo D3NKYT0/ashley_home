@@ -691,10 +691,12 @@ class Entity(object):
                             break
 
                         else:
-                            description = f"{user.name.upper()} VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O EFEITO " \
-                                          f"DE` **PRESAS**"
+                            description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
+                                          f"EFEITO DE` **PRESAS**"
                             embed = discord.Embed(description=description, color=0x000000)
                             embed.set_author(name=user.name, icon_url=user.avatar_url)
+                            await ctx.send(embed=embed)
+                            continue
 
                     potion_limit = 3 if not self.is_wave else 3 + (wave_now // 2)
                     if int(answer.content) == len(skills) + 2 and self.potion < potion_limit:
@@ -721,10 +723,12 @@ class Entity(object):
                             break
 
                         else:
-                            description = f"{user.name.upper()} VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O EFEITO " \
-                                          f"DE` **PRESAS**"
+                            description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
+                                          f"EFEITO DE` **PRESAS**"
                             embed = discord.Embed(description=description, color=0x000000)
                             embed.set_author(name=user.name, icon_url=user.avatar_url)
+                            await ctx.send(embed=embed)
+                            continue
 
                     if int(answer.content) == len(skills) + 3:
                         # cancela ou foge da batalha
