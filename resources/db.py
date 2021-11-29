@@ -262,7 +262,7 @@ class Database(object):
         if not data_user['security']['status']:
             return '`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO DEMAIS` **USE COMANDOS COM MAIS CALMA JOVEM...**'
 
-        response, items, reward_list = '', dict(), list()
+        response, items, reward_list = '`Caiu pra você:` \n\n' if not wave else '', dict(), list()
         for item in list_:
             amount = randint(1, 3) if not one else 1
 
