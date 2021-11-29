@@ -36,13 +36,15 @@ class MeltedClass(commands.Cog):
             "secret": 1
         }
 
-        self.cost = {
+        self.cost_ini = {
             "melted_artifact": 1,
             "unsealed_stone": 2,
             "Discharge_Crystal": 10,
             "Acquittal_Crystal": 10,
             "Crystal_of_Energy": 10
         }
+
+        self.cost = dict()
 
         self.cost_celestial = {
             "Discharge_Crystal": 125,
@@ -101,6 +103,7 @@ class MeltedClass(commands.Cog):
                 return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER UMA RARIDADE VALIDA!`")
             gem_rarity = True
 
+        self.cost = dict(self.cost_ini)
         if gem_rarity:  # adiciona a gema da raridade
             rarity_equip = self.rarity_gem[rarity_now]
             self.cost[rarity_equip] = 3

@@ -32,10 +32,12 @@ class JewelClass(commands.Cog):
             "hero": "gem_of_hero"
         }
 
-        self.cost = {
+        self.cost_ini = {
             "fused_diamond": 1,
             "fused_ruby": 1
         }
+
+        self.cost = dict()
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -49,6 +51,7 @@ class JewelClass(commands.Cog):
         if rarity not in ["silver", "mystic", "inspiron", "violet", "hero"] and rarity is not None:
             return await ctx.send("<:negate:721581573396496464>│`VOCE PRECISA DIZER UMA RARIDADE VALIDA!`")
 
+        self.cost = dict(self.cost_ini)
         if rarity:  # adiciona a gema da raridade
             rarity_equip = self.rarity_gem[rarity]
             self.cost[rarity_equip] = 3
