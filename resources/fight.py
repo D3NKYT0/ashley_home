@@ -304,13 +304,13 @@ class Entity(object):
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['icon']
             if self.stack == 1:
-                text_passive = "fireball"
+                text_passive = "looping"
             elif self.stack == 2:
-                text_passive = "fireball"
+                text_passive = "looping"
             elif self.stack == 3:
-                text_passive = "fireball"
+                text_passive = "looping"
             else:
-                text_passive = "fireball"
+                text_passive = "looping"
             description = f"**0** - {passive_icon} **{passive_name.upper()}** | **SF MODE** \n" \
                           f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
 
