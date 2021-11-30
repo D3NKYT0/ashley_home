@@ -372,20 +372,20 @@ class Entity(object):
                         damage, burn = self.effects[c]['damage'], ""
 
                         if c == "queimadura" and randint(1, 2) == 2:
-                            bb = randint(50, 75)
+                            bb = randint(50, 100)
                             damage += int(damage / 100 * bb)
                             burn += f"\n `levou {bb}% a mais por queimadura profunda`"
                             _chance = randint(1, 100)
-                            if _chance <= 5:
+                            if _chance <= 10:
                                 self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
                         if c == "veneno" and randint(1, 2) == 2:
-                            bb = randint(50, 75)
+                            bb = randint(50, 100)
                             damage += int(damage / 100 * bb)
                             burn += f"\n `levou {bb}% a mais por intoxicação aguda`"
                             _chance = randint(1, 100)
-                            if _chance <= 5:
+                            if _chance <= 10:
                                 self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
                                 burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
@@ -482,7 +482,7 @@ class Entity(object):
                             msg_return += f"{_text3}\n\n"
                             self.skill = None
                         else:
-                            _text3 = f'**{self.name.upper()}** `não recuperou HP pois seu oponente está sob o ' \
+                            _text3 = f'**{self.name.upper()}** `não recuperou HP pois está sob o ' \
                                      f'efeito de` **presas**'
                             msg_return += f"{_text3}\n\n"
                             self.skill = None
@@ -505,7 +505,7 @@ class Entity(object):
                             msg_return += f"{_text4}\n\n"
                             self.skill = None
                         else:
-                            _text4 = f'**{self.name.upper()}** `não recuperou HP pois seu oponente está sob o ' \
+                            _text4 = f'**{self.name.upper()}** `não recuperou HP pois está sob o ' \
                                      f'efeito de` **presas**'
                             msg_return += f"{_text4}\n\n"
                             self.skill = None
@@ -1285,7 +1285,9 @@ class Entity(object):
 
         if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
             if not self.is_boss and not self.is_mini_boss:
-                damage = self.status['hp'] // 2
+                damage = self.status['hp'] // 2  # 50% do HP atual
+            else:
+                damage = self.status['hp'] // 20  # 5% do HP atual
 
         return damage
 
@@ -1504,11 +1506,11 @@ class Entity(object):
             if drain:
 
                 presas_active = False
-                if "presas" in self.effects.keys():
-                    if self.effects["presas"]["turns"] >= 1:
+                if "presas" in entity.effects.keys():
+                    if entity.effects["presas"]["turns"] >= 1:
                         presas_active = True
 
-                if presas_active:
+                if not presas_active:
                     dr = self.effects["drain"]["damage"]
                     _dr = dr if dr == 50 else randint(50, dr)
                     recovery = int(dn / 100 * _dr)
@@ -1517,7 +1519,7 @@ class Entity(object):
                         entity.status['hp'] = entity.status['con'] * entity.rate[0]
                     msg_drain += f'\n**{entity.name.upper()}** `recuperou` **{recovery}** `de HP pelo efeito` **drain**'
                 else:
-                    msg_drain += f'\n**{entity.name.upper()}** `não recuperou HP pois seu oponente está sob o ' \
+                    msg_drain += f'\n**{entity.name.upper()}** `não recuperou HP pois está sob o ' \
                                  f'efeito de` **presas**'
 
             if not confusion and not hit_kill:
