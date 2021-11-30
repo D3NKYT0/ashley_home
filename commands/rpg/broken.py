@@ -140,12 +140,15 @@ class BrokenClass(commands.Cog):
             cont += 1
 
         rarity_now = self.next_rarity[rarity]
-        gem_now = self.rarity_gem[rarity_now]
-        if gem_now is not None:
-            try:
-                update['inventory'][gem_now] += randint(1, 3)
-            except KeyError:
-                update['inventory'][gem_now] = randint(1, 3)
+        if rarity_now is not None:
+            gem_now = self.rarity_gem[rarity_now]
+            if gem_now is not None:
+                amount = randint(1, 3)
+                msg += f"✨ {self.bot.items[gem_now][0]} ✨ `{amount}` **{self.bot.items[gem_now][1]}**\n"
+                try:
+                    update['inventory'][gem_now] += amount
+                except KeyError:
+                    update['inventory'][gem_now] = amount
 
         await self.bot.db.update_data(data, update, 'users')
         embed = discord.Embed(color=self.bot.color, description=msg)

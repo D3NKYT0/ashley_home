@@ -272,7 +272,7 @@ class Entity(object):
         if self.is_passive and self.passive == "priest":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['icon']
-            text_passive = "veneno, queimadura" if self.type_skill_passive == 0 else "curse, queimadura"
+            text_passive = "veneno, fraquesa" if self.type_skill_passive == 0 else "curse, queimadura"
             description = f"**0** - {passive_icon} **{passive_name.upper()}** | **DH MODE** \n" \
                           f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
 
@@ -1452,46 +1452,25 @@ class Entity(object):
 
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
-            
-        _defense = randint(int(defense * 0.50), defense) if defense > 2 else defense
 
         if "reflect" in entity.effects.keys():
             reflect, damage = True, int(damage / 2)
             entity.effects['reflect']['damage'] = damage
 
-        armor_now = _defense if _defense > 0 else 1
-        armor_now = randint(int(armor_now * 0.50), armor_now)  # a defesa varia entre 50% a 100% da sua eficacia
+        # NOVO SISTEMA DE DEFESA
+        armor_tot = randint(int(defense * 0.50), defense) if defense > 2 else defense
+        armor_now, damage_now = armor_tot // 100, damage // 100
+        armor_now = 59 if armor_now >= 60 else armor_now
+        defended = randint(armor_now * damage_now, 60 * damage_now) if damage_now > 0 else 0
 
-        # efeito da hold
-        if hold:
-            armor_now = 0
-
-        if armor_now > damage:  # se a defesa for maior que o dano
-            dn = randint(int(damage * 0.60), int(damage * 0.80))  # é defendido entre 60% a 80% do dano total
-        else:
-            if damage > 0:
-                one_percent = damage // 100  # 1% do dano
-                one_percent = 1 if one_percent < 1 else one_percent  # proteção contra divisão 0
-                defense_percent = armor_now // one_percent  # quantos % do dano tem na defesa
-            else:
-                defense_percent = 100
-
-            if defense_percent < 50:  # se a defesa for 50% ou manor do dano
-                dn = int(damage - armor_now)  # é retirado exatamente a defesa
-
-            elif defense_percent >= 100:
-                dn = damage  # defesa absoluta
-
-            else:  # se a defesa for entre 51% a 99%
-                dn = randint(int(damage * 0.50), int(damage * 0.60))  # é defendido entre 50% a 60% do dano total
-
-        defended = damage - dn  # verdadeira defesa.
+        defended = 0 if hold else defended  # efeito da hold
+        dn = damage - defended  # dano verdadeiro.
 
         if reflect:
             _text4 = f'**{self.name.upper()}** `refletiu` **50%** `do dano que recebeu`'
             msg_return += f"{_text4}\n\n"
 
-        if dn < 0:
+        if dn <= 0:
             _text5 = f'**{self.name.upper()}** `obsorveu todo o dano e recebeu` **0** `de dano`'
             msg_return += f"{_text5}\n\n"
 
@@ -1546,7 +1525,7 @@ class Entity(object):
                 if self.status['hp'] < 0:
                     self.status['hp'] = 0
                 bb = "" if bda == 0 else f"\n`e` **{_soulshot}%** `de dano a mais por causa da soulshot:` **{bda}**"
-                if defense > 0:
+                if defended > 0:
                     descrip = f'**{self.name.upper()}** `absorveu` **{defended}** `de dano, recebendo` **{dn}** {bb}'
                 else:
                     descrip = f'**{self.name.upper()}** `recebeu` **{damage}** `de dano` {bb}'

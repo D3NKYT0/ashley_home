@@ -202,8 +202,16 @@ class MeltedClass(commands.Cog):
                 "secret": "hero"
             }
 
+            legend_reverse = {
+                "silver": "uncommon",
+                "mystic": "rare",
+                "inspiron": "super rare",
+                "violet": "ultra rare",
+                "hero": "secret"
+            }
+
             if gem_rarity and rarity_now is not None:
-                rarity = rarity_now  # altera a raridade do item para a da gema
+                rarity = legend_reverse[rarity_now]  # altera a raridade do item para a da gema
 
             reward_equip = None
             item_reward = equip.lower()
