@@ -389,28 +389,28 @@ class Entity(object):
                     if 'damage' in self.effects[c]['type']:
                         damage, burn = self.effects[c]['damage'], ""
 
-                        if c == "queimadura" and "fireball" in self.effects.keys():
-                            if self.effects["fireball"]["turns"] > 0:  # bonus de fireball
-                                damage += self.effects[c]['damage'] * randint(9, 15)
-                                if randint(1, 100) <= 10:
-                                    self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage}
-                                    burn += " `ganhou o efeito de` **gelo** `pelo alto dano da queimadura.`"
-
                         if c == "queimadura" and randint(1, 2) == 2:
-                            bb = randint(50, 100)
-                            damage += int(damage / 100 * bb)
+                            bb = int(damage / 100 * randint(50, 100))
+                            damage += bb
                             burn += f"\n `levou {bb}% a mais por queimadura profunda`"
                             _chance = randint(1, 100)
-                            if _chance <= 10:
+                            if _chance <= 15:
                                 self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
+                        if c == "queimadura" and "fireball" in self.effects.keys():
+                            if self.effects["fireball"]["turns"] > 0:  # bonus de fireball
+                                damage += self.effects[c]['damage'] * randint(4, 8)
+                                if randint(1, 100) <= 15:
+                                    self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage}
+                                    burn += " `e ganhou o efeito de` **gelo** `pelo alto dano da queimadura.`"
+
                         if c == "veneno" and randint(1, 2) == 2:
-                            bb = randint(50, 100)
-                            damage += int(damage / 100 * bb)
+                            bb = int(damage / 100 * randint(50, 100))
+                            damage += bb
                             burn += f"\n `levou {bb}% a mais por intoxicação aguda`"
                             _chance = randint(1, 100)
-                            if _chance <= 10:
+                            if _chance <= 15:
                                 self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
                                 burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
@@ -1274,10 +1274,9 @@ class Entity(object):
                     entity.is_bluff, chance = True, True
 
                 # sistema de fireball
-                mid_now = False
                 if c == "queimadura" and "fireball" in self.effects.keys():
                     if self.effects["fireball"]["turns"] > 0:
-                        chance, mid_now = True, True
+                        chance = True
 
                 if entity.passive == "warlock":
                     if entity.SPEAR_OF_DESTINY and skill["skill"] == 0:
@@ -1311,20 +1310,12 @@ class Entity(object):
                             self.effects[c] = skill['effs'][self.ls][c]
                             min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
                             min_turn = 3 if c in ["bluff"] else min_turn
-                            if mid_now:
-                                min_turn = max_turn // 2
-                                if min_turn < 1:
-                                    min_turn = 2
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
                             min_turn, max_turn = 2, skill['effs'][c]['turns']
                             min_turn = 3 if c in ["bluff"] else min_turn
-                            if mid_now:
-                                min_turn = max_turn // 2
-                                if min_turn < 1:
-                                    min_turn = 2
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
@@ -1568,10 +1559,10 @@ class Entity(object):
         looping_msg, total_bonus_dn = "\n", 0
         if looping:
             for _ in range(self.effects["looping"]["turns"]):
-                bonus_damage = randint(int(damage * 0.25), int(damage * 0.75))
+                bonus_damage = randint(int(damage * 0.40), int(damage * 0.80))
                 total_bonus_dn += bonus_damage
-            looping_msg += f'**{entity.name.upper()}** `adicinou` **{total_bonus_dn}** `de dano a mais, pelo efeito`' \
-                           f'**looping** `ter pego` **{self.effects["looping"]["turns"]}x** ` nesse turno.`'
+            looping_msg += f'\n**{entity.name.upper()}** `adicinou` **{total_bonus_dn}** `de dano a mais, pelo ' \
+                           f'efeito` **looping** `ter pego` **{self.effects["looping"]["turns"]}x** ` nesse turno.`'
 
         salvation = self.data["salvation"]
         if not self.is_boss and not self.is_mini_boss:
