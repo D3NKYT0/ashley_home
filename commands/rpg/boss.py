@@ -78,6 +78,10 @@ class BossSystem(commands.Cog):
 
         await self.bot.db.update_data(data, update, 'users')
 
+        _class = data["rpg"]["class_now"]
+        _db_class = data["rpg"]["sub_class"][_class]
+        player_level_now = _db_class['level']
+
         # configuração do player
         db_player = extension.set_player(ctx.author, data)
 
@@ -274,11 +278,14 @@ class BossSystem(commands.Cog):
 
             # bonus de XP durante evento!
             if self.bot.event_special and perc < 10:
-                perc = 10
+                perc = 10 if player_level_now < 80 else 2
 
             # bonus de XP por estar em provincia
             if data['config']['provinces'] is not None:
-                perc += 10
+                perc += 10 if player_level_now < 80 else 2
+
+            if perc > 25 and player_level_now > 80:
+                perc = 25
 
             if db_player['xp'] < 32:
                 xpm = data_xp[2]

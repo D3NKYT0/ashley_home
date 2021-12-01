@@ -80,7 +80,8 @@ class Raid(commands.Cog):
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
-        if _db_class['level'] < 26:
+        player_level_now = _db_class['level']
+        if player_level_now < 26:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR UMA WAVE!\n' \
                   'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
             embed = discord.Embed(color=self.bot.color, description=msg)
@@ -435,11 +436,11 @@ class Raid(commands.Cog):
 
             # bonus de XP durante evento!
             if self.bot.event_special and perc < 10:
-                perc = 10
+                perc = 10 if player_level_now < 80 else 2
 
             # bonus de XP por estar em provincia
             if data['config']['provinces'] is not None:
-                perc += 10
+                perc += 10 if player_level_now < 80 else 2
 
             if self.db_player[ctx.author.id]['xp'] < 32:
                 xpm = data_xp[2]

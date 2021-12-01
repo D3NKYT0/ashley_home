@@ -1313,6 +1313,8 @@ class Entity(object):
                             min_turn = 3 if c in ["bluff"] else min_turn
                             if mid_now:
                                 min_turn = max_turn // 2
+                                if min_turn < 1:
+                                    min_turn = 2
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
@@ -1321,6 +1323,8 @@ class Entity(object):
                             min_turn = 3 if c in ["bluff"] else min_turn
                             if mid_now:
                                 min_turn = max_turn // 2
+                                if min_turn < 1:
+                                    min_turn = 2
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
@@ -1564,9 +1568,9 @@ class Entity(object):
         looping_msg, total_bonus_dn = "\n", 0
         if looping:
             for _ in range(self.effects["looping"]["turns"]):
-                bonus_damage = randint(int(damage * 0.50), damage)
+                bonus_damage = randint(int(damage * 0.25), int(damage * 0.75))
                 total_bonus_dn += bonus_damage
-            looping_msg += f'**{self.name.upper()}** `recebeu` **{total_bonus_dn}** `de dano a mais, pelo efeito`' \
+            looping_msg += f'**{entity.name.upper()}** `adicinou` **{total_bonus_dn}** `de dano a mais, pelo efeito`' \
                            f'**looping** `ter pego` **{self.effects["looping"]["turns"]}x** ` nesse turno.`'
 
         salvation = self.data["salvation"]
@@ -1575,6 +1579,8 @@ class Entity(object):
                 hold = False
                 damage = damage // 2
                 defense += defense // 4
+
+        damage += total_bonus_dn  # adicionado antes da defesa / adição a loop
 
         # NOVO SISTEMA DE DEFESA
         armor_tot = randint(int(defense * 0.50), defense) if defense > 2 else defense
@@ -1589,7 +1595,6 @@ class Entity(object):
 
         defended = 0 if hold else defended  # efeito da hold
         dn = damage - defended  # dano verdadeiro.
-        dn += total_bonus_dn  # adição a loop
 
         if reflect:
             _text4 = f'**{self.name.upper()}** `refletiu` **50%** `do dano que recebeu`'

@@ -99,6 +99,10 @@ class Battle(commands.Cog):
         self.xp_off[ctx.author.id] = False
         await self.bot.db.update_data(data, update, 'users')
 
+        _class = data["rpg"]["class_now"]
+        _db_class = data["rpg"]["sub_class"][_class]
+        player_level_now = _db_class['level']
+
         min_max, is_xp, is_level = None, False, 0
         if ctx.channel.id in [911688232159301685, 911784419633811466]:
             min_max = [1, 11]  # lvl 1 a 11
@@ -119,13 +123,17 @@ class Battle(commands.Cog):
             min_max = [81, 99]  # lvl 81 a 99
             is_xp, is_level = True, randint(81, 99)
 
+        xp_bonus_area = False
+        if min_max[0] <= player_level_now <= min_max[1]:
+            xp_bonus_area = True
+
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
 
         # config CHAMPIONS
         champion = False
         chance_champion = randint(1, 100)
-        if chance_champion <= 5:
+        if chance_champion <= 15 and player_level_now >= 61:
             champion = True
 
         db_monster = extension.set_monster(db_player, mini_boss, min_max, champion)
@@ -298,11 +306,14 @@ class Battle(commands.Cog):
 
         # bonus de XP durante evento!
         if self.bot.event_special and perc < 10:
-            perc = 10
+            perc = 10 if player_level_now < 80 else 2
 
         # bonus de XP por estar em provincia
         if data['config']['provinces'] is not None:
-            perc += 10
+            perc += 10 if player_level_now < 80 else 2
+
+        if xp_bonus_area:
+            perc += 10 if player_level_now < 80 else 2
 
         if db_player['xp'] < 32:
             xpm = data_xp[2]
@@ -618,7 +629,7 @@ class Battle(commands.Cog):
         # sistema de skin dos champions
         if champion and player[ctx.author.id].status['hp'] > 0:
             chance_drop_skin = randint(1, 100)
-            if chance_drop_skin <= 5:
+            if chance_drop_skin <= 25:
                 data_member = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 update_member = data_member
                 skin = choice(db_monster["skins"])
