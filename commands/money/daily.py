@@ -91,8 +91,8 @@ class DailyClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=86400, vip=True))
     @daily.group(name='vip', aliases=['v'])
     async def _vip(self, ctx):
-        """Comando usado pra ganhar coins de jogo da Ashley
-        Use ash daily coin"""
+        """Comando usado pra ganhar itens de jogo da Ashley
+        Use ash daily vip"""
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if not data_user['security']['status']:
             return await ctx.send("<:alert:739251822920728708>│`USUARIO DE MACRO / OU USANDO COMANDOS RAPIDO "

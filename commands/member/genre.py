@@ -14,6 +14,7 @@ class GenreClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='genre', aliases=['sex', 'sexo', 'genero'])
     async def genre(self, ctx):
+        """Altere seu genero no sistema de RPG da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
         update['rpg']['sex'] = "male" if update['rpg']['sex'] == "female" else "female"

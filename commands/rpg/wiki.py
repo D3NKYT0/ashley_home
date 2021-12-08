@@ -16,6 +16,7 @@ class WikiClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='wiki', aliases=['pesquisar'])
     async def _wiki(self, ctx, *, item=None):
+        """Comando com o catalogo de informações sobre o bot/rpg"""
         wiki, equip, file, emoji, tier = self.bot.config['wiki'], self.bot.config['equips'], None, None, ""
 
         equips_list = list()

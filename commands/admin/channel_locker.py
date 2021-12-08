@@ -15,8 +15,7 @@ class ChannelClass(commands.Cog):
     async def channel(self, ctx):
         """Esse comando bloqueia a ashley de usar comandos em determinados canais, usando o sistema de
         lista branca e lista negra.
-        ash channel (troca de listra negra e branca)
-        ash channel on/off (libera/bloqueia variando do tipo de lista)"""
+        ash channel (troca de listra negra e branca)"""
         if ctx.invoked_subcommand is None:
             data_guild = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
             update_guild = data_guild
@@ -39,6 +38,9 @@ class ChannelClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @channel.command(name='add', aliases=['on'])
     async def _add(self, ctx):
+        """Esse comando bloqueia a ashley de usar comandos em determinados canais, usando o sistema de
+        lista branca e lista negra.
+        ash channel add (adiciona um canal a lista vigente)"""
         data_guild = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update_guild = data_guild
 
@@ -65,6 +67,9 @@ class ChannelClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @channel.command(name='remove', aliases=['off'])
     async def _remove(self, ctx):
+        """Esse comando bloqueia a ashley de usar comandos em determinados canais, usando o sistema de
+        lista branca e lista negra.
+        ash channel remove (remove um canal a lista vigente)"""
         data_guild = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update_guild = data_guild
 
@@ -91,6 +96,9 @@ class ChannelClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @channel.command(name='reset', aliases=['r'])
     async def _reset(self, ctx):
+        """Esse comando bloqueia a ashley de usar comandos em determinados canais, usando o sistema de
+        lista branca e lista negra.
+        ash channel reset (reseta todos os canais da lista vigente)"""
         data_guild = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update_guild = data_guild
 

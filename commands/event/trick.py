@@ -35,8 +35,8 @@ class TrickTreat(commands.Cog):
     async def trick_treat(self, ctx, amount=None):
         """Comando para sortear um presente para você"""
         if amount is None:
-            return await ctx.send('<:alert:739251822920728708>│`Insira a quantidade de MOON BAGS que deseja usar!`\n'
-                                  '**NOTA:** `Quanto mais voce usar, mais chance de ganhar!`')
+            return await ctx.send('<:alert:739251822920728708>│`Insira a quantidade de Trick or Treat Bag que deseja'
+                                  ' usar!`\n**NOTA:** `Quanto mais voce usar, mais chance de ganhar!`')
 
         try:
             amount_test = int(amount)
@@ -85,4 +85,5 @@ class TrickTreat(commands.Cog):
             await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
 
         else:
-            await ctx.send(f"> `VOCE NAO ACHOU NADA DENTRO DA(S)` **{amount_test}** `MOON BAG(S)`", delete_after=30.0)
+            await ctx.send(f"> `VOCE NAO ACHOU NADA DENTRO DA(S)` **{amount_test}** `TRICK OR TREAT BAG(S)`",
+                           delete_after=30.0)

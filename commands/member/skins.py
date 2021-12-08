@@ -15,6 +15,7 @@ class SkinsClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='skin', aliases=['skins'])
     async def skin(self, ctx, *, skin=None):
+        """Mostra a lista de SKINS disponiveis em sua conta ou ativa uma de suas skins 'ash skin nome_da_skin'!"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if skin is None:
             skins = "**Voce nao tem skins disponiveis**"

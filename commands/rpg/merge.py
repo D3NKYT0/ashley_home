@@ -189,6 +189,7 @@ class MergeClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='convert', aliases=['converter'])
     async def convert(self, ctx, *, item=None):
+        """Comando para converter um item selado em outro!"""
         if item is None:
             return await ctx.send("<:alert:739251822920728708>│`Você esqueceu de falar o nome do item para "
                                   "converter!`")

@@ -14,8 +14,8 @@ class Trivias(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='trivia', aliases=['tutorial', 't'])
     async def trivia(self, ctx):
-        """comando usado pra enviar uma frase do pensador
-        Use ash thinker"""
+        """comando usado pra enviar uma lista de tarefas para os novatos no rpg da ASHLEY
+        Use ash trivia"""
         msg = """
 ```markdown
 [1]: Faça sua primeira batalha

@@ -149,7 +149,7 @@ class UtilityClass(commands.Cog):
     @commands.command(name='add_skin', aliases=['as'])
     async def add_skin(self, ctx, member: disnake.Member = None, *, skin: str = None):
         """
-        Comando usado apelas por DEVS para criar money para usuarios doadores
+        Comando usado apelas por DEVS para add skin para usuarios doadores
         """
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
@@ -224,7 +224,7 @@ class UtilityClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='true_money', aliases=['tm'])
     async def true_money(self, ctx, member: disnake.Member = None, amount: int = None, *, money="blessed"):
-        """Comando usado apelas por DEVS para criar itens de crafts para doadores"""
+        """Comando usado apelas por DEVS para dinheiro real para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         if amount is None:
@@ -315,7 +315,7 @@ class UtilityClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='set_level', aliases=['sl'])
     async def set_level(self, ctx, member: disnake.Member = None, lvl: int = None):
-        """Comando usado apelas por DEVS para criar equipamentos para doadores"""
+        """Comando usado apelas por DEVS para dar leveis para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         if lvl is None:

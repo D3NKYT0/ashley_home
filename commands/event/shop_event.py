@@ -23,9 +23,9 @@ class ShopEvent(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.group(name='halloween', aliases=['hallo'])
-    async def halloween(self, ctx):
-        """Comando para comprar equipamentos no Halloween"""
+    @commands.group(name='eventshop', aliases=['ev'])
+    async def event_shot(self, ctx):
+        """Comando para comprar itens com moeda de evento"""
         if not self.bot.event_special:
             return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE NAO TEM NENHUM EVENTO ESPECIAL!`")
             
@@ -40,9 +40,9 @@ class ShopEvent(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @halloween.command(name='craft', aliases=['criar'])
-    async def _halloweencraft(self, ctx, *, item: str = None):
-        """Comando usado pra comprar um presente no Halloween."""
+    @event_shot.command(name='craft', aliases=['criar', 'c'])
+    async def _event_craft(self, ctx, *, item: str = None):
+        """Comando usado pra comprar um item usando item de evento."""
         if ctx.author.id in self.bot.comprando:
             return await ctx.send('<:alert:739251822920728708>│`VOCE JA ESTA EM PROCESSO DE COMPRA...`')
 

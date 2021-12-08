@@ -46,6 +46,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='action_log', aliases=['al'])
     async def _action_log(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -89,6 +90,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='member_count', aliases=['mc'])
     async def _member_count(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -149,6 +151,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='level_up', aliases=['lvl'])
     async def _level_up(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -191,6 +194,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='join_member', aliases=['jm'])
     async def _join_member(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -235,6 +239,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='remove_member', aliases=['rm'])
     async def _remove_member(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -279,6 +284,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='draw_member', aliases=['dm'])
     async def _draw_member(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 
@@ -324,6 +330,7 @@ class ConfigClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @config.command(name='interaction', aliases=['i'])
     async def _interaction(self, ctx):
+        """Ativa ou desativa a função"""
         data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
         update = data
 

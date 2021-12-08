@@ -244,6 +244,7 @@ class GuildBank(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @guild.group(name='warehouse', aliases=["w", "armazem"])
     async def _warehouse(self, ctx, *, item=None):
+        """Comando que adiciona itens de evento para a warehouse da guilda atual"""
         _event = await (await self.bot.db.cd("events")).find_one({"_id": self.bot.event_now})
         if not self.bot.event_special or not _event["capsules"]:
             return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE NAO TEM NENHUM EVENTO ESPECIAL!`")

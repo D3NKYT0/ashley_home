@@ -21,8 +21,8 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='sticker', aliases=["figurinha", "f"])
     async def sticker(self, ctx):
-        """Comando usado pra retornar a lista de comandos pra staff
-        Use ash staff"""
+        """Comando usado pra retornar a lista de comandos pra figurinhas
+        Use ash sticker"""
         if ctx.invoked_subcommand is None:
             self.status()
             embed = disnake.Embed(color=self.color)
@@ -42,6 +42,7 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='yugioh', aliases=["ygo", "y"])
     async def _yugioh(self, ctx, member: disnake.Member = None):
+        """cartela de figurinhas"""
         if member is None:
             member = ctx.author
 
@@ -64,6 +65,7 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='kozmo', aliases=["k"])
     async def _kozmo(self, ctx, member: disnake.Member = None):
+        """cartela de figurinhas"""
         if member is None:
             member = ctx.author
 
@@ -86,6 +88,7 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='especial', aliases=["e"])
     async def _especial(self, ctx, member: disnake.Member = None):
+        """cartela de figurinhas"""
         if member is None:
             member = ctx.author
 
@@ -108,6 +111,7 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='cdz', aliases=["c"])
     async def _cdz(self, ctx, member: disnake.Member = None):
+        """cartela de figurinhas"""
         if member is None:
             member = ctx.author
 
@@ -130,6 +134,7 @@ class StickerClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='bleach', aliases=["b"])
     async def _bleach(self, ctx, member: disnake.Member = None):
+        """cartela de figurinhas"""
         if member is None:
             member = ctx.author
 

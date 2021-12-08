@@ -62,7 +62,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='moon', aliases=['lua'])
     async def moon(self, ctx):
-        """Abra um presente para liberar seu giftcard."""
+        """Pega uma moon bag disponivel no servidor"""
         if ctx.invoked_subcommand is None:
             if ctx.guild.id in self.bot.moon_bag:
                 if self.bot.moon_bag[ctx.guild.id] < 1:
@@ -82,11 +82,12 @@ class OpenClass(commands.Cog):
                                f"**OBS:** se eu for reiniciada, todas as moon bag disponiveis sao resetadas. "
                                f"Isso é feito por medidas de segurança da minha infraestrutura!")
 
-    @check_it(no_pm=True)
+    @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @moon.command(name='phase', aliases=['fase', 'p', 'f'])
     async def _phase(self, ctx):
+        """apenas para DEVs verificarem a posição real da lua"""
         data = get_moon()
         msg = f"<:confirmed:721581574461587496>│`Moon Phase:` **{data[0]}** -  `Moon Position:` **{data[1]}**"
         embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -97,6 +98,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @moon.command(name='open', aliases=['abrir', 'o', 'a'])
     async def _open(self, ctx, amount=None):
+        """Abre uma moon bag, dependendo da sua sorte voce pode ganhar algo fantastico."""
         if amount is None:
             return await ctx.send('<:alert:739251822920728708>│`Insira a quantidade de MOON BAGS que deseja usar!`\n'
                                   '**NOTA:** `Quanto mais voce usar, mais chance de ganhar!`')
@@ -164,6 +166,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @moon.command(name='check', aliases=['c'])
     async def _check(self, ctx):
+        """checa a fase da lua atual, dependendo dela sua moon bag vai dar coisas diferentes"""
         data = get_moon()
 
         numbers, bonus = [int(n) for n in str(data[1]).replace(".", "")], 0
@@ -187,7 +190,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='pick', aliases=['pegar'])
     async def pick(self, ctx):
-        """Abra um presente para liberar seu giftcard."""
+        """Pegue uma figurinha disponivel no servidor"""
         if ctx.guild.id in self.bot.sticker:
             if self.bot.sticker[ctx.guild.id] < 1:
                 return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis!`\n"
@@ -351,7 +354,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='event', aliases=['evento'])
     async def event(self, ctx):
-        """Abra um presente para liberar seu giftcard."""
+        """Abra um bau de evento especial."""
         if not self.bot.event_special:
             return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE NAO TEM NENHUM EVENTO ESPECIAL!`")
 
@@ -450,7 +453,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='chest', aliases=['bau', 'baú'])
     async def chest(self, ctx):
-        """Abra um presente para liberar seu giftcard."""
+        """Abra um bau de casamento, comando exclusivos para usuarios casados! VIVA O AMOR!"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if not data['user']['married']:
             return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE VOCÊ NÃO É CASADO!`")
@@ -496,7 +499,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='discover', aliases=['descobrir'])
     async def discover(self, ctx, amount: int = 1, *, item=None):
-        """Abra um presente para liberar seu giftcard."""
+        """Descubra o que tem dentro do seu bau de casamento!!"""
         if item is None:
             return await ctx.send("<:alert:739251822920728708>│`Você esqueceu de falar o nome do item para descobrir!`")
 
@@ -602,7 +605,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='key', aliases=['chave'])
     async def key(self, ctx, amount: int = 1):
-        """Abra um presente para liberar seu giftcard."""
+        """Libera as fendas de uma BOSS KEY, tente sua sorte e surpreenda-se!"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -690,6 +693,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='read', aliases=["ler"])
     async def read(self, ctx):
+        """Esse comando mostra a lista de comandos do sistema de READ da ashley."""
         if ctx.invoked_subcommand is None:
             self.status()
             embed = disnake.Embed(color=self.bot.color)
@@ -710,6 +714,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='letter', aliases=['l'])
     async def _letter(self, ctx, amount: int = 1):
+        """leia sua FROZEN LETTER!"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -774,6 +779,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='assemble')
     async def _assemble(self, ctx, amount: int = 1):
+        """Leia o spellbook e verifique suas receiras incriveis"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -857,6 +863,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='aungen', aliases=['a'])
     async def _aungen(self, ctx, amount: int = 1):
+        """Leia o spellbook e verifique suas receiras incriveis"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -940,6 +947,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='soul', aliases=['s'])
     async def _soul(self, ctx, amount: int = 1):
+        """Leia o spellbook e verifique suas receiras incriveis"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -1023,6 +1031,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='nw', aliases=['n'])
     async def _nw(self, ctx, amount: int = 1):
+        """Leia o spellbook e verifique suas receiras incriveis"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -1107,6 +1116,7 @@ class OpenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @read.command(name='waffen', aliases=['w'])
     async def _waffen(self, ctx, amount: int = 1):
+        """Leia o spellbook e verifique suas receiras incriveis"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 

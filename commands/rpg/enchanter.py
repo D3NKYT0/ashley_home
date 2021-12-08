@@ -334,8 +334,8 @@ class EnchanterClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @enchant.command(name='recovery', aliases=['recuperar', 'r'])
     async def _recovery(self, ctx):
-        """Comando usado pra encantar suas habilidades no rpg da Ashley
-        Use ash enchant add numero_da_skill"""
+        """Comando usado pra recuperar suas habilidades no rpg da Ashley
+        Use ash enchant recovery"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -376,8 +376,8 @@ class EnchanterClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='enchanter_armor', aliases=['ena'])
     async def enchanter_armor(self, ctx, armor: str = None, *, enchant: str = None):
-        """Comando usado pra encantar suas habilidades no rpg da Ashley
-        Use ash enchant add numero_da_skill"""
+        """Comando usado pra encantar suas armaduras no rpg da Ashley
+        Use ash ena slot_da_armor 'blessed_caso_tenha'!"""
         query = {"_id": 0, "user_id": 1, "inventory": 1, "rpg": 1}
         data = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
 
@@ -467,8 +467,8 @@ class EnchanterClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='enchanter_weapon', aliases=['enw'])
     async def enchanter_weapon(self, ctx, *, enchant: str = None):
-        """Comando usado pra encantar suas habilidades no rpg da Ashley
-        Use ash enchant add numero_da_skill"""
+        """Comando usado pra encantar suas armas no rpg da Ashley
+        Use ash enw 'blessed_caso_tenha'!"""
         query = {"_id": 0, "user_id": 1, "inventory": 1, "rpg": 1}
         data = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
 

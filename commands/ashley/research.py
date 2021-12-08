@@ -174,6 +174,7 @@ class ResearchClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @research.command(name='feedback', aliases=['f'])
     async def _feedback(self, ctx):
+        """Sistema de Pesquisa da Ashley"""
         query = {"_id": 0, "user_id": 1, "research": 1}
         data = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         if "feedback" in data["research"].keys():

@@ -17,6 +17,7 @@ class MailClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='mail', aliases=['email'])
     async def mail(self, ctx):
+        """Sistema de Correios da ashley!"""
         if ctx.invoked_subcommand is None:
             mail = 0
             mail_collection = await self.bot.db.cd("mails")
@@ -62,6 +63,7 @@ class MailClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @mail.command(name='read', aliases=['ler'])
     async def _read_mail(self, ctx, *, id_mail: str = None):
+        """Leia suas correnpondecias, para ver os IDs olhe o comando 'ash mail' la tem uma lista!"""
         id_mail = id_mail.upper() if id_mail else None
         mails, item_mails, items, find_id = list(), dict(), list(), False
         if id_mail is None:
@@ -163,6 +165,7 @@ class MailClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @mail.command(name='create', aliases=['criar'])
     async def _create_mail(self, ctx):
+        """apenas para DEVS criarem uma correspondencia para os jogadores"""
         asks = {'_id': None, "active": True, 'issuer': ctx.author.id, 'title': None, 'text': None, 'gift': None,
                 'global': False, 'benefited': [], 'guilds_benefited': []}
 
@@ -273,6 +276,7 @@ class MailClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @mail.command(name='delete', aliases=['excluir'])
     async def _delete_mail(self, ctx, id_mail: str):
+        """Apenas para DEVs desativarem uma correspondencia criada!"""
         mail_collection = await self.bot.db.cd("mails")
         data = await mail_collection.find_one({'_id': id_mail.upper()})
         if data is None:

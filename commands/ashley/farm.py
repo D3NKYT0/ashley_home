@@ -86,7 +86,7 @@ class FarmClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='join', aliases=['entrar'])
     async def join(self, ctx):
-        """Comando usado pra ir pro canal hell do server da ashley
+        """Comando usado pra entrar no server da ashley
         Use ash join"""
         if ctx.channel.id == 872515868477751296:
             await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU LHE ENVINANDO PARA O "
@@ -157,8 +157,8 @@ class FarmClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='heaven', aliases=['paraiso'])
     async def heaven(self, ctx):
-        """Comando usado pra ir pro canal hell do server da ashley
-        Use ash hell"""
+        """Comando usado pra ir pro canal heaven do server da ashley
+        Use ash heaven"""
         record = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         if ctx.author.id == record["user_id"]:
             if record['config']['provinces'] is None:

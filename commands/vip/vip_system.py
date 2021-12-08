@@ -47,7 +47,7 @@ class VipSystem(commands.Cog):
     @vip.group(name='member', aliases=['membro', 'player', 'jogador'])
     async def _member(self, ctx):
         """Comando usado pra comprar vip da Ashley (usavel somente no server da Ashley)
-        Use ash vip"""
+        Use ash vip member"""
         if ctx.guild.id != self.bot.config['config']['default_guild']:
             try:
                 data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")

@@ -69,6 +69,7 @@ class LotteryClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='accumulated', aliases=['acumulado', 'ac'])
     async def accumulated(self, ctx):
+        """Verifica o total aculumado atual das loterias da ashley"""
         cl = await (await self.bot.db.cd("miscellaneous")).find_one({"_id": "lottery"})
         msg = f'<:coins:519896825365528596>│`Atualmente o total acumulado é de:` ' \
               f'**{self.format_num(cl["accumulated"])}**'
@@ -80,6 +81,7 @@ class LotteryClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='tickets', aliases=['bilhetes', 'tk'])
     async def tickets(self, ctx):
+        """Comando de compra de bilhetes para a loteria da ASHLEY"""
         _await = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                                 "**mesmo que demore, aguarde o fim do processamento...**")
         raw, actives, tot = (await self.bot.db.cd("lottery")).find({"user_id": ctx.author.id}), list(), list()

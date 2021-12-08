@@ -62,6 +62,7 @@ class BrokenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='broken', aliases=['quebrar'])
     async def broken(self, ctx, *, item=None):
+        """Comando usado para quebrar seus equipamentos afim de obter itens unicos para crafts"""
         if item is None:
             return await ctx.send("<:negate:721581573396496464>│`Você precisa colocar o nome de um item que deseja "
                                   "quebrar:` **ash broken <nome_do_item>** `voce consegue ver os itens "
@@ -159,6 +160,7 @@ class BrokenClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='fragrance', aliases=['fragrancia'])
     async def fragrance(self, ctx, *, item=None):
+        """tente capturar as fraguancias dos seus itens quebrados!"""
         if item is None:
             return await ctx.send("<:negate:721581573396496464>│`Você precisa colocar o nome de um item que deseja "
                                   "usar:` **ash fragrance <nome_do_item>** `voce consegue ver os itens "

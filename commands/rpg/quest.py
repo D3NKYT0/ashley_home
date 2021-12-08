@@ -31,6 +31,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='completed', aliases=['completado', "completar"])
     async def completed(self, ctx):
+        """Comando para verificar se voce tem alguma quest que ja foi completada!"""
         if ctx.channel.id != 840007934967808030:
             msg = "<:negate:721581573396496464>│`VOCÊ APENAS PODE USAR ESSE COMANDO NO CANAL:` **QUESTS** " \
                   "`NO SERVIDOR DE SUPORTE DA ASHLEY!`"
@@ -338,6 +339,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='one', aliases=['um'])
     async def _one(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -385,6 +387,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='two', aliases=['dois'])
     async def _two(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -434,6 +437,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='three', aliases=['tres'])
     async def _three(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -481,6 +485,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='four', aliases=['quatro'])
     async def _four(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -529,6 +534,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='five', aliases=['cinco'])
     async def _five(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -578,6 +584,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='six', aliases=['seis'])
     async def _six(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -626,6 +633,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='seven', aliases=['sete'])
     async def _seven(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -684,6 +692,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='eight', aliases=['oito'])
     async def _eight(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -732,6 +741,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='nine', aliases=['nove'])
     async def _nine(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
@@ -783,6 +793,7 @@ class QuestClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @quest.group(name='ten', aliases=['dez'])
     async def _ten(self, ctx):
+        """quest a ser feita no rpg da ashley"""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 

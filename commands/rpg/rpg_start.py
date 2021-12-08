@@ -205,7 +205,7 @@ class RpgStart(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='guild_verify', aliases=['guildv'])
     async def guild_verify(self, ctx, guild: disnake.Guild = None):
-        """Comando para verificar a data de registro na ASHLEY"""
+        """Comando para verificar a data de registro da guilda na ASHLEY"""
 
         if guild is None:
             guild = ctx.guild

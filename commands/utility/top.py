@@ -156,8 +156,8 @@ class TopClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @top.group(name='wave')
     async def _wave(self, ctx):
-        """Comando usado pra retornar o top 20 em questão das RAIDS
-        Use ash top raid"""
+        """Comando usado pra retornar o top 20 em questão das WAVES
+        Use ash top wave"""
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")
         top = await self.bot.data.get_rank_raid(20, ctx)
@@ -169,8 +169,8 @@ class TopClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @top.group(name='fragment')
     async def _fragment(self, ctx):
-        """Comando usado pra retornar o top 20 em questão das RAIDS
-        Use ash top raid"""
+        """Comando usado pra retornar o top 20 em questão das fragment
+        Use ash top fragment"""
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")
         top = await self.bot.data.get_rank_fragment(20, ctx)
@@ -182,8 +182,8 @@ class TopClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @top.group(name='blessed')
     async def _blessed(self, ctx):
-        """Comando usado pra retornar o top 20 em questão das RAIDS
-        Use ash top raid"""
+        """Comando usado pra retornar o top 20 em questão das blessed
+        Use ash top blessed"""
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")
         top = await self.bot.data.get_rank_blessed(20, ctx)
@@ -195,6 +195,8 @@ class TopClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @top.group(name='event')
     async def _event(self, ctx):
+        """Comando usado pra retornar o top 20 em questão das event
+                Use ash top event"""
         if not self.bot.event_special and ctx.author.id not in self.bot.staff:
             return await ctx.send(f"<:negate:721581573396496464>│`ATUALMENTE NAO TEM NENHUM EVENTO ESPECIAL!`")
 
@@ -210,6 +212,8 @@ class TopClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @top.group(name='pvp')
     async def _pvp(self, ctx):
+        """Comando usado pra retornar o top 20 em questão dos pvp
+                        Use ash top pvp"""
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")
 

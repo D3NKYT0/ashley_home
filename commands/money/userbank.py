@@ -66,6 +66,7 @@ class UserBank(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @wallet.group(name='convert', aliases=['c'])
     async def _add(self, ctx, amount: int = 0, money: str = None):
+        """Comando para converter os fragmentos de ethernyas em dinheiro real ou blessed ethernyas"""
         if amount is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia.`")
         if amount < 1:
@@ -750,7 +751,7 @@ class UserBank(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='lucky', aliases=['sorte'])
     async def lucky(self, ctx, stone: int = None):
-        """pedra da liberação usada para tirar o selo das armaduras seladas."""
+        """tente ganhar um item especial usando suas pedras."""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         global coin, cost, plus
 
