@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -24,7 +24,7 @@ class TopClass(commands.Cog):
         Use ash top"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = discord.Embed(color=self.color)
+            top = disnake.Embed(color=self.color)
             top.add_field(name="Top Commands:",
                           value=f"{self.st[67]} `top level` Top 20 dos usuarios com maiores LEVEIS.\n"
                                 f"{self.st[67]} `top money` Top 20 dos usuarios com mais ETHERNYAS.\n"
@@ -39,8 +39,8 @@ class TopClass(commands.Cog):
                                 f"{self.st[67]} `top blessed` Top 20 dos usuarios com mais BLESSEDS.\n"
                                 f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.\n"
                                 f"{self.st[67]} `top pvp` Top 20 dos melhores jogadores de PVP.")
-            top.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            top.set_thumbnail(url=self.bot.user.avatar_url)
+            top.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            top.set_thumbnail(url=self.bot.user.display_avatar)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=top)
 

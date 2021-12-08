@@ -8,7 +8,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import calc_xp
 from datetime import datetime
-raid_rank, p_raid, m_raid, money, xp_tot, xp_off, extension, reward = {}, {}, {}, {}, {}, {}, Ext(), {}
+raid_rank, p_raid, m_raid, money, xp_tot, xp_off, extension = {}, {}, {}, {}, {}, {}, Ext()
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -30,11 +30,8 @@ class Raid(commands.Cog):
     async def wave(self, ctx, extra=None):
         """Comando usado pra batalhar no rpg da ashley
         Use ash wave"""
-        global raid_rank, m_raid, p_raid, money, xp_tot, xp_off, reward
-        especial_m = 0
-
-        if ctx.author.id not in self.bot.recovery:
-            xp_off[ctx.author.id], raid_rank[ctx.author.id], reward[ctx.author.id] = False, 0, dict()
+        global raid_rank, m_raid, p_raid, money, xp_tot, xp_off
+        xp_off[ctx.author.id], raid_rank[ctx.author.id], especial_m = False, 0, 0
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -59,97 +56,82 @@ class Raid(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if ctx.author.id not in self.bot.recovery:
-            _ESPECIAL = False
-            if extra is not None:
-                if extra in ["especial", 'e']:
-                    if 'pass_royal' in update['inventory'].keys():
-                        if update['inventory']['pass_royal'] > 0:
-                            _ESPECIAL = True
-                            update['inventory']['pass_royal'] -= 1
-                            if update['inventory']['pass_royal'] < 1:
-                                del update['inventory']['pass_royal']
+        _ESPECIAL = False
+        if extra is not None:
+            if extra in ["especial", 'e']:
+                if 'pass_royal' in update['inventory'].keys():
+                    if update['inventory']['pass_royal'] > 0:
+                        _ESPECIAL = True
+                        update['inventory']['pass_royal'] -= 1
+                        if update['inventory']['pass_royal'] < 1:
+                            del update['inventory']['pass_royal']
 
-                if extra in ["especial", 'e'] and not _ESPECIAL:
-                    return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
-                                          f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}`"
-                                          f" **no seu inventario para lutar com os monstros especiais!**\n"
-                                          f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
-        else:
-            _ESPECIAL = self.db_player[ctx.author.id]["ESPECIAL"]
+            if extra in ["especial", 'e'] and not _ESPECIAL:
+                return await ctx.send(f"<:alert:739251822920728708>│**Voce precisa ter** "
+                                      f"{self.bot.items['pass_royal'][0]} `1` `{self.bot.items['pass_royal'][1]}` "
+                                      f"**no seu inventario para lutar com os monstros especiais!**\n"
+                                      f"**Obs:** `esses itens são adiquiridos atraves dos presentes!`")
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
-        player_level_now = _db_class['level']
-        if player_level_now < 26:
+        if _db_class['level'] < 26:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR UMA WAVE!\n' \
                   'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if ctx.author.id not in self.bot.recovery:
-            ct = 50
-            if data['rpg']['active']:
-                date_old = data['rpg']['activated_at']
-                date_now = datetime.today()
-                days = abs((date_old - date_now).days)
-                if days <= 10:
-                    ct = 5
+        ct = 50
+        if data['rpg']['active']:
+            date_old = data['rpg']['activated_at']
+            date_now = datetime.today()
+            days = abs((date_old - date_now).days)
+            if days <= 10:
+                ct = 5
 
-            try:
-                if data['inventory']['coins'] < ct:
-                    msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
-                          f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
-                    embed = disnake.Embed(color=self.bot.color, description=msg)
-                    return await ctx.send(embed=embed)
-
-            except KeyError:
-                msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
+        try:
+            if data['inventory']['coins'] < ct:
+                msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
+                      f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-            update['inventory']['coins'] -= ct
-            if update['inventory']['coins'] < 1:
-                del update['inventory']['coins']
+        except KeyError:
+            msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
+        update['inventory']['coins'] -= ct
+        if update['inventory']['coins'] < 1:
+            del update['inventory']['coins']
         self.bot.batalhando.append(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
 
-        if ctx.author.id not in self.bot.recovery:
-            # configuração do player
-            self.db_player[ctx.author.id] = extension.set_player(ctx.author, data)
-            # adição de uma chave especial para o modo de wave especial
-            self.db_player[ctx.author.id]["ESPECIAL"] = _ESPECIAL
+        # configuração do player
+        self.db_player[ctx.author.id] = extension.set_player(ctx.author, data)
+        # adição de uma chave especial para o modo de wave especial
+        self.db_player[ctx.author.id]["ESPECIAL"] = _ESPECIAL
 
-            if ctx.author.id in p_raid.keys():
-                del p_raid[ctx.author.id]
+        if ctx.author.id in p_raid.keys():
+            del p_raid[ctx.author.id]
 
-            p_raid[ctx.author.id] = Entity(self.db_player[ctx.author.id], True, is_wave=True)
+        p_raid[ctx.author.id] = Entity(self.db_player[ctx.author.id], True, is_wave=True)
 
         # ======================================================================================================
         # ----------------------------------- SYSTEM RAID MONSTERS / BOSS --------------------------------------
         # ======================================================================================================
 
-        if ctx.author.id not in self.bot.recovery:
+        _USER = ctx.author.id
+        self.db_monster[_USER] = extension.set_monster_raid(self.db_player[_USER], raid_rank[_USER])
 
-            _USER = ctx.author.id
-            self.db_monster[_USER] = extension.set_monster_raid(self.db_player[_USER], raid_rank[_USER])
+        if "quest" in self.db_monster[ctx.author.id]["name"].lower():
+            especial_m += 1
 
-            if "quest" in self.db_monster[ctx.author.id]["name"].lower():
-                especial_m += 1
+        if ctx.author.id in m_raid.keys():
+            del m_raid[ctx.author.id]
 
-            if ctx.author.id in m_raid.keys():
-                del m_raid[ctx.author.id]
-
-            for rew in self.db_monster[ctx.author.id]["reward"]:
-                try:
-                    reward[ctx.author.id][rew] += 1
-                except KeyError:
-                    reward[ctx.author.id][rew] = 1
-
-            m_raid[ctx.author.id] = Entity(self.db_monster[ctx.author.id], False, is_wave=True)
-            money[ctx.author.id] = self.db_monster[ctx.author.id]['ethernya']
-            xp_tot[ctx.author.id] = [(self.db_monster[ctx.author.id]['xp'], self.db_monster[ctx.author.id]['level'])]
+        m_raid[ctx.author.id] = Entity(self.db_monster[ctx.author.id], False, is_wave=True)
+        money[ctx.author.id] = self.db_monster[ctx.author.id]['ethernya']
+        xp_tot[ctx.author.id] = [(self.db_monster[ctx.author.id]['xp'], self.db_monster[ctx.author.id]['level'])]
 
         # durante a batalha
         while not self.bot.is_closed():
@@ -162,13 +144,6 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
-
-                for rew in self.db_monster[ctx.author.id]["reward"]:
-                    try:
-                        reward[ctx.author.id][rew] += 1
-                    except KeyError:
-                        reward[ctx.author.id][rew] = 1
-
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = disnake.Embed(color=self.bot.color, title=msg)
@@ -180,9 +155,6 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
-                p_raid[ctx.author.id].combo_cont = 0
-                if raid_rank[ctx.author.id] % 2 == 0:
-                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -200,13 +172,6 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
-
-                for rew in self.db_monster[ctx.author.id]["reward"]:
-                    try:
-                        reward[ctx.author.id][rew] += 1
-                    except KeyError:
-                        reward[ctx.author.id][rew] = 1
-
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = disnake.Embed(color=self.bot.color, title=msg)
@@ -218,9 +183,6 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
-                p_raid[ctx.author.id].combo_cont = 0
-                if raid_rank[ctx.author.id] % 2 == 0:
-                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -295,13 +257,6 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
-
-                for rew in self.db_monster[ctx.author.id]["reward"]:
-                    try:
-                        reward[ctx.author.id][rew] += 1
-                    except KeyError:
-                        reward[ctx.author.id][rew] = 1
-
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = disnake.Embed(color=self.bot.color, title=msg)
@@ -313,9 +268,6 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
-                p_raid[ctx.author.id].combo_cont = 0
-                if raid_rank[ctx.author.id] % 2 == 0:
-                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -333,13 +285,6 @@ class Raid(commands.Cog):
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
                 if "quest" in _mon["name"].lower():
                     especial_m += 1
-
-                for rew in self.db_monster[ctx.author.id]["reward"]:
-                    try:
-                        reward[ctx.author.id][rew] += 1
-                    except KeyError:
-                        reward[ctx.author.id][rew] = 1
-
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
                 embed = disnake.Embed(color=self.bot.color, title=msg)
@@ -351,9 +296,6 @@ class Raid(commands.Cog):
                     del m_raid[ctx.author.id]
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
-                p_raid[ctx.author.id].combo_cont = 0
-                if raid_rank[ctx.author.id] % 2 == 0:
-                    p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
                 xp_tot[ctx.author.id].append((self.db_monster[ctx.author.id]['xp'],
                                               self.db_monster[ctx.author.id]['level']))
@@ -436,11 +378,11 @@ class Raid(commands.Cog):
 
             # bonus de XP durante evento!
             if self.bot.event_special and perc < 10:
-                perc = 10 if player_level_now < 80 else 2
+                perc = 10
 
             # bonus de XP por estar em provincia
             if data['config']['provinces'] is not None:
-                perc += 10 if player_level_now < 80 else 2
+                perc += 10
 
             if self.db_player[ctx.author.id]['xp'] < 32:
                 xpm = data_xp[2]
@@ -497,9 +439,10 @@ class Raid(commands.Cog):
                              icon_url=f"{self.db_monster[ctx.author.id]['img']}")
             await ctx.send(embed=embed)
 
-            _reward = []
-            for i_, amount in reward[ctx.author.id].items():
-                _reward += [i_] * amount
+            if data['rpg']['vip']:
+                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(8)]
+            else:
+                reward = [choice(self.db_monster[ctx.author.id]['reward']) for _ in range(4)]
 
             raid_reward = ["soul_crystal_of_love", "soul_crystal_of_hope", "soul_crystal_of_hate",
                            "fused_diamond", "fused_ruby", "fused_sapphire", "fused_emerald", "unsealed_stone",
@@ -509,50 +452,56 @@ class Raid(commands.Cog):
                            "enchant_silver", "armor_hero", "armor_violet", "armor_inspiron", "armor_mystic",
                            "armor_silver"]
 
-            msg, send_message = "\n", False
+            msg = "\n"
 
             if raid_rank[ctx.author.id] >= 5:
-                send_message = True
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **5** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 10:
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **10** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 15:
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **15** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 20:
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **20** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 25:
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **25** `monstros`\n"
 
             if raid_rank[ctx.author.id] >= 30:
-                _reward.append(choice(raid_reward))
+                reward.append(choice(raid_reward))
                 msg += "🎊 **PARABENS** 🎉│`Ganhou` **+1** `item especial por matar` **30** `monstros`\n"
+
+            if self.db_player[ctx.author.id]['level'] > 25:
+                bonus = ['stone_crystal_white', 'stone_crystal_red', 'stone_crystal_green',
+                         'stone_crystal_blue', 'stone_crystal_yellow']
+
+                if data['rpg']['vip']:
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
+                    reward[2] = choice(bonus)
+                    reward[3] = choice(bonus)
+
+                else:
+                    reward[0] = choice(bonus)
+                    reward[1] = choice(bonus)
 
             if change < 50:
                 if data['rpg']['vip']:
-                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
-                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
                 else:
-                    _reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
+                    reward.append(choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal']))
 
-            response = await self.bot.db.add_reward(ctx, _reward, False, True)
-            desc = "<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨"
-            embed = disnake.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
-            for texts in response:
-                embed.add_field(name="**Loot Aleatorio**", value=texts, inline=False)
-            if send_message:
-                embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
-            embed.set_thumbnail(url=ctx.author.display_avatar)
-            embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-            await ctx.send(embed=embed)
+            response = await self.bot.db.add_reward(ctx, reward, True)
+            await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨ '
+                           f'{response}\n{msg}')
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -631,29 +580,17 @@ class Raid(commands.Cog):
                                f"**{raid_rank[ctx.author.id]}** `MONSTROS!` {msg if especial_m > 0 else ''}")
 
         if raid_rank[ctx.author.id] >= 10:
-            amount_raid = (raid_rank[ctx.author.id] // 5) - 1
             try:
-                update['inventory']['frozen_letter'] += amount_raid
+                update['inventory']['frozen_letter'] += 1
             except KeyError:
-                update['inventory']['frozen_letter'] = amount_raid
-
-            await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` "
-                           f"**{raid_rank[ctx.author.id]}** `monstros,"
-                           f" voce dropou` ✨ {self.bot.items['frozen_letter'][0]} ✨ `{amount_raid}`"
-                           f" **{self.bot.items['frozen_letter'][1]}** `adicionando ao seu inventario o item "
-                           f"com sucesso...`")
+                update['inventory']['frozen_letter'] = 1
+            await ctx.send(f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Por matar` **10+** `monstros,"
+                           f" voce dropou` ✨ <:bosskey:766048658470600714> ✨ `1` **Frozen Letter** "
+                           f"`adicionando ao seu inventario o item com sucesso...`")
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)
         await self.bot.db.update_data(data, update, 'users')
-
-        # sistema de level up das skills
-        query, query_user, cl = {"_id": 0, "user_id": 1, "rpg": 1}, {"$set": {}}, await self.bot.db.cd("users")
-        data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
-        _class = p_raid[ctx.author.id].data['class_now']
-        if p_raid[ctx.author.id].level >= 26:
-            query_user["$set"][f"rpg.sub_class.{_class}.skill_level"] = p_raid[ctx.author.id].data["skill_level"]
-            await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
         if p_raid[ctx.author.id].soulshot[0]:
             query = {"_id": 0, "user_id": 1, "rpg": 1}
@@ -690,10 +627,7 @@ class Raid(commands.Cog):
         else:  # ia ganhou
             await self.bot.data.add_sts(ctx.author, ['raid_total', 'raid_lose'])
 
-        if ctx.author.id in self.bot.recovery:
-            self.bot.recovery.remove(ctx.author.id)
-
 
 def setup(bot):
     bot.add_cog(Raid(bot))
-    print('\033[1;32m( 🔶 ) | O comando \033[1;34mWAVE\033[1;32m foi carregado com sucesso!\33[m')
+    print('\033[1;32m( 🔶 ) | O comando \033[1;WAVE\033[1;32m foi carregado com sucesso!\33[m')

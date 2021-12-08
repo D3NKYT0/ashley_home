@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class OnTypingClass(commands.Cog):
@@ -11,7 +11,7 @@ class OnTypingClass(commands.Cog):
     @commands.Cog.listener()
     async def on_typing(self, channel, user, when):
         if channel.id == 546753700517904405:
-            embed = discord.Embed(color=self.color, description=f'Usuario: {user.mention}\n Quando: {when}')
+            embed = disnake.Embed(color=self.color, description=f'Usuario: {user.mention}\n Quando: {when}')
             await channel.send(embed=embed)
 
 

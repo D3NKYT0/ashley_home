@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class OnMessageDelete(commands.Cog):
@@ -24,13 +24,13 @@ class OnMessageDelete(commands.Cog):
                             return
                         if message.author.bot:
                             return
-                        to_send = discord.Embed(
+                        to_send = disnake.Embed(
                             title=":pencil: **Mensagem de texto deletada**",
                             color=self.color,
                             description=f"**Canal de texto:** {message.channel.mention}")
                         to_send.add_field(name="**Messagem**", value=f"```{message.content}```")
-                        to_send.set_author(name=message.author, icon_url=message.author.avatar_url)
-                        to_send.set_thumbnail(url=message.author.avatar_url)
+                        to_send.set_author(name=message.author, icon_url=message.author.display_avatar)
+                        to_send.set_thumbnail(url=message.author.display_avatar)
                         to_send.set_footer(text="Ashley ® Todos os direitos reservados.")
                         ashley = canal.guild.get_member(self.bot.user.id)
                         perms = canal.permissions_for(ashley)
@@ -43,9 +43,9 @@ class OnMessageDelete(commands.Cog):
                                 await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
-                except discord.errors.HTTPException:
+                except disnake.errors.HTTPException:
                     pass
                 except TypeError:
                     pass

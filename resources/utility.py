@@ -1,11 +1,10 @@
-import discord
+import disnake
 import operator
 import datetime
 
+from random import choice
 from pytz import timezone
 from config import data as config
-from random import choice
-from asyncio import TimeoutError
 from captcha.image import ImageCaptcha
 
 responses = config['answers']
@@ -163,7 +162,7 @@ def embed_creator(description, img_url, monster, hp_max, hp, monster_img, monste
         for c in range(0, 3):
             if color_value >= checkpoints[c]:
                 color_embed = color[c]
-    embed = discord.Embed(
+    embed = disnake.Embed(
         description=description,
         color=color_embed
     )
@@ -206,6 +205,8 @@ def convert_item_name(item, db_items):
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
+    if page is None:
+        pass
     descriptions = []
     cont = 0
     cont_i = 0
@@ -353,7 +354,10 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
                 string = f"{items[icon][0]} **{key.upper()}**\n\n"
             else:
                 icon = inventory[key]['reward'][0][0]
-                name = equips[icon]['name'].upper().replace(' - ', ' ').replace(' ', '_') if equips[icon]['slot'] == "sword" else equips[icon]['name'].upper().replace(' ', '_')
+                if equips[icon]['slot'] == "sword":
+                    name = equips[icon]['name'].upper().replace(' - ', ' ').replace(' ', '_')
+                else:
+                    name = equips[icon]['name'].upper().replace(' ', '_')
                 string = f"{equips[icon]['icon']} **{name}**\n\n"
 
         cont += len(string)
@@ -372,108 +376,112 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             cont_i = 0
 
     descriptions.append(description)
-    cont = 0
-    emojis = bot.config['emojis']['arrow']
+    # cont = 0
+    # emojis = bot.config['emojis']['arrow']
 
     msg = await ctx.send('<:alert:739251822920728708>│`Aguarde...`')
-    if page is None:
-        for c in emojis:
-            await msg.add_reaction(c)
 
-    while not bot.is_closed():
+    class View(disnake.ui.View):
+        def __init__(self, author):
+            self.author_id = author
+            self.current_page = 0
+            super().__init__()
 
-        if page is not None:
-            if (page + 1) > len(descriptions):
-                cont = len(descriptions) - 1
-            elif page < 0:
-                cont = 0
+        async def interaction_check(self, interaction):
+            if interaction.user.id != self.author_id:
+                await interaction.response.send_message(content="Você não pode interagir aqui !", ephemeral=True)
+                return False
             else:
-                cont = page
+                return True
 
-        Embed = discord.Embed(
-            title=embed[0],
-            color=embed[1],
-            description=descriptions[cont]
-        )
-        Embed.set_author(name=bot.user, icon_url=bot.user.avatar_url)
-        Embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
-        Embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(cont + 1, len(descriptions)))
+        @disnake.ui.button(emoji="<:inicio:749090949157748821>")
+        async def _init(self, button, interaction):
+            self.current_page = 0
+            embeds = disnake.Embed(
+                title=embed[0],
+                color=embed[1],
+                description=descriptions[self.current_page]
+            )
+            embeds.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+            embeds.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+            pags = [self.current_page + 1, len(descriptions)]
+            embeds.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(pags[0], pags[1]))
+            self.back.disabled = True
+            self.next.disabled = False
+            await interaction.response.edit_message(embed=embeds, view=self)
 
-        if page is None:
-            await msg.edit(embed=Embed, content='')
-        else:
-            try:
-                await msg.delete()
-            except discord.errors.NotFound:
+            if button:
                 pass
-            await ctx.send(embed=Embed)
 
-        if page is None:
+        @disnake.ui.button(emoji="<:voltar:749090948931256381>")
+        async def back(self, button, interaction):
+            if self.current_page > 0:
+                self.current_page -= 1
+                embeds = disnake.Embed(
+                    title=embed[0],
+                    color=embed[1],
+                    description=descriptions[self.current_page]
+                )
+                embeds.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+                embeds.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+                pags = [self.current_page + 1, len(descriptions)]
+                embeds.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(pags[0], pags[1]))
+                self.next.disabled = False
+                button.disabled = True if self.current_page == 0 else None
+                await interaction.response.edit_message(embed=embeds, view=self)
 
-            def check(react, member):
-                try:
-                    if react.message.id == msg.id:
-                        if member.id == ctx.author.id:
-                            return True
-                    return False
-                except AttributeError:
-                    return False
+        @disnake.ui.button(emoji="<:passar:749090949136646202>")
+        async def next(self, button, interaction):
+            if self.current_page < len(descriptions) - 1:
+                self.current_page += 1
+                embeds = disnake.Embed(
+                    title=embed[0],
+                    color=embed[1],
+                    description=descriptions[self.current_page]
+                )
+                embeds.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+                embeds.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+                pags = [self.current_page + 1, len(descriptions)]
+                embeds.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(pags[0], pags[1]))
+                self.back.disabled = False
+                button.disabled = True if self.current_page == len(descriptions) - 1 else None
+                await interaction.response.edit_message(embed=embeds, view=self)
 
-            try:
-                reaction = await bot.wait_for('reaction_add', timeout=60.0, check=check)
-            except TimeoutError:
-                break
+        @disnake.ui.button(emoji="<:fim:749090949346361435>")
+        async def end(self, button, interaction):
+            self.current_page = len(descriptions) - 1
+            embeds = disnake.Embed(
+                title=embed[0],
+                color=embed[1],
+                description=descriptions[self.current_page]
+            )
+            embeds.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+            embeds.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+            pags = [self.current_page + 1, len(descriptions)]
+            embeds.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(pags[0], pags[1]))
+            self.next.disabled = True
+            self.back.disabled = False
+            await interaction.response.edit_message(embed=embeds, view=self)
 
-            try:
-                emoji = str(emojis[0]).replace('<:', '').replace(emojis[0][emojis[0].rfind(':'):], '')
-                try:
-                    _reaction = reaction[0].emoji.name
-                except AttributeError:
-                    _reaction = reaction[0].emoji
-                if _reaction == emoji and reaction[0].message.id == msg.id:
-                    cont = 0
+            if button:
+                pass
 
-                emoji = str(emojis[1]).replace('<:', '').replace(emojis[1][emojis[1].rfind(':'):], '')
-                try:
-                    _reaction = reaction[0].emoji.name
-                except AttributeError:
-                    _reaction = reaction[0].emoji
-                if _reaction == emoji and reaction[0].message.id == msg.id:
-                    cont -= 1
-                    if cont < 0:
-                        cont = 0
+        @disnake.ui.button(emoji="<:fechar:749090949413732352>", style=disnake.ButtonStyle.danger)
+        async def _close(self, button, interaction):
+            if button or interaction:
+                pass
+            return await msg.delete()
 
-                emoji = str(emojis[2]).replace('<:', '').replace(emojis[2][emojis[2].rfind(':'):], '')
-                try:
-                    _reaction = reaction[0].emoji.name
-                except AttributeError:
-                    _reaction = reaction[0].emoji
-                if _reaction == emoji and reaction[0].message.id == msg.id:
-                    cont += 1
-                    if cont > len(descriptions) - 1:
-                        cont = len(descriptions) - 1
+    _embed = disnake.Embed(
+        title=embed[0],
+        color=embed[1],
+        description=descriptions[0]
+    )
+    _embed.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+    _embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+    _embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(1, len(descriptions)))
 
-                emoji = str(emojis[3]).replace('<:', '').replace(emojis[3][emojis[3].rfind(':'):], '')
-                try:
-                    _reaction = reaction[0].emoji.name
-                except AttributeError:
-                    _reaction = reaction[0].emoji
-                if _reaction == emoji and reaction[0].message.id == msg.id:
-                    cont = len(descriptions) - 1
-
-                emoji = str(emojis[4]).replace('<:', '').replace(emojis[4][emojis[4].rfind(':'):], '')
-                try:
-                    _reaction = reaction[0].emoji.name
-                except AttributeError:
-                    _reaction = reaction[0].emoji
-                if _reaction == emoji and reaction[0].message.id == msg.id:
-                    break
-            except AttributeError:
-                break
-        else:
-            break
-    if page is None:
-        await msg.delete()
+    await msg.edit(content=None, embed=_embed, view=View(ctx.author.id))
 
 
 async def get_response(message):
@@ -567,16 +575,16 @@ async def guild_info(guild):
 
     verification_level = {
         "none": "Nenhuma",
-        "low": "Baixo: Precisa ter um e-mail verificado na conta do Discord.",
-        "medium": "Médio: Precisa ter uma conta no Discord há mais de 5 minutos.",
+        "low": "Baixo: Precisa ter um e-mail verificado na conta do disnake.",
+        "medium": "Médio: Precisa ter uma conta no disnake há mais de 5 minutos.",
         "high": "Alta: Também precisa ser um membro deste servidor há mais de 10 minutos.",
         "table_flip": "Alta: Precisa ser um membro deste servidor há mais de 10 minutos.",
-        "extreme": "Extrema: Precisa ter um telefone verificado na conta do Discord.",
-        "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do Discord."
+        "extreme": "Extrema: Precisa ter um telefone verificado na conta do disnake.",
+        "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do disnake."
     }
 
     verification = verification_level.get(str(guild.verification_level))
-    embed = discord.Embed(color=int("ff00c1", 16), description="Abaixo está as informaçoes principais do servidor!")
+    embed = disnake.Embed(color=int("ff00c1", 16), description="Abaixo está as informaçoes principais do servidor!")
     embed.set_thumbnail(url=guild.icon_url)
     embed.add_field(name="Nome:", value=guild.name, inline=True)
     embed.add_field(name="Dono:", value=f"{str(guild.owner)}")

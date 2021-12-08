@@ -1,8 +1,8 @@
-import discord
+import disnake
 import json
 
-from asyncio import sleep, TimeoutError
-from discord.ext import commands
+from asyncio import TimeoutError
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -13,7 +13,7 @@ _ANSWERS, _SCORE, _RESEARCH = dict(), dict(), research["satisfaction"]
 _ANSWERS_2, _SCORE_2, _RESEARCH_2 = dict(), dict(), research["feedback"]
 
 
-class RegisterClass(commands.Cog):
+class ResearchClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.st = []
@@ -42,12 +42,12 @@ class RegisterClass(commands.Cog):
         """Sistema de Pesquisa da Ashley"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = discord.Embed(color=self.color)
+            top = disnake.Embed(color=self.color)
             top.add_field(name="Research Commands:",
                           value=f"{self.st[67]} `p s` Faça uma pesquisa de satisfação sobre a ASHLEY!\n"
                                 f"{self.st[67]} `p f` Faça uma pesquisa de feedback sobre a ASHLEY!")
-            top.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            top.set_thumbnail(url=self.bot.user.avatar_url)
+            top.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            top.set_thumbnail(url=self.bot.user.display_avatar)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=top)
 
@@ -62,7 +62,7 @@ class RegisterClass(commands.Cog):
         if "satisfaction" in data["research"].keys():
             try:
                 return await ctx.author.send(_RESEARCH["-4"])
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 return await ctx.send(_RESEARCH["-4"])
 
         def check(m):
@@ -78,7 +78,7 @@ class RegisterClass(commands.Cog):
         # ----------------------------------------------------------------------------------
         try:
             await ctx.author.send(_RESEARCH["1"] + _RESEARCH["-3"])
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
@@ -152,10 +152,10 @@ class RegisterClass(commands.Cog):
             _SCORE[ctx.author.id] += self.verify_answer(_ANSWERS[ctx.author.id][k].content)
 
         desc = f"`Pesquisa de:` **{ctx.author}**\n`ID:` **{ctx.author.id}**\n`Score:` **{_SCORE[ctx.author.id]}**"
-        embed = discord.Embed(colour=self.color, description=desc)
+        embed = disnake.Embed(colour=self.color, description=desc)
         for k in _ANSWERS[ctx.author.id].keys():
             embed.add_field(name=_RESEARCH[k], value=f"**{_ANSWERS[ctx.author.id][k].content}**", inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_thumbnail(url=ctx.author.display_avatar)
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
         canal = self.bot.get_channel(839593358895743016)
         extra = ""
@@ -179,7 +179,7 @@ class RegisterClass(commands.Cog):
         if "feedback" in data["research"].keys():
             try:
                 return await ctx.author.send(_RESEARCH_2["-4"])
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 return await ctx.send(_RESEARCH_2["-4"])
 
         def check(m):
@@ -195,7 +195,7 @@ class RegisterClass(commands.Cog):
         # ----------------------------------------------------------------------------------
         try:
             await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS_2[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
@@ -269,10 +269,10 @@ class RegisterClass(commands.Cog):
             _SCORE_2[ctx.author.id] += self.verify_answer(_ANSWERS_2[ctx.author.id][k].content)
 
         desc = f"`Pesquisa de:` **{ctx.author}**\n`ID:` **{ctx.author.id}**\n`Score:` **{_SCORE_2[ctx.author.id]}**"
-        embed = discord.Embed(colour=self.color, description=desc)
+        embed = disnake.Embed(colour=self.color, description=desc)
         for k in _ANSWERS_2[ctx.author.id].keys():
             embed.add_field(name=_RESEARCH_2[k], value=f"**{_ANSWERS_2[ctx.author.id][k].content}**", inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar_url)
+        embed.set_thumbnail(url=ctx.author.display_avatar)
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
         canal = self.bot.get_channel(839593358895743016)
         extra = ""
@@ -288,5 +288,5 @@ class RegisterClass(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(RegisterClass(bot))
+    bot.add_cog(ResearchClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mREGISTERCLASS\033[1;32m foi carregado com sucesso!\33[m')

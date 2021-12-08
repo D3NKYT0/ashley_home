@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class ChannelPinUpdate(commands.Cog):
@@ -30,7 +30,7 @@ class ChannelPinUpdate(commands.Cog):
             else:
                 fix_ = "dex" + fix_
 
-            embed = discord.Embed(color=self.color,
+            embed = disnake.Embed(color=self.color,
                                   title=f":bangbang: **Uma mensagem foi {fix_}**",
                                   description=f"**Canal de texto:** {channel!s} \n{time_}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")

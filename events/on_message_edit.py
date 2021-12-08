@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class OnMessageEdit(commands.Cog):
@@ -32,7 +32,7 @@ class OnMessageEdit(commands.Cog):
             if not canal:
                 return
 
-            embed = discord.Embed(color=self.color, title=f":pencil: {after.author} **editou uma mensagem de texto**",
+            embed = disnake.Embed(color=self.color, title=f":pencil: {after.author} **editou uma mensagem de texto**",
                                   description=f"**Canal de texto:** {after.channel.mention}")
 
             embed.add_field(name="**Antiga mensagem:**",
@@ -40,8 +40,8 @@ class OnMessageEdit(commands.Cog):
             embed.add_field(name="**Nova mensagem:**",
                             value=f"```{after.content[:1000]}```")
 
-            embed.set_author(name=after.author, icon_url=after.author.avatar_url)
-            embed.set_thumbnail(url=after.author.avatar_url)
+            embed.set_author(name=after.author, icon_url=after.author.display_avatar)
+            embed.set_thumbnail(url=after.author.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
 
             ashley = canal.guild.get_member(self.bot.user.id)

@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -45,14 +45,14 @@ class MeltedClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
 
-        Embed = discord.Embed(
+        embed = disnake.Embed(
             title="O CUSTO PARA VOCE DERRETER UM ARTEFATO:",
             color=self.bot.color,
             description=msg)
-        Embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        Embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
-        Embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-        await ctx.send(embed=Embed)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
+        embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
 
         artifacts = []
         for i_, amount in data['inventory'].items():
@@ -145,7 +145,7 @@ class MeltedClass(commands.Cog):
                                f"**Melted Artifact** `adicionado ao seu inventario com sucesso...`")
 
         img = choice(git)
-        embed = discord.Embed(color=self.bot.color)
+        embed = disnake.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 

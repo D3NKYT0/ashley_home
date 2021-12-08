@@ -1,8 +1,8 @@
-import discord
+import disnake
 import copy
 
 from asyncio import TimeoutError
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import paginator
@@ -95,7 +95,7 @@ class ShopEvent(commands.Cog):
                                '\n▶ **Craftar** `1`\n⏩ **Craftar** `2+`' \
                                '\n⏭ **Craftar o Maximo**\n❌ **Fechar**'.format(maximo)
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     title='🎃 **CRAFT HALLOWEEN** 🎃\n(Custo/Quantidade no inventario)',
                     color=self.bot.color,
                     description=description)

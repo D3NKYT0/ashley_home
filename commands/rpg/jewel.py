@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -59,9 +59,9 @@ class JewelClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE DEVE USAR OS COMANDOS` **ASH RECIPE** `E` **ASH CRAFT**"
 
-        embed = discord.Embed(title="O CUSTO PARA VOCE CRIAR UMA JOIA:", color=self.bot.color, description=msg)
-        embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
+        embed = disnake.Embed(title="O CUSTO PARA VOCE CRIAR UMA JOIA:", color=self.bot.color, description=msg)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
+        embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
         await ctx.send(embed=embed)
 
@@ -186,7 +186,7 @@ class JewelClass(commands.Cog):
                                    f"`adicionado ao seu inventario de equipamentos com sucesso...`")
 
             img = choice(git)
-            embed = discord.Embed(color=self.bot.color)
+            embed = disnake.Embed(color=self.bot.color)
             embed.set_image(url=img)
             await ctx.send(embed=embed)
 

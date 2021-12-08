@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice, randint
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class PunchClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='punch', aliases=['soco', 'murro'])
-    async def punch(self, ctx, member: discord.Member = None):
+    async def punch(self, ctx, member: disnake.Member = None):
         """Comando de gifs de soco
         Use ash punch <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         try:
             punchimg = ['https://media1.tenor.com/images/0d0afe2df6c9ff3499a81bf0dab1d27c/tenor.gif?itemid=15580060',
@@ -63,7 +63,7 @@ class PunchClass(commands.Cog):
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 punch = 'https://i.makeagif.com/media/4-09-2016/E9n3n4.gif'
 
-            punchemb = discord.Embed(title='Soco :boxing_glove: ',
+            punchemb = disnake.Embed(title='Soco :boxing_glove: ',
                                      description=f'**{member.name}** {text} **{ctx.author.name}**! '
                                                  f'{end}',
                                      color=self.color)

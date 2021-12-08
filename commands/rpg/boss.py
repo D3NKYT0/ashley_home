@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from asyncio import sleep
-from discord.ext import commands
+from disnake.ext import commands
 from random import randint, choice
 from resources.fight import Entity, Ext
 from resources.check import check_it
@@ -30,17 +30,17 @@ class BossSystem(commands.Cog):
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`Você está jogando, aguarde para quando você estiver livre!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         ct = 50
@@ -55,16 +55,16 @@ class BossSystem(commands.Cog):
             if data['inventory']['coins'] < ct:
                 msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
                       f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
         except KeyError:
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if not self.bot.boss_live:
             msg = '<:negate:721581573396496464>│`ATUALMENTE NAO TEM BOSS VIVO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
@@ -97,7 +97,7 @@ class BossSystem(commands.Cog):
             if ctx.author.id in self.bot.batalhando:
                 self.bot.batalhando.remove(ctx.author.id)
             msg = '<:negate:721581573396496464>│`O BOSS JÁ ESTA MORTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         # durante a batalha
@@ -165,7 +165,7 @@ class BossSystem(commands.Cog):
             else:
                 monster[ctx.author.id].evasion += 1
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -237,7 +237,7 @@ class BossSystem(commands.Cog):
             else:
                 player[ctx.author.id].evasion += 1
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -251,7 +251,7 @@ class BossSystem(commands.Cog):
 
         # depois da batalha
         if monster[ctx.author.id].status['hp'] > 0:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
                 color=0x000000
             )
@@ -263,7 +263,7 @@ class BossSystem(commands.Cog):
         else:
             db_monster = monster[ctx.author.id].data
             _din = await self.bot.db.add_money(ctx, randint(db_monster['ethernya'] // 4, db_monster['ethernya']), True)
-            embed = discord.Embed(description=f"`{ctx.author.name.upper()} GANHOU!` {_din}", color=0x000000)
+            embed = disnake.Embed(description=f"`{ctx.author.name.upper()} GANHOU!` {_din}", color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])

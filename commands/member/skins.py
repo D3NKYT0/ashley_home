@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -21,24 +21,24 @@ class SkinsClass(commands.Cog):
             if len(data["rpg"]["skins"]) != 0:
                 skins = "\n".join([f"**{n.upper()}**" for n in data["rpg"]["skins"]])
             msg = f"<:confirmed:721581574461587496>│`Segue abaixo suas skins disponiveis:`\n{skins}"
-            embed = discord.Embed(olor=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if skin not in self.skins and skin.lower() != "default":
             msg = f"<:negate:721581573396496464>│`Essa skin nao existe`"
-            embed = discord.Embed(olor=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if skin not in data["rpg"]["skins"] and skin.lower() != "default":
             msg = f"<:alert:739251822920728708>│`Essa skin nao esta disponivel pra voce`"
-            embed = discord.Embed(olor=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update = data
         update['rpg']['skin'] = skin.lower()
         await self.bot.db.update_data(data, update, "users")
         msg = f"<:confirmed:721581574461587496>│`Sua skin foi mudada para:` **{skin.upper()}**"
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 

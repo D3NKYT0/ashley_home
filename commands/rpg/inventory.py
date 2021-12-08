@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
@@ -55,7 +55,7 @@ class InventoryClass(commands.Cog):
                 self.he[ctx.author.id] = {str(ctx.command): False}
 
             if not data['rpg']['active']:
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     color=self.bot.color,
                     description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
                 return await ctx.send(embed=embed)
@@ -182,7 +182,7 @@ class InventoryClass(commands.Cog):
 
             equips(data_equips)
             _id = create_id()
-            self.botmsg[_id] = await ctx.send(file=discord.File('equips.png'),
+            self.botmsg[_id] = await ctx.send(file=disnake.File('equips.png'),
                                               content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
             if not self.he[ctx.author.id][str(ctx.command)]:
                 await self.botmsg[_id].add_reaction('<a:help:767825933892583444>')
@@ -270,12 +270,12 @@ class InventoryClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         equips_list = list()
@@ -313,12 +313,12 @@ class InventoryClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         equips_list = list()
@@ -352,7 +352,7 @@ class InventoryClass(commands.Cog):
 
         else:
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ITEM EQUIPADO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -368,12 +368,12 @@ class InventoryClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if item is None:

@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import skill_points
@@ -38,13 +38,13 @@ class SkillClass(commands.Cog):
 
             data = await self.bot.db.get_data("user_id", member.id, "users")
             if data is None:
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     color=self.bot.color,
                     description='<:negate:721581573396496464>│`MEMBRO NAO CADASTRADO!`')
                 return await ctx.send(embed=embed)
 
             if not data['rpg']['active']:
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     color=self.bot.color,
                     description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
                 return await ctx.send(embed=embed)
@@ -54,7 +54,7 @@ class SkillClass(commands.Cog):
 
             db = {
                 "name": member.name,
-                "avatar_member": member.avatar_url_as(format="png"),
+                "avatar_member": member.display_avatar.with_format("png"),
                 "class_now": data['rpg']["class_now"],
                 "sub_class": data['rpg']["sub_class"],
                 "atk": str(data['rpg']["sub_class"][_class]['status']['atk']),
@@ -69,7 +69,7 @@ class SkillClass(commands.Cog):
             await skill_points(db)
 
             _id = create_id()
-            self.botmsg[_id] = await ctx.send(file=discord.File('skill_points.png'),
+            self.botmsg[_id] = await ctx.send(file=disnake.File('skill_points.png'),
                                               content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
             if not self.he[ctx.author.id][str(ctx.command)]:
                 await self.botmsg[_id].add_reaction('<a:help:767825933892583444>')
@@ -166,14 +166,14 @@ class SkillClass(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
 
         if not data['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status is None:
@@ -197,27 +197,27 @@ class SkillClass(commands.Cog):
 
         if status.lower() == "con" and update['rpg']["sub_class"][_class]['status']['con'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "prec" and update['rpg']["sub_class"][_class]['status']['prec'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "agi" and update['rpg']["sub_class"][_class]['status']['agi'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "atk" and update['rpg']["sub_class"][_class]['status']['atk'] + n > 50:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 50 PONTOS NESSE ATRIBUTO`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if status.lower() == "luk" and update['rpg']["sub_class"][_class]['status']['luk'] + n > 20:
             msg = '<:negate:721581573396496464>│`VOCE NAO PODE PASSAR DE 20 PONTOS NESSE ATRIBUTO`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update['rpg']["sub_class"][_class]['status'][status.lower()] += n
@@ -244,12 +244,12 @@ class SkillClass(commands.Cog):
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _class = data["rpg"]["class_now"]

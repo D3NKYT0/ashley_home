@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -22,14 +22,14 @@ class IaResponseClass(commands.Cog):
         response = update['user']['ia_response']
         await self.bot.db.update_data(data, update, "users")
         if response:
-            embed = discord.Embed(
-                color=discord.Color.green(),
+            embed = disnake.Embed(
+                color=disnake.Color.green(),
                 description=f'<:confirmed:721581574461587496>│`Interação com a Inteligencia Artificial '
                             f'habilitada com sucesso!`')
             await ctx.send(embed=embed)
         else:
-            embed = discord.Embed(
-                color=discord.Color.red(),
+            embed = disnake.Embed(
+                color=disnake.Color.red(),
                 description=f'<:negate:721581573396496464>│`Interação com a Inteligencia Artificial '
                             f'desabilitada com sucesso!`')
             await ctx.send(embed=embed)

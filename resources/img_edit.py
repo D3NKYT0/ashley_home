@@ -67,10 +67,10 @@ def remove_acentos_e_caracteres_especiais(word):
     return re.sub('[^a-zA-Z \\\]', '', palavra_sem_acento)
 
 
-async def get_avatar(avatar_url, x: int = -1, y: int = -1, rect: bool = False):
+async def get_avatar(display_avatar, x: int = -1, y: int = -1, rect: bool = False):
 
-    if validate_url(str(avatar_url)):
-        link = str(avatar_url)
+    if validate_url(str(display_avatar)):
+        link = str(display_avatar)
     else:
         link = "https://festsonho.com.br/images/sem_foto.png"
     url_avatar = await requests.get(link)

@@ -1,8 +1,8 @@
-import discord
+import disnake
 import psutil
 import pytz
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from humanize import i18n, precisedelta
 from resources.db import Database
@@ -10,6 +10,7 @@ from collections import Counter
 from datetime import datetime as dt
 
 i18n.activate("pt_BR")
+
 
 class BotInfo(commands.Cog):
     def __init__(self, bot):
@@ -24,14 +25,14 @@ class BotInfo(commands.Cog):
         """Comando para ter informações sobre a Ashley
         Use ash botinfo"""
         total_members = sum(len(s.members) for s in self.bot.guilds)
-        channel_types = Counter(isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels())
+        channel_types = Counter(isinstance(c, disnake.TextChannel) for c in self.bot.get_all_channels())
         ver_, voice, text = self.bot.version, channel_types[False], channel_types[True]
         owner, dated = str(self.bot.get_user(self.bot.owner_id)), ctx.me.created_at
-        uptime = uptime = precisedelta(dt.utcnow() - self.bot.start_time, format='%0.0f')
+        uptime = precisedelta(dt.utcnow() - self.bot.start_time, format='%0.0f')
         date = dt.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
 
-        embed_bot = discord.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
-        embed_bot.set_thumbnail(url=ctx.me.avatar_url)
+        embed_bot = disnake.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
+        embed_bot.set_thumbnail(url=ctx.me.display_avatar)
         embed_bot.add_field(name="📨 | Comandos Executados",
                             value='**{}** `comandos`'.format(sum(self.bot.commands_used.values())), inline=False)
         embed_bot.add_field(name="📖 | Canais de texto", value='**{}** `canais de texto`'.format(text), inline=False)
@@ -41,7 +42,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name="<:memory:522400971406573578> | Memoria Usada", value=f'**{self.bot.get_ram()}**',
                             inline=False)
         embed_bot.add_field(name="<:mito:745375589145247804> | Entre no meu servidor",
-                            value="[Clique Aqui](https://discord.gg/rYT6QrM)", inline=False)
+                            value="[Clique Aqui](https://disnake.gg/rYT6QrM)", inline=False)
         embed_bot.add_field(name='`💮 | Nome`', value=ctx.me.name, inline=False)
         embed_bot.add_field(name='`◼ | Id bot`', value=ctx.me.id, inline=False)
         embed_bot.add_field(name='💠 | Criado em', value=f"<t:{dated:%s}:f>",
@@ -54,10 +55,10 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name='<:cool:745375589245911190> Bot  | Version', value=str(ver_), inline=False)
         embed_bot.add_field(name="<a:loading:520418506567843860> | Tempo Online", value=f"{uptime}", inline=False)
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
-                            value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
+                            value="[Clique Aqui](https://disnakeapp.com/oauth2/authorize?client_id=478977311266570242&s"
                                   "cope=bot&permissions=806218998)", inline=False)
         embed_bot.set_footer(text=f"Comando usado por {ctx.author} às {date}",
-                             icon_url=ctx.author.avatar_url)
+                             icon_url=ctx.author.display_avatar)
         await ctx.send(delete_after=120, embed=embed_bot)
 
 

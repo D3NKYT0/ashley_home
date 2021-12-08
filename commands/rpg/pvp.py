@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from asyncio import sleep, TimeoutError
-from discord.ext import commands
+from disnake.ext import commands
 from random import randint
 from resources.fight import Entity, Ext
 from resources.check import check_it
@@ -17,7 +17,7 @@ class PVP(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='pvp')
-    async def pvp(self, ctx, member: discord.Member = None):
+    async def pvp(self, ctx, member: disnake.Member = None):
         """Comando usado pra ir PVP no rpg da ashley
         Use ash pvp"""
         global player_1, player_2
@@ -27,37 +27,37 @@ class PVP(commands.Cog):
 
         if member is None:
             msg = "<:alert:739251822920728708>│`Você precisa mencionar alguem!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if member.id == ctx.author.id:
             msg = "<:alert:739251822920728708>│`Você não pode ir PVP consigo mesmo!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`Você está jogando, aguarde para quando você estiver livre!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if member.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`O usuario está jogando, aguarde para quando ele estiver livre!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if member.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`O USUARIO ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if member.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`O membro está sendo desafiado/desafiando para um PVP!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if randint(1, 100) <= 50:
@@ -74,13 +74,13 @@ class PVP(commands.Cog):
         if data_idp1 is None or data_idp2 is None:
             _NOME = _name_p1 if data_idp1 is None else _name_p2
             msg = f'<:alert:739251822920728708>│**ATENÇÃO** : `{_NOME} não está cadastrado!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if not data_idp1['rpg']['active'] or not data_idp2['rpg']['active']:
             _NOME = _name_p1 if data_idp1 is None else _name_p2
             msg = f'<:negate:721581573396496464>│`{_NOME} USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _class1 = data_idp1["rpg"]["class_now"]
@@ -88,7 +88,7 @@ class PVP(commands.Cog):
         if _db_class1['level'] < 26:
             msg = f'<:negate:721581573396496464>│`{_name_p1} PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR PVP!\n' \
                   f'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _class2 = data_idp2["rpg"]["class_now"]
@@ -96,7 +96,7 @@ class PVP(commands.Cog):
         if _db_class2['level'] < 26:
             msg = f'<:negate:721581573396496464>│`{_name_p2} PRECISA ESTA NO NIVEL 26 OU MAIOR PARA  IR PVP!\n' \
                   f'PEÇA PARA ELE OLHAR O NIVEL NO COMANDO:` **ASH SKILL**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.desafiado.append(ctx.author.id)
@@ -199,7 +199,7 @@ class PVP(commands.Cog):
             else:
                 player_2[_idp2].evasion += 1
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     description=f"`{player_2[_idp2].name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -270,7 +270,7 @@ class PVP(commands.Cog):
             else:
                 player_1[_idp1].evasion += 1
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     description=f"`{player_1[_idp1].name.upper()} EVADIU`",
                     color=0x000000
                 )

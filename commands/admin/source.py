@@ -1,10 +1,9 @@
 import os
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
-from resources.utility import ERRORS
 
 
 class SourceGit(commands.Cog):
@@ -30,24 +29,24 @@ class SourceGit(commands.Cog):
             try:
                 obj = obj.get_command(cmd)
                 if obj is None:
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         color=self.color,
                         description=f"<:negate:721581573396496464>│`NÃO CONSEGUIR ENCONTRAR O COMANDO {cmd}!`")
                     return await ctx.send(embed=embed)
             except AttributeError:
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     color=self.color,
                     description=f"<:negate:721581573396496464>│`{obj.name} ESSE COMANDO NÃO TEM SUB-COMANDOS!`")
                 return await ctx.send(embed=embed)
 
         src = obj.callback.__code__
 
-        if not obj.callback.__module__.startswith('discord'):
+        if not obj.callback.__module__.startswith('disnake'):
             location = os.path.relpath(src.co_filename).replace('\\', '/')
             final_url = '<{}/tree/master/{}#L{}>'.format(source_url, location, src.co_firstlineno)
         else:
             location = obj.callback.__module__.replace('.', '/') + '.py'
-            base = 'https://github.com/Rapptz/discord.py'
+            base = 'https://github.com/Rapptz/disnake.py'
             final_url = '<{}/blob/master/{}#L{}>'.format(base, location, src.co_firstlineno)
 
         await ctx.send(final_url)

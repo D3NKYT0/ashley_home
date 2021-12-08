@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -14,7 +14,7 @@ git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.g
        "https://media1.tenor.com/images/39c363015f2ae22f212f9cd8df2a1063/tenor.gif?itemid=15894886"]
 
 
-class MeltedClass(commands.Cog):
+class UnseleadClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.i = self.bot.items
@@ -118,12 +118,12 @@ class MeltedClass(commands.Cog):
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR OS COMANDOS` " \
                "**ASH MELTED, ASH STONE**  `E` **ASH BOX**"
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title="O CUSTO PARA VOCE TIRAR O SELO DE UM EQUIPAMENTO:",
             color=self.bot.color,
             description=msg)
-        embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
+        embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
         await ctx.send(embed=embed)
 
@@ -257,7 +257,7 @@ class MeltedClass(commands.Cog):
         await sleep(2)
         await msg.edit(content=msg_return)
         img = choice(git)
-        embed = discord.Embed(color=self.bot.color)
+        embed = disnake.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
@@ -291,5 +291,5 @@ class MeltedClass(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(MeltedClass(bot))
+    bot.add_cog(UnseleadClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mUNSEALED\033[1;32m foi carregado com sucesso!\33[m')

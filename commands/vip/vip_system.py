@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -32,12 +32,12 @@ class VipSystem(commands.Cog):
         Use ash vip"""
         if ctx.invoked_subcommand is None:
             self.status()
-            vip = discord.Embed(color=self.color)
+            vip = disnake.Embed(color=self.color)
             vip.add_field(name="Vip Commands:",
                           value=f"{self.st[66]} `vip member` Compre seu vip de membro.\n"
                                 f"{self.st[66]} `vip guild` Compre seu vip de servidor.\n")
-            vip.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            vip.set_thumbnail(url=self.bot.user.avatar_url)
+            vip.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            vip.set_thumbnail(url=self.bot.user.display_avatar)
             vip.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=vip)
 
@@ -99,7 +99,7 @@ class VipSystem(commands.Cog):
         update_['rpg']['vip'] = True
         await self.bot.db.update_data(data_, update_, 'users')
         img = choice(git)
-        embed = discord.Embed(color=self.bot.color)
+        embed = disnake.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
         await ctx.send(f'<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `ACABOU DE COMPRAR '
@@ -109,7 +109,7 @@ class VipSystem(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=2592000))
     @vip.group(name='guild', aliases=['servidor', 'guilda', 'server'])
-    async def _guild(self, ctx, guild: discord.Guild = None):
+    async def _guild(self, ctx, guild: disnake.Guild = None):
         """Comando usado pra comprar vip guild da ashley (usavel somente no server da Ashley)
         Use ash vip guild"""
         if guild is None:
@@ -206,7 +206,7 @@ class VipSystem(commands.Cog):
         await self.bot.db.update_data(data_, update_, 'users')
         await self.bot.db.update_data(data_guild, update_guild, 'guilds')
         img = choice(git)
-        embed = discord.Embed(color=self.bot.color)
+        embed = disnake.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
         await ctx.send(f'<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `ACABOU DE COMPRAR'

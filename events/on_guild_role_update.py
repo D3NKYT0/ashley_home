@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class RoleUpdate(commands.Cog):
@@ -19,7 +19,7 @@ class RoleUpdate(commands.Cog):
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is None:
                                 return
-                            to_send = discord.Embed(
+                            to_send = disnake.Embed(
                                 title=":star2: **Cargo Editado**",
                                 color=self.color,
                                 description=f"**Cargo:** {before.mention}")
@@ -37,9 +37,9 @@ class RoleUpdate(commands.Cog):
                                     await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
-                except discord.errors.HTTPException:
+                except disnake.errors.HTTPException:
                     pass
                 except TypeError:
                     pass

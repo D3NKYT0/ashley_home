@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from datetime import datetime as dt
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import parse_duration
@@ -27,7 +27,7 @@ class ProfileSystem(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='profile', aliases=['perfil'])
-    async def profile(self, ctx, member: discord.Member = None):
+    async def profile(self, ctx, member: disnake.Member = None):
         """Comando usado pra ver o seu perfil da ashley
         Use ash profile <@usuario em questão se não colocar vera seu proprio perfil>"""
         if member is None:
@@ -77,7 +77,7 @@ class ProfileSystem(commands.Cog):
         if data['user']['married']:
             try:
                 user = self.bot.get_user(data['user']['married_at'])
-                married = user.avatar_url_as(format="png")
+                married = user.display_avatar.with_format("png")
             except AttributeError:
                 married = "https://w-dog.net/wallpapers/2/13/487318654230690/abandoned-church-the-altar-interior.jpg"
                 """await ctx.send("<:alert:739251822920728708>│`VOCE TA CASADO COM ALGUEM QUE NAO EXISTE MAIS, "
@@ -96,7 +96,7 @@ class ProfileSystem(commands.Cog):
             guild_link = "https://festsonho.com.br/images/sem_foto.png"
 
         data_profile = {
-            "avatar_member": member.avatar_url_as(format="png"),
+            "avatar_member": member.display_avatar.with_format("png"),
             "avatar_married": married,
             "name": remove_acentos_e_caracteres_especiais(member.display_name),
             "xp": data['user']['experience'],
@@ -116,7 +116,7 @@ class ProfileSystem(commands.Cog):
         }
 
         await profile(data_profile)
-        await ctx.send(file=discord.File('profile.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=disnake.File('profile.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

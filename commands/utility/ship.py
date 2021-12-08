@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from PIL import Image
@@ -15,7 +15,7 @@ class Ship(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.command(name='ship', aliases=['s', 'chip'])
-    async def ship(self, ctx, member_1: discord.Member = None, member_2: discord.Member = None):
+    async def ship(self, ctx, member_1: disnake.Member = None, member_2: disnake.Member = None):
         """Comando de Ship entre duas pessoas
         Use ash ship"""
 
@@ -83,15 +83,15 @@ class Ship(commands.Cog):
 
         image = Image.open(f"images/ship/ship{ship}.png").convert('RGBA')
 
-        avatar_1 = await get_avatar(m1.avatar_url_as(format="png"), 165, 165)
+        avatar_1 = await get_avatar(m1.display_avatar.with_format("png"), 165, 165)
         image.paste(avatar_1, (42, 118), avatar_1)
 
-        avatar_2 = await get_avatar(m2.avatar_url_as(format="png"), 165, 165)
+        avatar_2 = await get_avatar(m2.display_avatar.with_format("png"), 165, 165)
         image.paste(avatar_2, (393, 118), avatar_2)
 
         image.save('ship.png')
         await msg.delete()
-        await ctx.send(file=discord.File('ship.png'))
+        await ctx.send(file=disnake.File('ship.png'))
 
 
 def setup(bot):

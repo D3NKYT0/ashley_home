@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import include, reward_broken, convert_item_name
@@ -82,12 +82,12 @@ class BrokenClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data_item, data_key = None, None
@@ -97,17 +97,17 @@ class BrokenClass(commands.Cog):
 
         if data_item is None or data_key is None:
             msg = "<:negate:721581573396496464>│`COMANDO CANCELADO: HOUVE UM ERRO INESPERADO!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if data_item["slot"] not in self.slots or not include(item, self.rarities):
             msg = "<:negate:721581573396496464>│`COMANDO CANCELADO: ESSE EQUIPAMENTO NAO PODE SER QUEBRADO!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if data_key not in update['rpg']["items"].keys():
             msg = "<:negate:721581573396496464>│`VOCE NAO TEM ESSE ITEM...`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         # aqui esta tirando o item do inventario
@@ -151,7 +151,7 @@ class BrokenClass(commands.Cog):
                     update['inventory'][gem_now] = amount
 
         await self.bot.db.update_data(data, update, 'users')
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -170,17 +170,17 @@ class BrokenClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if key not in self.jewel.keys():
             msg = '<:negate:721581573396496464>│`NÃO EXISTE ESSA ESSENCIA!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if key not in data['inventory'].keys():
@@ -204,7 +204,7 @@ class BrokenClass(commands.Cog):
                 update['inventory'][self.jewel[key]] = 1
 
         await self.bot.db.update_data(data, update, 'users')
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 

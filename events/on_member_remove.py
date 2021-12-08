@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from resources.img_edit import welcome
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class OnMemberRemove(commands.Cog):
@@ -24,26 +24,26 @@ class OnMemberRemove(commands.Cog):
                         data_goodbye = {
                             "type": "goodbye",
                             "name": str(member.name),
-                            "avatar": member.avatar_url_as(format="png"),
+                            "avatar": member.display_avatar.with_format("png"),
                             "text": None
                         }
 
                         await welcome(data_goodbye)
 
-                        file = discord.File('goodbye.png')
+                        file = disnake.File('goodbye.png')
                         if file is not None:
                             try:
                                 await canal.send(file=file, content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
-                            except discord.errors.HTTPException:
+                            except disnake.errors.HTTPException:
                                 pass
                         else:
-                            embed = discord.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
+                            embed = disnake.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
                             userjoinedat = str(member.joined_at).split('.', 1)[0]
                             usercreatedat = str(member.created_at).split('.', 1)[0]
                             embed.add_field(name="Entrou no server em:", value=userjoinedat, inline=True)
                             embed.add_field(name="Conta criada em:", value=usercreatedat, inline=True)
                             embed.add_field(name="ID:", value=str(member.id), inline=True)
-                            embed.set_thumbnail(url=member.avatar_url)
+                            embed.set_thumbnail(url=member.display_avatar)
                             ashley = canal.guild.get_member(self.bot.user.id)
                             perms = canal.permissions_for(ashley)
                             if perms.send_messages and perms.read_messages:
@@ -56,9 +56,9 @@ class OnMemberRemove(commands.Cog):
 
             except AttributeError:
                 pass
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 pass
-            except discord.errors.NotFound:
+            except disnake.errors.NotFound:
                 pass
 
             try:
@@ -84,9 +84,9 @@ class OnMemberRemove(commands.Cog):
                                              " CORRETAMENTE!**")
                         else:
                             await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-            except discord.Forbidden:
+            except disnake.Forbidden:
                 pass
-            except discord.errors.NotFound:
+            except disnake.errors.NotFound:
                 pass
 
 

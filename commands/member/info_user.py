@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -14,7 +14,7 @@ class UserInfo(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='userinfo', aliases=['infouser', 'ui', 'iu'])
-    async def userinfo(self, ctx, member: discord.Member = None):
+    async def userinfo(self, ctx, member: disnake.Member = None):
         """comando que da uma lista de informações sobre o usuario
         Use ash userinfo <@usuario em questão>"""
         if member is None:
@@ -34,7 +34,7 @@ class UserInfo(commands.Cog):
         userjoinedat = member.joined_at
         usercreatedat = member.created_at
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title=":pushpin:Informações pessoais de:",
             color=self.color,
             description=member.name
@@ -46,7 +46,7 @@ class UserInfo(commands.Cog):
         embed.add_field(name="Cargos:", value=role, inline=True)
         embed.add_field(name="DataBase:", value=database)
         embed.set_footer(text=f"Pedido por {ctx.author}")
-        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_thumbnail(url=str(member.display_avatar))
         await ctx.send(embed=embed)
 
 

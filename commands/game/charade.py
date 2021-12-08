@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from random import choice
 from asyncio import TimeoutError
 from resources.check import check_it
@@ -27,7 +27,7 @@ class CharadeClass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -49,12 +49,12 @@ class CharadeClass(commands.Cog):
             charade_list = list(self.charade.keys())
             charade = choice(charade_list)
 
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 title='A CHARADA É...',
                 description=f'```{charade}```',
                 color=self.color,
             )
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
             if ctx.author.id == self.bot.owner_id:

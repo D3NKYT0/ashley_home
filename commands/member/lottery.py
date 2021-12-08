@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.lotash import Lottery, create
@@ -51,14 +51,14 @@ class LotteryClass(commands.Cog):
         bets = create(Lottery("megasena"), amount, 6)
 
         for bet in bets:
-            BET = ' '.join('%02d' % n for n in bet)
-            msg += f"<:confirmed:721581574461587496>│`{BET}`\n"
+            _bet_now = ' '.join('%02d' % n for n in bet)
+            msg += f"<:confirmed:721581574461587496>│`{_bet_now}`\n"
             _bet = {"_id": create_id(), "bet": bet, "user_id": ctx.author.id, "date": dt.today(), "active": True}
             await self.bot.db.push_data(_bet, "lottery")
 
         query = {"$inc": {"accumulated": amount * 1000}}
         await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         await ctx.send(f'<:coins:519896825365528596>│`PARABENS, VC COMPROU {amount} BILHETES E GASTOU '
@@ -72,7 +72,7 @@ class LotteryClass(commands.Cog):
         cl = await (await self.bot.db.cd("miscellaneous")).find_one({"_id": "lottery"})
         msg = f'<:coins:519896825365528596>│`Atualmente o total acumulado é de:` ' \
               f'**{self.format_num(cl["accumulated"])}**'
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -80,18 +80,18 @@ class LotteryClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='tickets', aliases=['bilhetes', 'tk'])
     async def tickets(self, ctx):
-        AGUARDE = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
-                                 "**mesmo que demore, aguarde o fim do processamento...**")
-        RAW, actives, tot = (await self.bot.db.cd("lottery")).find({"user_id": ctx.author.id}), list(), list()
-        async for d in RAW:
+        _await = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                "**mesmo que demore, aguarde o fim do processamento...**")
+        raw, actives, tot = (await self.bot.db.cd("lottery")).find({"user_id": ctx.author.id}), list(), list()
+        async for d in raw:
             if self.verify_time(d["date"]) and d["active"]:
                 actives.append(d)
             tot.append(d)
 
         msg = f'<:coins:519896825365528596>│`Atualmente você tem:` **{len(actives)}** `bilhetes ativos e `' \
               f'**{len(tot)}** `bilhetes comprados no total!`'
-        embed = discord.Embed(color=self.bot.color, description=msg)
-        await AGUARDE.delete()
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await _await.delete()
         await ctx.send(embed=embed)
 
 

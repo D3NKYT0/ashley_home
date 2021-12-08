@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class LickClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='lick', aliases=['lambida', 'lamber'])
-    async def lick(self, ctx, member: discord.Member = None):
+    async def lick(self, ctx, member: disnake.Member = None):
         """Comando de gifs de lambida
         Use ash lick <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         try:
             lickimg = ['https://media1.tenor.com/images/5f73f2a7b302a3800b3613095f8a5c40/tenor.gif?itemid=10005495',
@@ -31,7 +31,7 @@ class LickClass(commands.Cog):
                        'https://media1.tenor.com/images/c1d9ff6f013a3deba4b7941fa00374e5/tenor.gif?itemid=16150817',
                        'https://media1.tenor.com/images/6b701503b0e5ea725b0b3fdf6824d390/tenor.gif?itemid=12141727']
             lick = choice(lickimg)
-            lickemb = discord.Embed(title='Lambida :heart:',
+            lickemb = disnake.Embed(title='Lambida :heart:',
                                     description='**{}** Ele(a) recebeu uma lambida de **{}**! Que casal fofo! '
                                                 ':heart_eyes: '.format(member.name, ctx.author.name),
                                     color=self.color)

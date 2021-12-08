@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -44,11 +44,11 @@ class IdentifierClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISAR USAR O COMANDO` **ASH BOX**"
 
-        Embed = discord.Embed(title="O CUSTO PARA VOCE IDENTIFICAR UMA ?-BOLLASH:", color=self.c, description=msg)
-        Embed.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
-        Embed.set_thumbnail(url="{}".format(ctx.author.avatar_url))
-        Embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-        await ctx.send(embed=Embed)
+        embed = disnake.Embed(title="O CUSTO PARA VOCE IDENTIFICAR UMA ?-BOLLASH:", color=self.c, description=msg)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
+        embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
 
         try:
             if update['inventory']['?-Bollash'] < 1:

@@ -1,5 +1,5 @@
 import copy
-import discord
+import disnake
 
 from asyncio import TimeoutError
 from resources.utility import embed_creator
@@ -60,6 +60,8 @@ class Entity(object):
 
         # limit de uso de skill
         self.limit = [0, 0, 0, 0, 0]  # skill 1 a 5
+
+        self.OPTIONS = list()
 
         # sistema de passiva
         self.passive = ""
@@ -153,6 +155,29 @@ class Entity(object):
             self.ia_combo = False
             # classe nao definida
             self._class = None
+
+    class View(disnake.ui.View):
+        def __init__(self, author):
+            self.author_id = author
+            super().__init__()
+
+        async def interaction_check(self, interaction):
+            if interaction.user.id != self.author_id:
+                await interaction.response.send_message(content="Você não pode interagir aqui !", ephemeral=True)
+                return False
+            else:
+                return True
+
+    class SelectSkill(disnake.ui.Select):
+        def __init__(self, options):
+            self.value = 0
+            self.options_param = options
+            super().__init__(placeholder='Escolha uma skill', min_values=1, max_values=1, options=self.options_param)
+
+        async def callback(self, interaction: disnake.Interaction):
+            self.value = self.values[0]
+            self.disabled = True
+            await interaction.response.edit_message(view=self.view)
 
     @property
     def get_class(self):
@@ -260,8 +285,16 @@ class Entity(object):
                 f"{_emo[2]}:  [ {_mp if _mp > 0 else 0} / {self.tot_mp} ]\n" \
                 f"{_emo[0]}: {_ini} - [ {ehp if ehp > 0 else 0} / {econ * err} ] | LVL - {entity.level}{extra}"
 
-        description = f"**0** - <:skill_base:912134358813523989> **SKILL BASE** | **COMUM** \n" \
-                      f"`Dano:` **Base** | `Mana:` **0** | `Efeito(s):` **sem efeito**\n\n"
+        description = ""
+
+        self.OPTIONS.append(
+            disnake.SelectOption(
+                emoji="<:skill_base:912134358813523989>",
+                label="0 - SKILL BASE | COMUM",
+                description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
+                value=str(0)
+            )
+        )
 
         if passive_skill:
             passive_name = CLS[self.data['class_now']]["passive"]['name']
@@ -269,22 +302,38 @@ class Entity(object):
             passive_amount = CLS[self.data['class_now']]["passive"]['amount']
             text_passive = ""
             if not self.is_passive and self.passive in ["necromancer", "priest", "warlock", "assassin", "wizard"]:
-                text_passive += f"`Progress:` **{self.progress}/{passive_amount}**"
-                description = f"**0** - {passive_icon} **{passive_name.upper()}** | **PASSIVE** \n" \
-                              f"`Dano:` **base** | `Mana:` **0** | {text_passive}\n\n"
+                text_passive += f"Progress: {self.progress}/{passive_amount}"
+
+                selection = disnake.SelectOption(
+                    emoji=passive_icon,
+                    label=f"0 - {passive_icon} {passive_name.upper()} | PASSIVE",
+                    description=f"Dano: base | Mana: 0 | {text_passive}",
+                    value=str(0)
+                )
+                self.OPTIONS.append(selection)
 
         if self.is_passive and self.passive == "priest":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['icon']
             text_passive = "veneno, fraquesa" if self.type_skill_passive == 0 else "curse, queimadura"
-            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **DH MODE** \n" \
-                          f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_icon} {passive_name.upper()} | DH MODE",
+                description=f"Dano: base | Mana: 0 | {text_passive}",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
 
         if self.is_passive and self.passive == "assassin":
             passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
-            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **MIRAGE MODE** \n" \
-                          f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **gelo**\n\n"
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_icon} {passive_name.upper()} | MIRAGE MODE",
+                description=f"Dano: base | Mana: 0 | Efeito(s): gelo",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
 
         if self.is_passive and self.passive == "warlock":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['name']
@@ -297,8 +346,14 @@ class Entity(object):
                 text_passive = "silencio, fraquesa, strike"
             else:
                 text_passive = "silencio, fraquesa, strike, skull"
-            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **SOD MODE** \n" \
-                          f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
+
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_icon} {passive_name.upper()} | SOD MODE",
+                description=f"Dano: base | Mana: 0 | {text_passive}",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
 
         if self.is_passive and self.passive == "wizard":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.stack}"]['name']
@@ -311,8 +366,14 @@ class Entity(object):
                 text_passive = "looping"
             else:
                 text_passive = "looping"
-            description = f"**0** - {passive_icon} **{passive_name.upper()}** | **SF MODE** \n" \
-                          f"`Dano:` **base** | `Mana:` **0** | `Efeito(s):` **{text_passive}**\n\n"
+
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_icon} {passive_name.upper()} | SF MODE",
+                description=f"Dano: base | Mana: 0 | {text_passive}",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
 
         tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
@@ -343,45 +404,82 @@ class Entity(object):
             _mana = ru if skills_now[c2]['type'] == "especial" else _mana
             lvn = ls + 1
 
-            description += f"**{_ + 1}** - {icon} **{c2.upper()}** `+{lvs}` | **{skill_type.lower()}** `Lv: {lvn}`\n" \
-                           f"`Dano:` **{damage}** | `Mana:` **{_mana}** | `Efeito(s):` **{effect_skill}**\n\n"
+            self.OPTIONS.append(
+                disnake.SelectOption(
+                    emoji=icon,
+                    label=f"{_ + 1} - {c2.upper()} +{lvs} | {skill_type.lower()} Lv: {lvn}",
+                    description=f"Dano: {damage} | Mana: {_mana} | Efeito(s): {effect_skill}",
+                    value=str(_ + 1)
+                    )
+                )
 
         regen = int((self.tot_mp / 100) * 50)
         pl = 3 if not self.is_wave else 3 + (wave_now // 2)
 
-        description += f'**{tot + 1}** - <:MP:774699585620672534> **{"Pass turn MP".upper()}**\n' \
-                       f'`MP Recovery:` **+{regen} de Mana**\n\n' \
+        self.OPTIONS.append(
+            disnake.SelectOption(
+                emoji="<:MP:774699585620672534>",
+                label=f'{tot + 1} - {"Pass turn MP".upper()}',
+                description=f"MP Recovery: +{regen} de Mana",
+                value=str(tot + 1)
+                )
+            )
 
-        description += f'**{tot + 2}** - <:HP:774699585070825503> **{"Pass turn HP".upper()}**\n' \
-                       f'`HP Recovery:` **25-35% de HP** (**{self.potion}**/{pl})\n\n' \
+        self.OPTIONS.append(
+            disnake.SelectOption(
+                emoji="<:HP:774699585070825503>",
+                label=f'{tot + 2} - {"Pass turn hp".upper()}',
+                description=f"HP Recovery: 25-35% de HP ({self.potion}/{pl})",
+                value=str(tot + 2)
+                )
+            )
 
-        description += f'**{tot + 3}** - <:fechar:749090949413732352> **Finalizar batalha**'
-
-        skill_combo = f"\n\n**{tot + 4}** - <a:combo:834236942295891969> **[Combo] - Half Life** | **COMBO**\n" \
-                      f"`Dano:` **50%** | `Mana:` **100%** | `Efeito(s):` **Sem Efeito**"
-
-        if self.is_passive and self.data['class_now'] == "necromancer":
-            passive_combo_name = CLS[self.data['class_now']]["passive"]['combo_name']
-            passive_combo_icon = CLS[self.data['class_now']]["passive"]['combo_icon']
-            skill_combo = f"\n\n**{tot + 4}** - {passive_combo_icon} **[{passive_combo_name}]** | **COMBO**\n" \
-                          f"`Dano:` **75%** | `Mana:` **100%** | `Efeito(s):` **fraquesa, silencio**"
+        self.OPTIONS.append(
+            disnake.SelectOption(
+                emoji="<:fechar:749090949413732352>",
+                label=f'{tot + 3} - Finalizar batalha',
+                value=str(tot + 3)
+                )
+            )
 
         if self.is_combo:
-            description += skill_combo
+            if self.is_passive and self.data['class_now'] == "necromancer":
+                passive_combo_name = CLS[self.data['class_now']]["passive"]['combo_name']
+                passive_combo_icon = CLS[self.data['class_now']]["passive"]['combo_icon']
+                self.OPTIONS.append(
+                    disnake.SelectOption(
+                        emoji=passive_combo_icon,
+                        label=f'{tot + 4} - [{passive_combo_name}] | COMBO',
+                        description=f"Dano: 75% | Mana: 100% | Efeito(s): fraquesa, silencio",
+                        value=str(tot + 4)
+                    )
+                )
+            else:
+                self.OPTIONS.append(
+                    disnake.SelectOption(
+                        emoji="<a:combo:834236942295891969>",
+                        label=f'{tot + 4} - [Combo] - Half Life | COMBO',
+                        description=f"Dano: 50% | Mana: 100% | Efeito(s): Sem Efeito",
+                        value=str(tot + 4)
+                        )
+                    )
 
         if self.soulshot[0]:
             soulshot = f"\n\n`Soulshot:` **{self.soulshot[1]}**"
             description += soulshot
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title=title,
             description=description,
             color=0x000000
         )
-        embed.set_author(name=user.name, icon_url=user.avatar_url)
-        return embed, attacks, hate_no_mana, hate_no_limit
+        view = self.View(user.id)
+        select = self.SelectSkill(self.OPTIONS)
+        view.add_item(select)
+        embed.set_author(name=user.name, icon_url=user.display_avatar)
+        return embed, view, attacks, hate_no_mana, hate_no_limit
 
-    async def effects_resolve(self, ctx, effects, msg_return):
+    async def effects_resolve(self, ctx, effects, msg_return, entity):
         type_effects = ["cegueira", "strike", "reflect", "confusion", "hold", "bluff"]
         if effects is not None:
             for c in effects:
@@ -393,17 +491,19 @@ class Entity(object):
                             bb = int(damage / 100 * randint(50, 100))
                             damage += bb
                             burn += f"\n `levou {bb}% a mais por queimadura profunda`"
-                            _chance = randint(1, 100)
-                            if _chance <= 15:
+                            if randint(1, 100) <= 15:
                                 self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
                         if c == "queimadura" and "fireball" in self.effects.keys():
                             if self.effects["fireball"]["turns"] > 0:  # bonus de fireball
                                 damage += self.effects[c]['damage'] * randint(4, 8)
-                                if randint(1, 100) <= 15:
-                                    self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage}
-                                    burn += " `e ganhou o efeito de` **gelo** `pelo alto dano da queimadura.`"
+                                if entity.passive == "warlock" and entity.is_passive and randint(1, 100) <= 25:
+                                    damage_ice = 50 * entity.stack
+                                    self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage_ice}
+                                    burn += f" `e ganhou o efeito de` **gelo** `pela combinação do efeito` " \
+                                            f"**fireball** `com o modo` **SPELLCASTER FIRER** `de` " \
+                                            f"**{entity.name.upper()}**"
 
                         if c == "veneno" and randint(1, 2) == 2:
                             bb = int(damage / 100 * randint(50, 100))
@@ -680,24 +780,27 @@ class Entity(object):
                 if self_passive:
                     self_skill = True
 
-                response = self.get_skill_menu(entity, user, skills, wave_now, self_skill)
-                embed, attacks, hate_no_mana, hate_no_limit = response[0], response[1], response[2], response[3]
-                await ctx.send(embed=embed)
+                res = self.get_skill_menu(entity, user, skills, wave_now, self_skill)
+                embed, view, attacks, hate_no_mana, hate_no_limit = res[0], res[1], res[2], res[3], res[4]
+                _OPTIONS_LAST = self.OPTIONS.copy()
+                await ctx.send(embed=embed, view=view)
 
                 while not ctx.bot.is_closed():
                     def check(m):
-                        if m.author.id == user.id and m.channel.id == ctx.channel.id:
-                            if m.content in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                                return True
+                        if m.user.id == user.id and m.channel.id == ctx.channel.id:
+                            return True
                         return False
 
                     try:
-                        answer = await ctx.bot.wait_for('message', check=check, timeout=120.0)
+                        answer = await ctx.bot.wait_for('interaction', check=check, timeout=60.0)
                     except TimeoutError:
                         return "COMANDO-CANCELADO"
 
+                    # Apagar itens da lista
+                    self.OPTIONS.clear()
+                    
                     # verificador de limit de skill
-                    skill_now, limit_now = int(answer.content), False
+                    skill_now, limit_now = int(answer.values[0]), False
                     if skill_now in [n + 1 for n in range(len(skills))]:
                         skill_now_main = skills_now[attacks[skill_now]]["skill"]
                         ls = self.data["skill_level"][skill_now_main - 1][0]  # verificando o lvl atual da skill
@@ -710,7 +813,7 @@ class Entity(object):
                         else:
                             limit_now = True
 
-                    if int(answer.content) == len(skills) + 1:
+                    if int(answer.values[0]) == len(skills) + 1:
 
                         if not presas_active:
                             # regeneração de MP
@@ -726,13 +829,13 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embed = discord.Embed(description=description, color=0x000000)
-                            embed.set_author(name=user.name, icon_url=user.avatar_url)
+                            embed = disnake.Embed(description=description, color=0x000000)
+                            embed.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embed)
                             continue
 
                     potion_limit = 3 if not self.is_wave else 3 + (wave_now // 2)
-                    if int(answer.content) == len(skills) + 2 and self.potion < potion_limit:
+                    if int(answer.values[0]) == len(skills) + 2 and self.potion < potion_limit:
 
                         if not presas_active:
 
@@ -758,16 +861,16 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embed = discord.Embed(description=description, color=0x000000)
-                            embed.set_author(name=user.name, icon_url=user.avatar_url)
+                            embed = disnake.Embed(description=description, color=0x000000)
+                            embed.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embed)
                             continue
 
-                    if int(answer.content) == len(skills) + 3:
+                    if int(answer.values[0]) == len(skills) + 3:
                         # cancela ou foge da batalha
                         return "BATALHA-CANCELADA"
 
-                    if int(answer.content) == len(skills) + 4 and self.is_combo:
+                    if int(answer.values[0]) == len(skills) + 4 and self.is_combo:
                         self.skill = "SKILL-COMBO"
                         self.is_combo = False
                         self.status['mp'] = 0
@@ -776,7 +879,7 @@ class Entity(object):
                             self.is_combo_passive = True
                         break
 
-                    if int(answer.content) == 0:
+                    if int(answer.values[0]) == 0:
                         self.skill = CLS[self._class]['base_skill']
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
@@ -798,8 +901,8 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = discord.Embed(description=description, color=0x000000)
-                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = CLS[self._class]['passive']["gif"]
                                     embeds.set_image(url=_url)
@@ -823,8 +926,8 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = discord.Embed(description=description, color=0x000000)
-                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://c.tenor.com/ibnv8p1He_QAAAAM/crazywiz-crazywizzz.gif"
                                     embeds.set_image(url=_url)
@@ -848,8 +951,8 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = discord.Embed(description=description, color=0x000000)
-                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = CLS[self._class]['passive']["gif"]
                                     embeds.set_image(url=_url)
@@ -873,8 +976,8 @@ class Entity(object):
                                     self.is_passive, especial = True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = discord.Embed(description=description, color=0x000000)
-                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://i.gifer.com/DRps.gif"
                                     embeds.set_image(url=_url)
@@ -895,8 +998,8 @@ class Entity(object):
                                     self.is_passive, especial = True, True
                                     if "self_drain" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_drain"]
-                                embeds = discord.Embed(description=description, color=0x000000)
-                                embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
                                     embeds.set_image(url=_url)
@@ -906,32 +1009,32 @@ class Entity(object):
                             self.is_passive, self.progress = False, 0
                             self.CLAWS_STUCK = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **CLAWS STUCK!**"
-                            embeds = discord.Embed(description=description, color=0x000000)
-                            embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
                         if self.is_passive and self.passive == "warlock" and not not_is_now:
                             self.is_passive, self.progress, self.stack = False, 0, 1
                             self.SPEAR_OF_DESTINY = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **SPEAR OF DESTINY!**"
-                            embeds = discord.Embed(description=description, color=0x000000)
-                            embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
                         if self.is_passive and self.passive == "wizard" and not not_is_now:
                             self.is_passive, self.progress, self.stack = False, 0, 1
                             self.SPELLCASTER_FIRER = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **SPELLCASTER FIRER!**"
-                            embeds = discord.Embed(description=description, color=0x000000)
-                            embeds.set_author(name=user.name, icon_url=user.avatar_url)
+                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
                         break
 
                     potion_msg = False
                     for c in attacks.keys():
-                        if int(c) == int(answer.content) or len(skills) + 2 == int(answer.content):
-                            if int(c) == int(answer.content):
+                        if int(c) == int(answer.values[0]) or len(skills) + 2 == int(answer.values[0]):
+                            if int(c) == int(answer.values[0]):
 
                                 ls = self.data["skill_level"][skills_now[attacks[c]]['skill'] - 1][0]
                                 remove = skills_now[attacks[c]]['mana'][ls]
@@ -956,7 +1059,7 @@ class Entity(object):
                                 remove = 10000
 
                             potion_limit = 3 if not self.is_wave else 3 + (wave_now // 2)
-                            if self.potion >= potion_limit and len(skills) + 2 == int(answer.content):
+                            if self.potion >= potion_limit and len(skills) + 2 == int(answer.values[0]):
 
                                 if self.is_wave:
                                     msg = f"`MATE OUTRO MONSTRO PARA AUMENTAR O SEU LIMITE, ESCOLHA UMA SKILL OU " \
@@ -967,11 +1070,14 @@ class Entity(object):
 
                                 description = f"**{user.name.upper()}** `VOCÊ JA ATINGIU O LIMITE DE POÇÃO DE VIDA!`" \
                                               f"\n{msg}"
-                                embed = discord.Embed(description=description, color=0x000000)
-                                embed.set_author(name=user.name, icon_url=user.avatar_url)
+                                embedhp = disnake.Embed(description=description, color=0x000000)
+                                embedhp.set_author(name=user.name, icon_url=user.display_avatar)
 
                                 if not potion_msg:
-                                    await ctx.send(embed=embed)
+                                    await ctx.send(embed=embedhp)
+                                    view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                    view.add_item(select)
+                                    await ctx.send(embed=embed, view=view)
                                     potion_msg = True
                                     hate_no_mana += 1
                                     if hate_no_mana > 5:
@@ -982,14 +1088,17 @@ class Entity(object):
                                         return "BATALHA-CANCELADA"
 
                             elif limit_now:
-                                embed = discord.Embed(
+                                embedh = disnake.Embed(
                                     description=f"**{user.name.upper()}** `VOCÊ ATINGIU O LIMITE DESSA HABILDIADE!`\n"
                                                 f"`ENTÃO ESCOLHA OUTRA SKILL OU PASSE A VEZ...`\n"
                                                 f"**Obs:** Passar a vez regenera a mana ou vida!",
                                     color=0x000000
                                 )
-                                embed.set_author(name=user.name, icon_url=user.avatar_url)
-                                await ctx.send(embed=embed)
+                                embedh.set_author(name=user.name, icon_url=user.display_avatar)
+                                await ctx.send(embed=embedh)
+                                view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                view.add_item(select)
+                                await ctx.send(embed=embed, view=view)
                                 hate_no_limit += 1
                                 if hate_no_limit > 5:
                                     await ctx.send(f"`Ficar repetindo esse tipo de msg no mesmo turno é "
@@ -1026,7 +1135,7 @@ class Entity(object):
                                     self.is_combo = False
                                     self.combo_cont = 0
 
-                                self.verify_combo(int(answer.content) - 1)
+                                self.verify_combo(int(answer.values[0]) - 1)
 
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
@@ -1043,14 +1152,17 @@ class Entity(object):
                                 break
 
                             else:
-                                embed = discord.Embed(
+                                embedm = disnake.Embed(
                                     description=f"**{user.name.upper()}** `VOCÊ NÃO TEM MANA O SUFICIENTE!`\n"
                                                 f"`ENTÃO ESCOLHA OUTRA SKILL OU PASSE A VEZ...`\n"
                                                 f"**Obs:** Passar a vez regenera a mana ou vida!",
                                     color=0x000000
                                 )
-                                embed.set_author(name=user.name, icon_url=user.avatar_url)
-                                await ctx.send(embed=embed)
+                                embedm.set_author(name=user.name, icon_url=user.display_avatar)
+                                await ctx.send(embed=embedm)
+                                view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                view.add_item(select)
+                                await ctx.send(embed=embed, view=view)
                                 self.next = 0
                                 hate_no_mana += 1
                                 if hate_no_mana > 5:
@@ -1192,7 +1304,7 @@ class Entity(object):
         if not self.is_passive and self.passive in ["priest", "warlock", "assassin", "wizard"]:
             msg_return = self.self_passive_effect_resolve(msg_return)
 
-        effects, msg_return = await self.effects_resolve(ctx, effects, msg_return)
+        effects, msg_return = await self.effects_resolve(ctx, effects, msg_return, entity)
         hp_max, monster, img_ = self.tot_hp, not self.is_player, None
         embed_ = embed_creator(msg_return, img_, monster, hp_max, self.status['hp'], self.img, self.name)
 
@@ -1408,8 +1520,8 @@ class Entity(object):
         if critical:
             _cd = randint(int(critical_damage / 2), critical_damage)
             damage = int(damage + (damage / 100 * _cd))  # adiciona a % do critical
-            embed = discord.Embed(title="CRITICAL", color=0x38105e)
-            file = discord.File("images/elements/critical.gif", filename="critical.gif")
+            embed = disnake.Embed(title="CRITICAL", color=0x38105e)
+            file = disnake.File("images/elements/critical.gif", filename="critical.gif")
             embed.set_thumbnail(url="attachment://critical.gif")
             await ctx.send(file=file, embed=embed)
 
@@ -1574,15 +1686,20 @@ class Entity(object):
         damage += total_bonus_dn  # adicionado antes da defesa / adição a loop
 
         # NOVO SISTEMA DE DEFESA
-        armor_tot = randint(int(defense * 0.50), defense) if defense > 2 else defense
-        armor_now, damage_now = armor_tot // 100, damage // 100
-        armor_now = 59 if armor_now >= 60 else armor_now
+        armor_now, damage_now = defense // 50, damage // 100
+        armor_now, total_percent = 64 if armor_now >= 65 else armor_now, 65
 
         if not self.is_boss and not self.is_mini_boss:
             if salvation:
                 armor_now += 15
+                total_percent += 15
+                
+        if self.is_player:
+            if self.data["set_equip"]:
+                armor_now += 10
+                total_percent += 10
 
-        defended = randint(armor_now * damage_now, 60 * damage_now) if damage_now > 0 else 0
+        defended = randint(armor_now * damage_now, total_percent * damage_now) if defense > 0 else 0
 
         defended = 0 if hold else defended  # efeito da hold
         dn = damage - defended  # dano verdadeiro.
@@ -1779,7 +1896,7 @@ class Ext(object):
         # configuração do player
         db_player, _class = data['rpg'], data["rpg"]["class_now"]
         db_player["_id"], db_player['name'] = user.id, user.name
-        db_player["img"] = user.avatar_url_as(format="png")
+        db_player["img"] = user.display_avatar.with_format("png")
         db_player["pdef"], db_player["mdef"] = 0, 0
         _db_class = data["rpg"]["sub_class"][_class]
 
@@ -1789,6 +1906,7 @@ class Ext(object):
         db_player["status"] = _db_class["status"]
         db_player["skills"] = _db_class["skills"]
         db_player["skill_level"] = _db_class["skill_level"]
+        db_player["set_equip"] = False
 
         db_player["xp"], db_player["level"] = _db_class["xp"], _db_class["level"]
 
@@ -1850,6 +1968,7 @@ class Ext(object):
         # configurando o set de bonus de uma armadura completa
         for kkk in SET_EQUIPS.values():
             if len([e for e in set_e if e in kkk['set']]) == 5:
+                db_player["set_equip"] = True
                 db_player["pdef"] += kkk["pdef"]
                 db_player["mdef"] += kkk["mdef"]
                 for name in db_player["status"].keys():

@@ -1,10 +1,10 @@
-import discord
+import disnake
 import asyncio
 import copy
 import json
 
 import time as date
-from discord.ext import commands
+from disnake.ext import commands
 from random import choice, randint, shuffle
 from datetime import datetime as dt, timedelta
 from resources.verify_cooldown import verify_cooldown
@@ -122,17 +122,17 @@ class OnReady(commands.Cog):
                 if channel.permissions_for(user).external_emojis and channel.permissions_for(user).add_reactions:
                     try:
                         await msg.add_reaction(emo)
-                    except discord.errors.Forbidden:
+                    except disnake.errors.Forbidden:
                         try:
                             await msg.delete()
                             continue
-                        except discord.errors.NotFound:
+                        except disnake.errors.NotFound:
                             continue
-                    except discord.errors.NotFound:
+                    except disnake.errors.NotFound:
                         try:
                             await msg.delete()
                             continue
-                        except discord.errors.NotFound:
+                        except disnake.errors.NotFound:
                             continue
 
             # ESCOLHENDO EMOJI DE CAPTURA
@@ -154,13 +154,13 @@ class OnReady(commands.Cog):
                 # FUGIU
                 try:
                     await msg.delete()
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     pass
                 try:
                     await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ESCAPEI!**", delete_after=60.0)
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     pass
                 await asyncio.sleep(1800)
                 continue
@@ -174,7 +174,7 @@ class OnReady(commands.Cog):
                 # CAPTUROU
                 try:
                     await msg.delete()
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
                 await channel.send("🎊 **PARABENS** 🎉 **ME PEGOU! AFF!**", delete_after=60.0)
                 cl = await self.bot.db.cd("users")
@@ -187,7 +187,7 @@ class OnReady(commands.Cog):
                 # ERROU
                 try:
                     await msg.delete()
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
                 await channel.send("<a:fofo:524950742487007233>│**HA! HA! HA! ERROU!**", delete_after=60.0)
 
@@ -215,7 +215,7 @@ class OnReady(commands.Cog):
 
                             for c in range(0, len(roles)):
                                 if roles[c] not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
-                                    role = discord.utils.find(lambda r: r.name == roles[c], guild.roles)
+                                    role = disnake.utils.find(lambda r: r.name == roles[c], guild.roles)
                                     await member.add_roles(role)
 
                 cd = await self.bot.db.cd("users")
@@ -261,8 +261,8 @@ class OnReady(commands.Cog):
                         msg += f"<:confirmed:721581574461587496>│`{_bet}`\n"
 
                     ashley_guild = self.bot.get_guild(519894833783898112)
-                    lovers = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
-                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    lovers = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
                     await CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
 
                     _espera = await CHANNEL.send("<a:loading:520418506567843860>│ `AGUARDEM, ESTOU PROCESSANDO O(S) "
@@ -353,9 +353,9 @@ class OnReady(commands.Cog):
             if self.bot.boss_live and not self.bot.boss_msg:
                 channel = self.bot.get_channel(837777587064930316)
                 ashley_guild = self.bot.get_guild(519894833783898112)
-                lovers = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
+                lovers = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
                 msg = f"<:confirmed:721581574461587496>│**PARA BATALHAR USE: ASH BOSS**"
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 await channel.send(f"{lovers.mention} **APARECEU UM BOSS!**", embed=embed)
                 self.bot.boss_msg = True
 
@@ -382,7 +382,7 @@ class OnReady(commands.Cog):
                                      f"{' **{MPV}**' if p in [n[0] for n in winners] else ''}" for p in players])
 
                     msg = f"<:confirmed:721581574461587496>│`O BOSS MORREU!` - **LISTA DOS GANHADORES:**\n\n{pl}"
-                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
                     await channel.send(embed=embed)
 
                     # sistema de loot
@@ -461,7 +461,7 @@ class OnReady(commands.Cog):
                                    f"Total de Effects: {self.bot.boss_players[user.id]['eff']}\n" \
                                    f"Damage Recebido: {self.bot.boss_players[user.id]['dano']}\n" \
                                    f"Damage no Boss: {self.bot.boss_players[user.id]['dano_boss']}```"
-                            embed = discord.Embed(color=self.bot.color, title=_tt, description=desc)
+                            embed = disnake.Embed(color=self.bot.color, title=_tt, description=desc)
                             title_1 = "**Loot Aleatorio**"
                             if len(loot_random) == 0:
                                 loot_random = "Você nao teve loot aleatorio..."
@@ -473,12 +473,12 @@ class OnReady(commands.Cog):
                             embed.add_field(name=title_2, value=loot_fixo, inline=False)
                             title_3 = "**Bonus de  Loot pelo MPV**"
                             embed.add_field(name=title_3, value=loot_mvp[p], inline=False)
-                            embed.set_thumbnail(url=user.avatar_url)
+                            embed.set_thumbnail(url=user.display_avatar)
                             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
 
                             try:
                                 await user.send(embed=embed)
-                            except discord.errors.Forbidden:
+                            except disnake.errors.Forbidden:
                                 await channel.send(embed=embed)
 
                     else:
@@ -577,14 +577,14 @@ class OnReady(commands.Cog):
                             ext = ''.join([f"{self.bot.items[k][0]} **{v}** `{self.bot.items[k][1]}`\n"
                                            for k, v in rewards.items()])
 
-                            embed = discord.Embed(title="`Fiz o sorteio de um membro`", colour=self.color,
+                            embed = disnake.Embed(title="`Fiz o sorteio de um membro`", colour=self.color,
                                                   description=f"Membro sorteado foi **{str(_member)}**\n "
                                                               f"<a:palmas:520418512011788309>│"
                                                               f"`Parabens você acaba de ganhar:`\n{ext}")
 
-                            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+                            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar)
                             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-                            embed.set_thumbnail(url=_member.avatar_url)
+                            embed.set_thumbnail(url=_member.display_avatar)
 
                             ash_member = channel__.guild.get_member(self.bot.user.id)
                             perms = channel__.permissions_for(ash_member)
@@ -631,7 +631,7 @@ class OnReady(commands.Cog):
                                     self.bot.box[guild.id]['quant'] += 1
                                     self.bot.box[guild.id]['boxes'].append(box_type)
 
-                            embed = discord.Embed(
+                            embed = disnake.Embed(
                                 title="**Presente Liberado**",
                                 colour=self.color,
                                 description=f"Esse servidor foi gratificado com {box_type + 1} presente(s) "
@@ -640,7 +640,7 @@ class OnReady(commands.Cog):
                                             f"**qualquer membro pode abrir um presente**\n"
                                             f"**Obs:** Essa guilda tem {self.bot.box[guild.id]['quant']} presente(s)"
                                             f"disponiveis!")
-                            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+                            embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar)
                             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                             embed.set_thumbnail(url=BOX)
                             ash_member = channel__.guild.get_member(self.bot.user.id)
@@ -654,7 +654,7 @@ class OnReady(commands.Cog):
                                     await channel__.send(embed=embed)
 
                             guild__ = self.bot.get_guild(data['guild_id'])
-                            role = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", guild__.roles)
+                            role = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", guild__.roles)
                             msg = "<:alert:739251822920728708>│`CRIE UM CARGO CHAMADO` **</Ash_Lovers>** `PARA SER" \
                                   " PINGADO QUANDO UM PRESENTE DROPAR.`"
                             if role is not None:
@@ -672,7 +672,7 @@ class OnReady(commands.Cog):
     async def change_status(self):
         await self.bot.wait_until_ready()
         status, details = "GitHub - Ashley Lab", "Artigo de Ajuda do RPG"
-        activity = discord.Streaming(name=status, url=self.url, details=details)
+        activity = disnake.Streaming(name=status, url=self.url, details=details)
         await self.bot.change_presence(activity=activity)
 
     @commands.Cog.listener()

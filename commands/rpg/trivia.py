@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -94,7 +94,7 @@ class Trivias(commands.Cog):
 [25]: Para mais informações use:
 <Comandos: ash help ; ash wiki nome_do_item>
 ```"""
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 

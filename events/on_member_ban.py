@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class MemberBanClass(commands.Cog):
@@ -38,9 +38,9 @@ class MemberBanClass(commands.Cog):
                                          " CORRETAMENTE!**")
                     else:
                         await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-        except discord.Forbidden:
+        except disnake.Forbidden:
             pass
-        except discord.errors.NotFound:
+        except disnake.errors.NotFound:
             pass
 
         data = data["log_config"]
@@ -51,7 +51,7 @@ class MemberBanClass(commands.Cog):
             if not canal:
                 return
 
-            embed = discord.Embed(color=self.color,
+            embed = disnake.Embed(color=self.color,
                                   title=":star2: **Membro Banido**",
                                   description=f"**Membro:** {user.name}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")

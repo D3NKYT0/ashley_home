@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -16,8 +16,8 @@ class TotComandos(commands.Cog):
     @commands.command(name='total_de_comandos', aliases=['tdc'])
     async def total_de_comandos(self, ctx):
         """apenas desenvolvedores"""
-        embed = discord.Embed(color=self.color)
-        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        embed = disnake.Embed(color=self.color)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar)
         for val in self.bot.commands_used.most_common(25):
             embed.add_field(name=val[0], value=val[1])
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")

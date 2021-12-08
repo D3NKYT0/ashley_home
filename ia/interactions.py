@@ -1,8 +1,8 @@
 import json
-import discord
+import disnake
 
 from ia.scripts import ia
-from discord.ext import commands
+from disnake.ext import commands
 from config import data as config
 from random import choice, randint
 from resources.ia_heart import HeartIA
@@ -31,13 +31,13 @@ class IaInteractions(commands.Cog):
         emoji = choice(self.bot.config['emojis']['ashley'])
         guild = self.bot.get_guild(519894833783898112)
         link = [emo for emo in guild.emojis if str(emo) == emoji][0].url
-        embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
+        embed = disnake.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_thumbnail(url=link)
         if deleted:
             return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
         try:
             await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
-        except discord.errors.HTTPException:
+        except disnake.errors.HTTPException:
             return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
 
     @commands.Cog.listener()

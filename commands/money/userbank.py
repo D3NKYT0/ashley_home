@@ -1,8 +1,8 @@
-import discord
+import disnake
 
 from random import choice, randint
-from asyncio import sleep, TimeoutError
-from discord.ext import commands
+from asyncio import sleep
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, paginator
@@ -308,7 +308,7 @@ class UserBank(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='pay', aliases=['pagar'])
-    async def pay(self, ctx, member: discord.Member = None, amount: int = None):
+    async def pay(self, ctx, member: disnake.Member = None, amount: int = None):
         """Pague aquele dinheiro que voce ficou devendo"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
@@ -355,7 +355,7 @@ class UserBank(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='give', aliases=['dar'])
-    async def give(self, ctx, member: discord.Member = None, amount: int = None, *, item=None):
+    async def give(self, ctx, member: disnake.Member = None, amount: int = None, *, item=None):
         """De aquele item de craft como presente para um amigo seu ou troque com alguem."""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -385,7 +385,7 @@ class UserBank(commands.Cog):
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if data_member is None:
@@ -398,7 +398,7 @@ class UserBank(commands.Cog):
 
         if member.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`O membro está batalhando!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         item_name = self.bot.items[item_key][1]
@@ -526,9 +526,9 @@ class UserBank(commands.Cog):
                                f"RELIQUIA NO SEU INVENTARIO`")
 
             else:
-                file = discord.File(awards[reward]["url"], filename="reward.png")
-                embed = discord.Embed(title='VOCÊ GANHOU! 🎊 **PARABENS** 🎉', color=self.bot.color)
-                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                file = disnake.File(awards[reward]["url"], filename="reward.png")
+                embed = disnake.Embed(title='VOCÊ GANHOU! 🎊 **PARABENS** 🎉', color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://reward.png")
                 await ctx.send(file=file, embed=embed)
 
@@ -552,7 +552,7 @@ class UserBank(commands.Cog):
                     update['inventory']['vip_coin'] = 1
                 update['vip_free'] = True
                 img = choice(git)
-                embed = discord.Embed(color=self.bot.color)
+                embed = disnake.Embed(color=self.bot.color)
                 embed.set_image(url=img)
                 await ctx.send(embed=embed)
                 await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `VOCE COMPLETOU TODOS OS ARTEFATOS!`"
@@ -633,10 +633,10 @@ class UserBank(commands.Cog):
         chance = 100 * 0.04 + plus / 2 if randint(1, 10) > 5 else 100 * 0.04 + 100 * 0.04 / 2 + plus
         if percent <= chance:
 
-            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
+            embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
                                   description=f"{self.bot.items['?-Bollash'][0]} `{1}` "
                                               f"`{self.bot.items['?-Bollash'][1]}`")
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
             msg = await ctx.send("<a:loading:520418506567843860>│`SALVANDO SEU PREMIO...`")
@@ -722,10 +722,10 @@ class UserBank(commands.Cog):
         chance = 100 * 0.05 + plus / 2 if randint(1, 10) > 5 else 100 * 0.01 + 100 * 0.05 / 2 + plus
         if percent <= chance:
 
-            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
+            embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
                                   description=f"{self.bot.items['unsealed_stone'][0]} `{1}` "
                                               f"`{self.bot.items['unsealed_stone'][1]}`")
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
             msg = await ctx.send("<a:loading:520418506567843860>│`SALVANDO SEU PREMIO...`")
@@ -817,10 +817,10 @@ class UserBank(commands.Cog):
                 list_items += [i_] * amount
             reward = choice(list_items)
 
-            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
+            embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color,
                                   description=f"{self.bot.items[reward][0]} `{1}` "
                                               f"`{self.bot.items[reward][1]}`")
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
             msg = await ctx.send("<a:loading:520418506567843860>│`SALVANDO SEU PREMIO...`")

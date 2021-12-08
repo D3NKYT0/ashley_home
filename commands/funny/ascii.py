@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from pyfiglet import Figlet
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,7 +19,7 @@ class AsciiText(commands.Cog):
         Use ash ascii <texto desejado>"""
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         f = Figlet(font='slant')
         text = f.renderText(msg)

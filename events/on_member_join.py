@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from resources.img_edit import welcome
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class OnMemberJoin(commands.Cog):
@@ -23,13 +23,13 @@ class OnMemberJoin(commands.Cog):
                         data_welcome = {
                             "type": "welcome",
                             "name": str(member.name),
-                            "avatar": member.avatar_url_as(format="png"),
+                            "avatar": member.display_avatar.with_format("png"),
                             "text": f"Seja bem vindo ao servidor {member.guild.name.upper()}, divirta-se!"
                         }
 
                         await welcome(data_welcome)
 
-                        file = discord.File('welcome.png')
+                        file = disnake.File('welcome.png')
                         if file is not None:
                             ashley = canal.guild.get_member(self.bot.user.id)
                             perms = canal.permissions_for(ashley)
@@ -42,10 +42,10 @@ class OnMemberJoin(commands.Cog):
                                     try:
                                         msg = "> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`"
                                         await canal.send(file=file, content=msg)
-                                    except discord.errors.HTTPException:
+                                    except disnake.errors.HTTPException:
                                         pass
                         else:
-                            embed = discord.Embed(
+                            embed = disnake.Embed(
                                 title=f"{member.name.upper()} Entrou!", color=self.bot.color,
                                 description=f"Seja bem vindo ao servidor {member.guild.name.upper()}, divirta-se!")
                             userjoinedat = str(member.joined_at).split('.', 1)[0]
@@ -53,7 +53,7 @@ class OnMemberJoin(commands.Cog):
                             embed.add_field(name="Entrou no server em:", value=userjoinedat, inline=True)
                             embed.add_field(name="Conta criada em:", value=usercreatedat, inline=True)
                             embed.add_field(name="ID:", value=str(member.id), inline=True)
-                            embed.set_thumbnail(url=member.avatar_url)
+                            embed.set_thumbnail(url=member.display_avatar)
                             ashley = canal.guild.get_member(self.bot.user.id)
                             perms = canal.permissions_for(ashley)
                             if perms.send_messages and perms.read_messages:
@@ -64,11 +64,11 @@ class OnMemberJoin(commands.Cog):
                                 else:
                                     await canal.send(embed=embed)
 
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     pass
                 except AttributeError:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
 
             if data['func_config']['cont_users']:
@@ -93,9 +93,9 @@ class OnMemberJoin(commands.Cog):
                                                  " CORRETAMENTE!**")
                             else:
                                 await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
 
             if self.bot.config['config']['default_guild'] == member.guild.id:
@@ -114,7 +114,7 @@ class OnMemberJoin(commands.Cog):
                             if cargos[c].name not in ["@everyone", 'Server Booster']:
                                 await member.remove_roles(cargos[c])
 
-                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
+                        role = disnake.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
                         await member.add_roles(role)
                         canal = self.bot.get_channel(576795574783705104)
                         return await canal.send(f"<a:blue:525032762256785409>│{member.mention} `SAIR SEM"

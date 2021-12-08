@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,11 +19,11 @@ class LoadCog(commands.Cog):
         try:
             self.bot.load_extension(cog)
             msg = f'<:confirmed:721581574461587496>│Extenção **{cog}**, carregada com sucesso!'
-            embed = discord.Embed(color=self.color, description=msg)
+            embed = disnake.Embed(color=self.color, description=msg)
             await ctx.send(embed=embed)
         except ModuleNotFoundError as e:
             msg = f'<:negate:721581573396496464>│Falha ao carregar a extenção **{cog}**. \n```{e}```'
-            embed = discord.Embed(color=discord.Color.red(), description=msg)
+            embed = disnake.Embed(color=disnake.Color.red(), description=msg)
             await ctx.send(embed=embed)
 
 

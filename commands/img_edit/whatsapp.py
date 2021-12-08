@@ -1,9 +1,9 @@
 import random
-import discord
+import disnake
 import requests
 
 from io import BytesIO
-from discord.ext import commands
+from disnake.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from resources.check import check_it
 from resources.db import Database
@@ -52,7 +52,7 @@ chamado de mobrau''', (147, 216), 7], ['''pare com as drogas''', (177, 237), 7]]
 ''') > rede[4]:
             await ctx.send('<:alert:739251822920728708>│`Sua mensagem foi muito grande!`')
         else:
-            avatar = await get_avatar(ctx.author.avatar_url_as(format="png"), rede[0][0], rede[0][0])
+            avatar = await get_avatar(ctx.author.display_avatar.with_format("png"), rede[0][0], rede[0][0])
 
             imgurl = random.choice(['https://i.imgur.com/2Owhe1y.jpg',
                                     'https://i.imgur.com/pFuPCUE.jpg',
@@ -138,7 +138,7 @@ chamado de mobrau''', (147, 216), 7], ['''pare com as drogas''', (177, 237), 7]]
             image.paste(avatar, rede[0][1], avatar)
             image.paste(img, rede[1][1], img)
             image.save('zaspzasp.png')
-            await ctx.send(file=discord.File('zaspzasp.png'))
+            await ctx.send(file=disnake.File('zaspzasp.png'))
             await msg.delete()
             rede[2][0][0] = um
             rede[2][1][0] = dois

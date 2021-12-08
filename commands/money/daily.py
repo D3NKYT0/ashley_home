@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import parse_duration as pd
@@ -41,14 +41,14 @@ class DailyClass(commands.Cog):
         Use ash daily"""
         if ctx.invoked_subcommand is None:
             self.status()
-            daily = discord.Embed(color=self.color)
+            daily = disnake.Embed(color=self.color)
             daily.add_field(name="Daily Commands:",
                             value=f"{self.st[66]} `daily coin` Receba suas fichas diarias.\n"
                                   f"{self.st[66]} `daily energy` Receba suas energias diarias.\n"
                                   f"{self.st[66]} `daily work` Trabalhe duro e receba seu salario.\n"
                                   f"{self.st[66]} `daily vip` Recompença diaria para VIPs.")
-            daily.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            daily.set_thumbnail(url=self.bot.user.avatar_url)
+            daily.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            daily.set_thumbnail(url=self.bot.user.display_avatar)
             daily.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=daily)
 
@@ -200,7 +200,7 @@ class DailyClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='rec', aliases=['recomendação', 'rep', 'reputação'])
-    async def rec(self, ctx, member: discord.Member = None):
+    async def rec(self, ctx, member: disnake.Member = None):
         """Comando usado pra dar um rec da Ashley pra algum usuario
         Use ash rec <usuario desejado>"""
         if member is None:
@@ -245,8 +245,8 @@ class DailyClass(commands.Cog):
         # o rec é dado aqui (acima é apenas testes, e abaixo as premiações.)
         update_user['user']['rec'] += 1
 
-        embed = discord.Embed(color=self.color)
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed = disnake.Embed(color=self.color)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="https://i.pinimg.com/originals/1f/48/c4/1f48c47b7803eca495d237be1d0cfaba.gif")
 
         if (update_user['user']['rec'] % 2) == 0:

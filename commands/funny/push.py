@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice, randint
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class PushClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='push', aliases=['empurrao', 'empurrão', 'empurrar'])
-    async def push(self, ctx, member: discord.Member = None):
+    async def push(self, ctx, member: disnake.Member = None):
         """Comando de gifs de empurrão
         Use ash push <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         try:
             pushimg = ['https://media1.tenor.com/images/a8e2bfdbf0d3e4fb8c52fab9e4cb249e/tenor.gif?itemid=16131433',
@@ -57,7 +57,7 @@ class PushClass(commands.Cog):
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 push = 'https://media1.tenor.com/images/62ef360ace36ba9e60a11e6dec2edb59/tenor.gif?itemid=5416860'
 
-            pushemb = discord.Embed(title='Empurrão :raised_hands:',
+            pushemb = disnake.Embed(title='Empurrão :raised_hands:',
                                     description='**{}** {} **{}**! {}'.format(member.name, text,
                                                                               ctx.author.name, end),
                                     color=self.color)

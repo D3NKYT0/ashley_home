@@ -1,7 +1,7 @@
-import discord
+import disnake
 import time as date
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from datetime import datetime as dt
@@ -20,7 +20,7 @@ class LoverClass(commands.Cog):
     async def lover(self, ctx):
         """Esse comando te transforma em um lover da ahsley, sendo pingado para novidades."""
         try:
-            role = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ctx.guild.roles)
+            role = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", ctx.guild.roles)
             if role is not None:
                 if role not in [r for r in ctx.author.roles]:
                     await ctx.author.add_roles(role)
@@ -38,7 +38,7 @@ class LoverClass(commands.Cog):
                 await self.bot.db.update_data(data_, update_, 'users')
                 await ctx.send(f"<:alert:739251822920728708>│`PEÇA PRA UM ADMINISTRADOR CRIAR UM CARGO CHAMADO:` "
                                f"**</Ash_Lovers>** `PARA ESSE SERVIDOR DESFRUTAR DOS MEUS SERVIÇOS DE PING.`")
-        except discord.Forbidden:
+        except disnake.Forbidden:
             data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update_ = data_
             del data_['cooldown'][str(ctx.command)]
@@ -52,7 +52,7 @@ class LoverClass(commands.Cog):
     async def unlover(self, ctx):
         """Esse comando retira seu lover, assim voce nao é mais notificado"""
         try:
-            role = discord.utils.find(lambda r: r.name == "</Ash_Lovers>", ctx.guild.roles)
+            role = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", ctx.guild.roles)
             if role is not None:
                 if role in [r for r in ctx.author.roles]:
                     await ctx.author.remove_roles(role)
@@ -71,7 +71,7 @@ class LoverClass(commands.Cog):
                 await self.bot.db.update_data(data_, update_, 'users')
                 await ctx.send(f"<:alert:739251822920728708>│`PEÇA PRA UM ADMINISTRADOR CRIAR UM CARGO CHAMADO:`"
                                f" **</Ash_Lovers>** `PARA ESSE SERVIDOR DESFRUTAR DOS MEUS SERVIÇOS DE PING.`")
-        except discord.Forbidden:
+        except disnake.Forbidden:
             data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update_ = data_
             del data_['cooldown'][str(ctx.command)]
@@ -190,7 +190,7 @@ class LoverClass(commands.Cog):
 
         vip_msg = f"{'🟢' if vip else '🔴'} `Energy` Se tiver verde está disponivel pra usar.\n"
 
-        embed = discord.Embed(color=self.bot.color)
+        embed = disnake.Embed(color=self.bot.color)
 
         embed.add_field(name="-== STATUS DO USUARIO ==-", inline=False,
                         value=f"{'🟢' if a1 else '🔴'} `Casando` Se for verde esta ativado.\n"
@@ -226,8 +226,8 @@ class LoverClass(commands.Cog):
                               f"`{'bloqueado hoje'.upper()}:` **{status}**\n"
                               f"`{'bloqueado por 72h'.upper()}:` **{blocked}**\n")
 
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+        embed.set_thumbnail(url=self.bot.user.display_avatar)
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
         await ctx.send(embed=embed)
 

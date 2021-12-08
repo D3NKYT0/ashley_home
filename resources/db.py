@@ -1,10 +1,9 @@
 import json
-import discord
+import disnake
 import datetime
-
 from random import randint
 from collections import Counter
-from discord.ext import commands
+from disnake.ext import commands
 from motor.motor_asyncio import AsyncIOMotorClient as Client
 from resources.utility import parse_duration, quant_etherny, create_id
 from resources.structure import user_data_structure, guild_data_structure
@@ -165,7 +164,7 @@ class Database(object):
             try:
                 await _user.send(f"<:confirmed:721581574461587496>│`Voce acabou de vender um item no mercado, "
                                  f"e recebeu o valor de` **R$ {d}** `Ethernyas. Aproveite e olhe sua lojinha.`")
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 pass
             except AttributeError:
                 pass
@@ -594,7 +593,7 @@ class DataInteraction(object):
                               f'```Markdown\n[>>]: AGORA VOCE TAMBEM GANHOU O BONUS DE STATUS DA SUA CLASSE```'
                         img = "https://i.gifer.com/143t.gif"
 
-                    embed = discord.Embed(color=self.bot.color, description=f'<:confirmed:721581574461587496>│{msg}')
+                    embed = disnake.Embed(color=self.bot.color, description=f'<:confirmed:721581574461587496>│{msg}')
                     embed.set_image(url=img)
                     await ctx.send(embed=embed)
 

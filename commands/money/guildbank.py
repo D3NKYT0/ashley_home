@@ -1,9 +1,9 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
-from random import choice, randint
+from random import randint
 from resources.utility import ERRORS
 
 
@@ -95,13 +95,13 @@ class GuildBank(commands.Cog):
                 Use ash guild"""
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = discord.Embed(color=self.bot.color)
+            embed = disnake.Embed(color=self.bot.color)
             embed.add_field(name="Guilds Commands:",
                             value=f"{self.st[29]} `guild reward` Receba suas recompenças a cada hora.\n"
                                   f"{self.st[29]} `guild convert` Converta as pedras da guilda em ETHERNYAS.\n"
                                   f"{self.st[29]} `guild warehouse` Mande seus itens de evento para a GUILDA.")
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)
 

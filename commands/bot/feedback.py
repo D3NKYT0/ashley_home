@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.color import random_color
@@ -23,16 +23,16 @@ class FeedBackClass(commands.Cog):
             member = ctx.author
             server = ctx.guild
             channel = self.bot.get_channel(530418605284917252)
-            embed = discord.Embed(title='Feedback', color=random_color())
+            embed = disnake.Embed(title='Feedback', color=random_color())
             embed.add_field(name='Info',
                             value=f'● Server: {server.name}\n● ServerID: {server.id}\n● Usuario: {member.name}\n● '
                             f'UsuarioID: {member.id}')
             embed.add_field(name='Feedback', value=f'{msg}', inline=False)
-            embed.set_thumbnail(url="{}".format(member.avatar_url))
+            embed.set_thumbnail(url="{}".format(member.display_avatar))
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await channel.send(embed=embed)
             await ctx.send('<:confirmed:721581574461587496>│`Feedback enviado com sucesso!`')
-        except discord.errors.HTTPException:
+        except disnake.errors.HTTPException:
             await ctx.send("<:negate:721581573396496464>│`SEU FEEDBACK FOI GRANDE DEMAIS, TENTE MANDAR "
                            "EM PARTES!`")
 

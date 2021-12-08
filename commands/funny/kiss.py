@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class KissClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='kiss', aliases=['beijo', 'beijar', 'beijao', 'beijão'])
-    async def kiss(self, ctx, member: discord.Member = None):
+    async def kiss(self, ctx, member: disnake.Member = None):
         """Comando de gifs de beijo
         Use ash kiss <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         try:
             kissimg = ['https://media1.tenor.com/images/ef4a0bcb6e42189dc12ee55e0d479c54/tenor.gif?itemid=12143127',
@@ -31,7 +31,7 @@ class KissClass(commands.Cog):
                        'https://media1.tenor.com/images/693602b39a071644cebebdce7c459142/tenor.gif?itemid=6206552',
                        'https://media1.tenor.com/images/e76e640bbbd4161345f551bb42e6eb13/tenor.gif?itemid=4829336']
             kiss = choice(kissimg)
-            kissemb = discord.Embed(title='Beijo :heart:',
+            kissemb = disnake.Embed(title='Beijo :heart:',
                                     description='**{}** Ele(a) recebeu um beijo de **{}**! Que casal fofo! '
                                                 ':heart_eyes: '.format(member.name, ctx.author.name),
                                     color=self.color)

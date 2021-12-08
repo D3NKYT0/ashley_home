@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class ChannelUpdate(commands.Cog):
@@ -18,7 +18,7 @@ class ChannelUpdate(commands.Cog):
                         if before.name != after.name:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is not None:
-                                to_send = discord.Embed(
+                                to_send = disnake.Embed(
                                     title=":star2: **Canal de Texto Editado**",
                                     color=self.color,
                                     description=f"**Canal de texto:** {before.name}")
@@ -36,9 +36,9 @@ class ChannelUpdate(commands.Cog):
                                         await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
-                except discord.errors.HTTPException:
+                except disnake.errors.HTTPException:
                     pass
                 except TypeError:
                     pass
@@ -48,7 +48,7 @@ class ChannelUpdate(commands.Cog):
                         if before.topic != after.topic:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is not None:
-                                to_send = discord.Embed(
+                                to_send = disnake.Embed(
                                     title=":star2: **Canal de Texto Editado**",
                                     color=self.color,
                                     description=f"**Canal de texto:** {before.name}")
@@ -66,9 +66,9 @@ class ChannelUpdate(commands.Cog):
                                         await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except discord.errors.NotFound:
+                except disnake.errors.NotFound:
                     pass
-                except discord.errors.HTTPException:
+                except disnake.errors.HTTPException:
                     pass
                 except TypeError:
                     pass

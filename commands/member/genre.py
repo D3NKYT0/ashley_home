@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,7 +19,7 @@ class GenreClass(commands.Cog):
         update['rpg']['sex'] = "male" if update['rpg']['sex'] == "female" else "female"
         genre = "HOMEM" if update['rpg']['sex'] == "male" else "MULHER"
         await self.bot.db.update_data(data, update, "users")
-        embed = discord.Embed(
+        embed = disnake.Embed(
             color=self.bot.color,
             description=f"<:confirmed:721581574461587496>│`Seu genero foi trocado para:` **{genre}**")
         await ctx.send(embed=embed)

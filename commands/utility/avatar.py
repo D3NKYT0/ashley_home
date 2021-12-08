@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from resources.check import check_it
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 
 
@@ -22,10 +22,10 @@ class Avatar(commands.Cog):
         except IndexError:
             user = ctx.author
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title="Avatar de: {}".format(user.name),
             color=self.color)
-        embed.set_image(url=user.avatar_url)
+        embed.set_image(url=user.display_avatar)
         embed.set_footer(text="Pedido por {}#{}".format(ctx.author.name, ctx.author.discriminator))
         await ctx.send(embed=embed)
 

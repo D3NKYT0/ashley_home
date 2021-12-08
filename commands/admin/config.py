@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from asyncio import sleep, TimeoutError
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.utility import ERRORS
 from resources.db import Database
@@ -26,7 +26,7 @@ class ConfigClass(commands.Cog):
         Use ash config pra ver as configurações disponiveis"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = discord.Embed(color=self.color)
+            top = disnake.Embed(color=self.color)
             top.add_field(name="Config Commands:",
                           value=f"{self.st[0]} `config action_log` Registra as ações do servidor.\n"
                                 f"{self.st[0]} `config member_count` Exibe a quantidade de membros.\n"
@@ -36,8 +36,8 @@ class ConfigClass(commands.Cog):
                                 f"{self.st[0]} `config draw_member` Sistema de sorteio da Ashley.\n"
                                 f"{self.st[0]} `config interaction` Sistema de IA da Ashley.\n"
                                 f"{self.st[0]} `config report` Canal de report para STAFF.\n")
-            top.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            top.set_thumbnail(url=self.bot.user.avatar_url)
+            top.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+            top.set_thumbnail(url=self.bot.user.display_avatar)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=top)
 
@@ -128,7 +128,7 @@ class ConfigClass(commands.Cog):
                 await channel_.edit(topic="<a:caralho:525105064873033764> **Membros:** " + ''.join(list_))
 
                 await ctx.send('<:confirmed:721581574461587496>│`Contador de membros ativado!`')
-            except discord.Forbidden:
+            except disnake.Forbidden:
                 await ctx.send("<:negate:721581573396496464>│`Não tenho permissão para editar canais "
                                "nesse servidor!`", delete_after=5.0)
 

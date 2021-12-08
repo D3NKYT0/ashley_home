@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -49,7 +49,7 @@ class RpgStart(commands.Cog):
         update_guild_native = data_guild_native
 
         if data['rpg']['active']:
-            embed = discord.Embed(color=self.bot.color, description=f'<:alert:739251822920728708>│`VOCE JA INICIOU O '
+            embed = disnake.Embed(color=self.bot.color, description=f'<:alert:739251822920728708>│`VOCE JA INICIOU O '
                                                                     f'RPG, SE VOCE DESEJA ALTERAR A CLASSE:`')
             await ctx.send(embed=embed)
 
@@ -73,7 +73,7 @@ class RpgStart(commands.Cog):
 
         asks = {'sex': 'male', 'class_now': None}
 
-        embed = discord.Embed(color=self.bot.color,
+        embed = disnake.Embed(color=self.bot.color,
                               description=f'<a:blue:525032762256785409>│`QUAL O SEXO DO SEU PERSONAGEM?`\n'
                                           f'`O sexo definirá a img que aparecera no comando (ash equip)`\n'
                                           f'**1** para `HOMEM` ou **2** para `MULHER`')
@@ -82,13 +82,13 @@ class RpgStart(commands.Cog):
         try:
             answer = await self.bot.wait_for('message', check=check_sex, timeout=30.0)
         except TimeoutError:
-            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│{self.c}')
+            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│{self.c}')
             return await ctx.send(embed=embed)
 
         asks['sex'] = "male" if answer.content == "1" else "female"
         await msg.delete()
 
-        embed = discord.Embed(color=self.bot.color,
+        embed = disnake.Embed(color=self.bot.color,
                               description=f'<a:blue:525032762256785409>│`QUAL CLASSE VOCE DESEJA APRENDER?`\n'
                                           f'`As classes fazem voce aprender habilidades unicas de cada uma`\n'
                                           f'`USE OS NUMEROS PARA DIZER QUAL CLASSE VOCE DESEJA:`\n'
@@ -101,7 +101,7 @@ class RpgStart(commands.Cog):
         try:
             answer = await self.bot.wait_for('message', check=check_option, timeout=30.0)
         except TimeoutError:
-            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│{self.c}')
+            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│{self.c}')
             return await ctx.send(embed=embed)
 
         if int(answer.content) in [1, 2, 3, 4, 5, 6, 7]:
@@ -140,14 +140,14 @@ class RpgStart(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
         await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
         msg = f'<:confirmed:721581574461587496>│`CONFIGURAÇÃO DO RPG FEITA COM SUCESSO!` {bonus}'
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='rpg_verify', aliases=['rpgv'])
-    async def rpg_verify(self, ctx, member: discord.Member = None):
+    async def rpg_verify(self, ctx, member: disnake.Member = None):
         """Comando para verificar a data de entrada no RPG da ASHLEY"""
         if member is None:
             member = ctx.author
@@ -157,7 +157,7 @@ class RpgStart(commands.Cog):
 
         if date_old is None:
             msg = f'<:negate:721581573396496464>│{member} `USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         date_now = datetime.today()
@@ -166,8 +166,8 @@ class RpgStart(commands.Cog):
         hour = datetime.now().strftime("%H:%M:%S")
         msg = f"**Data de Entrada no RPG:** `{d1}`\n" \
               f"**Faz{'em' if days > 1 else ''}:** `{days} dia{'s' if days > 1 else ''}`"
-        embed = discord.Embed(color=self.bot.color, description=msg)
-        embed.set_thumbnail(url=member.avatar_url)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed.set_thumbnail(url=str(member.display_avatar))
         embed.set_footer(text="{} • {}".format(ctx.author, hour))
         await ctx.send(embed=embed)
 
@@ -175,7 +175,7 @@ class RpgStart(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='user_verify', aliases=['userv'])
-    async def user_verify(self, ctx, member: discord.Member = None):
+    async def user_verify(self, ctx, member: disnake.Member = None):
         """Comando para verificar a data de registro na ASHLEY"""
         if member is None:
             member = ctx.author
@@ -195,8 +195,8 @@ class RpgStart(commands.Cog):
         hour = datetime.now().strftime("%H:%M:%S")
         msg = f"**Data de registro na ASHLEY:** `{d1}`\n" \
               f"**Faz{'em' if days > 1 else ''}:** `{days} dia{'s' if days > 1 else ''}`"
-        embed = discord.Embed(color=self.bot.color, description=msg)
-        embed.set_thumbnail(url=member.avatar_url)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed.set_thumbnail(url=str(member.display_avatar))
         embed.set_footer(text="{} • {}".format(ctx.author, hour))
         await ctx.send(embed=embed)
 
@@ -204,7 +204,7 @@ class RpgStart(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='guild_verify', aliases=['guildv'])
-    async def guild_verify(self, ctx, guild: discord.Guild = None):
+    async def guild_verify(self, ctx, guild: disnake.Guild = None):
         """Comando para verificar a data de registro na ASHLEY"""
 
         if guild is None:
@@ -227,7 +227,7 @@ class RpgStart(commands.Cog):
         hour = datetime.now().strftime("%H:%M:%S")
         msg = f"**Data de registro na ASHLEY:** `{d1}`\n" \
               f"**Faz{'em' if days > 1 else ''}:** `{days} dia{'s' if days > 1 else ''}`"
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         embed.set_thumbnail(url=guild.icon_url)
         embed.set_footer(text="{} • {}".format(ctx.author, hour))
         await ctx.send(embed=embed)

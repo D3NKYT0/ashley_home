@@ -1,7 +1,7 @@
-import discord
+import disnake
 import textwrap
 
-from discord.ext import commands
+from disnake.ext import commands
 from random import choice
 from resources.db import Database
 from PIL import Image, ImageDraw, ImageFont
@@ -37,7 +37,7 @@ class Reflection(commands.Cog):
 
         draw.rectangle([x1, y1, x2, y2])
         image.save('reflita.png')
-        await ctx.send(file=discord.File('reflita.png'))
+        await ctx.send(file=disnake.File('reflita.png'))
 
 
 def setup(bot):

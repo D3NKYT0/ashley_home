@@ -1,9 +1,8 @@
 import re
-import discord
-import operator
+import disnake
 import unicodedata
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from PIL import Image, ImageDraw, ImageFont
@@ -28,7 +27,7 @@ class RankingClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='rank', aliases=['r'])
-    async def rank(self, ctx, member: discord.Member = None):
+    async def rank(self, ctx, member: disnake.Member = None):
         """Mostra seu rank da Ashley
         Use ash rank"""
         if member is None:
@@ -105,7 +104,7 @@ class RankingClass(commands.Cog):
         for k in rectangles.keys():
             if k == "avatar":
                 # take name of member
-                avatar = await get_avatar(member.avatar_url_as(format="png"), 111, 135, True)
+                avatar = await get_avatar(member.display_avatar.with_format("png"), 111, 135, True)
                 image.paste(avatar, (rectangles[k][0], rectangles[k][1]), avatar)
 
             if k == "patent":
@@ -145,7 +144,7 @@ class RankingClass(commands.Cog):
 
         image.save('rank.png')
         await msg.delete()
-        await ctx.send(file=discord.File('rank.png'))
+        await ctx.send(file=disnake.File('rank.png'))
 
 
 def setup(bot):

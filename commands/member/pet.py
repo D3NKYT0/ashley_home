@@ -1,8 +1,8 @@
-import discord
+import disnake
 
 from resources.color import random_color
-from discord import Embed
-from discord.ext import commands
+from disnake import Embed
+from disnake.ext import commands
 from resources.webhook import Webhook
 from datetime import datetime
 from resources.check import check_it
@@ -49,13 +49,13 @@ class Pet(commands.Cog):
                 timestamp=datetime.utcnow()
             ).set_author(
                 name=ctx.author.name,
-                icon_url=ctx.author.avatar_url
+                icon_url=ctx.author.display_avatar
             ).set_thumbnail(
-                url=f'https://cdn.discordapp.com/avatars/{_webhook.id}/{_webhook.avatar}{format_1}?size=1024'
+                url=f'https://cdn.disnakeapp.com/avatars/{_webhook.id}/{_webhook.avatar}{format_1}?size=1024'
             ).to_dict()
             await webhook.send()
             await _webhook.delete()
-        except discord.Forbidden:
+        except disnake.Forbidden:
             await ctx.send("<:alert:739251822920728708>│`Não tenho permissão de gerenciar WEBHOOKS nesse "
                            "servidor.`")
 

@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -23,7 +23,7 @@ class MarriedSystem(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='marry', aliases=['casar', 'casamento'])
-    async def marry(self, ctx, member: discord.Member = None):
+    async def marry(self, ctx, member: disnake.Member = None):
         """Comando usado pra pedir alguem em casamento
         Use ash marry <@pessoa desejada>"""
         query = {"_id": 0, "user_id": 1, "user": 1, "ship": 1}
@@ -118,7 +118,7 @@ class MarriedSystem(commands.Cog):
         self.bot.casando.remove(ctx.author.id)
         self.bot.casando.remove(member.id)
 
-        embed = discord.Embed(color=self.color)
+        embed = disnake.Embed(color=self.color)
         embed.set_image(url=choice(git))
         await ctx.send(embed=embed)
         await ctx.send(f"🎊 **PARABENS** 🎉 {ctx.author.mention} **e** {member.mention} **vocês estão casados!**")
@@ -145,8 +145,8 @@ class MarriedSystem(commands.Cog):
             msg = f"**Data de casamento:** `{d1}`\n" \
                   f"**Faz{'em' if days > 1 else ''}:** `{days} dia{'s' if days > 1 else ''}`\n" \
                   f"`Você deve esperar pelo menos` **7 dias** `para se separar!`"
-            embed = discord.Embed(color=self.bot.color, description=msg)
-            embed.set_thumbnail(url=ctx.author.avatar_url)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed.set_thumbnail(url=ctx.author.display_avatar)
             hour = datetime.now().strftime("%H:%M:%S")
             embed.set_footer(text="{} • {}".format(ctx.author, hour))
             return await ctx.send(embed=embed)

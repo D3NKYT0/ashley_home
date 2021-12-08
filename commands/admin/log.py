@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -26,7 +26,7 @@ class LogClass(commands.Cog):
             for log in self.logs:
                 description += '[>>]: {}\n<Status: {}>\n\n'.format(log, data['log_config'][log])
             description += '```'
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 title='Logs Disponíveis',
                 description=description,
                 color=self.bot.color

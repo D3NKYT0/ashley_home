@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice, randint
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.giftmanage import register_code, generate_gift
@@ -91,7 +91,7 @@ class Adflier(commands.Cog):
 
             if update_user['config']['battle']:
                 msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             item_name = self.bot.items[item_key][1]
@@ -119,12 +119,12 @@ class Adflier(commands.Cog):
         if _update is not None:
             if _update['pending']:
                 text = f'<:alert:739251822920728708>│Você ainda tem esse link pendente:\n{_update["adlink"][1]}'
-                embed = discord.Embed(color=self.color, description=text)
+                embed = disnake.Embed(color=self.color, description=text)
                 try:
                     await ctx.author.send(embed=embed)
                     if ctx.message.guild is not None:
                         return await ctx.send('<:send:519896817320591385>│`ENVIADO PARA O SEU PRIVADO!`')
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     return await ctx.send(embed=embed)
             else:
                 _code1, _code2 = generate_gift()
@@ -140,12 +140,12 @@ class Adflier(commands.Cog):
                 await self.bot.db.update_data(_data, _update, 'adfly')
 
                 text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
-                embed = discord.Embed(color=self.color, description=text)
+                embed = disnake.Embed(color=self.color, description=text)
                 try:
                     await ctx.author.send(embed=embed)
                     if ctx.message.guild is not None:
                         await ctx.send('<:send:519896817320591385>│`ENVIADO PARA O SEU PRIVADO!`')
-                except discord.errors.Forbidden:
+                except disnake.errors.Forbidden:
                     await ctx.send(embed=embed)
 
         else:
@@ -156,12 +156,12 @@ class Adflier(commands.Cog):
             await register_code(self.bot, ctx.author.id, code[0], _code2, link[0], link[1], _bonus, code[1], code[2])
 
             text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
-            embed = discord.Embed(color=self.color, description=text)
+            embed = disnake.Embed(color=self.color, description=text)
             try:
                 await ctx.author.send(embed=embed)
                 if ctx.message.guild is not None:
                     await ctx.send('<:send:519896817320591385>│`ENVIADO PARA O SEU PRIVADO!`')
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 await ctx.send(embed=embed)
 
     @check_it(no_pm=False)

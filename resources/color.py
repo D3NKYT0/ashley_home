@@ -1,4 +1,4 @@
-from discord import Colour
+from disnake import Colour
 from random import randint
 
 

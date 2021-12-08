@@ -1,8 +1,8 @@
 import io
-import discord
+import disnake
 import asyncio
 
-from discord.ext import commands
+from disnake.ext import commands
 
 
 class EmojiUpdate(commands.Cog):
@@ -46,7 +46,7 @@ class EmojiUpdate(commands.Cog):
                                                  "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
                                                  " CORRETAMENTE!**")
                             else:
-                                await canal.send(_.name, file=discord.File(data, f'{_.name}.png'))
+                                await canal.send(_.name, file=disnake.File(data, f'{_.name}.png'))
                             await asyncio.sleep(1)
                 except TypeError:
                     continue

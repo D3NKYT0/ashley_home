@@ -1,7 +1,7 @@
 import copy
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
@@ -16,7 +16,7 @@ class RecipeClass(commands.Cog):
         self.color = self.bot.color
         self.i = self.bot.items
         self.potion = ["potion_of_soul", "potion_of_death", "potion_of_life",
-                  "potion_of_weakening", "potion_of_love", "potion_of_rejuvenation"]
+                       "potion_of_weakening", "potion_of_love", "potion_of_rejuvenation"]
 
         equips_dict = dict()
         for ky in self.bot.config['equips'].keys():
@@ -98,7 +98,7 @@ class RecipeClass(commands.Cog):
                                '\n▶ **Craftar** `1`\n⏩ **Craftar** `2+`' \
                                '\n⏭ **Craftar o Maximo**\n❌ **Fechar**'.format(maximo)
 
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     title='Craft\n(Custo/Quantidade no inventario)',
                     color=self.bot.color,
                     description=description)

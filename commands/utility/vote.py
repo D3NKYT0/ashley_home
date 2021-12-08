@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from resources.check import check_it
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 
 
@@ -20,7 +20,7 @@ class Vote(commands.Cog):
         link_gg = "https://top.gg/bot/478977311266570242/vote"
         link_best = "https://bestlist.online/bots/478977311266570242"
         description = f"`Top.gg`\n**[Clique Aqui]({link_gg})**\n\n`Bestlist`\n**[Clique Aqui]({link_best})**"
-        embed = discord.Embed(description=description, color=self.color)
+        embed = disnake.Embed(description=description, color=self.color)
         embed.set_footer(text=f"Pedido por {ctx.author}")
         await ctx.send(embed=embed)
 

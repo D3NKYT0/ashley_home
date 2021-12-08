@@ -1,7 +1,7 @@
 import json
 from resources.color import random_color
-from discord import Embed
-from discord.ext import commands
+from disnake import Embed
+from disnake.ext import commands
 from resources.webhook import Webhook
 from datetime import datetime
 
@@ -29,9 +29,9 @@ class Shards(commands.Cog):
             timestamp=datetime.utcnow()
         ).set_author(
             name=f"Shard {shard_id}",
-            icon_url=self.bot.user.avatar_url
+            icon_url=self.bot.user.display_avatar
         ).set_thumbnail(
-            url=self.bot.user.avatar_url
+            url=self.bot.user.display_avatar
         ).to_dict()
         if _auth["on_shard"]:
             await self.webhook.send()

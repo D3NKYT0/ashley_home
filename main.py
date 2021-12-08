@@ -1,7 +1,7 @@
-# ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA DISCORD.
+# ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA disnake.
 # CRIADO POR: DANIEL AMARAL -> Denky#5960
 # SEGUE ABAIXO OS IMPORTS COMPLETOS
-import discord
+import disnake
 import aiohttp
 import psutil
 import json
@@ -15,7 +15,7 @@ import time as date
 from random import choice, randint
 from datetime import datetime as dt
 from collections import Counter
-from discord.ext import commands
+from disnake.ext import commands
 from resources.color import random_color
 from bson.json_util import dumps
 from resources.utility import date_format, patent_calculator, guild_info, rank_definition, CreateCaptcha
@@ -25,27 +25,28 @@ from resources.boosters import Booster
 from resources.push import OneSignal
 from config import data as config
 from adlink.adfly_api_instance import api as api_adfly
-from discord import Webhook, AsyncWebhookAdapter
+from disnake import Webhook
 from resources.check import validate_url
 
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
 
 
-# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA DISCORD
+# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA disnake
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, shard_count=_auth["shard"], **kwargs)
         self.owner_id = 300592580381376513
+        self.owner_ids = [300592580381376513, 416606375498481686]
         self.msg_cont = 0
         self.start_time = dt.utcnow()
         self.commands_used = Counter()
         self.guilds_commands = Counter()
         self.guilds_messages = Counter()
-        self.user_commands = Counter()
+        self.commands_user = Counter()
         self.data_cog = dict()
         self.box = dict()
-        self.sticker = dict()
+        self.ash_sticker = dict()
         self.moon_bag = dict()
         self.chests_users = dict()
         self.chests_marry = dict()
@@ -83,10 +84,10 @@ class Ashley(commands.AutoShardedBot):
         self.chests_lm = self.config['attribute']['chests_lm']
         self.chests_m = self.config['attribute']['chests_m']
 
-        self.stickers = dict()
+        self.ash_stickers = dict()
         for TYPE in self.config['sticker_book'].keys():
             for STICKER in self.config['sticker_book'][TYPE]:
-                self.stickers[STICKER] = self.config['sticker_book'][TYPE][STICKER]
+                self.ash_stickers[STICKER] = self.config['sticker_book'][TYPE][STICKER]
 
         self.money = self.config['attribute']['money']
         self.items = self.config['items']
@@ -112,7 +113,7 @@ class Ashley(commands.AutoShardedBot):
                                f" TRANSTORNO!`"
 
         # status
-        self.is_ashley = False  # Default: False
+        self.is_ashley = True  # Default: False
         self.d_event = [2021, 12, 1, (12, 31)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
         self.event_now = "NATAL / FIM DE ANO"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
@@ -128,12 +129,12 @@ class Ashley(commands.AutoShardedBot):
             self.event_special = False
 
         # info bot
-        self.server_ = "HEROKU"
+        self.server_ = "ORACLE"
         self.github = "https://github.com/D3NKYT0/ashley_home"
-        self.progress = f"V.1 -> {_auth['version']}"
+        self.progress = f"V.2 -> {_auth['version']}"
         self.python_version = platform.python_version()
-        self.version_str = f"1.5.0"
-        self.version = f"API: {discord.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
+        self.version_str = f"2.2.0"
+        self.version = f"API: {disnake.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes
         self.db: Database = Database(self)
@@ -229,7 +230,7 @@ class Ashley(commands.AutoShardedBot):
                         if data['data']['status']:
                             self.announcements.append(data["data"]["announce"])
                     announce = choice(self.announcements)
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         color=0x000000,
                         description=f'<:confirmed:721581574461587496>│**ANUNCIO**\n '
                                     f'```{announce}```')
@@ -242,7 +243,7 @@ class Ashley(commands.AutoShardedBot):
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
             try:
                 _g = await ctx.guild.invites()
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 _g = list()
             _l = "" if len(_g) == 0 else f"{_g[0]}\n"
             commands_log = self.get_channel(575688812068339717)
@@ -264,7 +265,7 @@ class Ashley(commands.AutoShardedBot):
             query_user, query_guild = {"$set": {}, "$inc": {}}, {}
 
             if data_user is not None and data_guild is not None:
-                self.user_commands[ctx.author.id] += 1
+                self.commands_user[ctx.author.id] += 1
                 self.commands_used[ctx.command] += 1
                 self.guilds_commands[ctx.guild.id] += 1
 
@@ -384,7 +385,7 @@ class Ashley(commands.AutoShardedBot):
                         self.chests_users[ctx.author.id]['quant'] += 1
                         self.chests_users[ctx.author.id]['chests'].append(chest_type)
 
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="**Baú de Evento Liberado**",
                         colour=self.color,
                         description=f"{ctx.author.mention} foi gratificado com 1 "
@@ -392,11 +393,11 @@ class Ashley(commands.AutoShardedBot):
                                     f"Para abri-lo é so usar o comando `ash event`\n "
                                     f"**Apenas você pode abrir seu baú**\n"
                                     f"**Obs:** Você tem **{self.chests_users[ctx.author.id]['quant']}** bau(s)!")
-                    embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+                    embed.set_author(name=self.user.name, icon_url=self.user.avatar.url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
 
                     awards = 'images/elements/chest.gif'
-                    file = discord.File(awards, filename="reward_chest.gif")
+                    file = disnake.File(awards, filename="reward_chest.gif")
                     embed.set_thumbnail(url="attachment://reward_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -421,7 +422,7 @@ class Ashley(commands.AutoShardedBot):
                             self.box[ctx.guild.id]['quant'] += 1
                             self.box[ctx.guild.id]['boxes'].append(box_type)
 
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="**Presente Liberado**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com {box_type + 1} presente(s) "
@@ -429,7 +430,7 @@ class Ashley(commands.AutoShardedBot):
                                     f"`ash open`\n **qualquer membro pode abrir um presente**\n"
                                     f"**Obs:** Essa guilda tem {self.box[ctx.guild.id]['quant']} presente(s) "
                                     f"disponiveis!")
-                    embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+                    embed.set_author(name=self.user.name, icon_url=self.user.avatar.url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     embed.set_thumbnail(url=_BOX)
                     perms = ctx.channel.permissions_for(ctx.me)
@@ -443,18 +444,18 @@ class Ashley(commands.AutoShardedBot):
                 # figurinha
                 elif randint(1, 200) <= self.rate_drop and user_status and cmd not in self.block:
                     amount = randint(2, 5)
-                    if ctx.guild.id not in self.sticker:
-                        self.sticker[ctx.guild.id] = amount
+                    if ctx.guild.id not in self.ash_sticker:
+                        self.ash_sticker[ctx.guild.id] = amount
                     else:
-                        self.sticker[ctx.guild.id] += amount
+                        self.ash_sticker[ctx.guild.id] += amount
 
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="**Figurinha Liberada**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com {amount} figurinhas "
                                     f"**aleatorias**!\n Para pega-las é so usar o comando "
                                     f"`ash pick`\n **qualquer membro pode pegar uma figurinha**\n"
-                                    f"**Obs:** Essa guilda tem {self.sticker[ctx.guild.id]} figurinhas "
+                                    f"**Obs:** Essa guilda tem {self.ash_sticker[ctx.guild.id]} figurinhas "
                                     f"disponiveis!")
                     embed.set_thumbnail(url="https://media.giphy.com/media/MTSADZF0IdHXFtxBXx/giphy.gif")
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -474,7 +475,7 @@ class Ashley(commands.AutoShardedBot):
                     else:
                         self.moon_bag[ctx.guild.id] += amount
 
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="**Moon Bag Liberada**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com **{amount} moon bag!**\n"
@@ -512,7 +513,7 @@ class Ashley(commands.AutoShardedBot):
                         self.chests_marry[ctx.author.id]['quant'] += 1
                         self.chests_marry[ctx.author.id]['chests'].append(chest_type)
 
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="**Baú de Casamento Liberado**",
                         colour=self.color,
                         description=f"{ctx.author.mention} foi gratificado com 1 "
@@ -520,10 +521,10 @@ class Ashley(commands.AutoShardedBot):
                                     f"Para abri-lo é so usar o comando `ash chest`\n "
                                     f"**Apenas você pode abrir seu baú**\n"
                                     f"**Obs:** Você tem **{self.chests_marry[ctx.author.id]['quant']}** bau(s)!")
-                    embed.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+                    embed.set_author(name=self.user.name, icon_url=self.user.avatar.url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     awards = 'images/elements/love.gif'
-                    file = discord.File(awards, filename="love_chest.gif")
+                    file = disnake.File(awards, filename="love_chest.gif")
                     embed.set_thumbnail(url="attachment://love_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -596,8 +597,8 @@ class Ashley(commands.AutoShardedBot):
                 patent = patent_calculator(data_user['inventory']['rank_point'], data_user['inventory']['medal'])
                 if patent > data_user['user']['patent']:
                     query_user["$set"]["user.patent"] = patent
-                    file = discord.File(f'images/patente/{patent}.png', filename="patent.png")
-                    embed = discord.Embed(title='🎊 **PARABENS** 🎉\n`VOCE SUBIU DE PATENTE`', color=self.color)
+                    file = disnake.File(f'images/patente/{patent}.png', filename="patent.png")
+                    embed = disnake.Embed(title='🎊 **PARABENS** 🎉\n`VOCE SUBIU DE PATENTE`', color=self.color)
                     embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
                     embed.set_image(url="attachment://patent.png")
                     perms = ctx.channel.permissions_for(ctx.me)
@@ -727,8 +728,8 @@ class Ashley(commands.AutoShardedBot):
                     if data_user['security']['strikes_to_ban'] > 10:
                         answer = await self.ban_(data_user['user_id'], "BANIDO POR USAR MACRO!")
                         if answer:
-                            embed = discord.Embed(
-                                color=discord.Color.red(),
+                            embed = disnake.Embed(
+                                color=disnake.Color.red(),
                                 description=f'<:cry:530735037243719687>│`VOCE FOI BANIDO POR USAR MACRO!`'
                                             f' **SE QUISER CONTESTAR ENTRE NO MEU SERVIDOR DE SUPORTE!**')
                             await ctx.send(embed=embed)
@@ -848,11 +849,11 @@ class Ashley(commands.AutoShardedBot):
             msg = "EU FUI RETIRADA DESSE SERVIDOR SEM MOTIVO APARENTE, LOGO VC DEVE ENTRAR COM UM PEDIDO PARA RETIRAR" \
                   " SEU SERVIDOR (GUILD) DA MINHA LISTA NEGRA, VOCÊ PODE FAZER ISSO ENTRANDO NO MEU SERVIDOR (GUILD)" \
                   " DE SUPORTE E FALANDO COM UM DOS MEUS DESENVOLVEDORES\n LINK DO SERVIDOR:\n " \
-                  "https://discord.gg/rYT6QrM"
+                  "https://discord/rYT6QrM"
             try:
                 if guild.system_channel is not None:
                     await guild.system_channel.send(msg)
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 pass
             await guild.leave()
         else:
@@ -887,7 +888,7 @@ class Ashley(commands.AutoShardedBot):
         if message.guild is not None:
 
             ctx = await self.get_context(message)
-            if str(ctx.command) != "eval":
+            if str(ctx.command) not in ["eval", "jsk"]:
                 msg = copy.copy(message)
                 msg.content = message.content.lower()
             else:
@@ -903,7 +904,7 @@ class Ashley(commands.AutoShardedBot):
                     return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
                 if message.author.id not in self.testers and self.maintenance:
-                    embed = discord.Embed(color=self.color, description=self.maintenance_msg)
+                    embed = disnake.Embed(color=self.color, description=self.maintenance_msg)
                     return await message.channel.send(embed=embed)
 
             self.msg_cont += 1
@@ -935,22 +936,22 @@ class Ashley(commands.AutoShardedBot):
                     run_command = True
                     if message.guild.system_channel is not None and (self.msg_cont % 10) == 0:
                         if await verify_cooldown(self, f"{message.guild.id}_no_register", 86400):
-                            embed = discord.Embed(
+                            embed = disnake.Embed(
                                 color=self.color,
                                 description="<a:blue:525032762256785409>│`SEU SERVIDOR AINDA NAO ESTA CADASTRADO USE`"
                                             " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
                                             "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO "
-                                            "COM MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord.gg/rYT6QrM)")
+                                            "COM MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord/rYT6QrM)")
                             try:
                                 await message.guild.system_channel.send(embed=embed)
-                            except discord.Forbidden:
+                            except disnake.Forbidden:
                                 try:
                                     await message.channel.send(embed=embed)
-                                except discord.Forbidden:
+                                except disnake.Forbidden:
                                     try:
                                         if message.guild.owner is not None:
                                             await message.guild.owner.send(embed=embed)
-                                    except discord.Forbidden:
+                                    except disnake.Forbidden:
                                         pass
 
                 if str(ctx.command) in ['channel']:  # exceção dos comandos
@@ -1031,11 +1032,11 @@ class Ashley(commands.AutoShardedBot):
 
         pet = f"{pet_name} do {ctx.author.name} disse:\n```{content}```"
         msg = f"{pet if pet_name != 'Ashley' else content}"
-        embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
+        embed = disnake.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         embed.set_thumbnail(url=link)
 
-        webhook = Webhook.from_url(data_guild['webhook'], adapter=AsyncWebhookAdapter(self.session))
+        webhook = Webhook.from_url(data_guild['webhook'], session=self.session)
         g_perms = ctx.me.guild_permissions
         if g_perms.manage_webhooks:
             try:
@@ -1053,7 +1054,7 @@ def main_bot():
            f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
            f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
-    intents = discord.Intents.default()
+    intents = disnake.Intents.default()
     intents.members = True
     bot = Ashley(command_prefix=_auth['prefix'], description=desc, pm_help=True, intents=intents)
     bot.remove_command('help')
@@ -1089,6 +1090,8 @@ def main_bot():
                     traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
                 continue
     f.close()
+
+    bot.load_extension("jishaku")  # load extenção JISHAKU
 
     print(f"\033[1;35m( ✔ ) | {cont}/{len(bot.data_cog.keys())} extensões foram carregadas!\033[m")
     return bot, _auth['_t__ashley']

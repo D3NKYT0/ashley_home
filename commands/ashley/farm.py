@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from resources.check import check_it
-from discord.ext import commands
+from disnake.ext import commands
 from asyncio import sleep
 from resources.db import Database
 
@@ -53,7 +53,7 @@ class FarmClass(commands.Cog):
                             await sleep(1)
                     for c in range(0, len(roles)):
                         if roles[c] not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
-                            role = discord.utils.find(lambda r: r.name == roles[c], ctx.guild.roles)
+                            role = disnake.utils.find(lambda r: r.name == roles[c], ctx.guild.roles)
                             await ctx.author.add_roles(role)
                             await sleep(1)
                     updates['config']['roles'] = []
@@ -91,7 +91,7 @@ class FarmClass(commands.Cog):
         if ctx.channel.id == 872515868477751296:
             await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU LHE ENVINANDO PARA O "
                            "SERVIDOR`", delete_after=5.0)
-            role = discord.utils.find(lambda r: r.name == "</Members>", ctx.guild.roles)
+            role = disnake.utils.find(lambda r: r.name == "</Members>", ctx.guild.roles)
             await ctx.author.add_roles(role)
 
     @check_it(no_pm=True)
@@ -118,7 +118,7 @@ class FarmClass(commands.Cog):
                             if rules[c].name not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
                                 await ctx.author.remove_roles(rules[c])
                                 await sleep(1)
-                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", ctx.guild.roles)
+                        role = disnake.utils.find(lambda r: r.name == "👺Mobrau👺", ctx.guild.roles)
                         await ctx.author.add_roles(role)
 
                     else:
@@ -166,12 +166,12 @@ class FarmClass(commands.Cog):
                 if "🌈Santinho🌈" not in _roles and "👺Mobrau👺" in _roles:
                     if ctx.guild.id == self.bot.config['config']['default_guild']:
 
-                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", ctx.guild.roles)
+                        role = disnake.utils.find(lambda r: r.name == "👺Mobrau👺", ctx.guild.roles)
                         await ctx.author.remove_roles(role)
 
                         await sleep(1)
 
-                        role = discord.utils.find(lambda r: r.name == "🌈Santinho🌈", ctx.guild.roles)
+                        role = disnake.utils.find(lambda r: r.name == "🌈Santinho🌈", ctx.guild.roles)
                         await ctx.author.add_roles(role)
 
                         await ctx.send("<:alert:739251822920728708>│ `AGORA VOCÊ É SANTINHO!`", delete_after=30.0)
@@ -230,7 +230,7 @@ class FarmClass(commands.Cog):
                     global msg_user_farm
                     msg_user_farm = ctx.author
                     if ctx.guild.id == self.bot.config['config']['default_guild']:
-                        embed = discord.Embed(
+                        embed = disnake.Embed(
                             title="Escolha a área que você deseja Ir:\n"
                                   "```COMANDO PARA VOLTAR: ash.respawn```",
                             color=self.color,
@@ -306,7 +306,7 @@ class FarmClass(commands.Cog):
                                 if rules[c].name not in ["@everyone", "Server Booster", "</Ash_Lovers>"]:
                                     await ctx.author.remove_roles(rules[c])
                                     await sleep(1)
-                            role = discord.utils.find(lambda r: r.name == self.ctf[resposta_area], ctx.guild.roles)
+                            role = disnake.utils.find(lambda r: r.name == self.ctf[resposta_area], ctx.guild.roles)
                             await ctx.author.add_roles(role)
                         await botmsg.delete()
                     else:

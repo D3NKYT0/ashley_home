@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from random import randint
 from resources.check import check_it
 from resources.db import Database
@@ -27,7 +27,7 @@ class PokemonClass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -48,11 +48,11 @@ class PokemonClass(commands.Cog):
 
             pokemon = self.bot.config['poke']['list']
             response = pokemon[randint(0, 399)]
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 title='QUAL O NOME DESSE POKEMON?',
                 color=self.color,
             )
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_image(url=response['foto'])
             await ctx.send(embed=embed)
 

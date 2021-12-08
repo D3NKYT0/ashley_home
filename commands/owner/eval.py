@@ -4,7 +4,7 @@ import traceback
 import textwrap
 
 from contextlib import redirect_stdout
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -56,9 +56,9 @@ class EvalSintax(commands.Cog):
 
         try:
             exec(to_compile, env)
-        except Exception as e:
+        except Exception as error:
             await ctx.message.add_reaction('❌')
-            return await ctx.send(self.get_syntax_error(e))
+            return await ctx.send(self.get_syntax_error(error))
 
         func = env['func']
         try:

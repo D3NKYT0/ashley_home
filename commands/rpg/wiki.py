@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -47,7 +47,7 @@ class WikiClass(commands.Cog):
                               f'**Raridade**: {rare}\n' \
                               f'**Como adquirir**: {how}\n' \
                               f'**Como usar**: {why}'
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     title=f"Wikipedia",
                     color=self.bot.color,
                     description=description
@@ -55,7 +55,7 @@ class WikiClass(commands.Cog):
                 embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
                 embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                 if img:
-                    file = discord.File(img, filename="image.png")
+                    file = disnake.File(img, filename="image.png")
                     embed.set_image(url=f'attachment://image.png')
                 await ctx.send(embed=embed, file=file)
             elif item in [i[1]["name"] for i in equips_list]:
@@ -98,7 +98,7 @@ class WikiClass(commands.Cog):
                               f'{"="*5} Status {"="*5}\n' \
                               f'ACC: {prec}\nCON: {con}\n' \
                               f'ATK: {atk}\nDEX: {agi}```'
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     title=f"Wikipedia Equips",
                     color=self.bot.color,
                     description=description

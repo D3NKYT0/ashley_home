@@ -1,7 +1,7 @@
-import discord
+import disnake
 
 from random import choice, randint
-from discord.ext import commands
+from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class KickClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='kick', aliases=['chute', 'pesada', 'voadora'])
-    async def kick(self, ctx, member: discord.Member = None):
+    async def kick(self, ctx, member: disnake.Member = None):
         """Comando de gifs de chute
         Use ash kick <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         try:
             kickimg = ['https://media1.tenor.com/images/cc217519af48fe13bea6004afb36f1f2/tenor.gif?itemid=5738223',
@@ -57,7 +57,7 @@ class KickClass(commands.Cog):
                 kick = "https://media1.tenor.com/images/51dcdf7d7c418d356e86c20112361b26/tenor.gif?itemid=17370976"
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
 
-            kickemb = discord.Embed(title='Chute :boot:',
+            kickemb = disnake.Embed(title='Chute :boot:',
                                     description='**{}** {} **{}**! {}'.format(member.name, text,
                                                                               ctx.author.name, end),
                                     color=self.color)

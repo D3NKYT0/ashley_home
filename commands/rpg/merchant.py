@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, create_id, paginator
@@ -111,14 +111,14 @@ class MerchantClass(commands.Cog):
                                   " vocÊ estiver livre!`")
 
         if not update['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if _type == "craft":
@@ -216,14 +216,14 @@ class MerchantClass(commands.Cog):
                                   " você estiver livre!`")
 
         if not data_user['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data_shop = await self.bot.db.get_data("_id", id_shop.upper(), "merchant")
@@ -272,14 +272,14 @@ class MerchantClass(commands.Cog):
                                   " você estiver livre!`")
 
         if not data_user['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data_shop = await self.bot.db.get_data("_id", id_shop.upper(), "merchant")
@@ -291,7 +291,7 @@ class MerchantClass(commands.Cog):
 
         if update_shop['amount'] < amount:
             msg = '<:negate:721581573396496464>│`ESSA LOJA NAO TEM ESSA QUANTIDADE DO ITEM!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         money = amount * update_shop['value']
@@ -336,7 +336,7 @@ class MerchantClass(commands.Cog):
                                  f" tinha disponiveis. Estarei enviando em anexo a essa mensagem os dados da sua "
                                  f"lojinha para você identificar qual das suas lojinhas foi finalizada do "
                                  f"mercado.`\n`CODIGO:` **{data_shop['_id']}**\n`ITEM:` {icon} `{name}`")
-            except discord.errors.Forbidden:
+            except disnake.errors.Forbidden:
                 pass
             except AttributeError:
                 pass

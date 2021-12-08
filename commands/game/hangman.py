@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from random import choice
 from resources.utility import enforcado
 from resources.check import check_it
@@ -33,7 +33,7 @@ class ForceCass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)

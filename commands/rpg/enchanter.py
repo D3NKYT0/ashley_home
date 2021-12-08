@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -49,7 +49,7 @@ class EnchanterClass(commands.Cog):
             data = await self.bot.db.get_data("user_id", member.id, "users")
 
             if not data['rpg']['active']:
-                embed = discord.Embed(
+                embed = disnake.Embed(
                     color=self.bot.color,
                     description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
                 return await ctx.send(embed=embed)
@@ -124,8 +124,8 @@ class EnchanterClass(commands.Cog):
             _TM = int(tot_mp)
             description += f"`MDEF:` **{int(data_player['mdef'])}**  |  `PDEF:` **{int(data_player['pdef'])}**"
             title = f"ENCHANTER PANEL - TOTAL MANA: {_TM}"
-            embed = discord.Embed(title=title, description=description, color=0x000000)
-            embed.set_thumbnail(url=member.avatar_url)
+            embed = disnake.Embed(title=title, description=description, color=0x000000)
+            embed.set_thumbnail(url=member.display_avatar)
 
             _id = create_id()
 
@@ -163,7 +163,7 @@ class EnchanterClass(commands.Cog):
                                     try:
                                         await self.botmsg[_id].remove_reaction("<a:help:767825933892583444>",
                                                                                ctx.author)
-                                    except discord.errors.Forbidden:
+                                    except disnake.errors.Forbidden:
                                         pass
                                     msg = await ctx.send(text)
 
@@ -173,7 +173,7 @@ class EnchanterClass(commands.Cog):
                                     try:
                                         await self.botmsg[_id].remove_reaction("<a:help:767825933892583444>",
                                                                                ctx.author)
-                                    except discord.errors.Forbidden:
+                                    except disnake.errors.Forbidden:
                                         pass
                                     await msg.delete()
 
@@ -207,19 +207,19 @@ class EnchanterClass(commands.Cog):
         _class_now = update["rpg"]["class_now"]
 
         if not update['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if skill is None:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA DIZER UMA SKILL PARA ENCANTAR`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         try:
@@ -227,11 +227,11 @@ class EnchanterClass(commands.Cog):
                 pass
             else:
                 msg = '<:negate:721581573396496464>│`SKILL INVALIDA!`'
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
         except ValueError:
             msg = '<:negate:721581573396496464>│`SKILL INVALIDA!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         try:
@@ -239,16 +239,16 @@ class EnchanterClass(commands.Cog):
                 pass
             else:
                 msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ANGEL STONE!`'
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
         except KeyError:
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ANGEL STONE!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] == limit:
             msg = '<:negate:721581573396496464>│`ESSA SKILL JA ATINGIU O ENCANTAMENTO MAXIMO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if update['rpg']["sub_class"][_class_now]['skills'][int(skill) - 1] >= 10:
@@ -260,12 +260,12 @@ class EnchanterClass(commands.Cog):
                 else:
                     msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ANGEL WING, A PARTIR DO ENCANTAMENTO +10 VOCE ' \
                           'PRECISA DE 1 ANGEL STONE E 1 ANGEL WING!`'
-                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
             except KeyError:
                 msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ANGEL WING, A PARTIR DO ENCANTAMENTO +10 VOCE ' \
                       'PRECISA DE 1 ANGEL STONE E 1 ANGEL WING!`'
-                embed = discord.Embed(color=self.bot.color, description=msg)
+                embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
         if enchant is not None:
@@ -277,11 +277,11 @@ class EnchanterClass(commands.Cog):
                             del update['inventory']['blessed_enchant_skill']
                     else:
                         msg = '<:negate:721581573396496464>│`VOCE NÃO TEM BLESSED ENCHANT SKILL!`'
-                        embed = discord.Embed(color=self.bot.color, description=msg)
+                        embed = disnake.Embed(color=self.bot.color, description=msg)
                         return await ctx.send(embed=embed)
                 else:
                     msg = '<:negate:721581573396496464>│`VOCE NÃO TEM BLESSED ENCHANT SKILL!`'
-                    embed = discord.Embed(color=self.bot.color, description=msg)
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
         update['inventory']['angel_stone'] -= 1
@@ -305,14 +305,14 @@ class EnchanterClass(commands.Cog):
 
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
                   f"PARA` **+{update['rpg']['sub_class'][_class_now]['skills'][int(skill) - 1]}**"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_win"])
 
         elif chance == self.up_chance:
             msg = f'<:alert:739251822920728708>│{ctx.author.mention} `SEU ENCANTAMENTO FALHOU, MAS VOCE NAO REGREDIU' \
                   f' O SEU ENCANTAMENTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
@@ -325,7 +325,7 @@ class EnchanterClass(commands.Cog):
             amount = update["rpg"]["sub_class"][_class_now]["skills"][int(skill) - 1]
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
                   f'SEU ENCANTAMENTO REGREDIU PARA` **+{amount}**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
@@ -342,24 +342,24 @@ class EnchanterClass(commands.Cog):
         _class_now = update["rpg"]["class_now"]
 
         if not update['rpg']['active']:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "skills" not in update['rpg'].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM ENCHANTS PARA RECUPERAR!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "recovery" in update['rpg'].keys():
             msg = '<:negate:721581573396496464>│`VOCE JA RECUPEROU SEUS ENCHANTS!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update['rpg']["sub_class"][_class_now]['skills'] = update['rpg']['skills']
@@ -368,7 +368,7 @@ class EnchanterClass(commands.Cog):
 
         msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEUS ENCANTAMENTOS FORAM " \
               f"RECUPERADOS PARA A CLASSE:` **{_class_now.upper()}**"
-        embed = discord.Embed(color=self.bot.color, description=msg)
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -383,12 +383,12 @@ class EnchanterClass(commands.Cog):
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         armors = ["shoulder", "breastplate", "gloves", "leggings", "boots", "shield", "necklace", "earring", "ring"]
@@ -397,12 +397,12 @@ class EnchanterClass(commands.Cog):
                   'ash ena **gloves** blessed_armor_silver,\n' \
                   '`Partes validas:`\n**"shoulder", "breastplate", "gloves", "leggings", "boots", "shield", ' \
                   '"necklace", "earring", "ring"**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if enchant is None:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA DIZER UM ENCANTAMENTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         enchants = ["armor_hero", "armor_violet", "armor_inspiron", "armor_mystic", "armor_silver",
@@ -412,19 +412,19 @@ class EnchanterClass(commands.Cog):
         item_key = convert_item_name(enchant, self.bot.items)
         if item_key not in enchants:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA DIZER UM ENCANTAMENTO VÁLIDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if item_key not in data['inventory'].keys():
             msg = f'<:negate:721581573396496464>│`VOCE NAO TEM {enchant.upper()} NO SEU INVENTARIO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _TIER = ["silver", "mystic", "inspiron", "violet", "hero", "divine"]
         tt = _TIER.index(enchant.split()[-1])
         if data['rpg']['armors'][armor][tt] >= limit:
             msg = '<:negate:721581573396496464>│`ESSA ARMADURA JA ATINGIU O ENCANTAMENTO MAXIMO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data['inventory'][item_key] -= 1
@@ -437,14 +437,14 @@ class EnchanterClass(commands.Cog):
             data['rpg']['armors'][armor][tt] += 1
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
                   f"PARA` **+{data['rpg']['armors'][armor][tt]}**"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_win"])
 
         elif chance == up_chance:
             msg = f'<:alert:739251822920728708>│{ctx.author.mention} `SEU ENCANTAMENTO FALHOU, MAS VOCE NAO REGREDIU' \
                   f' O SEU ENCANTAMENTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
@@ -454,7 +454,7 @@ class EnchanterClass(commands.Cog):
                 data['rpg']['armors'][armor][tt] = 0
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
                   f'SEU ENCANTAMENTO REGREDIU PARA` **+{data["rpg"]["armors"][armor][tt]}**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
@@ -479,17 +479,17 @@ class EnchanterClass(commands.Cog):
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if enchant is None:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA DIZER UM ENCANTAMENTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         enchants = ["enchant_hero", "enchant_violet", "enchant_inspiron", "enchant_mystic", "enchant_silver",
@@ -499,18 +499,18 @@ class EnchanterClass(commands.Cog):
         item_key = convert_item_name(enchant, self.bot.items)
         if item_key not in enchants:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA DIZER UM ENCANTAMENTO VÁLIDO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if item_key not in data['inventory'].keys():
             msg = f'<:negate:721581573396496464>│`VOCE NAO TEM {enchant.upper()} NO SEU INVENTARIO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         sword_id = data['rpg']["equipped_items"]['sword']
         if sword_id is None:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA TER UMA ARMA EQUIPADA PARA ENCANTAR!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
         sword = [i[1]["name"] for i in equips_list if i[0] == sword_id][0]
 
@@ -519,13 +519,13 @@ class EnchanterClass(commands.Cog):
         tt_enchant = _TIER.index(enchant.split()[-1])
         if tt != tt_enchant:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA USAR UM ENCANTAMENTO DA MESMA RARIDADE DA SUA ARMA!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         lw = int(str(sword.split()[-1]).replace("+", "")) if "+" in sword.split()[-1] else 0
         if lw >= limit_weapon:
             msg = '<:negate:721581573396496464>│`ESSA ARMA JA ATINGIU O SEU ENCANTAMENTO MAXIMO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data['inventory'][item_key] -= 1
@@ -541,14 +541,14 @@ class EnchanterClass(commands.Cog):
             data['rpg']["equipped_items"]['sword'] = weapon_key
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
                   f"PARA` **+{lw + 1}**"
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_win"])
 
         elif chance == up_chance:
             msg = f'<:alert:739251822920728708>│{ctx.author.mention} `SEU ENCANTAMENTO FALHOU, MAS VOCE NAO REGREDIU' \
                   f' O SEU ENCANTAMENTO!`'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 
@@ -559,7 +559,7 @@ class EnchanterClass(commands.Cog):
             data['rpg']["equipped_items"]['sword'] = weapon_key
             msg = f'<:negate:721581573396496464>│{ctx.author.mention} `SEU ENCANTAMENTO QUEBROU, POR CONTA DISSO ' \
                   f'SEU ENCANTAMENTO REGREDIU PARA` **+{lw - 1}**'
-            embed = discord.Embed(color=self.bot.color, description=msg)
+            embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
             await self.bot.data.add_sts(ctx.author, ["enchants", "enchant_lose"])
 

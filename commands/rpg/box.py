@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -90,14 +90,14 @@ ITEMS:
 <I: {}/{}>
 <C: {}/{}>
 <SIZE: {}/{}>```'''.format(rarity, status, s, l_s, ur, l_ur, sr, l_sr, r, l_r, i, l_i, c, l_c, size_now, size_full)
-                box = discord.Embed(
+                box = disnake.Embed(
                     title="{}'s box:\n"
                           "`PARA ABRIR SUA BOX USE O COMANDO`\n"
                           "**ASH BOX BOOSTER**".format(ctx.author.name),
                     color=self.color,
                     description=description
                 )
-                box.set_author(name=self.bot.user, icon_url=self.bot.user.avatar_url)
+                box.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
                 box.set_thumbnail(url="{}".format(images[rarity]))
                 box.set_footer(text="Ashley ® Todos os direitos reservados.")
                 await ctx.send(embed=box)

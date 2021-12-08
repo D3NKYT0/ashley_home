@@ -1,9 +1,9 @@
-import discord
+import disnake
 import requests
 
 from random import choice
 from io import BytesIO
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from PIL import Image, ImageDraw, ImageOps
@@ -17,7 +17,7 @@ class Booket(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, vip=True))
     @commands.command(name='bok', aliases=['boquete', 'glubglub', 'blowjob'])
-    async def bok(self, ctx, member: discord.Member = None):
+    async def bok(self, ctx, member: disnake.Member = None):
         """eu não vou explicar oq isso faz
         Use ash bok <@pessoa que vc é casado/a>"""
         if member is not None:
@@ -37,8 +37,8 @@ class Booket(commands.Cog):
                     original = original.resize((992, 1402))
                     original.save('marrysend.png')
                     mens = member
-                    alvo = member.avatar_url
-                    autor = ctx.author.avatar_url
+                    alvo = member.display_avatar
+                    autor = ctx.author.display_avatar
                     lista = [[autor, alvo], [427, 290, 190, 208, 237, 200],
                              [(18, 98), (580, 142), (140, 744), (656, 753), (164, 1076), (652, 1078)]]
                     for c in range(6):
@@ -63,7 +63,7 @@ class Booket(commands.Cog):
 
                     await ctx.send('O casal {} e {} acabam de trocar alguns carinhos orais... '
                                    ':smirk: :flushed:'.format(ctx.author.mention, mens.mention),
-                                   file=discord.File('marrysend.png'))
+                                   file=disnake.File('marrysend.png'))
                 else:
                     await ctx.send("<:alert:739251822920728708>│`VOCÊ NÃO ESTÁ CASADO COM ESSA PESSOA!`")
             elif data_member['user']['married'] is False:
@@ -77,7 +77,7 @@ class Booket(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='love')
-    async def love(self, ctx, member: discord.Member = None):
+    async def love(self, ctx, member: disnake.Member = None):
         if member is not None:
 
             query = {"_id": 0, "user_id": 1, "user": 1}

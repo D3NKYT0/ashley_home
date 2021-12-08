@@ -1,8 +1,8 @@
-import discord
+import disnake
 import pytz
 
 from datetime import datetime
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -23,12 +23,12 @@ class ServerInfo(commands.Cog):
         afk = ctx.guild.afk_channel.name if ctx.guild.afk_channel else "Sem canal de AFK"
         verification_level = {
             "none": "Nenhuma",
-            "low": "Baixo: Precisa ter um e-mail verificado na conta do Discord.",
-            "medium": "Médio: Precisa ter uma conta no Discord há mais de 5 minutos.",
+            "low": "Baixo: Precisa ter um e-mail verificado na conta do disnake.",
+            "medium": "Médio: Precisa ter uma conta no disnake há mais de 5 minutos.",
             "high": "Alta: Também precisa ser um membro deste servidor há mais de 10 minutos.",
             "table_flip": "Alta: Precisa ser um membro deste servidor há mais de 10 minutos.",
-            "extreme": "Extrema: Precisa ter um telefone verificado na conta do Discord.",
-            "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do Discord."
+            "extreme": "Extrema: Precisa ter um telefone verificado na conta do disnake.",
+            "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do disnake."
         }
 
         verification = verification_level.get(str(ctx.guild.verification_level))
@@ -49,10 +49,11 @@ class ServerInfo(commands.Cog):
             cmds = str(data['data']['commands']) + " comandos contabilizados no total"
         except KeyError:
             cmds = str(self.bot.guilds_commands[ctx.guild.id]) + "comandos usados desde que fiquei online"
-        hour, created = datetime.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M"), ctx.guild.created_at
-        embed = discord.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
+        hour = datetime.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
+        created = ctx.guild.created_at
+        embed = disnake.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
                                                                         "servidor!")
-        embed.set_thumbnail(url=ctx.guild.icon_url)
+        embed.set_thumbnail(url=ctx.guild.icon)
         embed.set_footer(text="{} • {}".format(ctx.author, hour))
         embed.add_field(name="Nome:", value=ctx.guild.name, inline=True)
         embed.add_field(name="Dono:", value=str(ctx.guild.owner))

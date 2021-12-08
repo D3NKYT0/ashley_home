@@ -1,9 +1,9 @@
 import sys
-import discord
+import disnake
 import traceback
 import aiohttp
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.utility import ERRORS
 
 cor = {
@@ -23,16 +23,16 @@ class CommandErrorHandler(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
         self.read = ["read letter", "read assemble", "read aungen", "read soul", "read nw", "read waffen"]
-        self.errors = [aiohttp.ClientOSError, ConnectionResetError, discord.errors.DiscordServerError,
-                       discord.errors.HTTPException]
+        self.errors = [aiohttp.ClientOSError, ConnectionResetError, disnake.errors.DiscordServerError,
+                       disnake.errors.HTTPException]
         self.errors_str = [
             "Command raised an exception: HTTPException: 504 Gateway Time-out (error code: 0): <!DOCTYPE html>",
-            "Command raised an exception: DiscordServerError: 500 Internal Server Error (error code: 0): 500: "
+            "Command raised an exception: discordServerError: 500 Internal Server Error (error code: 0): 500: "
             "Internal Server Error",
-            "Command raised an exception: DiscordServerError: 503 Service Temporarily Unavailable (error code: 0):"
+            "Command raised an exception: discordServerError: 503 Service Temporarily Unavailable (error code: 0):"
             " <html> ",
             "Command raised an exception: Forbidden: 403 Forbidden (error code: 50013): Missing Permissions",
-            "Command raised an exception: DiscordServerError: 503 Service Unavailable (error code: 0): upstream"
+            "Command raised an exception: discordServerError: 503 Service Unavailable (error code: 0): upstream"
             "connect error or disconnect/reset before headers. reset reason: connection failure",
             "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe",
             "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer"
@@ -67,7 +67,7 @@ class CommandErrorHandler(commands.Cog):
             if self.bot.maintenance and ctx.author.id not in self.bot.testers:
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:
-                    embed = discord.Embed(color=self.color, description=self.bot.maintenance_msg)
+                    embed = disnake.Embed(color=self.color, description=self.bot.maintenance_msg)
                     return await ctx.send(embed=embed)
             return
 
@@ -127,7 +127,7 @@ class CommandErrorHandler(commands.Cog):
                     self.bot.lendo.remove(ctx.author.id)
 
             # retorno da msg de erro fora de CTX
-            await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO DISCORD E SEU"
+            await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO disnake E SEU"
                            f" COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O COMANDO"
                            f" NOVAMENTE!`", delete_after=5.0)
 
@@ -136,9 +136,9 @@ class CommandErrorHandler(commands.Cog):
         # e como nao quero print de comando mal executado pelo usuario faço a outra exceção
         if not isinstance(error, commands.CommandOnCooldown) and not isinstance(error, commands.CheckFailure):
             # nao quero mostrar os erros de API e desconexão
-            if not isinstance(error, discord.errors.DiscordServerError) or self.error_check(error):
+            if not isinstance(error, disnake.errors.DiscordServerError) or self.error_check(error):
                 # aqui quando um erro nao é tratado eu registro sua ocorrencia para averiguar sua origem
-                # PRINT INTERNO (DISCORD LOG)
+                # PRINT INTERNO (disnake LOG)
                 channel = self.bot.get_channel(530419409311760394)
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:

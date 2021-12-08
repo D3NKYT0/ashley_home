@@ -1,6 +1,6 @@
-import discord
+import disnake
 
-from discord.ext import commands
+from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -18,7 +18,7 @@ class AutoDelete(commands.Cog):
         Use ash gossip <mensagem desejada>"""
         try:
             await ctx.message.delete()
-        except discord.errors.Forbidden:
+        except disnake.errors.Forbidden:
             pass
         await ctx.send(f'```Markdown\n [>]: {msg.upper()}```', delete_after=5.0)
 
