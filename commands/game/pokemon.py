@@ -56,7 +56,7 @@ class PokemonClass(commands.Cog):
             embed.set_image(url=response['foto'])
             await ctx.send(embed=embed)
 
-            if ctx.author.id == self.bot.owner_id:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 await ctx.send(f"`OLÁ MESTRE, SUA RESPOSTA É:` **{response['nome'].upper()}**")
 
             try:

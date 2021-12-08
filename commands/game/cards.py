@@ -56,7 +56,7 @@ class CardsClass(commands.Cog):
             embed.set_image(url=card['foto'])
             await ctx.send(embed=embed)
 
-            if ctx.author.id == self.bot.owner_id:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 await ctx.send(f"`OLÁ MESTRE, SUA RESPOSTA É:` **{card['nome'].upper()}**")
 
             try:

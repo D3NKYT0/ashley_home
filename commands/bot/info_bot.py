@@ -27,7 +27,7 @@ class BotInfo(commands.Cog):
         total_members = sum(len(s.members) for s in self.bot.guilds)
         channel_types = Counter(isinstance(c, disnake.TextChannel) for c in self.bot.get_all_channels())
         ver_, voice, text = self.bot.version, channel_types[False], channel_types[True]
-        owner, dated = str(self.bot.get_user(self.bot.owner_id)), ctx.me.created_at
+        owner, dated = str(self.bot.get_user(self.bot.owner_ids[0])), ctx.me.created_at
         uptime = precisedelta(dt.utcnow() - self.bot.start_time, format='%0.0f')
         date = dt.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
 
@@ -37,9 +37,9 @@ class BotInfo(commands.Cog):
                             value='**{}** `comandos`'.format(sum(self.bot.commands_used.values())), inline=False)
         embed_bot.add_field(name="📖 | Canais de texto", value='**{}** `canais de texto`'.format(text), inline=False)
         embed_bot.add_field(name="🎤 | Canais de voz", value='**{}** `canais de voz`'.format(voice), inline=False)
-        embed_bot.add_field(name="<:processor:522400972094308362> | Porcentagem da CPU",
+        embed_bot.add_field(name="<:processor:918166968509562911> | Porcentagem da CPU",
                             value="**{}%**".format(psutil.cpu_percent()), inline=False)
-        embed_bot.add_field(name="<:memory:522400971406573578> | Memoria Usada", value=f'**{self.bot.get_ram()}**',
+        embed_bot.add_field(name="<:memory:918166968849289216> | Memoria Usada", value=f'**{self.bot.get_ram()}**',
                             inline=False)
         embed_bot.add_field(name="<:mito:745375589145247804> | Entre no meu servidor",
                             value="[Clique Aqui](https://disnake.gg/rYT6QrM)", inline=False)

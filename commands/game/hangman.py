@@ -100,7 +100,7 @@ Dica: **{}**'''.format(senha, dica))
                         await ctx.send('<a:red:525032764211200002>│`Tentativa {}/3`\n`QUAL A '
                                        'PALAVRA?`'.format(self.trying[ctx.author.id] + 1))
 
-                        if ctx.author.id == self.bot.owner_id:
+                        if ctx.author.id == self.bot.owner_ids[0]:
                             await ctx.send(f"`OLÁ MESTRE, SUA RESPOSTA É:` **{palavra.upper()}**")
 
                         try:

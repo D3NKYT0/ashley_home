@@ -678,7 +678,7 @@ class OnReady(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
 
-        owner = str(self.bot.get_user(self.bot.owner_id))
+        owner = str(self.bot.get_user(self.bot.owner_ids[0]))
         ver_ = self.bot.version
         id_bot = str(self.bot.user.id)
         name = str(self.bot.user)

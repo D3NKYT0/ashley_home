@@ -36,7 +36,6 @@ with open("data/auth.json") as auth:
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, shard_count=_auth["shard"], **kwargs)
-        self.owner_id = 300592580381376513
         self.owner_ids = [300592580381376513, 416606375498481686]
         self.msg_cont = 0
         self.start_time = dt.utcnow()

@@ -57,7 +57,7 @@ class CharadeClass(commands.Cog):
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
-            if ctx.author.id == self.bot.owner_id:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 await ctx.send(f"`OLÁ MESTRE, SUA RESPOSTA É:` "
                                f"**{self.charade[charade].lower().replace('resposta: ', '')}**")
 

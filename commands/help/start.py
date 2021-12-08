@@ -70,10 +70,18 @@ class Helper(commands.Cog):
             msg.content = 'ash ' + command_help
             ctx_ = await self.bot.get_context(msg)
             if ctx_.command is not None:
-                if ctx_.command.help is not None:
-                    text = f"`{ctx_.prefix + ctx_.command.qualified_name + ' ' + ctx_.command.signature}`"
-                    return await ctx.send(f"**Modo de Uso:** {text}\n```{ctx_.command.help}```")
+
+                command = ctx_.command
+                if isinstance(ctx_.command, commands.Group):
+                    for cmd in ctx_.command.commands:
+                        if f"{ctx_.command} {cmd.name}" == command_help:
+                            command = cmd
+
+                if command.help is not None:
+                    text = f"`{ctx_.prefix + command.qualified_name + ' ' + command.signature}`"
+                    return await ctx.send(f"**Modo de Uso:** {text}\n```{command.help}```")
                 await ctx.send("<:alert:739251822920728708>│`Comando Ainda nao tem uma ajuda definida`")
+
             else:
                 await ctx.send("<:alert:739251822920728708>│`Comando Inválido`")
 
