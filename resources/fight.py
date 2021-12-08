@@ -287,7 +287,7 @@ class Entity(object):
 
         description = ""
 
-        if not passive_skill:
+        if not passive_skill and not self.is_passive:
 
             self.OPTIONS.append(
                 disnake.SelectOption(
@@ -308,7 +308,7 @@ class Entity(object):
 
                 selection = disnake.SelectOption(
                     emoji=passive_icon,
-                    label=f"0 - {passive_icon} {passive_name.upper()} | PASSIVE",
+                    label=f"0 - {passive_name.upper()} | PASSIVE",
                     description=f"Dano: base | Mana: 0 | {text_passive}",
                     value=str(0)
                 )
@@ -320,7 +320,7 @@ class Entity(object):
             text_passive = "veneno, fraquesa" if self.type_skill_passive == 0 else "curse, queimadura"
             selection = disnake.SelectOption(
                 emoji=passive_icon,
-                label=f"0 - {passive_icon} {passive_name.upper()} | DH MODE",
+                label=f"0 - {passive_name.upper()} | DH MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
                 value=str(0)
             )
@@ -331,7 +331,7 @@ class Entity(object):
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
             selection = disnake.SelectOption(
                 emoji=passive_icon,
-                label=f"0 - {passive_icon} {passive_name.upper()} | MIRAGE MODE",
+                label=f"0 - {passive_name.upper()} | MIRAGE MODE",
                 description=f"Dano: base | Mana: 0 | Efeito(s): gelo",
                 value=str(0)
             )
@@ -351,7 +351,7 @@ class Entity(object):
 
             selection = disnake.SelectOption(
                 emoji=passive_icon,
-                label=f"0 - {passive_icon} {passive_name.upper()} | SOD MODE",
+                label=f"0 - {passive_name.upper()} | SOD MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
                 value=str(0)
             )
@@ -371,7 +371,7 @@ class Entity(object):
 
             selection = disnake.SelectOption(
                 emoji=passive_icon,
-                label=f"0 - {passive_icon} {passive_name.upper()} | SF MODE",
+                label=f"0 - {passive_name.upper()} | SF MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
                 value=str(0)
             )
