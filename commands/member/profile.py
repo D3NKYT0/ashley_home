@@ -91,7 +91,7 @@ class ProfileSystem(commands.Cog):
             coins = 0
 
         try:
-            guild_link = self.bot.get_guild(data['guild_id']).icon_url_as(format="png")
+            guild_link = self.bot.get_guild(data['guild_id']).icon.with_format("png")
         except AttributeError:
             guild_link = "https://festsonho.com.br/images/sem_foto.png"
 
