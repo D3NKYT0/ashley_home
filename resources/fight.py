@@ -287,16 +287,18 @@ class Entity(object):
 
         description = ""
 
-        self.OPTIONS.append(
-            disnake.SelectOption(
-                emoji="<:skill_base:912134358813523989>",
-                label="0 - SKILL BASE | COMUM",
-                description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
-                value=str(0)
-            )
-        )
+        if not passive_skill:
 
-        if passive_skill:
+            self.OPTIONS.append(
+                disnake.SelectOption(
+                    emoji="<:skill_base:912134358813523989>",
+                    label="0 - SKILL BASE | COMUM",
+                    description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
+                    value=str(0)
+                )
+            )
+
+        else:
             passive_name = CLS[self.data['class_now']]["passive"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]['icon']
             passive_amount = CLS[self.data['class_now']]["passive"]['amount']
