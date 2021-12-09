@@ -485,6 +485,7 @@ class Entity(object):
     async def effects_resolve(self, ctx, effects, msg_return, entity):
         type_effects = ["cegueira", "strike", "reflect", "confusion", "hold", "bluff"]
         if effects is not None:
+            fireball = True if "fireball" in self.effects.keys() else False
             for c in effects:
                 try:
                     if 'damage' in self.effects[c]['type']:
@@ -493,12 +494,12 @@ class Entity(object):
                         if c == "queimadura" and randint(1, 2) == 2:
                             bb = int(damage / 100 * randint(50, 100))
                             damage += bb
-                            burn += f"\n `levou {bb}% a mais por queimadura profunda`"
+                            burn += f" `levou {bb}% a mais por queimadura profunda`"
                             if randint(1, 100) <= 15:
                                 self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
-                        if c == "queimadura" and "fireball" in self.effects.keys():
+                        if c == "queimadura" and fireball:
                             if self.effects["fireball"]["turns"] > 0:  # bonus de fireball
                                 damage += self.effects[c]['damage'] * randint(4, 8)
                                 if entity.passive == "warlock" and entity.is_passive and randint(1, 100) <= 25:
@@ -511,7 +512,7 @@ class Entity(object):
                         if c == "veneno" and randint(1, 2) == 2:
                             bb = int(damage / 100 * randint(50, 100))
                             damage += bb
-                            burn += f"\n `levou {bb}% a mais por intoxicação aguda`"
+                            burn += f" `levou {bb}% a mais por intoxicação aguda`"
                             _chance = randint(1, 100)
                             if _chance <= 15:
                                 self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
@@ -571,7 +572,7 @@ class Entity(object):
                         del self.effects[c]
                         if "self" in c:
                             c = "PASSIVA"
-                        and_effect = f"**{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
+                        and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
                         msg_return += f"{and_effect}\n\n"
                 except KeyError:
                     pass
