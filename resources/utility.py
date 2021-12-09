@@ -585,7 +585,8 @@ async def guild_info(guild):
 
     verification = verification_level.get(str(guild.verification_level))
     embed = disnake.Embed(color=int("ff00c1", 16), description="Abaixo está as informaçoes principais do servidor!")
-    embed.set_thumbnail(url=guild.icon)
+    if guild.icon is not None:
+        embed.set_thumbnail(url=guild.icon)
     embed.add_field(name="Nome:", value=guild.name, inline=True)
     embed.add_field(name="Dono:", value=f"{str(guild.owner)}")
     embed.add_field(name="ID:", value=guild.id, inline=True)
