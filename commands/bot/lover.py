@@ -86,7 +86,7 @@ class LoverClass(commands.Cog):
         """Esse comando mostra seus status atuais, numa visao geral do bot."""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         g_data = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
-        user = self.bot.user_commands[ctx.author.id]
+        user = self.bot.commands_user[ctx.author.id]
         guild = self.bot.guilds_commands[ctx.guild.id]
 
         try:

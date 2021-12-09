@@ -598,7 +598,7 @@ class Ashley(commands.AutoShardedBot):
                     query_user["$set"]["user.patent"] = patent
                     file = disnake.File(f'images/patente/{patent}.png', filename="patent.png")
                     embed = disnake.Embed(title='🎊 **PARABENS** 🎉\n`VOCE SUBIU DE PATENTE`', color=self.color)
-                    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url)
                     embed.set_image(url="attachment://patent.png")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -1061,7 +1061,7 @@ def main_bot():
     emojis = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}
 
     print("\033[1;35m( >> ) | Iniciando...\033[m\n")
-    print("\033[1;35m( >> ) | Iniciando carregamento de extensões...\033[m")
+    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões...\033[m")
 
     if bot.maintenance:
         f = open("maintenance.txt", "r")
@@ -1090,7 +1090,35 @@ def main_bot():
                 continue
     f.close()
 
+    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões comuns...\033[m")
+    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões SLASHS...\033[m")
+
+    f = open("slashs.txt", "r")
+
+    for name in f.readlines():
+        if len(name.strip()) > 0:
+            try:
+                if '@' not in name.strip() and '#' not in name.strip():
+                    bot.load_extension(name.strip())
+                    if name.strip() not in bot.vip_cog:
+                        bot.data_cog[name.strip()] = emojis['ON']
+                    else:
+                        bot.data_cog[name.strip()] = emojis['VIP']
+                    cont += 1
+                else:
+                    if '#' not in name.strip():
+                        print(f'\033[1;36m( ☢️ ) | Cog: \033[1;34m{name.strip()}\033[1;36m não foi carregada!\33[m')
+                        bot.data_cog[name.strip()] = emojis['OFF']
+            except Exception as e:
+                if '#' not in name.strip():
+                    print(f"\033[1;31m( ❌ ) | Cog: \033[1;34m{name}\033[1;31m teve um [Erro] : \033[1;35m{e}\33[m")
+                    bot.data_cog[name.strip()] = emojis['IDLE']
+                    traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
+                continue
+    f.close()
+
     bot.load_extension("jishaku")  # load extenção JISHAKU
+    print('\033[1;33m( 🔶 ) | A cog \033[1;34mJISHAKU\033[1;33m foi carregada com sucesso!\33[m')
 
     print(f"\033[1;35m( ✔ ) | {cont}/{len(bot.data_cog.keys())} extensões foram carregadas!\033[m")
     return bot, _auth['_t__ashley']

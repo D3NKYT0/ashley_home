@@ -1,0 +1,2 @@
+slashs.help.start
+# O NUMERO DO INDICE É O NUMERO DA LINHA -1

@@ -19,7 +19,7 @@ class Pet(commands.Cog):
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, vip=True))
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='pet')
     async def pet(self, ctx, *, msg: str = "Oiiiii"):
         """Comando usado pra se comunicar com pet

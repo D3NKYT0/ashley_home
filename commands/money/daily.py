@@ -152,7 +152,7 @@ class DailyClass(commands.Cog):
         """Comando usado pra ganhar o dinheiro da Ashley diariamente
         Use ash daily work"""
         if self.bot.guilds_commands[ctx.guild.id] > 50:
-            if self.bot.user_commands[ctx.author.id] > 20:
+            if self.bot.commands_user[ctx.author.id] > 20:
                 global money, m
                 data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
                 if not data_user['security']['status']:
