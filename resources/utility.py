@@ -389,7 +389,8 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
 
         async def interaction_check(self, interaction):
             if interaction.user.id != self.author_id:
-                await interaction.response.send_message(content="Você não pode interagir aqui !", ephemeral=True)
+                _MESSAGE = "<:negate:721581573396496464>│`VOCÊ NÃO PODE INTERAGIR AQUI!`"
+                await interaction.response.send_message(content=_MESSAGE, ephemeral=True)
                 return False
             else:
                 return True
@@ -905,3 +906,31 @@ reward_broken = {
         }
     }
 }
+
+
+def pretty(value, htchar='\t', lfchar='\n', indent=0, auth=False):
+    nlch = lfchar + htchar * (indent + 1)
+    if isinstance(value, dict):
+        items = [
+            nlch + repr(key) + ': ' + pretty(value[key], htchar, lfchar, indent + 1)
+            for key in value
+        ]
+        return '{%s}' % (','.join(items) + lfchar + htchar * indent)
+    elif isinstance(value, list):
+        items = [
+            nlch + pretty(item, htchar, lfchar, indent + 1)
+            for item in value
+        ]
+        return '[%s]' % (','.join(items) + lfchar + htchar * indent)
+    elif isinstance(value, tuple):
+        items = [
+            nlch + pretty(item, htchar, lfchar, indent + 1)
+            for item in value
+        ]
+        return '(%s)' % (','.join(items) + lfchar + htchar * indent)
+    else:
+        value = str(value)
+        if auth:
+            value = value.replace(auth['_t__ashley'], "[CENSORED]")
+            value = value.replace(auth['db_url'], "[CENSORED]")
+        return value

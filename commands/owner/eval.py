@@ -1,93 +1,114 @@
-import io
-import json
+import ast
+import disnake
 import traceback
-import textwrap
+import import_expression
 
-from contextlib import redirect_stdout
+from io import BytesIO
 from disnake.ext import commands
-from resources.check import check_it
 from resources.db import Database
-
+from resources.check import check_it
+from resources.utility import pretty
 
 with open("data/auth.json") as security:
-    _auth = json.loads(security.read())
+    _auth = disnake.utils.json.loads(security.read())
 
 
-class EvalSintax(commands.Cog):
+class View(disnake.ui.View):
+    def __init__(self, author):
+        super().__init__()
+        self.author = author
+    
+    async def interaction_check(self, interaction):
+        if interaction.author.id != self.author.id:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    async def close(inter):
+        return await inter.message.delete()
+
+
+class EvalCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self._last_result = None
 
-    @staticmethod
-    def get_syntax_error(e):
-        if e.text is None:
-            return '```py\n{0.__class__.__name__}: {0}\n```'.format(e)
-        return '```py\n{0.text}{1:>{0.offset}}\n{2}: {0}```'.format(e, '^', type(e).__name__)
+    def insert_returns(self, body):
+        if isinstance(body[-1], ast.Expr):
+            body[-1] = ast.Return(body[-1].value)
+            ast.fix_missing_locations(body[-1])
 
-    @staticmethod
-    def cleanup_code(content):
-        if content.startswith('```') and content.endswith('```'):
-            return '\n'.join(content.split('\n')[1:-1])
-        return content.strip('` \n')
+        if isinstance(body[-1], ast.If):
+            self.insert_returns(body[-1].body)
+            self.insert_returns(body[-1].orelse)
+
+        if isinstance(body[-1], ast.With):
+            self.insert_returns(body[-1].body)
+
+        if isinstance(body[-1], ast.For):
+            self.insert_returns(body[-1].body)
+
+        if isinstance(body[-1], ast.While):
+            self.insert_returns(body[-1].body)
+
+        if isinstance(body[-1], ast.Try):
+            self.insert_returns(body[-1].body)
+            self.insert_returns(body[-1].finalbody)
+            self.insert_returns(body[-1].handlers)
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='eval')
-    async def eval(self, ctx, *, body: str):
-        """Apenas desenvolvedores."""
+    async def _eval(self, ctx, *, code: str):
+        """Apenas Devs"""
+        function = "_eval_function"
+        view = View(ctx.author)
+        button = disnake.ui.Button(emoji="<:negate:721581573396496464>", style=disnake.ButtonStyle.danger)
+        button.callback = view.close
+        view.add_item(button)
 
+        if code.startswith('```py'):
+            code = code[5:]
+        elif code.startswith('```'):
+            code = code[3:]
+        if code.endswith('```'):
+            code = code[:-3]
+        code = '\n'.join(f'    {i}' for i in code.splitlines())
+        body = f'async def {function}():\n{code}'
+        parsed = import_expression.parse(body)
+        body = parsed.body[0].body
+        self.insert_returns(body)
         env = {
             'bot': self.bot,
             'ctx': ctx,
-            'channel': ctx.channel,
+            'disnake': disnake,
+            'commands': commands,
             'author': ctx.author,
+            'channel': ctx.channel,
             'guild': ctx.guild,
             'message': ctx.message,
-            '_': self._last_result
         }
-
-        env.update(globals())
-
-        body = self.cleanup_code(body)
-        stdout = io.StringIO()
-
-        to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
-
         try:
-            exec(to_compile, env)
-        except Exception as error:
-            await ctx.message.add_reaction('❌')
-            return await ctx.send(self.get_syntax_error(error))
-
-        func = env['func']
-        try:
-            with redirect_stdout(stdout):
-                ret = await func()
-        except Exception as e:
-            if e:
-                pass
-            value = stdout.getvalue()
-            msg = f'```py\n{value}{traceback.format_exc()}\n```'.replace(_auth['_t__ashley'], "[CENSORED]")
-            msg = msg.replace(_auth['db_url'], "[CENSORED]")
-            await ctx.send(msg)
-        else:
-            value = stdout.getvalue()
-            await ctx.message.add_reaction('\u2705')
-
-            if ret is None:
-                if value:
-                    self._last_result = ret
-                    msg = f'```py\n{value}\n```'.replace(_auth['_t__ashley'], "[CENSORED]")
-                    msg = msg.replace(_auth['db_url'], "[CENSORED]")
-                    await ctx.send(msg)
+            exec(import_expression.compile(parsed, filename="<ast>", mode="exec"), env)
+            result = await import_expression.eval(f'{function}()', env)
+        except Exception:
+            error = str(traceback.format_exc())
+            if len(error) > 2000:
+                file = disnake.file(filename="error.py", fp=BytesIO(error.encode('utf-8')))
+                await ctx.send(content="Error:", file=file, view=view, delete_after=120)
             else:
-                self._last_result = ret
-                msg = f'```py\n{value}{ret}\n```'.replace(_auth['_t__ashley'], "[CENSORED]")
-                msg = msg.replace(_auth['db_url'], "[CENSORED]")
-                await ctx.send(msg)
+                embed = disnake.Embed(title="Error:", description=f"```py\n{error}```", colour=disnake.Colour.red())
+                await ctx.send(embed=embed, view=view, delete_after=120)
+        else:
+            if result:
+                result = pretty(result, auth=_auth)
+                if len(result) > 2000:
+                    await ctx.send(file=disnake.File(filename='result.py', fp=BytesIO(result.encode('utf-8'))),
+                                   view=view, delete_after=120)
+                else:
+                    await ctx.send(f"```py\n{result}```", view=view, delete_after=120)
 
 
 def setup(bot):
-    bot.add_cog(EvalSintax(bot))
-    print('\033[1;32m( 🔶 ) | O comando \033[1;34mEVALSINTAX\033[1;32m foi carregado com sucesso!\33[m')
+    bot.add_cog(EvalCog(bot))

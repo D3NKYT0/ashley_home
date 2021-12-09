@@ -19,6 +19,7 @@ from disnake.ext import commands
 from resources.color import random_color
 from bson.json_util import dumps
 from resources.utility import date_format, patent_calculator, guild_info, rank_definition, CreateCaptcha
+from resources.utility import include
 from resources.db import Database, DataInteraction
 from resources.verify_cooldown import verify_cooldown
 from resources.boosters import Booster
@@ -887,7 +888,7 @@ class Ashley(commands.AutoShardedBot):
         if message.guild is not None:
 
             ctx = await self.get_context(message)
-            if str(ctx.command) not in ["eval", "jsk"]:
+            if not include(str(ctx.command), ["eval", "jsk", "jishaku"]):
                 msg = copy.copy(message)
                 msg.content = message.content.lower()
             else:

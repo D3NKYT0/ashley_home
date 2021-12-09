@@ -163,7 +163,8 @@ class Entity(object):
 
         async def interaction_check(self, interaction):
             if interaction.user.id != self.author_id:
-                await interaction.response.send_message(content="Você não pode interagir aqui !", ephemeral=True)
+                msg = "<:negate:721581573396496464>│`VOCÊ NÃO PODE INTERAGIR AQUI!`"
+                await interaction.response.send_message(content=msg, ephemeral=True)
                 return False
             else:
                 return True
