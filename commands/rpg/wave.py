@@ -135,7 +135,7 @@ class Raid(commands.Cog):
             _USER = ctx.author.id
             self.db_monster[_USER] = extension.set_monster_raid(self.db_player[_USER], raid_rank[_USER])
 
-            if "quest" in self.db_monster[ctx.author.id]["name"].lower():
+            if "[quest]" in self.db_monster[ctx.author.id]["name"].lower():
                 especial_m += 1
 
             if ctx.author.id in m_raid.keys():
@@ -160,7 +160,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"].lower():
+                if "[quest]" in _mon["name"].lower():
                     especial_m += 1
 
                 for rew in self.db_monster[ctx.author.id]["reward"]:
@@ -198,7 +198,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"].lower():
+                if "[quest]" in _mon["name"].lower():
                     especial_m += 1
 
                 for rew in self.db_monster[ctx.author.id]["reward"]:
@@ -293,7 +293,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"].lower():
+                if "[quest]" in _mon["name"].lower():
                     especial_m += 1
 
                 for rew in self.db_monster[ctx.author.id]["reward"]:
@@ -331,7 +331,7 @@ class Raid(commands.Cog):
             if m_raid[ctx.author.id].status['hp'] <= 0:
                 raid_rank[ctx.author.id] += 1
                 _mon = extension.set_monster_raid(self.db_player[ctx.author.id], raid_rank[ctx.author.id])
-                if "quest" in _mon["name"].lower():
+                if "[quest]" in _mon["name"].lower():
                     especial_m += 1
 
                 for rew in self.db_monster[ctx.author.id]["reward"]:

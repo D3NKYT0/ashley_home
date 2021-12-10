@@ -37,7 +37,7 @@ class Entity(object):
         self.is_combo = False
         self.is_hold = False
         self.is_bluff = False
-        self.is_fireball = False
+        self.is_ignition = False
 
         # informações gerais
         self.name = self.data['name']
@@ -118,6 +118,16 @@ class Entity(object):
                 self.progress = 0
                 self.stack = 1
                 self.SPELLCASTER_FIRER = False
+
+                for c in range(5):
+                    if self.level >= LVL[c]:
+                        if c == 5:
+                            _SK = f"N{c}"
+                            self.skills_p[CLS[self.data['class_now']][_SK]['name']] = CLS[self.data['class_now']][_SK]
+                        else:
+                            self.skills_p[CLS[self.data['class_now']][c]['name']] = CLS[self.data['class_now']][c]
+                    else:
+                        self.skills[CLS[self.data['class']][str(c)]['name']] = CLS[self.data['class']][str(c)]
 
             elif self.data['class_now'] == "warlock":
                 self.passive = self.data['class_now']
@@ -485,7 +495,7 @@ class Entity(object):
     async def effects_resolve(self, ctx, effects, msg_return, entity):
         type_effects = ["cegueira", "strike", "reflect", "confusion", "hold", "bluff"]
         if effects is not None:
-            fireball = True if "fireball" in self.effects.keys() else False
+            ignition = True if "ignition" in self.effects.keys() else False
             for c in effects:
                 try:
                     if 'damage' in self.effects[c]['type']:
@@ -499,14 +509,14 @@ class Entity(object):
                                 self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
-                        if c == "queimadura" and fireball:
-                            if self.effects["fireball"]["turns"] > 0:  # bonus de fireball
+                        if c == "fireball" and ignition:
+                            if self.effects["ignition"]["turns"] > 0:  # bonus de ignition
                                 damage += self.effects[c]['damage'] * randint(4, 8)
-                                if entity.passive == "warlock" and entity.is_passive and randint(1, 100) <= 25:
+                                if entity.passive == "wizard" and entity.is_passive and randint(1, 100) <= 25:
                                     damage_ice = 50 * entity.stack
                                     self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage_ice}
                                     burn += f" `e ganhou o efeito de` **gelo** `pela combinação do efeito` " \
-                                            f"**fireball** `com o modo` **SPELLCASTER FIRER** `de` " \
+                                            f"**ignition** `com o modo` **SPELLCASTER FIRER** `de` " \
                                             f"**{entity.name.upper()}**"
 
                         if c == "veneno" and randint(1, 2) == 2:
@@ -701,7 +711,7 @@ class Entity(object):
                             msg_return += f"{_text3}\n\n"
 
                         # habilita passiva do wizard
-                        if "fireball" in self.skill['effs'][self.ls].keys():
+                        if "ignition" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
@@ -721,6 +731,11 @@ class Entity(object):
         if self.is_passive and self.passive == "necromancer":
             skills_now = self.skills_p
             skills = list(self.skills_p.keys())  # altera as skills do necro
+
+        if "ignition" in entity.effects.keys():
+            if entity["ignition"]["turns"] > 0 and self.passive == "wizard":
+                skills_now = self.skills_p
+                skills = list(self.skills_p.keys())  # altera a skill 5 do wizard
 
         if self.is_player:
             verify = await self.verify_equips(ctx)
@@ -884,6 +899,14 @@ class Entity(object):
                         break
 
                     if int(answer.values[0]) == 0:
+
+                        # verificador se esta sendo feito o combo
+                        if self.combo_cont >= 3:
+                            self.is_combo = False
+                            self.combo_cont = 0
+
+                        self.verify_combo(int(answer.values[0]) - 1)
+
                         self.skill = CLS[self._class]['base_skill']
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
@@ -1318,14 +1341,14 @@ class Entity(object):
         return self.skill
 
     def verify_effect(self, entity):
-        looping, fireball, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
+        looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
         if self.effects is not None:
             if "looping" in self.effects.keys():
                 if self.effects["looping"]["turns"] > 0:
                     looping = True
-            if "fireball" in self.effects.keys():
-                if self.effects["fireball"]["turns"] > 0:
-                    fireball = True
+            if "ignition" in self.effects.keys():
+                if self.effects["ignition"]["turns"] > 0:
+                    ignition = True
             if "skull" in self.effects.keys():
                 if self.effects["skull"]["turns"] > 0:
                     skull = True
@@ -1346,7 +1369,7 @@ class Entity(object):
                     if "bluff" in self.effects.keys() and "cegueira" in self.effects.keys():
                         if self.effects["bluff"]["turns"] > 0 and self.effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return looping, fireball, skull, drain, bluff, hit_kill, hold
+        return looping, ignition, skull, drain, bluff, hit_kill, hold
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
 
@@ -1377,9 +1400,9 @@ class Entity(object):
                 if c == "strike" and not entity.is_strike:
                     entity.is_strike, chance = True, True
 
-                # o primeiro fireball sempre vai funcionar
-                if c == "fireball" and not entity.is_fireball:
-                    entity.is_fireball, chance = True, True
+                # o primeiro ignition sempre vai funcionar
+                if c == "ignition" and not entity.is_ignition:
+                    entity.is_ignition, chance = True, True
 
                 # o primeiro hold sempre vai funcionar
                 if c == "hold" and not entity.is_hold:
@@ -1389,9 +1412,9 @@ class Entity(object):
                 if c == "bluff" and not entity.is_bluff:
                     entity.is_bluff, chance = True, True
 
-                # sistema de fireball
-                if c == "queimadura" and "fireball" in self.effects.keys():
-                    if self.effects["fireball"]["turns"] > 0:
+                # sistema de ignition
+                if c == "fireball" and "ignition" in self.effects.keys():
+                    if self.effects["ignition"]["turns"] > 0:
                         chance = True
 
                 if entity.passive == "warlock":
@@ -1605,7 +1628,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        looping, fireball, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
+        looping, ignition, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
         half_life_priest, stack_1, stack_2, lvs_skill = False, False, False, 1
 
         if test:
@@ -1650,7 +1673,7 @@ class Entity(object):
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stack_2)
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        looping, fireball, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
+        looping, ignition, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:

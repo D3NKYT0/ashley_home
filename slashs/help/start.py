@@ -9,7 +9,7 @@ class HelperSlash(commands.Cog):
         self.color = self.bot.color
 
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.slash_command(name="help", description="Artigos de Ajuda", guild_ids=[519894833783898112])
+    @commands.slash_command(name="help", description="Artigos de Ajuda")
     async def help(self, inter, *, command_help=None):
         """há fala serio!"""
         if command_help is None:
