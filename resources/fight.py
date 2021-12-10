@@ -121,11 +121,12 @@ class Entity(object):
 
                 for c in range(5):
                     if self.level >= LVL[c]:
-                        if c == 5:
+                        if c == 4:
                             _SK = f"N{c}"
                             self.skills_p[CLS[self.data['class_now']][_SK]['name']] = CLS[self.data['class_now']][_SK]
                         else:
-                            self.skills_p[CLS[self.data['class_now']][c]['name']] = CLS[self.data['class_now']][c]
+                            _SK = f"{c}"
+                            self.skills_p[CLS[self.data['class_now']][_SK]['name']] = CLS[self.data['class_now']][_SK]
                     else:
                         self.skills[CLS[self.data['class']][str(c)]['name']] = CLS[self.data['class']][str(c)]
 
@@ -244,7 +245,7 @@ class Entity(object):
             if self.is_combo:
                 self.combo_cont += 1
 
-    def calc_skill_attack(self, now, _att, lvs, c2):
+    def calc_skill_attack(self, now, _att, lvs, c2, skills_now):
 
         if self.cc[1] in ['necromancer', 'wizard', 'warlock']:
             tot_atk = int(_att * 1.6)
@@ -252,10 +253,6 @@ class Entity(object):
             tot_atk = int(_att * 1.4)
         else:
             tot_atk = int(_att * 1.2)
-
-        skills_now = self.skills
-        if self.is_passive and self.passive == "necromancer":
-            skills_now = self.skills_p
 
         self.ls = lvs if 0 <= lvs <= 9 else 9  # verificação de segurança para o limit (+10) de bonus
         # as skills so tem bonus ate o limit do indice 9 (+10) apos isso so existe bonus de ataque
@@ -285,7 +282,7 @@ class Entity(object):
 
         return damage  # o retorno do dano estimado nao calcula efeitos ou soulshots
 
-    def get_skill_menu(self, entity, user, skills, wave_now, passive_skill):
+    def get_skill_menu(self, entity, user, skills, wave_now, passive_skill, skills_now):
         hate_no_mana, emojis, _hp, rr, _con = 0, list(), self.status['hp'], self.rate, self.status['con']
         _mp, ehp, econ, err = self.status['mp'], entity.status['hp'], entity.status['con'], entity.rate[0]
         hate_no_limit = 0
@@ -392,13 +389,7 @@ class Entity(object):
         for _ in range(0, len(skills)):
             attacks[_ + 1], lvs, c2, _att = skills[_], self.level_skill[_], skills[_], self.status['atk']
             ls = self.data["skill_level"][_][0]
-
-            damage = self.calc_skill_attack(_, _att, lvs, c2)
-
-            skills_now = self.skills
-            if self.is_passive and self.passive == "necromancer":
-                skills_now = self.skills_p
-
+            damage = self.calc_skill_attack(_, _att, lvs, c2, skills_now)
             icon, skill_type = skills_now[c2]['icon'], skills_now[c2]['type']
             emojis.append(skills_now[c2]['icon'])
 
@@ -733,7 +724,7 @@ class Entity(object):
             skills = list(self.skills_p.keys())  # altera as skills do necro
 
         if "ignition" in entity.effects.keys():
-            if entity["ignition"]["turns"] > 0 and self.passive == "wizard":
+            if entity.effects["ignition"]["turns"] > 0 and self.passive == "wizard":
                 skills_now = self.skills_p
                 skills = list(self.skills_p.keys())  # altera a skill 5 do wizard
 
@@ -799,7 +790,7 @@ class Entity(object):
                 if self_passive:
                     self_skill = True
 
-                res = self.get_skill_menu(entity, user, skills, wave_now, self_skill)
+                res = self.get_skill_menu(entity, user, skills, wave_now, self_skill, skills_now)
                 embed, view, attacks, hate_no_mana, hate_no_limit = res[0], res[1], res[2], res[3], res[4]
                 _OPTIONS_LAST = self.OPTIONS.copy()
                 await ctx.send(embed=embed, view=view)
