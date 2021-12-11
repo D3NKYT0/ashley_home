@@ -174,7 +174,7 @@ class Entity(object):
 
         async def interaction_check(self, interaction):
             if interaction.user.id != self.author_id:
-                msg = "<:negate:721581573396496464>│`VOCÊ NÃO PODE INTERAGIR AQUI!`"
+                msg = "🚫 `VOCÊ NÃO PODE INTERAGIR AQUI!`"
                 await interaction.response.send_message(content=msg, ephemeral=True)
                 return False
             else:
@@ -488,79 +488,83 @@ class Entity(object):
         if effects is not None:
             ignition = True if "ignition" in self.effects.keys() else False
             for c in effects:
-                try:
-                    if 'damage' in self.effects[c]['type']:
-                        damage, burn = self.effects[c]['damage'], ""
+                if c in self.effects.keys():
 
-                        if c == "queimadura" and randint(1, 2) == 2:
-                            bb = int(damage / 100 * randint(50, 100))
-                            damage += bb
-                            burn += f" `levou {bb}% a mais por queimadura profunda`"
-                            if randint(1, 100) <= 15:
-                                self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
-                                burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
+                    if "type" in self.effects[c].keys():
+                        if 'damage' in self.effects[c]['type']:
+                            damage, burn = self.effects[c]['damage'], ""
 
-                        if c == "fireball" and ignition:
-                            if self.effects["ignition"]["turns"] > 0:  # bonus de ignition
-                                damage += self.effects[c]['damage'] * randint(4, 8)
-                                if entity.passive == "wizard" and entity.is_passive and randint(1, 100) <= 25:
-                                    damage_ice = 50 * entity.stack
-                                    self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage_ice}
-                                    burn += f" `e ganhou o efeito de` **gelo** `pela combinação do efeito` " \
-                                            f"**ignition** `com o modo` **SPELLCASTER FIRER** `de` " \
-                                            f"**{entity.name.upper()}**"
+                            if c in ["queimadura", "fireball"] and randint(1, 2) == 2:
+                                bb = int(damage / 100 * randint(50, 100))
+                                damage += bb
+                                burn += f" `levou {bb}% a mais por queimadura profunda`"
+                                if randint(1, 100) <= 15:
+                                    self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
+                                    burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
-                        if c == "veneno" and randint(1, 2) == 2:
-                            bb = int(damage / 100 * randint(50, 100))
-                            damage += bb
-                            burn += f" `levou {bb}% a mais por intoxicação aguda`"
-                            _chance = randint(1, 100)
-                            if _chance <= 15:
-                                self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
-                                burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
+                            if c == "fireball" and ignition:
+                                if "ignition" in self.effects.keys():
+                                    if self.effects["ignition"]["turns"] > 0:  # bonus de ignition
+                                        damage += damage * randint(3, 6)
+                                        if entity.passive == "wizard" and entity.is_passive and randint(1, 100) <= 25:
+                                            damage_ice = 50 * entity.stack
+                                            self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage_ice}
+                                            burn += f" `e ganhou o efeito de` **gelo** `pela combinação do efeito` " \
+                                                    f"**ignition** `com o modo` **SPELLCASTER FIRER** `de` " \
+                                                    f"**{entity.name.upper()}**"
 
-                        self.status['hp'] -= damage
-                        if self.status['hp'] < 0:
-                            self.status['hp'] = 0
+                            if c == "veneno" and randint(1, 2) == 2:
+                                bb = int(damage / 100 * randint(50, 100))
+                                damage += bb
+                                burn += f" `levou {bb}% a mais por intoxicação aguda`"
+                                _chance = randint(1, 100)
+                                if _chance <= 15:
+                                    self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
+                                    burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
-                        if damage > 0:
-                            _text5 = f"**{self.name.upper()}** `sofreu` **{damage}** `de dano " \
-                                     f"por efeito de` **{c.upper()}!**{burn}"
-                            msg_return += f"{_text5}\n\n"
-
-                    elif 'manadrain' in self.effects[c]['type']:
-
-                        presas_active = False
-                        if "presas" in self.effects.keys():
-                            if self.effects["presas"]["turns"] >= 1:
-                                presas_active = True
-
-                        if not presas_active:
-
-                            damage = int((self.tot_mp / 100) * self.effects[c]['damage'])
-
-                            self.status['mp'] -= damage
-                            if self.status['mp'] < 0:
-                                self.status['mp'] = 0
+                            self.status['hp'] -= damage
+                            if self.status['hp'] < 0:
+                                self.status['hp'] = 0
 
                             if damage > 0:
-                                _text6 = f"**{self.name.upper()}** `teve` **{damage}** `de mana " \
-                                         f"drenada por efeito de` **{c.upper()}!**"
-                                msg_return += f"{_text6}\n\n"
+                                _text5 = f"**{self.name.upper()}** `sofreu` **{damage}** `de dano " \
+                                         f"por efeito de` **{c.upper()}!**{burn}"
+                                msg_return += f"{_text5}\n\n"
+                            else:
+                                if c not in ["reflect"]:
+                                    emoji = "<a:alert:919041626486218783>"
+                                    _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano  de **{c.upper()}!**"
+                                    msg_return += f"{_text5}\n\n"
 
-                        else:
-                            _text6 = f"**{self.name.upper()}** `não teve a mana removida " \
-                                     f"pois seu oponente esta sob o efeito de` **presas**"
-                            msg_return += f"{_text6}\n\n"
+                        elif 'manadrain' in self.effects[c]['type']:
+
+                            presas_active = False
+                            if "presas" in self.effects.keys():
+                                if self.effects["presas"]["turns"] >= 1:
+                                    presas_active = True
+
+                            if not presas_active:
+
+                                damage = int((self.tot_mp / 100) * self.effects[c]['damage'])
+
+                                self.status['mp'] -= damage
+                                if self.status['mp'] < 0:
+                                    self.status['mp'] = 0
+
+                                if damage > 0:
+                                    _text6 = f"**{self.name.upper()}** `teve` **{damage}** `de mana " \
+                                             f"drenada por efeito de` **{c.upper()}!**"
+                                    msg_return += f"{_text6}\n\n"
+
+                            else:
+                                _text6 = f"**{self.name.upper()}** `não teve a mana removida " \
+                                         f"pois seu oponente esta sob o efeito de` **presas**"
+                                msg_return += f"{_text6}\n\n"
 
                     elif self.effects[c]['turns'] > 0 and c in type_effects:
                         _text7 = f"**{self.name.upper()}** `esta sobe o efeito de` **{c.upper()}!**"
                         msg_return += f"{_text7}\n\n"
 
-                except KeyError:
-                    pass
-
-                try:
                     if self.effects[c]['turns'] > 0:
                         if "reflect" in self.effects.keys():
                             if self.effects['reflect']['damage'] > 0:
@@ -575,8 +579,6 @@ class Entity(object):
                             c = "PASSIVA"
                         and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
                         msg_return += f"{and_effect}\n\n"
-                except KeyError:
-                    pass
 
         if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
             self.data["salvation"] = False
@@ -642,7 +644,6 @@ class Entity(object):
                             self.skill = None
         except (KeyError, TypeError):
             pass
-
         return msg_return
 
     def self_drain_effect_resolve(self, msg_return):
@@ -663,7 +664,6 @@ class Entity(object):
                             msg_return += f"{_text3}\n\n"
         except (KeyError, TypeError):
             pass
-
         return msg_return
 
     def self_passive_effect_resolve(self, msg_return):
@@ -707,10 +707,8 @@ class Entity(object):
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
-
         except (KeyError, TypeError):
             pass
-
         return msg_return
 
     async def turn(self, ctx, user, entity, wave_now=0):
@@ -947,6 +945,7 @@ class Entity(object):
                                 embeds = disnake.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
+                                    self.is_ignition = False
                                     _url = "https://c.tenor.com/ibnv8p1He_QAAAAM/crazywiz-crazywizzz.gif"
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
@@ -1439,13 +1438,13 @@ class Entity(object):
                         if test:
                             self.effects[c] = skill['effs'][self.ls][c]
                             min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
-                            min_turn = 3 if c in ["bluff"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
                             min_turn, max_turn = 2, skill['effs'][c]['turns']
-                            min_turn = 3 if c in ["bluff"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
