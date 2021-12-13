@@ -34,11 +34,19 @@ class IaInteractions(commands.Cog):
         embed = disnake.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
         embed.set_thumbnail(url=link)
         if deleted:
-            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
+            try:
+                return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
+            except disnake.errors.Forbidden:
+                pass
         try:
             await ctx.reply(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
+        except disnake.errors.Forbidden:
+            pass
         except disnake.errors.HTTPException:
-            return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
+            try:
+                return await ctx.send(content="⠀⠀⠀⠀⠀⠀⠀⠀", embed=embed, delete_after=60.0)
+            except disnake.errors.Forbidden:
+                pass
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):

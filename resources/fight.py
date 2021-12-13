@@ -38,6 +38,8 @@ class Entity(object):
         self.is_hold = False
         self.is_bluff = False
         self.is_ignition = False
+        self.is_duelist = False
+        self.is_charge = False
 
         # informações gerais
         self.name = self.data['name']
@@ -50,6 +52,7 @@ class Entity(object):
         self.skill = None
         self.potion = 0
         self.ls = 0  # level da skill atual (ultima skill)
+        self.rage_damage = 0  # dano do efeito acumulado de RAGE
 
         # informação de status
         self.status = self.data['status']
@@ -101,6 +104,11 @@ class Entity(object):
 
             elif self.data['class_now'] == "warrior":
                 self.passive = self.data['class_now']
+                self.progress = 0
+
+                self.passive_mode = 0
+                self.passive_key = ["def", "atk"]
+                self.passive_progress = [0, 0]
 
             elif self.data['class_now'] == "necromancer":
                 self.passive = self.data['class_now']
@@ -310,8 +318,16 @@ class Entity(object):
             passive_name = CLS[self.data['class_now']]["passive"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]['icon']
             passive_amount = CLS[self.data['class_now']]["passive"]['amount']
-            text_passive = ""
-            if not self.is_passive and self.passive in ["necromancer", "priest", "warlock", "assassin", "wizard"]:
+            text_passive, _classes = "", ["necromancer", "priest", "warlock", "assassin", "wizard", "warrior"]
+            if not self.is_passive and self.passive in _classes:
+
+                if self.passive == "warrior":
+                    key = self.passive_key[self.passive_mode]
+                    passive_name = CLS[self.data['class_now']]["passive"][key]['name']
+                    passive_icon = CLS[self.data['class_now']]["passive"][key]['icon']
+                    passive_amount = CLS[self.data['class_now']]["passive"][key]['amount']
+                    self.progress = self.passive_progress[self.passive_mode]
+
                 text_passive += f"Progress: {self.progress}/{passive_amount}"
 
                 selection = disnake.SelectOption(
@@ -380,6 +396,19 @@ class Entity(object):
             selection = disnake.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | SF MODE",
+                description=f"Dano: base | Mana: 0 | {text_passive}",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
+
+        if self.is_passive and self.passive == "warrior":
+            passive_name = CLS[self.data['class_now']]["passive"][f"{self.passive_mode}"]['name']
+            passive_icon = CLS[self.data['class_now']]["passive"][f"{self.passive_mode}"]['icon']
+            text_passive = "sem efeito" if self.passive_mode == 0 else "sem efeito"
+            _mode = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_name.upper()} | {_mode} MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
                 value=str(0)
             )
@@ -519,7 +548,8 @@ class Entity(object):
                                 burn += f" `levou {bb}% a mais por intoxicação aguda`"
                                 _chance = randint(1, 100)
                                 if _chance <= 15:
-                                    self.effects["silencio"] = {"type": "normal", "turns": randint(2, 4), "damage": None}
+                                    eff = {"type": "normal", "turns": randint(2, 4), "damage": None}
+                                    self.effects["silencio"] = eff
                                     burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
                             self.status['hp'] -= damage
@@ -566,12 +596,13 @@ class Entity(object):
                         msg_return += f"{_text7}\n\n"
 
                     if self.effects[c]['turns'] > 0:
-                        if "reflect" in self.effects.keys():
-                            if self.effects['reflect']['damage'] > 0:
-                                self.effects['reflect']['damage'] = 0
-                            self.effects[c]['turns'] -= 1
-                        else:
-                            self.effects[c]['turns'] -= 1
+                        if c not in ["duelist"]:  # efeitos eternos
+                            if "reflect" in self.effects.keys():
+                                if self.effects['reflect']['damage'] > 0:
+                                    self.effects['reflect']['damage'] = 0
+                                self.effects[c]['turns'] -= 1
+                            else:
+                                self.effects[c]['turns'] -= 1
 
                     if self.effects[c]['turns'] < 1:
                         del self.effects[c]
@@ -591,63 +622,59 @@ class Entity(object):
 
         return effects, msg_return
 
-    def health_effect_resolve(self, msg_return):
-        try:
+    def self_effect_resolve(self, msg_return, entity):
+        if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
             if self.skill['effs'] is not None:
                 if self.is_player:
                     lvs = self.level_skill[self.skill['skill'] - 1]
                     self.ls = lvs if 0 <= lvs <= 9 else 9
-                    if self.skill['effs'][self.ls]['cura']['type'] == "cura":
-
-                        presas_active = False
-                        if "presas" in self.effects.keys():
-                            if self.effects["presas"]["turns"] >= 1:
-                                presas_active = True
-
-                        if not presas_active:
-                            percent = self.skill['effs'][self.ls]['cura']['damage']
-                            regen = int((self.tot_hp / 100) * percent)
-                            if (self.status['hp'] + regen) <= self.tot_hp:
-                                self.status['hp'] += regen
-                            else:
-                                self.status['hp'] = self.tot_hp
-                            _text3 = f'**{self.name.upper()}** `recuperou` **{regen}** `de HP`'
-                            msg_return += f"{_text3}\n\n"
-                            self.skill = None
-                        else:
-                            _text3 = f'**{self.name.upper()}** `não recuperou HP pois está sob o ' \
-                                     f'efeito de` **presas**'
-                            msg_return += f"{_text3}\n\n"
-                            self.skill = None
+                    _skill = self.skill['effs'][self.ls]
                 else:
-                    if self.skill['effs']['cura']['type'] == "cura":
+                    _skill = self.skill['effs']
 
-                        presas_active = False
-                        if "presas" in self.effects.keys():
-                            if self.effects["presas"]["turns"] >= 1:
-                                presas_active = True
+                if "cura" in _skill.keys():
 
-                        if not presas_active:
-                            percent = self.skill['effs']['cura']['damage']
-                            regen = int((self.tot_hp / 100) * percent)
-                            if (self.status['hp'] + regen) <= self.tot_hp:
-                                self.status['hp'] += regen
-                            else:
-                                self.status['hp'] = self.tot_hp
-                            _text4 = f'**{self.name.upper()}** `recuperou` **{regen}** `de HP`'
-                            msg_return += f"{_text4}\n\n"
-                            self.skill = None
+                    presas_active = False
+                    if "presas" in self.effects.keys():
+                        if self.effects["presas"]["turns"] >= 1:
+                            presas_active = True
+
+                    if not presas_active:
+                        percent = _skill['cura']['damage']
+                        regen = int((self.tot_hp / 100) * percent)
+                        if (self.status['hp'] + regen) <= self.tot_hp:
+                            self.status['hp'] += regen
                         else:
-                            _text4 = f'**{self.name.upper()}** `não recuperou HP pois está sob o ' \
-                                     f'efeito de` **presas**'
-                            msg_return += f"{_text4}\n\n"
-                            self.skill = None
-        except (KeyError, TypeError):
-            pass
-        return msg_return
+                            self.status['hp'] = self.tot_hp
+                        _text3 = f'**{self.name.upper()}** `recuperou` **{regen}** `de HP`'
+                        msg_return += f"{_text3}\n\n"
+                        self.skill = None
+                    else:
+                        _text3 = f'**{self.name.upper()}** `não recuperou HP pois está sob o ' \
+                                 f'efeito de` **presas**'
+                        msg_return += f"{_text3}\n\n"
+                        self.skill = None
 
-    def self_drain_effect_resolve(self, msg_return):
-        try:
+                if "barrier" in _skill.keys():
+                    self.effects["barrier"] = _skill["barrier"]
+                    min_turn, max_turn = 2, _skill["barrier"]['turns']
+                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                    self.effects["barrier"]['turns'] = randint(min_turn, max_turn)
+
+                    text_duelist = ""
+                    if "duelist" in entity.effects.keys():
+                        del entity.effects["duelist"]
+                        text_duelist += f"`e por causa disso` **{entity.name.upper()}** `perdeu o efeito de` " \
+                                        f"**duelist**"
+
+                    _text3 = f'**{self.name.upper()}** `ativou o efeito` **barrier** `por` ' \
+                             f'**{self.effects["barrier"]["turns"]}** `turnos.` {text_duelist}'
+                    msg_return += f"{_text3}\n\n"
+
+        return msg_return, entity
+
+    def self_drain_effect_resolve(self, msg_return, entity):
+        if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
             if self.skill['effs'] is not None:
                 if self.is_player and not self.is_passive:
                     active_passive = True
@@ -657,17 +684,15 @@ class Entity(object):
                     if active_passive:
                         lvs = self.level_skill[self.skill['skill'] - 1]
                         self.ls = lvs if 0 <= lvs <= 9 else 9
-                        if self.skill['effs'][self.ls]['drain']['type'] == "normal":
+                        if "drain" in self.skill['effs'][self.ls].keys():
                             self.effects["self_drain"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_drain"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
-        except (KeyError, TypeError):
-            pass
-        return msg_return
+        return msg_return, entity
 
-    def self_passive_effect_resolve(self, msg_return):
-        try:
+    def self_passive_effect_resolve(self, msg_return, entity):
+        if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
             if self.skill['effs'] is not None:
                 if self.is_player and not self.is_passive:
                     active_passive = True
@@ -707,9 +732,24 @@ class Entity(object):
                             _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
-        except (KeyError, TypeError):
-            pass
-        return msg_return
+
+                        # habilita passiva do warrior (modo atk)
+                        if "duelist" in self.skill['effs'][self.ls].keys():
+                            self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
+                            self.passive_mode = 1
+
+                        # habilita passiva do warrior (modo def)
+                        if "barrier" in self.skill['effs'][self.ls].keys():
+                            self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
+                            self.passive_mode = 0
+
+        return msg_return, entity
 
     async def turn(self, ctx, user, entity, wave_now=0):
         msg_return, stun, ice, self.skill = "", False, False, None,
@@ -898,6 +938,29 @@ class Entity(object):
 
                         self.skill = CLS[self._class]['base_skill']
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
+
+                        if self.is_passive and self.passive == "warrior":
+                            _action = randint(15, 30)  # velocidade da progreção
+                            self.passive_progress[self.passive_mode] += _action
+                            if self.passive_progress[self.passive_mode] >= 100 and not self.is_passive:
+                                self.passive_progress[self.passive_mode] = 100
+
+                            if not self.is_passive:
+                                especial = False
+                                if self.passive_progress[self.passive_mode] < 100:
+                                    description = f"**{user.name.upper()}** `VOCÊ AUMENTOU SUA FURIA` **{_action}x**"
+                                else:
+                                    _MODE = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
+                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **{_MODE}**"
+                                    self.is_passive, especial = True, True
+                                    if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
+                                        del self.effects["self_passive"]
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
+                                if self.is_passive and especial:
+                                    _url = CLS[self._class]['passive']["gif"]
+                                    embeds.set_image(url=_url)
+                                await ctx.send(embed=embeds)
 
                         if self.is_passive and self.passive == "assassin":
                             self.skill = CLS[self._class]['passive']["0"]
@@ -1313,13 +1376,13 @@ class Entity(object):
             _text2 = f'**{self.name.upper()}** `esta` **{"STUNADO" if stun else "CONGELADO"}**'
             msg_return += f"{_text2}\n\n"
 
-        msg_return = self.health_effect_resolve(msg_return)
+        msg_return, entity = self.self_effect_resolve(msg_return, entity)
 
         if not self.is_passive and self.passive == "necromancer":
-            msg_return = self.self_drain_effect_resolve(msg_return)
+            msg_return, entity = self.self_drain_effect_resolve(msg_return, entity)
 
         if not self.is_passive and self.passive in ["priest", "warlock", "assassin", "wizard"]:
-            msg_return = self.self_passive_effect_resolve(msg_return)
+            msg_return, entity = self.self_passive_effect_resolve(msg_return, entity)
 
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return, entity)
         hp_max, monster, img_ = self.tot_hp, not self.is_player, None
@@ -1332,7 +1395,17 @@ class Entity(object):
 
     def verify_effect(self, entity):
         looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
+        duelist, stk1, stk2 = False, False, False
         if self.effects is not None:
+            if "target" in self.effects.keys():
+                if self.effects["target"]['turns'] > 0:
+                    stk1 = True
+            if "headshot" in self.effects.keys():
+                if self.effects["headshot"]['turns'] > 0:
+                    stk2 = True
+            if "duelist" in self.effects.keys():
+                if self.effects["duelist"]["turns"] > 0:
+                    duelist = True
             if "looping" in self.effects.keys():
                 if self.effects["looping"]["turns"] > 0:
                     looping = True
@@ -1359,7 +1432,7 @@ class Entity(object):
                     if "bluff" in self.effects.keys() and "cegueira" in self.effects.keys():
                         if self.effects["bluff"]["turns"] > 0 and self.effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return looping, ignition, skull, drain, bluff, hit_kill, hold
+        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
 
@@ -1380,11 +1453,22 @@ class Entity(object):
             key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
             for c in key:
 
+                if c in ["barrier"]:  # skills self nao pegam no inimigo
+                    continue
+
                 _percent = (1, 100) if not bluff else (25, 100)  # aumenta 25% de chance de pegar efeito de skill
                 chance_effect, rate_chance = randint(_percent[0], _percent[1]) + lvs, 96.0
                 rate_chance -= entity.status['luk'] * 0.5 if entity.status['luk'] > 0 else 0
 
                 chance = True if chance_effect > rate_chance else False
+
+                # o primeiro charge sempre vai funcionar
+                if c == "charge" and not entity.is_charge:
+                    entity.is_charge, chance = True, True
+
+                # o primeiro duelist sempre vai funcionar
+                if c == "duelist" and not entity.is_duelist:
+                    entity.is_duelist, chance = True, True
 
                 # o primeiro strike sempre vai funcionar
                 if c == "strike" and not entity.is_strike:
@@ -1618,8 +1702,16 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        looping, ignition, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
-        half_life_priest, stack_1, stack_2, lvs_skill = False, False, False, 1
+        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2 = self.verify_effect(entity)
+        half_life_priest, lvs_skill, barrier, rage, charge = False, 1, False, False, False
+
+        if "barrier" in self.effects.keys():
+            if self.effects["barrier"]['turns'] > 0:
+                barrier = True
+
+        if "charge" in self.effects.keys():
+            if self.effects["charge"]['turns'] > 0:
+                charge = True
 
         if test:
             lvs_skill = int(skill['skill']) if int(skill['skill']) != 0 else int(skill['skill']) + 1
@@ -1627,6 +1719,10 @@ class Entity(object):
         self.ls, confusion, act_eff, _soulshot, bda, reflect = lvs if 0 <= lvs <= 9 else 9, False, True, 0, 0, False
 
         if entity.effects is not None:
+
+            if "rage" in entity.effects.keys():
+                if entity.effects["rage"]["turns"] > 0:
+                    rage = True
 
             if "confusion" in entity.effects.keys():
                 if entity.effects["confusion"]["turns"] > 0:
@@ -1636,15 +1732,7 @@ class Entity(object):
                 if entity.effects["strike"]['turns'] > 0:
                     act_eff = False
 
-            if "target" in self.effects.keys():
-                if self.effects["target"]['turns'] > 0:
-                    stack_1 = True
-
-            if "headshot" in self.effects.keys():
-                if self.effects["headshot"]['turns'] > 0:
-                    stack_2 = True
-
-        if stack_1 and stack_2:
+        if stk1 and stk2:
             half_life_priest = True
 
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
@@ -1660,10 +1748,15 @@ class Entity(object):
                 entity.CLAWS_STUCK = False
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
-        damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stack_2)
+        damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stk2)
+        damage = damage if not duelist else damage + int(damage / 100 * randint(40, 80))  # 40 a 80% de dano a mais
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        looping, ignition, skull, drain, bluff, hit_kill, hold = self.verify_effect(entity)
+        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2 = self.verify_effect(entity)
+
+        msg_hl_priest = ""
+        if stk1 and stk2:
+            msg_hl_priest += f"**{self.name.upper()}** `levou o combo especial do` **{entity.name.upper()}**"
 
         if test:
             if entity.soulshot[0] and entity.soulshot[1] > 1:
@@ -1677,6 +1770,9 @@ class Entity(object):
 
         res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage, lethal)
         defense, critical, damage = self.pdef if skill['type'] == "fisico" else self.mdef, res[0], res[1]
+
+        if barrier and skill['type'] == "magico":  # aumenta a defesa magica
+            defense += defense // 100 * randint(40, 80)
 
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
@@ -1702,6 +1798,15 @@ class Entity(object):
 
         damage += total_bonus_dn  # adicionado antes da defesa / adição a loop
 
+        # charge
+        charge_msg = ""
+        if charge and entity.rage_damage > 0:
+            charge_damage = entity.rage_damage
+            entity.rage_damage = 0
+            damage += charge_damage
+            charge_msg += f'\n**{entity.name.upper()}** `adicinou` **{charge_damage}** `de dano a mais, pelo ' \
+                          f'efeito` **charge** `ter pego nesse turno.`'
+
         # NOVO SISTEMA DE DEFESA
         armor_now, damage_now = defense // 50, damage // 100
         armor_now, total_percent = 64 if armor_now >= 65 else armor_now, 65
@@ -1719,6 +1824,11 @@ class Entity(object):
         defended = randint(armor_now * damage_now, total_percent * damage_now) if defense > 0 else 0
 
         defended = 0 if hold else defended  # efeito da hold
+        rage_msg = ""
+        if rage:  # sistema de acumulação (RAGE)
+            self.rage_damage += defended // 2
+            defended = defended // 2
+            rage_msg += f" `e` **{self.name.upper()}** `acumulou` **{defended}** `de dano, pelo efeito de` **rage**"
         dn = damage - defended  # dano verdadeiro.
 
         if reflect:
@@ -1785,7 +1895,9 @@ class Entity(object):
                 else:
                     descrip = f'**{self.name.upper()}** `recebeu` **{damage}** `de dano` {bb}'
 
+                descrip += rage_msg  # rage effect
                 descrip += looping_msg  # looping effect
+                descrip += charge_msg  # charge effect
 
             elif hit_kill and not confusion:
                 if not self.is_boss and not self.is_mini_boss:
@@ -1807,7 +1919,7 @@ class Entity(object):
                 descrip = f'**{entity.name.upper()}** `recebeu` **{damage}** `de dano` {bb}{confusy}'
 
             descrip += msg_drain
-            msg_return += f"{descrip}\n\n"
+            msg_return += f"{descrip}\n\n" + msg_hl_priest
 
         monster = not self.is_player if self.is_pvp else self.is_player
         bed_ = embed_creator(msg_return, skill['img'], monster, self.tot_hp, self.status['hp'], self.img, self.name)
