@@ -573,6 +573,8 @@ class Entity(object):
                             # novo sistema de reflect
                             if "reflect" in self.effects.keys() and c == "reflect":
                                 if self.effects['reflect']['damage'] > 0:
+                                    if self.effects['reflect']['damage'] > 0:
+                                        self.effects['reflect']['damage'] = 0  # reseta o dano do reflect
                                     self.effects["reflect"]['turns'] -= 1
                                 if self.effects["reflect"]['turns'] < 1:
                                     del self.effects["reflect"]
@@ -615,6 +617,10 @@ class Entity(object):
                                          f"pois seu oponente esta sob o efeito de` **presas**"
                                 msg_return += f"{_text6}\n\n"
 
+                        elif self.effects[c]['turns'] > 0 and c in type_effects:
+                            _text7 = f"**{self.name.upper()}** `esta sobe o efeito de` **{c.upper()}!**"
+                            msg_return += f"{_text7}\n\n"
+
                     elif self.effects[c]['turns'] > 0 and c in type_effects:
                         _text7 = f"**{self.name.upper()}** `esta sobe o efeito de` **{c.upper()}!**"
                         msg_return += f"{_text7}\n\n"
@@ -622,12 +628,7 @@ class Entity(object):
                     if c not in ["duelist", "reflect"]:  # efeitos eternos
 
                         if self.effects[c]['turns'] > 0:
-                            if "reflect" in self.effects.keys():
-                                if self.effects['reflect']['damage'] > 0:
-                                    self.effects['reflect']['damage'] = 0
-                                self.effects[c]['turns'] -= 1
-                            else:
-                                self.effects[c]['turns'] -= 1
+                            self.effects[c]['turns'] -= 1
 
                         if self.effects[c]['turns'] < 1:
                             del self.effects[c]
@@ -1440,9 +1441,6 @@ class Entity(object):
             if "skull" in self.effects.keys():
                 if self.effects["skull"]["turns"] > 0:
                     skull = True
-            if "reflect" in self.effects.keys():
-                if self.effects["reflect"]["turns"] > 0:
-                    self.effects['reflect']['damage'] = 0
             if "drain" in self.effects.keys():
                 if self.effects["drain"]["turns"] > 0:
                     drain = True
@@ -1810,9 +1808,11 @@ class Entity(object):
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
 
+        reflect_damage = 0
         if "reflect" in entity.effects.keys():
-            reflect, damage = True, int(damage / 2)
-            entity.effects['reflect']['damage'] = damage
+            reflect_damage += int(damage / 100 * randint(50, 75))  # reflete 50 a 75% do dano recebido
+            reflect, damage = True, damage - reflect_damage
+            entity.effects['reflect']['damage'] = reflect_damage
 
         looping_msg, total_bonus_dn = "\n", 0
         if looping:
@@ -1865,7 +1865,7 @@ class Entity(object):
         dn = damage - defended  # dano verdadeiro.
 
         if reflect:
-            _text4 = f'**{self.name.upper()}** `refletiu` **50%** `do dano que recebeu`'
+            _text4 = f'**{self.name.upper()}** `refletiu` **{reflect_damage}** `do dano que recebeu`'
             msg_return += f"{_text4}\n\n"
 
         if dn <= 0:
