@@ -191,18 +191,18 @@ class OpenClass(commands.Cog):
     @commands.command(name='pick', aliases=['pegar'])
     async def pick(self, ctx):
         """Pegue uma figurinha disponivel no servidor"""
-        if ctx.guild.id in self.bot.ash_stickers:
-            if self.bot.ash_stickers[ctx.guild.id] < 1:
+        if ctx.guild.id in self.bot.ash_sticker:
+            if self.bot.ash_sticker[ctx.guild.id] < 1:
                 return await ctx.send(f"<:negate:721581573396496464>│`Esse Servidor não tem figurinhas disponiveis!`\n"
                                       f"`TODAS AS FIGURINHAS FORAM PEGAS, AGUARDE UMA NOVA FIGURINHA DROPAR E FIQUE "
                                       f"ATENTO!`")
 
             data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
-            self.bot.ash_stickers[ctx.guild.id] -= 1
+            self.bot.ash_sticker[ctx.guild.id] -= 1
             _STICKER = choice(self.list_stickers)
-            _NAME = self.bot.ash_stickers[_STICKER][0]
-            _RARITY = self.bot.ash_stickers[_STICKER][1]
-            _TYPE = self.bot.ash_stickers[_STICKER][2]
+            _NAME = self.bot.ash_sticker[_STICKER][0]
+            _RARITY = self.bot.ash_sticker[_STICKER][1]
+            _TYPE = self.bot.ash_sticker[_STICKER][2]
             _OBS = "" if _RARITY >= 10 else "\n<a:confet:853247252998389763> `E AINDA FOI UMA FIGURINHA PREMIADA!`" \
                                             "\n<a:stars:853247252389429278> `>> VOCE GANHOU 5 BLESSED ETHERNYAS <<` " \
                                             "<a:stars:853247252389429278>"

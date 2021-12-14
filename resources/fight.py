@@ -111,6 +111,11 @@ class Entity(object):
                 self.passive_key = ["atk", "def"]
                 self.passive_progress = [0, 0]
 
+                self.IRON_FISTS = False
+                self.TITAN_WALL = False
+
+                self.ultimate_defense = self.pdef + self.mdef
+
             elif self.data['class_now'] == "necromancer":
                 self.passive = self.data['class_now']
                 self.progress = 0
@@ -535,7 +540,12 @@ class Entity(object):
 
                     if "type" in self.effects[c].keys():
                         if 'damage' in self.effects[c]['type']:
-                            damage, burn = self.effects[c]['damage'], ""
+                            damage, burn, barrier_msg = self.effects[c]['damage'], "", ""
+
+                            if "barrier" in self.effects.keys():
+                                if self.effects["barrier"]['turns'] > 0:
+                                    damage = 0
+                                    barrier_msg += f" `por causa do efeito de` **barrier**"
 
                             if c in ["queimadura", "fireball"] and randint(1, 2) == 2:
                                 bb = int(damage / 100 * randint(50, 100))
@@ -590,6 +600,7 @@ class Entity(object):
                                 if c not in ["reflect"]:
                                     emoji = "<a:alert:919041626486218783>"
                                     _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano  de **{c.upper()}!**"
+                                    _text5 += barrier_msg
                                     msg_return += f"{_text5}\n\n"
 
                         elif 'manadrain' in self.effects[c]['type']:
@@ -978,7 +989,7 @@ class Entity(object):
                                 else:
                                     _MODE = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
                                     description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **{_MODE}**"
-                                    self.is_passive, especial = True, True
+                                    self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
                                 embeds = disnake.Embed(description=description, color=0x000000)
@@ -987,6 +998,9 @@ class Entity(object):
                                     _url = CLS[self._class]['passive']["gif"]
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
+
+                        if self.is_passive and self.passive == "warrior":
+                            self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
                         if self.is_passive and self.passive == "assassin":
                             self.skill = CLS[self._class]['passive']["0"]
@@ -1110,6 +1124,18 @@ class Entity(object):
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
+
+                        if self.is_passive and self.passive == "warrior" and not not_is_now:
+                            self.is_passive, self.progress = False, 0
+                            if self.passive_mode == 0:
+                                self.IRON_FISTS = True
+                            else:
+                                self.TITAN_WALL = True
+                            _MODE = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
+                            description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **{_MODE}!**"
+                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds.set_author(name=user.name, icon_url=user.display_avatar)
+                            await ctx.send(embed=embeds)
 
                         if self.is_passive and self.passive == "assassin" and not not_is_now:
                             self.is_passive, self.progress = False, 0
@@ -1530,6 +1556,13 @@ class Entity(object):
                     if entity.CLAWS_STUCK and skill["skill"] == 0:
                         chance = True
 
+                if entity.passive == "warrior":
+                    if entity.IRON_FISTS and skill["skill"] == 0:
+                        chance = False
+
+                    if entity.TITAN_WALL and skill["skill"] == 0:
+                        chance = False
+
                 negate_fisico = False
                 if "target" in entity.effects.keys():
                     if entity.effects["target"]['turns'] > 0:
@@ -1773,6 +1806,14 @@ class Entity(object):
         if entity.passive == "assassin":
             if entity.CLAWS_STUCK and skill["skill"] == 0:
                 entity.CLAWS_STUCK = False
+
+        # desabilita a chance 100% do modo IRON_FISTS e TITAN_WALL
+        if entity.passive == "warrior":
+            if entity.IRON_FISTS and skill["skill"] == 0:
+                entity.IRON_FISTS = False
+
+            if entity.TITAN_WALL and skill["skill"] == 0:
+                entity.TITAN_WALL = False
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stk2)
