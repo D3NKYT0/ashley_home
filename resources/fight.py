@@ -512,7 +512,7 @@ class Entity(object):
             soulshot = f"\n\n`Soulshot:` **{self.soulshot[1]}**"
             description += soulshot
 
-        if self.passive == "warrior":
+        if self.passive == "warrior" and self.rage_damage > 0:
             description += f"\n**Rage:** `{self.rage_damage}`"
 
         embed = disnake.Embed(
@@ -570,6 +570,16 @@ class Entity(object):
                             if self.status['hp'] < 0:
                                 self.status['hp'] = 0
 
+                            # novo sistema de reflect
+                            if "reflect" in self.effects.keys() and c == "reflect":
+                                if self.effects['reflect']['damage'] > 0:
+                                    self.effects["reflect"]['turns'] -= 1
+                                if self.effects["reflect"]['turns'] < 1:
+                                    del self.effects["reflect"]
+                                    _eff = "reflect"
+                                    reflect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{_eff.upper()}!**"
+                                    msg_return += f"{reflect}\n\n"
+
                             if damage > 0:
                                 _text5 = f"**{self.name.upper()}** `sofreu` **{damage}** `de dano " \
                                          f"por efeito de` **{c.upper()}!**{burn}"
@@ -609,8 +619,9 @@ class Entity(object):
                         _text7 = f"**{self.name.upper()}** `esta sobe o efeito de` **{c.upper()}!**"
                         msg_return += f"{_text7}\n\n"
 
-                    if self.effects[c]['turns'] > 0:
-                        if c not in ["duelist"]:  # efeitos eternos
+                    if c not in ["duelist", "reflect"]:  # efeitos eternos
+
+                        if self.effects[c]['turns'] > 0:
                             if "reflect" in self.effects.keys():
                                 if self.effects['reflect']['damage'] > 0:
                                     self.effects['reflect']['damage'] = 0
@@ -618,12 +629,12 @@ class Entity(object):
                             else:
                                 self.effects[c]['turns'] -= 1
 
-                    if self.effects[c]['turns'] < 1:
-                        del self.effects[c]
-                        if "self" in c:
-                            c = "PASSIVA"
-                        and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
-                        msg_return += f"{and_effect}\n\n"
+                        if self.effects[c]['turns'] < 1:
+                            del self.effects[c]
+                            if "self" in c:
+                                c = "PASSIVA"
+                            and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
+                            msg_return += f"{and_effect}\n\n"
 
         if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
             self.data["salvation"] = False
@@ -1767,7 +1778,11 @@ class Entity(object):
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stk2)
-        damage = damage if not duelist else damage + int(damage / 100 * randint(40, 80))  # 40 a 80% de dano a mais
+        duel, duel_msg = damage + int(damage / 100 * randint(60, 90)), ""  # 60 a 90% de dano a mais
+        damage = damage if not duelist else duel
+        if duelist:
+            duel_msg += f'\n**{entity.name.upper()}** `adicinou` **{duel}** `de dano a mais, pelo ' \
+                           f'efeito` **duelist** `nesse turno.`'
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
         looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2 = self.verify_effect(entity)
@@ -1916,6 +1931,7 @@ class Entity(object):
                 descrip += rage_msg  # rage effect
                 descrip += looping_msg  # looping effect
                 descrip += charge_msg  # charge effect
+                descrip += duel_msg  # duelist effect
 
             elif hit_kill and not confusion:
                 if not self.is_boss and not self.is_mini_boss:
