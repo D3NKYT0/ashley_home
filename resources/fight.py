@@ -40,6 +40,7 @@ class Entity(object):
         self.is_ignition = False
         self.is_duelist = False
         self.is_charge = False
+        self.is_rage = False
 
         # informações gerais
         self.name = self.data['name']
@@ -107,7 +108,7 @@ class Entity(object):
                 self.progress = 0
 
                 self.passive_mode = 0
-                self.passive_key = ["def", "atk"]
+                self.passive_key = ["atk", "def"]
                 self.passive_progress = [0, 0]
 
             elif self.data['class_now'] == "necromancer":
@@ -197,7 +198,7 @@ class Entity(object):
         async def callback(self, interaction: disnake.Interaction):
             self.value = self.values[0]
             self.disabled = True
-            await interaction.response.edit_message(view=self.view)
+            await interaction.response.edit_message(view=None)
 
     @property
     def get_class(self):
@@ -320,15 +321,15 @@ class Entity(object):
             passive_amount = CLS[self.data['class_now']]["passive"]['amount']
             text_passive, _classes = "", ["necromancer", "priest", "warlock", "assassin", "wizard", "warrior"]
             if not self.is_passive and self.passive in _classes:
-
+                progress_now = self.progress
                 if self.passive == "warrior":
                     key = self.passive_key[self.passive_mode]
                     passive_name = CLS[self.data['class_now']]["passive"][key]['name']
                     passive_icon = CLS[self.data['class_now']]["passive"][key]['icon']
                     passive_amount = CLS[self.data['class_now']]["passive"][key]['amount']
-                    self.progress = self.passive_progress[self.passive_mode]
+                    progress_now = self.passive_progress[self.passive_mode]
 
-                text_passive += f"Progress: {self.progress}/{passive_amount}"
+                text_passive += f"Progress: {progress_now}/{passive_amount}"
 
                 selection = disnake.SelectOption(
                     emoji=passive_icon,
@@ -413,6 +414,16 @@ class Entity(object):
                 value=str(0)
             )
             self.OPTIONS.append(selection)
+
+        if self.is_passive and self.passive == "necromancer":
+            self.OPTIONS.append(
+                disnake.SelectOption(
+                    emoji="<:skill_base:912134358813523989>",
+                    label="0 - SKILL BASE | COMUM",
+                    description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
+                    value=str(0)
+                )
+            )
 
         tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
@@ -500,6 +511,9 @@ class Entity(object):
         if self.soulshot[0]:
             soulshot = f"\n\n`Soulshot:` **{self.soulshot[1]}**"
             description += soulshot
+
+        if self.passive == "warrior":
+            description += f"\n**Rage:** `{self.rage_damage}`"
 
         embed = disnake.Embed(
             title=title,
@@ -736,18 +750,18 @@ class Entity(object):
                         # habilita passiva do warrior (modo atk)
                         if "duelist" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
-                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva` **IRON FISTS** `por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
-                            self.passive_mode = 1
+                            self.passive_mode = 0
 
                         # habilita passiva do warrior (modo def)
                         if "barrier" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
-                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva` **TITAN WALL** `por` ' \
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
-                            self.passive_mode = 0
+                            self.passive_mode = 1
 
         return msg_return, entity
 
@@ -939,7 +953,7 @@ class Entity(object):
                         self.skill = CLS[self._class]['base_skill']
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
-                        if self.is_passive and self.passive == "warrior":
+                        if self_passive and self.passive == "warrior":
                             _action = randint(15, 30)  # velocidade da progreção
                             self.passive_progress[self.passive_mode] += _action
                             if self.passive_progress[self.passive_mode] >= 100 and not self.is_passive:
@@ -1381,7 +1395,7 @@ class Entity(object):
         if not self.is_passive and self.passive == "necromancer":
             msg_return, entity = self.self_drain_effect_resolve(msg_return, entity)
 
-        if not self.is_passive and self.passive in ["priest", "warlock", "assassin", "wizard"]:
+        if not self.is_passive and self.passive in ["priest", "warlock", "assassin", "wizard", "warrior"]:
             msg_return, entity = self.self_passive_effect_resolve(msg_return, entity)
 
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return, entity)
@@ -1462,6 +1476,10 @@ class Entity(object):
 
                 chance = True if chance_effect > rate_chance else False
 
+                # o primeiro rage sempre vai funcionar
+                if c == "rage" and not entity.is_rage:
+                    entity.is_rage, chance = True, True
+
                 # o primeiro charge sempre vai funcionar
                 if c == "charge" and not entity.is_charge:
                     entity.is_charge, chance = True, True
@@ -1522,13 +1540,13 @@ class Entity(object):
                         if test:
                             self.effects[c] = skill['effs'][self.ls][c]
                             min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
                             min_turn, max_turn = 2, skill['effs'][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
