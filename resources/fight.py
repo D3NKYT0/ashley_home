@@ -576,6 +576,17 @@ class Entity(object):
                                     self.effects["silencio"] = eff
                                     burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
 
+                            if c == "judgment":
+                                etp1, etp2 = False, False
+                                if "veneno" in self.effects.keys():
+                                    if self.effects["veneno"]["turns"] > 0:
+                                        etp1 = True
+                                if "queimadura" in self.effects.keys():
+                                    if self.effects["queimadura"]["turns"] > 0:
+                                        etp2 = True
+                                if etp1 and etp2:
+                                    damage += damage * 10
+
                             self.status['hp'] -= damage
                             if self.status['hp'] < 0:
                                 self.status['hp'] = 0
@@ -1462,8 +1473,11 @@ class Entity(object):
 
     def verify_effect(self, entity):
         looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
-        duelist, stk1, stk2, lethal = False, False, False, False
+        duelist, stk1, stk2, lethal, ds = False, False, False, False, False
         if self.effects is not None:
+            if "dualshot" in self.effects.keys():
+                if self.effects["dualshot"]['turns'] > 0:
+                    ds = True
             if "target" in self.effects.keys():
                 if self.effects["target"]['turns'] > 0:
                     stk1 = True
@@ -1497,7 +1511,7 @@ class Entity(object):
                     if "bluff" in self.effects.keys() and "cegueira" in self.effects.keys():
                         if self.effects["bluff"]["turns"] > 0 and self.effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lethal
+        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lethal, ds
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
 
@@ -1791,7 +1805,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt = self.verify_effect(entity)
+        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect(entity)
         half_life_priest, lvs_skill, barrier, rage, charge = False, 1, False, False, False
 
         if "barrier" in self.effects.keys():
@@ -1853,7 +1867,7 @@ class Entity(object):
                            f'efeito` **duelist** `nesse turno.`'
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt = self.verify_effect(entity)
+        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect(entity)
 
         msg_hl_priest, lethal = "", lt
         if stk1 and stk2:
@@ -1896,12 +1910,19 @@ class Entity(object):
             entity.effects['reflect']['damage'] = reflect_damage
 
         looping_msg, total_bonus_dn = "\n", 0
-        if looping:
+        if lp:
             for _ in range(self.effects["looping"]["turns"]):
                 bonus_damage = randint(int(damage * 0.40), int(damage * 0.80))
                 total_bonus_dn += bonus_damage
             looping_msg += f'\n**{entity.name.upper()}** `adicinou` **{total_bonus_dn}** `de dano a mais, pelo ' \
                            f'efeito` **looping** `ter pego` **{self.effects["looping"]["turns"]}x** ` nesse turno.`'
+
+        dualshot_msg, total_bonus_ds = "\n", 0
+        if ds:
+            bonus_damage = randint(int(damage * 0.75), int(damage * 0.95))
+            total_bonus_ds += bonus_damage
+            dualshot_msg += f'\n**{entity.name.upper()}** `adicinou` **{total_bonus_ds}** `de dano a mais, pelo ' \
+                            f'efeito` **dualshot** `ter pego nesse turno.`'
 
         salvation = self.data["salvation"]
         if not self.is_boss and not self.is_mini_boss:
@@ -2019,6 +2040,7 @@ class Entity(object):
                 descrip += looping_msg  # looping effect
                 descrip += charge_msg  # charge effect
                 descrip += duel_msg  # duelist effect
+                descrip += dualshot_msg  # dualshot effect
 
             elif hit_kill and not confusion:
                 if not self.is_boss and not self.is_mini_boss:
