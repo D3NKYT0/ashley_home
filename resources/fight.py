@@ -540,7 +540,11 @@ class Entity(object):
 
                     if "type" in self.effects[c].keys():
                         if 'damage' in self.effects[c]['type']:
-                            damage, burn, barrier_msg = self.effects[c]['damage'], "", ""
+                            damage, burn, barrier_msg, detached = self.effects[c]['damage'], "", "", False
+
+                            if "detached" in self.effects.keys():
+                                if self.effects["detached"]["turns"] > 0:
+                                    detached = True
 
                             if "barrier" in self.effects.keys():
                                 if self.effects["barrier"]['turns'] > 0:
@@ -548,10 +552,11 @@ class Entity(object):
                                     barrier_msg += f" `por causa do efeito de` **barrier**"
 
                             if c in ["queimadura", "fireball"] and randint(1, 2) == 2:
-                                bb = int(damage / 100 * randint(50, 100))
+                                bb = int(damage / 100 * randint(50 if not detached else 80, 100))
                                 damage += bb
                                 burn += f" `levou {bb}% a mais por queimadura profunda`"
-                                if randint(1, 100) <= 15:
+                                _chance, percent = randint(1, 100), 15 if not detached else 25
+                                if _chance <= percent:
                                     self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                     burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
 
@@ -567,11 +572,11 @@ class Entity(object):
                                                     f"**{entity.name.upper()}**"
 
                             if c == "veneno" and randint(1, 2) == 2:
-                                bb = int(damage / 100 * randint(50, 100))
+                                bb = int(damage / 100 * randint(50 if not detached else 80, 100))
                                 damage += bb
                                 burn += f" `levou {bb}% a mais por intoxicação aguda`"
-                                _chance = randint(1, 100)
-                                if _chance <= 15:
+                                _chance, percent = randint(1, 100), 15 if not detached else 50
+                                if _chance <= percent:
                                     eff = {"type": "normal", "turns": randint(2, 4), "damage": None}
                                     self.effects["silencio"] = eff
                                     burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
@@ -808,17 +813,16 @@ class Entity(object):
     async def turn(self, ctx, user, entity, wave_now=0):
         msg_return, stun, ice, self.skill = "", False, False, None,
         skills, effects = list(self.skills.keys()), [eff.lower() for eff in self.effects.keys()]
-        skills_verify, skills_now_verify = [sk for sk in skills], dict(self.skills)
+        skills_verify, skills_now = [sk for sk in skills], self.skills
 
-        skills_now = self.skills
         if self.is_passive and self.passive == "necromancer":
-            skills_now = self.skills_p
             skills = list(self.skills_p.keys())  # altera as skills do necro
+            skills_verify, skills_now = [sk for sk in skills], self.skills_p
 
         if "ignition" in entity.effects.keys():
             if entity.effects["ignition"]["turns"] > 0 and self.passive == "wizard":
-                skills_now = self.skills_p
-                skills = list(self.skills_p.keys())  # altera a skill 5 do wizard
+                skills = list(self.skills_p.keys())  # altera a skill 5 do wizardp
+                skills_verify, skills_now = [sk for sk in skills], self.skills_p
 
         if self.is_player:
             verify = await self.verify_equips(ctx)
@@ -1156,6 +1160,9 @@ class Entity(object):
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
+
+                        if self.is_passive and self.passive == "necromancer":
+                            self.skill = CLS[self._class]['passive']["0"]
 
                         if self.is_passive and self.passive == "warrior" and not not_is_now:
                             self.is_passive, self.progress = False, 0
@@ -1550,6 +1557,15 @@ class Entity(object):
                 rate_chance -= entity.status['luk'] * 0.5 if entity.status['luk'] > 0 else 0
 
                 chance = True if chance_effect > rate_chance else False
+
+                # detached sempre vai funcionar
+                if c == "detached":
+                    chance = True
+
+                # sistema de detached
+                if c == "veneno" and "detached" in self.effects.keys():
+                    if self.effects["detached"]["turns"] > 0:
+                        chance = True
 
                 # o primeiro rage sempre vai funcionar
                 if c == "rage" and not entity.is_rage:
