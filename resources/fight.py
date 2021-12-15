@@ -578,14 +578,20 @@ class Entity(object):
 
                             if c == "judgment":
                                 etp1, etp2 = False, False
+
                                 if "veneno" in self.effects.keys():
                                     if self.effects["veneno"]["turns"] > 0:
                                         etp1 = True
+
                                 if "queimadura" in self.effects.keys():
                                     if self.effects["queimadura"]["turns"] > 0:
                                         etp2 = True
-                                if etp1 and etp2:
-                                    damage += damage * 10
+                                        
+                                if etp1:
+                                    damage += damage * 5
+
+                                if etp2:
+                                    damage += damage * 5
 
                             self.status['hp'] -= damage
                             if self.status['hp'] < 0:

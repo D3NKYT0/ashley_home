@@ -275,7 +275,7 @@ class Database(object):
 
         for it in items.keys():
             if wave:
-                if len(response) <= 950:
+                if len(response) <= 900:
                     response += f"{self.bot.items[it][0]} **{items[it]}** `{self.bot.items[it][1].upper()}`\n"
                 else:
                     reward_list.append(response)
