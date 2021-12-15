@@ -129,11 +129,11 @@ class Ashley(commands.AutoShardedBot):
             self.event_special = False
 
         # info bot
-        self.server_ = "ORACLE"
+        self.server_ = "HEROKU"
         self.github = "https://github.com/D3NKYT0/ashley_home"
         self.progress = f"V.2 -> {_auth['version']}"
         self.python_version = platform.python_version()
-        self.version_str = f"2.2.0"
+        self.version_str = f"2.2.5"
         self.version = f"API: {disnake.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes

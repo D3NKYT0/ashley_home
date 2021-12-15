@@ -987,7 +987,12 @@ class Entity(object):
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
                         if self_passive and self.passive == "warrior":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(15, 30)  # velocidade da
+
+                            if "impulse" in entity.effects.keys():
+                                if entity.effects["impulse"]["turns"] > 0:
+                                    _action = randint(15, 30)  # bonus de impulse
+
                             self.passive_progress[self.passive_mode] += _action
                             if self.passive_progress[self.passive_mode] >= 100 and not self.is_passive:
                                 self.passive_progress[self.passive_mode] = 100
@@ -1592,13 +1597,13 @@ class Entity(object):
                         if test:
                             self.effects[c] = skill['effs'][self.ls][c]
                             min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
                             min_turn, max_turn = 2, skill['effs'][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
