@@ -8,7 +8,7 @@ from resources.db import Database
 class InviteClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.url = "https://disnakeapp.com/oauth2/authorize?client_id=478977311266570242&scope=bot&" \
+        self.url = "https://discordapp.com/oauth2/authorize?client_id=478977311266570242&scope=bot&" \
                    "permissions=806218998"
         self.color = self.bot.color
 
@@ -25,7 +25,7 @@ class InviteClass(commands.Cog):
                 description=f'<:safada:530029764061298699>│[CLIQUE AQUI PARA ME ADICIONAR NO SEU '
                             f'SERVIDOR]({self.url})')
 
-            await ctx.author.send("<:confirmed:721581574461587496>│https://disnake.gg/rYT6QrM")
+            await ctx.author.send("<:confirmed:721581574461587496>│https://discord.gg/rYT6QrM")
             await ctx.author.send(embed=embed)
             await ctx.send("<:send:519896817320591385>│`Obrigado por querer participar da` "
                            "**MINHA COMUNIDADE** `enviei para seu privado um convite "

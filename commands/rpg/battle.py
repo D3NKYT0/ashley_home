@@ -134,7 +134,7 @@ class Battle(commands.Cog):
         # config CHAMPIONS
         champion = False
         chance_champion = randint(1, 100)
-        if chance_champion <= 15 and player_level_now >= 61:
+        if chance_champion <= 15 and player_level_now >= 61 and not mini_boss:
             champion = True
 
         db_monster = extension.set_monster(db_player, mini_boss, min_max, champion)

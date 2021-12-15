@@ -586,7 +586,7 @@ class Entity(object):
                                 if "queimadura" in self.effects.keys():
                                     if self.effects["queimadura"]["turns"] > 0:
                                         etp2 = True
-                                        
+
                                 if etp1:
                                     damage += damage * 5
 

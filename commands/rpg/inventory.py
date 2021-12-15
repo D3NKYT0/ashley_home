@@ -16,6 +16,8 @@ class InventoryClass(commands.Cog):
         self.color = self.bot.color
         self.botmsg = {}
         self.he = self.bot.help_emoji
+        self.sets = self.bot.config['attribute']['sets']
+        self.set_equips = self.bot.config["set_equips"]
 
     def rarity_item(self, data):
         equips_list = list()
@@ -515,6 +517,136 @@ class InventoryClass(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @equip.command(name='set', aliases=['s'])
+    async def _set(self, ctx, *, set_equip=None):
+        """Esse comando equipa um conjunto de equipamentos no seu personagem"""
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        _class = ["paladin", "warrior", "necromancer", "wizard", "warlock", "priest", "assassin"]
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if set_equip is None:
+            return await ctx.send("<:negate:721581573396496464>│`Você precisa colocar o nome de um conjunto que deseja"
+                                  " equipar em voce:` **ash equip set leather hero** `voce consegue ver os conjuntos"
+                                  " usando o comando:` **ash sets**")
+
+        if set_equip not in self.sets.keys():
+            return await ctx.send("<:negate:721581573396496464>│`ESSE CONJUNTO NAO EXISTE...`\n"
+                                  "`Verifique se vc digitou o comando corretamente:`\n"
+                                  "`Ex:` **ash equip set leather hero**")
+
+        _classes = data["rpg"]["class_now"]
+        _db_class = data["rpg"]["sub_class"][_classes]
+
+        equips_list = list()
+        for ky in self.bot.config['equips'].keys():
+            for k, v in self.bot.config['equips'][ky].items():
+                equips_list.append((k, v))
+
+        if "divine" in set_equip and _db_class['level'] < 99:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ SÓ PODE USAR ESSE CONJUNTO NO LEVEL 99!`")
+        elif "hero" in set_equip and _db_class['level'] < 80:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ SÓ PODE USAR ESSE CONJUNTO ABAIXO DO LEVEL 80!`")
+        elif "violet" in set_equip and _db_class['level'] < 61:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NÃO PODE USAR ESSE CONJUNTO ABAIXO DO LEVEL 61!`")
+        elif "inspiron" in set_equip and _db_class['level'] < 41:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NÃO PODE USAR ESSE CONJUNTO ABAIXO DO LEVEL 41!`")
+        elif "mystic" in set_equip and _db_class['level'] < 21:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NÃO PODE USAR ESSE CONJUNTO ABAIXO DO LEVEL 21!`")
+        elif "silver" in set_equip and _db_class['level'] < 11:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NÃO PODE USAR ESSE CONJUNTO ABAIXO DO LEVEL 11!`")
+
+        if "jewel" not in set_equip:
+            if "leather" not in set_equip and _classes in ["assassin", "priest"]:
+                return await ctx.send("<:negate:721581573396496464>│`SUA CLASSE NAO PODE USAR ESSE CONJUNTO...`")
+            if "platinum" not in set_equip and _classes in ["warrior", "paladin"]:
+                return await ctx.send("<:negate:721581573396496464>│`SUA CLASSE NAO PODE USAR ESSE CONJUNTO...`")
+            if "cover" not in set_equip and _classes in ["necromancer", "wizard", "warlock"]:
+                return await ctx.send("<:negate:721581573396496464>│`SUA CLASSE NAO PODE USAR ESSE CONJUNTO...`")
+
+        equipped_items = list()
+        for value in update['rpg']["equipped_items"].values():
+            for i in equips_list:
+                if i[0] == value:
+                    equipped_items.append(i[0])
+
+        items_inventory = list()
+        for key in update['rpg']["items"].keys():
+            for i in equips_list:
+                if i[0] == key:
+                    items_inventory.append(i[0])
+
+        if "jewel" in set_equip:
+            set_now = self.sets[set_equip]
+        else:
+            set_now = self.set_equips[self.sets[set_equip]]["set"]
+
+        for i in set_now:
+            if i not in items_inventory:
+                return await ctx.send("<:negate:721581573396496464>│`VOCE NAO TEM UM DOS ITENS DESSE CONJUNTO!`")
+
+        # ------------------------------------------------------------------------------------------------------------
+
+        for item in set_now:
+
+            data_item = None
+            for di in equips_list:
+                if di[0] == item:
+                    data_item = di[1]
+
+            if data_item is None:
+                print(f"ERRO NA DATA DO ITEM: {item}")
+                continue
+
+            if item in equipped_items:
+                continue
+
+            else:
+                msg = await ctx.send(f"<a:loading:520418506567843860>│`EQUIPANDO` **{data_item['name'].upper()}**")
+                await sleep(1)
+
+                # aqui esta tirando o item do inventario
+                update['rpg']['items'][item] -= 1
+                if update['rpg']['items'][item] < 1:
+                    del update['rpg']['items'][item]
+
+                # se o slot do item esta vazio, apenas equipa o item!
+                if update['rpg']["equipped_items"][data_item["slot"]] is None:
+                    update['rpg']["equipped_items"][data_item["slot"]] = item
+                    await msg.delete()
+
+                # caso contrario, retira o item para add o novo
+                else:
+                    # retira o item antigo de coloca no inventario de volta!
+                    item_equipped = update['rpg']["equipped_items"][data_item["slot"]]
+                    if item_equipped in update['rpg']['items'].keys():
+                        update['rpg']['items'][item_equipped] += 1
+                    else:
+                        update['rpg']['items'][item_equipped] = 1
+
+                    # adiciona o item novo no lugar do antigo
+                    update['rpg']["equipped_items"][data_item["slot"]] = item
+
+                    await sleep(1)
+                    await msg.delete()
+
+        await self.bot.db.update_data(data, update, 'users')
+        await ctx.send(f"<:confirmed:721581574461587496>│`O CONJUNTO` **{set_equip.upper()}** "
+                       f"`FOI EQUIPADO COM SUCESSO!`")
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='inventory', aliases=['inventario', 'i'])
     async def inventory(self, ctx, page: int = 0):
         """Comando usado pra ver seu inventario
@@ -523,6 +655,17 @@ class InventoryClass(commands.Cog):
         embed = ['Inventário de itens:', self.color, 'Items: \n']
         num = page - 1 if page > 0 else None
         await paginator(self.bot, self.i, data['inventory'], embed, ctx, num)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='sets', aliases=['conjuntos'])
+    async def sets(self, ctx):
+        """Comando usado pra ver os conjuntos de equipamentos disponiveis"""
+        sets = ""
+        for conjunto in self.sets:
+            sets += f"\n**{conjunto.upper()}**"
+        await ctx.send(f"<:confirmed:721581574461587496>|`SEGUE ABAIXO A LISTA DOS CONJUNTOS DISPONIVEIS:`\n{sets}")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
