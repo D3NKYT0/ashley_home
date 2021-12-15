@@ -914,9 +914,14 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embed = disnake.Embed(description=description, color=0x000000)
-                            embed.set_author(name=user.name, icon_url=user.display_avatar)
-                            await ctx.send(embed=embed)
+                            embedd = disnake.Embed(description=description, color=0x000000)
+                            embedd.set_author(name=user.name, icon_url=user.display_avatar)
+                            await ctx.send(embed=embedd)
+
+                            view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                            view.add_item(select)
+                            await ctx.send(embed=embed, view=view)
+
                             continue
 
                     potion_limit = 3 if not self.is_wave else 3 + (wave_now // 2)
@@ -946,9 +951,14 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embed = disnake.Embed(description=description, color=0x000000)
-                            embed.set_author(name=user.name, icon_url=user.display_avatar)
-                            await ctx.send(embed=embed)
+                            embedd = disnake.Embed(description=description, color=0x000000)
+                            embedd.set_author(name=user.name, icon_url=user.display_avatar)
+                            await ctx.send(embed=embedd)
+
+                            view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                            view.add_item(select)
+                            await ctx.send(embed=embed, view=view)
+
                             continue
 
                     if int(answer.values[0]) == len(skills) + 3:
