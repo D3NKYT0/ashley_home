@@ -421,14 +421,15 @@ class Entity(object):
             self.OPTIONS.append(selection)
 
         if self.is_passive and self.passive == "necromancer":
-            self.OPTIONS.append(
-                disnake.SelectOption(
-                    emoji="<:skill_base:912134358813523989>",
-                    label="0 - SKILL BASE | COMUM",
-                    description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
-                    value=str(0)
-                )
+            passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
+            passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_name.upper()} | SDM MODE",
+                description=f"Dano: base | Mana: 0 | Efeito(s): detached",
+                value=str(0)
             )
+            self.OPTIONS.append(selection)
 
         tot, attacks = len(skills), dict()
         for _ in range(0, len(skills)):
