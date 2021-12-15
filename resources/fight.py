@@ -410,7 +410,7 @@ class Entity(object):
         if self.is_passive and self.passive == "warrior":
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.passive_mode}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.passive_mode}"]['icon']
-            text_passive = "sem efeito" if self.passive_mode == 0 else "sem efeito"
+            text_passive = "impulse" if self.passive_mode == 0 else "impulse"
             _mode = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
             selection = disnake.SelectOption(
                 emoji=passive_icon,
@@ -599,7 +599,7 @@ class Entity(object):
                             else:
                                 if c not in ["reflect"]:
                                     emoji = "<a:alert:919041626486218783>"
-                                    _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano  de **{c.upper()}!**"
+                                    _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano  de` **{c.upper()}!**"
                                     _text5 += barrier_msg
                                     msg_return += f"{_text5}\n\n"
 
@@ -1558,10 +1558,10 @@ class Entity(object):
 
                 if entity.passive == "warrior":
                     if entity.IRON_FISTS and skill["skill"] == 0:
-                        chance = False
+                        chance = True
 
                     if entity.TITAN_WALL and skill["skill"] == 0:
-                        chance = False
+                        chance = True
 
                 negate_fisico = False
                 if "target" in entity.effects.keys():
@@ -1843,11 +1843,19 @@ class Entity(object):
         res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage, lethal)
         defense, critical, damage = self.pdef if skill['type'] == "fisico" else self.mdef, res[0], res[1]
 
+        if self.passive == "warrior":
+            if self.TITAN_WALL:
+                defense = self.ultimate_defense
+
         if barrier and skill['type'] == "magico":  # aumenta a defesa magica
             defense += defense // 100 * randint(40, 80)
 
         if skill['type'] == "especial":
             defense = choice([self.pdef, self.mdef])
+
+            if self.passive == "warrior":
+                if self.TITAN_WALL:
+                    defense = self.ultimate_defense
 
         reflect_damage = 0
         if "reflect" in entity.effects.keys():
@@ -1872,15 +1880,6 @@ class Entity(object):
 
         damage += total_bonus_dn  # adicionado antes da defesa / adição a loop
 
-        # charge
-        charge_msg = ""
-        if charge and entity.rage_damage > 0:
-            charge_damage = entity.rage_damage
-            entity.rage_damage = 0
-            damage += charge_damage
-            charge_msg += f'\n**{entity.name.upper()}** `adicinou` **{charge_damage}** `de dano a mais, pelo ' \
-                          f'efeito` **charge** `ter pego nesse turno.`'
-
         # NOVO SISTEMA DE DEFESA
         armor_now, damage_now = defense // 50, damage // 100
         armor_now, total_percent = 64 if armor_now >= 65 else armor_now, 65
@@ -1895,14 +1894,29 @@ class Entity(object):
                 armor_now += 10
                 total_percent += 10
 
+        if self.passive == "warrior":
+            if self.TITAN_WALL:
+                armor_now += 25
+                total_percent += 25
+
         defended = randint(armor_now * damage_now, total_percent * damage_now) if defense > 0 else 0
 
-        defended = 0 if hold else defended  # efeito da hold
-        rage_msg = ""
+        defended, rage_msg = 0 if hold else defended, ""  # efeito da hold
         if rage:  # sistema de acumulação (RAGE)
-            self.rage_damage += defended // 2
-            defended = defended // 2
+            rage_damage_now = int(defended / 100 * randint(50, 75))
+            self.rage_damage += rage_damage_now
+            defended = defended - rage_damage_now
             rage_msg += f" `e` **{self.name.upper()}** `acumulou` **{defended}** `de dano, pelo efeito de` **rage**"
+
+        # charge
+        charge_msg = ""
+        if charge and entity.rage_damage > 0:
+            charge_damage = entity.rage_damage
+            entity.rage_damage = 0
+            damage += charge_damage
+            charge_msg += f'\n**{entity.name.upper()}** `adicinou` **{charge_damage}** `de dano a mais, pelo ' \
+                          f'efeito` **charge** `ter pego nesse turno.`'
+
         dn = damage - defended  # dano verdadeiro.
 
         if reflect:

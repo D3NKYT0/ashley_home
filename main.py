@@ -114,8 +114,8 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.is_ashley = True  # Default: False
-        self.d_event = [2021, 12, 1, (12, 31)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "NATAL / FIM DE ANO"  # NOME DO EVENTO ATUAL
+        self.d_event = [2022, 1, 1, (1, 7)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "ANO NOVO"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
