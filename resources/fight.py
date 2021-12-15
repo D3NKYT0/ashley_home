@@ -987,7 +987,7 @@ class Entity(object):
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
                         if self_passive and self.passive == "warrior":
-                            _action = randint(15, 30)  # velocidade da
+                            _action = randint(15, 30)  # velocidade da progreção
 
                             if "impulse" in entity.effects.keys():
                                 if entity.effects["impulse"]["turns"] > 0:
@@ -1462,7 +1462,7 @@ class Entity(object):
 
     def verify_effect(self, entity):
         looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
-        duelist, stk1, stk2 = False, False, False
+        duelist, stk1, stk2, lethal = False, False, False, False
         if self.effects is not None:
             if "target" in self.effects.keys():
                 if self.effects["target"]['turns'] > 0:
@@ -1493,10 +1493,11 @@ class Entity(object):
                     hold = True
             if "lethal" in self.effects.keys():
                 if self.effects["lethal"]["turns"] > 0:
+                    lethal = True
                     if "bluff" in self.effects.keys() and "cegueira" in self.effects.keys():
                         if self.effects["bluff"]["turns"] > 0 and self.effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2
+        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lethal
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
 
@@ -1511,6 +1512,10 @@ class Entity(object):
                 if skill["name"] == "SoD Stack [4]":
                     # se o stack da passiva do warlock for 4 (o efeito sobrepoe o strike)
                     act_eff = True
+
+        luck_skill, eff_now = 0, 0
+        if entity.passive == "priest" and skill["skill"] == 0 and entity.is_passive:
+            luck_skill = choice([0, 1])
 
         if skill['effs'] is not None and act_eff:
 
@@ -1578,6 +1583,10 @@ class Entity(object):
                     if entity.TITAN_WALL and skill["skill"] == 0:
                         chance = True
 
+                if entity.passive == "priest" and skill["skill"] == 0 and entity.is_passive:
+                    if luck_skill == eff_now:
+                        chance = True
+
                 negate_fisico = False
                 if "target" in entity.effects.keys():
                     if entity.effects["target"]['turns'] > 0:
@@ -1621,6 +1630,8 @@ class Entity(object):
                     _text3 = f'🔴 **{self.name.upper()}** `não recebeu o efeito de` **{c.upper()}**'
                     _text3 += negate
                     msg_return += f"{_text3}\n\n"
+
+                eff_now += 1
 
         if skill['effs'] is not None and not act_eff:
             # branco
@@ -1677,7 +1688,7 @@ class Entity(object):
 
         return damage
 
-    async def chance_critical(self, ctx, enemy_cc, enemy_luk, test, skull, damage, lethal):
+    async def chance_critical(self, ctx, enemy_cc, enemy_luk, test, skull, damage):
         critical, critical_chance, critical_damage, value_critical = False, randint(1, 30), enemy_cc[0], 29
         if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
             value_critical = 27
@@ -1685,9 +1696,12 @@ class Entity(object):
             value_critical = 25
         if test:
             value_critical -= int(enemy_luk / 5)
+
         if "cegueira" in self.effects.keys():
-            lethal = True if self.effects["cegueira"]['turns'] > 0 else False
-        if critical_chance >= value_critical or lethal:
+            if self.effects["cegueira"]['turns'] > 0:
+                critical_chance = value_critical + 1
+
+        if critical_chance >= value_critical:
             critical = True
 
         if skull:
@@ -1777,7 +1791,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2 = self.verify_effect(entity)
+        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt = self.verify_effect(entity)
         half_life_priest, lvs_skill, barrier, rage, charge = False, 1, False, False, False
 
         if "barrier" in self.effects.keys():
@@ -1839,9 +1853,9 @@ class Entity(object):
                            f'efeito` **duelist** `nesse turno.`'
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2 = self.verify_effect(entity)
+        looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt = self.verify_effect(entity)
 
-        msg_hl_priest = ""
+        msg_hl_priest, lethal = "", lt
         if stk1 and stk2:
             msg_hl_priest += f"**{self.name.upper()}** `levou o combo especial do` **{entity.name.upper()}**"
 
@@ -1855,7 +1869,7 @@ class Entity(object):
                     bda = 0  # o efeito de skull elimita o adicional da soulshot
                 damage += bda
 
-        res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage, lethal)
+        res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage)
         defense, critical, damage = self.pdef if skill['type'] == "fisico" else self.mdef, res[0], res[1]
 
         if self.passive == "warrior":
@@ -1871,6 +1885,9 @@ class Entity(object):
             if self.passive == "warrior":
                 if self.TITAN_WALL:
                     defense = self.ultimate_defense
+
+        if stk2 or lethal:
+            defense = defense // 2
 
         reflect_damage = 0
         if "reflect" in entity.effects.keys():
