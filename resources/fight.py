@@ -733,24 +733,6 @@ class Entity(object):
 
         return msg_return, entity
 
-    def self_drain_effect_resolve(self, msg_return, entity):
-        if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
-            if self.skill['effs'] is not None:
-                if self.is_player and not self.is_passive:
-                    active_passive = True
-                    if "self_drain" in self.effects.keys():
-                        if self.effects["self_drain"]["turns"] >= 1:
-                            active_passive = False
-                    if active_passive:
-                        lvs = self.level_skill[self.skill['skill'] - 1]
-                        self.ls = lvs if 0 <= lvs <= 9 else 9
-                        if "drain" in self.skill['effs'][self.ls].keys():
-                            self.effects["self_drain"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
-                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
-                                     f'**{self.effects["self_drain"]["turns"]}** `turno(s)`'
-                            msg_return += f"{_text3}\n\n"
-        return msg_return, entity
-
     def self_passive_effect_resolve(self, msg_return, entity):
         if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
             if self.skill['effs'] is not None:
@@ -764,6 +746,13 @@ class Entity(object):
                     if active_passive:
                         lvs = self.level_skill[self.skill['skill'] - 1]
                         self.ls = lvs if 0 <= lvs <= 9 else 9
+
+                        # habilita passiva do necromancer
+                        if "drain" in self.skill['effs'][self.ls].keys():
+                            self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
 
                         # habilita passiva do priest
                         if "hold" in self.skill['effs'][self.ls].keys():
@@ -867,27 +856,14 @@ class Entity(object):
         if stun is False and ice is False:
             if self.is_player:
 
-                # verificação da skill base do necro
-                self_drain = False
-                if effects is not None:
-                    if 'self_drain' in effects:
-                        if self.effects['self_drain']['turns'] > 0:
-                            self_drain = True
-
-                # verificação da skill base do priest / warlock / wizard / assassin
+                # verificação da skill passiva das classes
                 self_passive = False
                 if effects is not None:
                     if 'self_passive' in effects:
                         if self.effects['self_passive']['turns'] > 0:
                             self_passive = True
 
-                self_skill = False
-                if self_drain:
-                    self_skill = True
-                if self_passive:
-                    self_skill = True
-
-                res = self.get_skill_menu(entity, user, skills, wave_now, self_skill, skills_now)
+                res = self.get_skill_menu(entity, user, skills, wave_now, self_passive, skills_now)
                 embed, view, attacks, hate_no_mana, hate_no_limit = res[0], res[1], res[2], res[3], res[4]
                 _OPTIONS_LAST = self.OPTIONS.copy()
                 await ctx.send(embed=embed, view=view)
@@ -1003,10 +979,12 @@ class Entity(object):
                             self.is_combo = False
                             self.combo_cont = 0
 
-                        self.verify_combo(int(answer.values[0]) - 1)
+                        self.verify_combo(0)
 
                         self.skill = CLS[self._class]['base_skill']
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
+
+                        # ----------------------------------------------------------------------------------
 
                         if self_passive and self.passive == "warrior":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1039,9 +1017,6 @@ class Entity(object):
                         if self.is_passive and self.passive == "warrior":
                             self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
-                        if self.is_passive and self.passive == "assassin":
-                            self.skill = CLS[self._class]['passive']["0"]
-
                         if self_passive and self.passive == "assassin":
                             _action = randint(15, 30)  # velocidade da progreção
                             self.progress += _action
@@ -1064,8 +1039,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "wizard":
-                            self.skill = CLS[self._class]['passive'][f"{self.stack}"]
+                        if self.is_passive and self.passive == "assassin":
+                            self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "wizard":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1090,7 +1065,7 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "warlock":
+                        if self.is_passive and self.passive == "wizard":
                             self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "warlock":
@@ -1115,8 +1090,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "priest":
-                            self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
+                        if self.is_passive and self.passive == "warlock":
+                            self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "priest":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1140,16 +1115,19 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self_drain:
-                            drained = randint(15, 30)  # velocidade da progreção
-                            self.progress += drained
+                        if self.is_passive and self.passive == "priest":
+                            self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
+
+                        if self_passive and self.passive == "necromancer":
+                            _action = randint(15, 30)  # velocidade da progreção
+                            self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
 
                             if not self.is_passive and self.passive == "necromancer":
                                 especial = False
                                 if self.progress < 100:
-                                    description = f"**{user.name.upper()}** `VOCÊ ABSORVEU` **{drained}** `ALMAS!`"
+                                    description = f"**{user.name.upper()}** `VOCÊ ABSORVEU` **{_action}** `ALMAS!`"
                                 else:
                                     description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **SENHOR DA MORTE!**"
                                     self.is_passive, especial = True, True
@@ -1164,6 +1142,8 @@ class Entity(object):
 
                         if self.is_passive and self.passive == "necromancer":
                             self.skill = CLS[self._class]['passive']["0"]
+
+                        # ----------------------------------------------------------------------------------
 
                         if self.is_passive and self.passive == "warrior" and not not_is_now:
                             self.is_passive, self.passive_progress[self.passive_mode] = False, 0
@@ -1307,7 +1287,7 @@ class Entity(object):
                                     self.is_combo = False
                                     self.combo_cont = 0
 
-                                self.verify_combo(int(answer.values[0]) - 1)
+                                self.verify_combo(int(skills_now[self.skill]["skill"]))
 
                                 # sistema de level up das skills
                                 if skill_now in [n + 1 for n in range(len(skills))]:
@@ -1470,10 +1450,7 @@ class Entity(object):
 
         msg_return, entity = self.self_effect_resolve(msg_return, entity)
 
-        if not self.is_passive and self.passive == "necromancer":
-            msg_return, entity = self.self_drain_effect_resolve(msg_return, entity)
-
-        if not self.is_passive and self.passive in ["priest", "warlock", "assassin", "wizard", "warrior"]:
+        if not self.is_passive:
             msg_return, entity = self.self_passive_effect_resolve(msg_return, entity)
 
         effects, msg_return = await self.effects_resolve(ctx, effects, msg_return, entity)
