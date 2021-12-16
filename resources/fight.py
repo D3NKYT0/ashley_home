@@ -1013,7 +1013,7 @@ class Entity(object):
 
                             if "impulse" in entity.effects.keys():
                                 if entity.effects["impulse"]["turns"] > 0:
-                                    _action = randint(15, 30)  # bonus de impulse
+                                    _action = randint(40, 80)  # bonus de impulse
 
                             self.passive_progress[self.passive_mode] += _action
                             if self.passive_progress[self.passive_mode] >= 100 and not self.is_passive:
@@ -1166,7 +1166,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self.is_passive and self.passive == "warrior" and not not_is_now:
-                            self.is_passive, self.progress = False, 0
+                            self.is_passive, self.passive_progress[self.passive_mode] = False, 0
                             if self.passive_mode == 0:
                                 self.IRON_FISTS = True
                             else:
@@ -1725,7 +1725,8 @@ class Entity(object):
 
         return damage
 
-    async def chance_critical(self, ctx, enemy_cc, enemy_luk, test, skull, damage):
+    async def chance_critical(self, ctx, entity, test, skull, damage):
+        enemy_cc, enemy_luk = entity.cc, entity.status['luk']
         critical, critical_chance, critical_damage, value_critical = False, randint(1, 30), enemy_cc[0], 29
         if enemy_cc[1] in ['necromancer', 'wizard', 'warlock']:
             value_critical = 27
@@ -1733,6 +1734,13 @@ class Entity(object):
             value_critical = 25
         if test:
             value_critical -= int(enemy_luk / 5)
+
+        if entity.passive == "warrior":
+            if entity.IRON_FISTS:
+                critical_chance += critical_chance // 10
+
+            if entity.TITAN_WALL:
+                critical_chance -= critical_chance // 10
 
         if "cegueira" in self.effects.keys():
             if self.effects["cegueira"]['turns'] > 0:
@@ -1883,6 +1891,14 @@ class Entity(object):
 
         entity, msg_return, _eff, chance = resp[0], resp[1], resp[2], resp[3]
         damage = self.calc_damage_skill(skill, test, lvs, entity.cc, entity.status['atk'], half_life_priest, stk2)
+
+        if entity.passive == "warrior":
+            if entity.IRON_FISTS:  # passiva de atk do warrior
+                damage += int(damage / 100 * randint(60, 80))
+
+            if entity.TITAN_WALL:  # passiva de def do warrior
+                damage -= int(damage / 100 * randint(60, 80))
+
         duel, duel_msg = damage + int(damage / 100 * randint(60, 90)), ""  # 60 a 90% de dano a mais
         damage = damage if not duelist else duel
         if duelist:
@@ -1906,12 +1922,16 @@ class Entity(object):
                     bda = 0  # o efeito de skull elimita o adicional da soulshot
                 damage += bda
 
-        res = await self.chance_critical(ctx, entity.cc, entity.status['luk'], test, skull, damage)
+        res = await self.chance_critical(ctx, entity, test, skull, damage)
         defense, critical, damage = self.pdef if skill['type'] == "fisico" else self.mdef, res[0], res[1]
 
         if self.passive == "warrior":
             if self.TITAN_WALL:
                 defense = self.ultimate_defense
+
+        if self.passive == "warrior":
+            if self.IRON_FISTS:
+                defense -= defense // 2
 
         if barrier and skill['type'] == "magico":  # aumenta a defesa magica
             defense += defense // 100 * randint(40, 80)
@@ -1974,6 +1994,11 @@ class Entity(object):
             if self.TITAN_WALL:
                 armor_now += 25
                 total_percent += 25
+
+        if self.passive == "warrior":
+            if self.IRON_FISTS:
+                armor_now -= 10
+                total_percent -= 10
 
         defended = randint(armor_now * damage_now, total_percent * damage_now) if defense > 0 else 0
 
