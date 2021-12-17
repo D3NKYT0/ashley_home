@@ -8,6 +8,7 @@ commands.data.register
 commands.ashley.farm
 commands.bot.invite
 handler.on_command_error
+handler.on_slash_command_error
 commands.funny.ascii
 commands.funny.gif
 commands.funny.gossip

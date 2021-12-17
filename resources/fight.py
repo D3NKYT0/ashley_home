@@ -637,12 +637,20 @@ class Entity(object):
 
                                 damage = int((self.tot_mp / 100) * self.effects[c]['damage'])
 
-                                self.status['mp'] -= damage
-                                if self.status['mp'] < 0:
-                                    self.status['mp'] = 0
+                                if not self.is_player:
+                                    damage = damage * 10  # se nao for player o dano é no hp
+                                    self.status['hp'] -= damage
+                                    if self.status['hp'] < 0:
+                                        self.status['hp'] = 0
+
+                                else:
+                                    self.status['mp'] -= damage
+                                    if self.status['mp'] < 0:
+                                        self.status['mp'] = 0
 
                                 if damage > 0:
-                                    _text6 = f"**{self.name.upper()}** `teve` **{damage}** `de mana " \
+                                    _type = "mana" if not self.is_player else "hp"
+                                    _text6 = f"**{self.name.upper()}** `teve` **{damage}** `de {_type} " \
                                              f"drenada por efeito de` **{c.upper()}!**"
                                     msg_return += f"{_text6}\n\n"
 
@@ -875,9 +883,12 @@ class Entity(object):
                         return False
 
                     try:
-                        answer = await ctx.bot.wait_for('interaction', check=check, timeout=60.0)
+                        answer = await ctx.bot.wait_for('interaction', check=check, timeout=120.0)
                     except TimeoutError:
-                        return "COMANDO-CANCELADO"
+                        if self.is_wave and wave_now > 1:
+                            return "BATALHA-CANCELADA"
+                        else:
+                            return "COMANDO-CANCELADO"
 
                     # Apagar itens da lista
                     self.OPTIONS.clear()

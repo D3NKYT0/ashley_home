@@ -18,7 +18,7 @@ cor = {
 }
 
 
-class CommandErrorHandler(commands.Cog):
+class SlashCommandErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.color = self.bot.color
@@ -48,88 +48,94 @@ class CommandErrorHandler(commands.Cog):
         return False
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_slash_command_error(self, inter, error):
 
         if error.__str__() in ERRORS:
             return
 
         # Isso faz com que os comandos com argumentos invalidos tenham um retorno explicatorio!
         if isinstance(error, commands.BadArgument):
-            perms = ctx.channel.permissions_for(ctx.me)
+            perms = inter.channel.permissions_for(inter.me)
             if perms.send_messages and perms.read_messages:
-                ctx.command.reset_cooldown(ctx)
-                return await ctx.send(f'<:alert:739251822920728708>│`VOCE INSERIU UMA INFORMAÇÃO INVALIDA! POR FAVOR '
-                                      f'TENTE NOVAMENTE OU USE O COMANDO:` **ASH HELP {str(ctx.command).upper()}**'
-                                      f' `PARA MAIORES INFORMAÇÕES.`')
+                inter.command.reset_cooldown(inter)
+                return await inter.response.send_message(
+                    f'<:alert:739251822920728708>│`VOCE INSERIU UMA INFORMAÇÃO INVALIDA! POR FAVOR '
+                    f'TENTE NOVAMENTE OU USE O COMANDO:` **ASH HELP {str(inter.command).upper()}**'
+                    f' `PARA MAIORES INFORMAÇÕES.`')
 
         # Todos os eventos de erros ignorados, qualquer coisa ignorada retornará e impedirá que algo aconteça.
         if isinstance(error, commands.CommandNotFound) or isinstance(error, commands.UserInputError):
-            if self.bot.maintenance and ctx.author.id not in self.bot.testers:
-                perms = ctx.channel.permissions_for(ctx.me)
+            if self.bot.maintenance and inter.author.id not in self.bot.testers:
+                perms = inter.channel.permissions_for(inter.me)
                 if perms.send_messages and perms.read_messages:
                     embed = disnake.Embed(color=self.color, description=self.bot.maintenance_msg)
-                    return await ctx.send(embed=embed)
+                    return await inter.response.send_message(embed=embed)
             return
 
         # Qualquer comando desabilitado retornará uma mensagem de aviso
         if isinstance(error, commands.DisabledCommand):
-            perms = ctx.channel.permissions_for(ctx.me)
+            perms = inter.channel.permissions_for(inter.me)
             if perms.send_messages and perms.read_messages:
-                return await ctx.send(f'<:negate:721581573396496464>│**{ctx.command}** `foi desabilitado`')
+                return await inter.response.send_message(
+                    f'<:negate:721581573396496464>│**{inter.command}** `foi desabilitado`')
 
         # Manipulação de erros voltados para erro de checagem, aqui eu trato de maneira particular erros de Check
         # dentro dos comandos para fins pessoais, ignorando totalmente os padroes comuns.
         if isinstance(error, commands.CheckFailure):
             if error.__str__() == 'The check functions for command register guild failed.':
-                perms = ctx.channel.permissions_for(ctx.me)
+                perms = inter.channel.permissions_for(inter.me)
                 if perms.send_messages and perms.read_messages:
-                    return await ctx.send(f"<:negate:721581573396496464>│`VOCÊ NÃO TEM PERMISSÃO PARA USAR ESSE "
-                                          f"COMANDO!`")
+                    return await inter.response.send_message(
+                        f"<:negate:721581573396496464>│`VOCÊ NÃO TEM PERMISSÃO PARA USAR ESSE "
+                        f"COMANDO!`")
 
-            perms = ctx.channel.permissions_for(ctx.me)
+            perms = inter.channel.permissions_for(inter.me)
             if perms.send_messages and perms.read_messages:
-                return await ctx.send(f"{error}")
+                return await inter.response.send_message(f"{error}")
 
         # aqui faço as verificações dos cooldowns dos comandos padroes
         # obs: existem comandos com cooldowns personalizados que nao entram nesse contexto
         if isinstance(error, commands.CommandOnCooldown):
-            perms = ctx.channel.permissions_for(ctx.me)
-            if perms.send_messages and perms.read_messages and float("{:.2f}".format(error.retry_after)) > 6.0:
-                return await ctx.send(f"<:alert:739251822920728708>│**Aguarde**: `Você deve esperar` **{{:.2f}}** "
-                                      f"`segundos` `para mandar outro comando!`".format(error.retry_after),
-                                      delete_after=float("{:.2f}".format(error.retry_after)))
+            perms = inter.channel.permissions_for(inter.me)
+            if perms.send_messages and perms.read_messages and float(
+                    "{:.2f}".format(error.retry_after)) > 6.0:
+                return await inter.response.send_message(
+                    f"<:alert:739251822920728708>│**Aguarde**: `Você deve esperar` **{{:.2f}}** "
+                    f"`segundos` `para mandar outro comando!`".format(error.retry_after),
+                    delete_after=float("{:.2f}".format(error.retry_after)))
 
         # Check de Erros fora de CTX
         if self.error_check(error):
-            if str(ctx.command) in ["wave"]:
-                if ctx.author.id not in self.bot.recovery:
-                    self.bot.recovery.append(ctx.author.id)
-            if str(ctx.command) in ["battle", "boss", "wave", "pvp"]:
-                if ctx.author.id in self.bot.batalhando:
-                    self.bot.batalhando.remove(ctx.author.id)
-            if str(ctx.command) in ["card", "whats", "hot", "guess", "hangman", "jkp", "pokemon"]:
-                if ctx.author.id in self.bot.jogando:
-                    self.bot.jogando.remove(ctx.author.id)
-            if str(ctx.command) in ["marry", "divorce"]:
-                if ctx.author.id in self.bot.casando:
-                    self.bot.casando.remove(ctx.author.id)
-            if str(ctx.command) in ["box buy", "box booster", "craft"]:
-                if ctx.author.id in self.bot.comprando:
-                    self.bot.comprando.remove(ctx.author.id)
-            if str(ctx.command) in ["mine"]:
-                if ctx.author.id in self.bot.minerando:
-                    self.bot.minerando.remove(ctx.author.id)
-            if str(ctx.command) in ["pvp"]:
-                if ctx.author.id in self.bot.desafiado:
-                    self.bot.desafiado.remove(ctx.author.id)
-            if str(ctx.command) in self.read:
-                if ctx.author.id in self.bot.lendo:
-                    self.bot.lendo.remove(ctx.author.id)
+            if str(inter.command) in ["wave"]:
+                if inter.author.id not in self.bot.recovery:
+                    self.bot.recovery.append(inter.author.id)
+            if str(inter.command) in ["battle", "boss", "wave", "pvp"]:
+                if inter.author.id in self.bot.batalhando:
+                    self.bot.batalhando.remove(inter.author.id)
+            if str(inter.command) in ["card", "whats", "hot", "guess", "hangman", "jkp", "pokemon"]:
+                if inter.author.id in self.bot.jogando:
+                    self.bot.jogando.remove(inter.author.id)
+            if str(inter.command) in ["marry", "divorce"]:
+                if inter.author.id in self.bot.casando:
+                    self.bot.casando.remove(inter.author.id)
+            if str(inter.command) in ["box buy", "box booster", "craft"]:
+                if inter.author.id in self.bot.comprando:
+                    self.bot.comprando.remove(inter.author.id)
+            if str(inter.command) in ["mine"]:
+                if inter.author.id in self.bot.minerando:
+                    self.bot.minerando.remove(inter.author.id)
+            if str(inter.command) in ["pvp"]:
+                if inter.author.id in self.bot.desafiado:
+                    self.bot.desafiado.remove(inter.author.id)
+            if str(inter.command) in self.read:
+                if inter.author.id in self.bot.lendo:
+                    self.bot.lendo.remove(inter.author.id)
 
             # retorno da msg de erro fora de CTX
-            await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO DISCORD E SEU"
-                           f" COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O COMANDO"
-                           f" NOVAMENTE!`", delete_after=5.0)
+            await inter.response.send_message(
+                f"<:alert:739251822920728708>│{inter.author.mention} `HOUVE UM ERRO NA API DO DISCORD E "
+                f"SEU COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O "
+                f"COMANDO NOVAMENTE!`", delete_after=5.0)
 
         # Todos os outros erros não retornados vêm aqui... E podemos mostrar o TraceBack padrão.
         # como nao quero print de comando esperando para ser usado, faço a exceção
@@ -140,22 +146,23 @@ class CommandErrorHandler(commands.Cog):
                 # aqui quando um erro nao é tratado eu registro sua ocorrencia para averiguar sua origem
                 # PRINT INTERNO (disnake LOG)
                 channel = self.bot.get_channel(530419409311760394)
-                perms = ctx.channel.permissions_for(ctx.me)
+                perms = inter.channel.permissions_for(inter.me)
                 if perms.send_messages and perms.read_messages:
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
-                                       f"**{ctx.command}**, `no servidor:` **{ctx.guild}**, `no canal:` "
-                                       f"**{ctx.channel}** `com o membro:` **{ctx.author}**  "
-                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()[:3000]}**")
+                                       f"**{inter.command}**, `no servidor:` **{inter.guild}**, `no canal:` "
+                                       f"**{inter.channel}** `com o membro:` **{inter.author}**  "
+                                       f"`com o id:` **{inter.author.id}**, `com o erro:` "
+                                       f"**{error.__str__()[:3000]}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)
-                print(f"{cor['verm']}( ❌ ) | error in command: {cor['azul']}{str(ctx.command).upper()}\n"
+                print(f"{cor['verm']}( ❌ ) | error in command: {cor['azul']}{str(inter.command).upper()}\n"
                       f"{cor['verm']}>> in Guild: "
-                      f"{cor['azul']}{ctx.guild} {cor['verm']}- {cor['amar']}ID: {ctx.guild.id}\n"
+                      f"{cor['azul']}{inter.guild} {cor['verm']}- {cor['amar']}ID: {inter.guild.id}\n"
                       f"{cor['verm']}>> in Channel: "
-                      f"{cor['azul']}{ctx.channel} {cor['verm']}- {cor['amar']}ID: {ctx.channel.id}\n"
+                      f"{cor['azul']}{inter.channel} {cor['verm']}- {cor['amar']}ID: {inter.channel.id}\n"
                       f"{cor['verm']}>> with the Member: "
-                      f"{cor['azul']}{ctx.author} {cor['verm']}- {cor['amar']}ID: {ctx.author.id}\n"
+                      f"{cor['azul']}{inter.author} {cor['verm']}- {cor['amar']}ID: {inter.author.id}\n"
                       f"{cor['verm']}>> with error:\n "
                       f"{cor['roxo']}{error}\n\n")
 
@@ -169,5 +176,5 @@ class CommandErrorHandler(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(CommandErrorHandler(bot))
-    print('\033[1;36m( 🔶 ) | O Handler \033[1;31mON_COMMAND_ERROR\033[1;36m foi carregado com sucesso!\33[m')
+    bot.add_cog(SlashCommandErrorHandler(bot))
+    print('\033[1;36m( 🔶 ) | O Handler \033[1;31mON_SLASH_COMMAND_ERROR\033[1;36m foi carregado com sucesso!\33[m')

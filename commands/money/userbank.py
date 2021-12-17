@@ -25,6 +25,7 @@ class UserBank(commands.Cog):
         self.items = self.bot.config['attribute']['shop']
         self.items_shopping = self.bot.config['attribute']['shopping']
         self.items_shop_vote = self.bot.config['attribute']['shop_vote']
+        self.items_shop_vote_event = self.bot.config['attribute']['shop_vote_event']
         self.rewards_lucky = self.bot.config['attribute']['rewards_lucky']
 
     @staticmethod
@@ -239,6 +240,9 @@ class UserBank(commands.Cog):
         """A lojinha da ashley, compre itens e crafts que voce ainda nao conseguiu pegar em outros comandos."""
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
+
+        if self.bot.event_special:
+            self.items_shop_vote += self.items_shop_vote_event
 
         if item is None:
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
