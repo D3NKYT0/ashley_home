@@ -634,22 +634,22 @@ class Entity(object):
                                     presas_active = True
 
                             if not presas_active:
-
-                                damage = int((self.tot_mp / 100) * self.effects[c]['damage'])
+                                damage = 0
 
                                 if not self.is_player:
-                                    damage = damage * 10  # se nao for player o dano é no hp
+                                    damage += self.effects[c]['damage'] * 10  # se nao for player o dano é no hp
                                     self.status['hp'] -= damage
                                     if self.status['hp'] < 0:
                                         self.status['hp'] = 0
 
                                 else:
+                                    damage += int((self.tot_mp / 100) * self.effects[c]['damage'])
                                     self.status['mp'] -= damage
                                     if self.status['mp'] < 0:
                                         self.status['mp'] = 0
 
                                 if damage > 0:
-                                    _type = "mana" if not self.is_player else "hp"
+                                    _type = "mana" if self.is_player else "hp"
                                     _text6 = f"**{self.name.upper()}** `teve` **{damage}** `de {_type} " \
                                              f"drenada por efeito de` **{c.upper()}!**"
                                     msg_return += f"{_text6}\n\n"
@@ -996,6 +996,8 @@ class Entity(object):
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
                         # ----------------------------------------------------------------------------------
+                        if self.is_passive and self.passive == "warrior":
+                            self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
                         if self_passive and self.passive == "warrior":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1025,8 +1027,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "warrior":
-                            self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
+                        if self.is_passive and self.passive == "assassin":
+                            self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "assassin":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1050,8 +1052,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "assassin":
-                            self.skill = CLS[self._class]['passive']["0"]
+                        if self.is_passive and self.passive == "wizard":
+                            self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "wizard":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1076,7 +1078,7 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "wizard":
+                        if self.is_passive and self.passive == "warlock":
                             self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "warlock":
@@ -1101,8 +1103,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "warlock":
-                            self.skill = CLS[self._class]['passive'][f"{self.stack}"]
+                        if self.is_passive and self.passive == "priest":
+                            self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
 
                         if self_passive and self.passive == "priest":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1126,8 +1128,8 @@ class Entity(object):
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
 
-                        if self.is_passive and self.passive == "priest":
-                            self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
+                        if self.is_passive and self.passive == "necromancer":
+                            self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "necromancer":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1150,9 +1152,6 @@ class Entity(object):
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
                                     embeds.set_image(url=_url)
                                 await ctx.send(embed=embeds)
-
-                        if self.is_passive and self.passive == "necromancer":
-                            self.skill = CLS[self._class]['passive']["0"]
 
                         # ----------------------------------------------------------------------------------
 
@@ -1473,7 +1472,7 @@ class Entity(object):
 
         return self.skill
 
-    def verify_effect(self, entity):
+    def verify_effect(self):
         looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
         duelist, stk1, stk2, lethal, ds = False, False, False, False, False
         if self.effects is not None:
@@ -1505,7 +1504,7 @@ class Entity(object):
                 if self.effects["bluff"]["turns"] > 0:
                     bluff = True
             if "hold" in self.effects.keys():
-                if self.effects["hold"]["turns"] > 0 and entity.is_player:
+                if self.effects["hold"]["turns"] > 0:
                     hold = True
             if "lethal" in self.effects.keys():
                 if self.effects["lethal"]["turns"] > 0:
@@ -1824,7 +1823,7 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect(entity)
+        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
         half_life_priest, lvs_skill, barrier, rage, charge = False, 1, False, False, False
 
         if "barrier" in self.effects.keys():
@@ -1894,7 +1893,7 @@ class Entity(object):
                            f'efeito` **duelist** `nesse turno.`'
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect(entity)
+        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
 
         msg_hl_priest, lethal = "", lt
         if stk1 and stk2:
@@ -1991,7 +1990,7 @@ class Entity(object):
         defended = randint(armor_now * damage_now, total_percent * damage_now) if defense > 0 else 0
 
         defended, rage_msg = 0 if hold else defended, ""  # efeito da hold
-        if rage:  # sistema de acumulação (RAGE)
+        if rage and not hold:  # sistema de acumulação (RAGE)
             rage_damage_now = int(defended / 100 * randint(50, 75))
             self.rage_damage += rage_damage_now
             defended = defended - rage_damage_now
