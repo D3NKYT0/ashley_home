@@ -41,6 +41,7 @@ class Entity(object):
         self.is_duelist = False
         self.is_charge = False
         self.is_rage = False
+        self.is_target = False
 
         # informações gerais
         self.name = self.data['name']
@@ -102,6 +103,7 @@ class Entity(object):
 
             if self.data['class_now'] == "paladin":
                 self.passive = self.data['class_now']
+                self.progress = 0
 
             elif self.data['class_now'] == "warrior":
                 self.passive = self.data['class_now']
@@ -324,8 +326,8 @@ class Entity(object):
             passive_name = CLS[self.data['class_now']]["passive"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]['icon']
             passive_amount = CLS[self.data['class_now']]["passive"]['amount']
-            text_passive, _classes = "", ["necromancer", "priest", "warlock", "assassin", "wizard", "warrior"]
-            if not self.is_passive and self.passive in _classes:
+            text_passive = ""
+            if not self.is_passive:
                 progress_now = self.progress
                 if self.passive == "warrior":
                     key = self.passive_key[self.passive_mode]
@@ -427,6 +429,17 @@ class Entity(object):
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | SDM MODE",
                 description=f"Dano: base | Mana: 0 | Efeito(s): detached",
+                value=str(0)
+            )
+            self.OPTIONS.append(selection)
+
+        if self.is_passive and self.passive == "paladin":
+            passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
+            passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
+            selection = disnake.SelectOption(
+                emoji=passive_icon,
+                label=f"0 - {passive_name.upper()} | ... MODE",
+                description=f"Dano: base | Mana: 0 | Efeito(s): ...",
                 value=str(0)
             )
             self.OPTIONS.append(selection)
@@ -790,6 +803,13 @@ class Entity(object):
                                      f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
                             msg_return += f"{_text3}\n\n"
 
+                        # habilita passiva do paladin
+                        if "devotion" in self.skill['effs'][self.ls].keys():
+                            self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
+                            _text3 = f'**{self.name.upper()}** `habilitou a passiva por` ' \
+                                     f'**{self.effects["self_passive"]["turns"]}** `turno(s)`'
+                            msg_return += f"{_text3}\n\n"
+
                         # habilita passiva do warrior (modo atk)
                         if "duelist" in self.skill['effs'][self.ls].keys():
                             self.effects["self_passive"] = {"type": "normal", "turns": randint(1, 3), "damage": 0}
@@ -996,6 +1016,31 @@ class Entity(object):
                         not_is_now = False  # nao deixa desativar a skill no turno em ativou a passiva
 
                         # ----------------------------------------------------------------------------------
+                        if self.is_passive and self.passive == "paladin":
+                            self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
+
+                        if self_passive and self.passive == "paladin":
+                            _action = randint(15, 30)  # velocidade da progreção
+                            self.progress += _action
+                            if self.progress >= 100 and not self.is_passive:
+                                self.progress = 100
+
+                            if not self.is_passive:
+                                especial = False
+                                if self.progress < 100:
+                                    description = f"**{user.name.upper()}** `VOCÊ ELEVOU SUA DEVOÇÃO` **{_action}x**"
+                                else:
+                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **...!**"
+                                    self.is_passive, especial, not_is_now = True, True, True
+                                    if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
+                                        del self.effects["self_passive"]
+                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds.set_author(name=user.name, icon_url=user.display_avatar)
+                                if self.is_passive and especial:
+                                    _url = "https://c.tenor.com/Nx0mPkS00KcAAAAM/algoz.gif"
+                                    embeds.set_image(url=_url)
+                                await ctx.send(embed=embeds)
+
                         if self.is_passive and self.passive == "warrior":
                             self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
@@ -1559,6 +1604,10 @@ class Entity(object):
                 if c == "rage" and not entity.is_rage:
                     entity.is_rage, chance = True, True
 
+                # o primeiro target sempre vai funcionar ( nos monstros )
+                if c == "target" and not entity.is_target and not self.is_player:
+                    entity.is_target, chance = True, True
+
                 # o primeiro charge sempre vai funcionar
                 if c == "charge" and not entity.is_charge:
                     entity.is_charge, chance = True, True
@@ -1630,13 +1679,13 @@ class Entity(object):
                         if test:
                             self.effects[c] = skill['effs'][self.ls][c]
                             min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             self.effects[c] = skill['effs'][c]
                             min_turn, max_turn = 2, skill['effs'][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse"] else min_turn
+                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
 
