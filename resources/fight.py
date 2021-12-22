@@ -42,6 +42,7 @@ class Entity(object):
         self.is_charge = False
         self.is_rage = False
         self.is_target = False
+        self.is_confine = True
 
         # informações gerais
         self.name = self.data['name']
@@ -104,6 +105,9 @@ class Entity(object):
             if self.data['class_now'] == "paladin":
                 self.passive = self.data['class_now']
                 self.progress = 0
+
+                self.devotion = 0
+                self.confine = None
 
             elif self.data['class_now'] == "warrior":
                 self.passive = self.data['class_now']
@@ -438,8 +442,8 @@ class Entity(object):
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
             selection = disnake.SelectOption(
                 emoji=passive_icon,
-                label=f"0 - {passive_name.upper()} | ... MODE",
-                description=f"Dano: base | Mana: 0 | Efeito(s): ...",
+                label=f"0 - {passive_name.upper()} | RESPLENDENT MODE",
+                description=f"Dano: base | Mana: 0 | Efeito(s): sem efeito",
                 value=str(0)
             )
             self.OPTIONS.append(selection)
@@ -565,6 +569,22 @@ class Entity(object):
                                     damage = 0
                                     barrier_msg += f" `por causa do efeito de` **barrier**"
 
+                            if c == "confine" and self.is_confine:
+                                self.confine = self.effects
+                                self.is_confine = False
+
+                            if c == "devotion" and self.passive == "paladin":
+                                self.devotion += damage
+                                barrier_msg += f" `e ainda acumulou` **{damage}** `de devoção por causa do efeito de`" \
+                                               f" **devotion**"
+                                damage = 0
+
+                            if c == "blessing" and entity.passive == "paladin":
+                                damage += entity.devotion
+                                if entity.confine is not None:
+                                    self.effects.update(entity.confine)
+                                    entity.confine = None
+
                             if c in ["queimadura", "fireball"] and randint(1, 2) == 2:
                                 bb = int(damage / 100 * randint(50 if not detached else 80, 100))
                                 damage += bb
@@ -611,6 +631,16 @@ class Entity(object):
 
                                 if etp2:
                                     damage += damage * 5
+
+                            if c == "devotion" and self.passive != "paladin" and randint(1, 100) <= 25:
+                                devotion = {
+                                    "silencio": {"type": "normal", "turns": randint(2, 4), "damage": None},
+                                    "gelo": {"type": "damage", "turns": 2, "damage": damage * 25},
+                                    "curse": {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
+                                }
+                                key = choice(list(devotion.keys()))
+                                self.effects[key] = devotion[key]
+                                msg_return += f" `e ganhou o efeito de` **{key}** `pela alta devoção do seu inimigo.`"
 
                             self.status['hp'] -= damage
                             if self.status['hp'] < 0:
@@ -692,6 +722,12 @@ class Entity(object):
                             and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
                             msg_return += f"{and_effect}\n\n"
 
+                            if c == "confine" and not self.is_confine:
+                                self.is_confine = True
+
+        if self.confine is not None:
+            self.effects = None
+
         if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
             self.data["salvation"] = False
             self.status['hp'] = self.tot_hp
@@ -736,7 +772,16 @@ class Entity(object):
                         msg_return += f"{_text3}\n\n"
                         self.skill = None
 
-                if "barrier" in _skill.keys():
+                if "devotion" in _skill.keys():
+                    min_turn, max_turn = 2, _skill["devotion"]['turns']
+                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                    self.effects["devotion"]['turns'] = randint(min_turn, max_turn)
+
+                    _text3 = f'**{self.name.upper()}** `ativou o efeito` **devotion** `por` ' \
+                             f'**{self.effects["devotion"]["turns"]}** `turnos.`'
+                    msg_return += f"{_text3}\n\n"
+
+                if "barrier" in _skill.keys() and self.passive == "paladin":
                     self.effects["barrier"] = _skill["barrier"]
                     min_turn, max_turn = 2, _skill["barrier"]['turns']
                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
@@ -1030,7 +1075,7 @@ class Entity(object):
                                 if self.progress < 100:
                                     description = f"**{user.name.upper()}** `VOCÊ ELEVOU SUA DEVOÇÃO` **{_action}x**"
                                 else:
-                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **...!**"
+                                    description = f"**{user.name.upper()}** `VOCÊ ATIVOU O MODO` **RESPLENDENT!**"
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
