@@ -181,6 +181,10 @@ class Raid(commands.Cog):
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
                 p_raid[ctx.author.id].combo_cont = 0
+
+                if p_raid[ctx.author.id].passive == "paladin":
+                    p_raid[ctx.author.id].devotion = 0
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -219,6 +223,10 @@ class Raid(commands.Cog):
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
                 p_raid[ctx.author.id].combo_cont = 0
+
+                if p_raid[ctx.author.id].passive == "paladin":
+                    p_raid[ctx.author.id].devotion = 0
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -314,6 +322,10 @@ class Raid(commands.Cog):
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
                 p_raid[ctx.author.id].combo_cont = 0
+
+                if p_raid[ctx.author.id].passive == "paladin":
+                    p_raid[ctx.author.id].devotion = 0
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -352,6 +364,10 @@ class Raid(commands.Cog):
                 m_raid[ctx.author.id] = Entity(_db_monster, False, is_wave=True)
                 p_raid[ctx.author.id].next = 0
                 p_raid[ctx.author.id].combo_cont = 0
+
+                if p_raid[ctx.author.id].passive == "paladin":
+                    p_raid[ctx.author.id].devotion = 0
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']

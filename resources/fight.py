@@ -1767,7 +1767,7 @@ class Entity(object):
                                 _skills = choice(list(self.skills.keys()))
                                 _skills = self.skills[_skills]
 
-                                keys = list(_skills['effs'][self.ls].keys())
+                                keys = list(_skills['effs'].keys())
                                 for k in keys:
 
                                     self.effects[k] = _skills['effs'][k]
@@ -1783,7 +1783,7 @@ class Entity(object):
                                     _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
                                              f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
                                     msg_return += f"{_text2}\n\n"
-                                
+
                             else:
                                 self.effects[c] = skill['effs'][c]
                                 min_turn, max_turn = 2, skill['effs'][c]['turns']
