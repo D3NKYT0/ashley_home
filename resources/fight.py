@@ -1648,6 +1648,12 @@ class Entity(object):
                     if self.effects["detached"]["turns"] > 0:
                         chance = True
 
+                # sistema de mirror
+                mirror_now = False
+                if c == "mirror" and "mirror" in self.effects.keys():
+                    if self.effects["mirror"]["turns"] > 0:
+                        chance, mirror_now = True, True
+
                 # o primeiro rage sempre vai funcionar
                 if c == "rage" and not entity.is_rage:
                     entity.is_rage, chance = True, True
@@ -1725,14 +1731,26 @@ class Entity(object):
                             msg_return += f"{_text1}\n\n"
                     else:
                         if test:
-                            self.effects[c] = skill['effs'][self.ls][c]
-                            min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
+                            if mirror_now:
+                                _skills = choice(list(self.skills.keys()))
+                                _skills = self.skills[_skills]
+                                self.effects[c] = _skills['effs'][self.ls][c]
+                                min_turn, max_turn = 2, _skills['effs'][self.ls][c]['turns']
+                            else:
+                                self.effects[c] = skill['effs'][self.ls][c]
+                                min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
                             min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
-                            self.effects[c] = skill['effs'][c]
-                            min_turn, max_turn = 2, skill['effs'][c]['turns']
+                            if mirror_now:
+                                _skills = choice(list(self.skills.keys()))
+                                _skills = self.skills[_skills]
+                                self.effects[c] = _skills['effs'][c]
+                                min_turn, max_turn = 2, _skills['effs'][c]['turns']
+                            else:
+                                self.effects[c] = skill['effs'][c]
+                                min_turn, max_turn = 2, skill['effs'][c]['turns']
                             min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
                             max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                             self.effects[c]['turns'] = randint(min_turn, max_turn)
