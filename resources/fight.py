@@ -576,7 +576,7 @@ class Entity(object):
                             if c == "devotion" and self.passive == "paladin":
                                 self.devotion += damage
                                 barrier_msg += f" `e ainda acumulou` **{damage}** `de devoção por causa do efeito de`" \
-                                               f" **devotion**"
+                                               f" **DEVOTION**"
                                 damage = 0
 
                             if c == "blessing" and entity.passive == "paladin":
@@ -592,7 +592,7 @@ class Entity(object):
                                 _chance, percent = randint(1, 100), 15 if not detached else 25
                                 if _chance <= percent:
                                     self.effects["curse"] = {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
-                                    burn += " `e ganhou o efeito de` **curse** `pelo alto dano da queimadura.`"
+                                    burn += " `e ganhou o efeito de` **CURSE** `pelo alto dano da queimadura.`"
 
                             if c == "fireball" and ignition:
                                 if "ignition" in self.effects.keys():
@@ -601,8 +601,8 @@ class Entity(object):
                                         if entity.passive == "wizard" and entity.is_passive and randint(1, 100) <= 25:
                                             damage_ice = 50 * entity.stack
                                             self.effects["gelo"] = {"type": "damage", "turns": 2, "damage": damage_ice}
-                                            burn += f" `e ganhou o efeito de` **gelo** `pela combinação do efeito` " \
-                                                    f"**ignition** `com o modo` **SPELLCASTER FIRER** `de` " \
+                                            burn += f" `e ganhou o efeito de` **GELO** `pela combinação do efeito` " \
+                                                    f"**IGNITION** `com o modo` **SPELLCASTER FIRER** `de` " \
                                                     f"**{entity.name.upper()}**"
 
                             if c == "veneno" and randint(1, 2) == 2:
@@ -613,7 +613,7 @@ class Entity(object):
                                 if _chance <= percent:
                                     eff = {"type": "normal", "turns": randint(2, 4), "damage": None}
                                     self.effects["silencio"] = eff
-                                    burn += " `e ganhou o efeito de` **silencio** `pelo alto dano da intoxicação.`"
+                                    burn += " `e ganhou o efeito de` **SILENCIO** `pelo alto dano da intoxicação.`"
 
                             if c == "judgment":
                                 etp1, etp2 = False, False
@@ -634,7 +634,8 @@ class Entity(object):
 
                             if c == "devotion" and self.passive != "paladin" and randint(1, 100) <= 25:
                                 devotion = {
-                                    "silencio": {"type": "normal", "turns": randint(2, 4), "damage": None},
+                                    "queimadura": {"type": "damage", "turns": randint(2, 7), "damage": 50},
+                                    "veneno": {"type": "damage", "turns": randint(2, 7), "damage": 50},
                                     "gelo": {"type": "damage", "turns": 2, "damage": damage * 25},
                                     "curse": {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 }
@@ -665,7 +666,7 @@ class Entity(object):
                             else:
                                 if c not in ["reflect"]:
                                     emoji = "<a:alert:919041626486218783>"
-                                    _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano  de` **{c.upper()}!**"
+                                    _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano de` **{c.upper()}!**"
                                     _text5 += barrier_msg
                                     msg_return += f"{_text5}\n\n"
 
@@ -725,8 +726,9 @@ class Entity(object):
                             if c == "confine" and not self.is_confine:
                                 self.is_confine = True
 
-        if self.confine is not None:
-            self.effects = None
+        if self.passive == "paladin":
+            if self.confine is not None:
+                self.effects = None
 
         if not self.is_pvp and self.data["salvation"] and self.status['hp'] <= 0:
             self.data["salvation"] = False
@@ -775,6 +777,7 @@ class Entity(object):
                 if "devotion" in _skill.keys():
                     min_turn, max_turn = 2, _skill["devotion"]['turns']
                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                    self.effects["devotion"] = _skill["devotion"]
                     self.effects["devotion"]['turns'] = randint(min_turn, max_turn)
 
                     _text3 = f'**{self.name.upper()}** `ativou o efeito` **devotion** `por` ' \
