@@ -13,6 +13,7 @@ LVL, MONSTERS_QUEST = [5, 10, 15, 20, 25], all_data["battle"]['quests']
 SET_ARMOR = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
 _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
 _ini = "<:inimigo:873756815287017552>"
+_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion"]
 
 # todos os equipamentos
 equips_list = dict()
@@ -1068,7 +1069,7 @@ class Entity(object):
 
                         # ----------------------------------------------------------------------------------
                         if self.is_passive and self.passive == "paladin":
-                            self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
+                            self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "paladin":
                             _action = randint(15, 30)  # velocidade da progreção
@@ -1727,7 +1728,7 @@ class Entity(object):
                     chance = False
 
                 if chance:
-                    if c in self.effects.keys():
+                    if c in self.effects.keys() and c != "mirror":
                         if self.effects[c]['turns'] > 0:
                             # laranja
                             _text1 = f'🟠 **{self.name.upper()}** `ainda está sob o efeito de` **{c.upper()}**'
@@ -1737,33 +1738,66 @@ class Entity(object):
                             if mirror_now:
                                 _skills = choice(list(self.skills.keys()))
                                 _skills = self.skills[_skills]
-                                self.effects[c] = _skills['effs'][self.ls][c]
-                                min_turn, max_turn = 2, _skills['effs'][self.ls][c]['turns']
+
+                                keys = list(_skills['effs'][self.ls].keys())
+                                for k in keys:
+
+                                    self.effects[k] = _skills['effs'][self.ls][k]
+                                    min_turn, max_turn = 2, _skills['effs'][self.ls][k]['turns']
+
+                                    min_turn = 3 if k in _EFFECTS else min_turn
+                                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                                    self.effects[k]['turns'] = randint(min_turn, max_turn)
+
+                                    turns = self.effects[k]['turns']
+                                    _eff += turns
+                                    # verde
+                                    _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
+                                             f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
+                                    msg_return += f"{_text2}\n\n"
+
                             else:
                                 self.effects[c] = skill['effs'][self.ls][c]
                                 min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
-                            max_turn = min_turn + 1 if min_turn > max_turn else max_turn
-                            self.effects[c]['turns'] = randint(min_turn, max_turn)
+                                min_turn = 3 if c in _EFFECTS else min_turn
+                                max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                                self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             if mirror_now:
                                 _skills = choice(list(self.skills.keys()))
                                 _skills = self.skills[_skills]
-                                self.effects[c] = _skills['effs'][c]
-                                min_turn, max_turn = 2, _skills['effs'][c]['turns']
+
+                                keys = list(_skills['effs'][self.ls].keys())
+                                for k in keys:
+
+                                    self.effects[k] = _skills['effs'][k]
+                                    min_turn, max_turn = 2, _skills['effs'][k]['turns']
+
+                                    min_turn = 3 if k in _EFFECTS else min_turn
+                                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                                    self.effects[k]['turns'] = randint(min_turn, max_turn)
+
+                                    turns = self.effects[k]['turns']
+                                    _eff += turns
+                                    # verde
+                                    _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
+                                             f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
+                                    msg_return += f"{_text2}\n\n"
+                                
                             else:
                                 self.effects[c] = skill['effs'][c]
                                 min_turn, max_turn = 2, skill['effs'][c]['turns']
-                            min_turn = 3 if c in ["bluff", "ignition", "rage", "impulse", "confusion"] else min_turn
-                            max_turn = min_turn + 1 if min_turn > max_turn else max_turn
-                            self.effects[c]['turns'] = randint(min_turn, max_turn)
+                                min_turn = 3 if c in _EFFECTS else min_turn
+                                max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                                self.effects[c]['turns'] = randint(min_turn, max_turn)
 
-                        turns = self.effects[c]['turns']
-                        _eff += turns
-                        # verde
-                        _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
-                                 f'**{turns}** `turno{"s" if turns > 1 else ""}`'
-                        msg_return += f"{_text2}\n\n"
+                        if not mirror_now:
+                            turns = self.effects[c]['turns']
+                            _eff += turns
+                            # verde
+                            _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
+                                     f'**{turns}** `turno{"s" if turns > 1 else ""}`'
+                            msg_return += f"{_text2}\n\n"
                 else:
                     negate = ""
                     if negate_fisico:
