@@ -443,7 +443,7 @@ class Entity(object):
             selection = disnake.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | RESPLENDENT MODE",
-                description=f"Dano: base | Mana: 0 | Efeito(s): sem efeito",
+                description=f"Dano: base | Mana: 0 | Efeito(s): mirror",
                 value=str(0)
             )
             self.OPTIONS.append(selection)
@@ -558,7 +558,7 @@ class Entity(object):
 
                     if "type" in self.effects[c].keys():
                         if 'damage' in self.effects[c]['type']:
-                            damage, burn, barrier_msg, detached = self.effects[c]['damage'], "", "", False
+                            damage, burn, barrier_msg, detached, _red = self.effects[c]['damage'], "", "", False, None
 
                             if "detached" in self.effects.keys():
                                 if self.effects["detached"]["turns"] > 0:
@@ -575,8 +575,8 @@ class Entity(object):
 
                             if c == "devotion" and self.passive == "paladin":
                                 self.devotion += damage
-                                barrier_msg += f" `e ainda acumulou` **{damage}** `de devoção por causa do efeito de`" \
-                                               f" **DEVOTION**"
+                                _red = f"**{self.name.upper()}** `acumulou` **{damage}** `de devoção por causa do " \
+                                       f"efeito de` **DEVOTION**"
                                 damage = 0
 
                             if c == "blessing" and entity.passive == "paladin":
@@ -667,7 +667,10 @@ class Entity(object):
                                 if c not in ["reflect"]:
                                     emoji = "<a:alert:919041626486218783>"
                                     _text5 = f"{emoji} **{self.name.upper()}** `evadiu ao dano de` **{c.upper()}!**"
-                                    _text5 += barrier_msg
+                                    if _red is not None:
+                                        _text5 = _red + barrier_msg
+                                    else:
+                                        _text5 += barrier_msg
                                     msg_return += f"{_text5}\n\n"
 
                         elif 'manadrain' in self.effects[c]['type']:
