@@ -967,6 +967,13 @@ class Entity(object):
 
                     # Apagar itens da lista
                     self.OPTIONS.clear()
+
+                    # proteção contra interação vazia
+                    if answer.values is None:
+                        view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                        view.add_item(select)
+                        await ctx.send(embed=embed, view=view)
+                        continue
                     
                     # verificador de limit de skill
                     skill_now, limit_now = int(answer.values[0]), False
