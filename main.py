@@ -1124,7 +1124,7 @@ def main_bot():
     bot.load_extension("jishaku")  # load extenção JISHAKU
     print('\033[1;33m( 🔶 ) | A cog \033[1;34mJISHAKU\033[1;33m foi carregada com sucesso!\33[m')
     print("\033[1;35m( >> ) | Finalizado o carregamento de extensões EXTRAS...\033[m")
-    print(f"\033[1;35m( ✔ ) | {cont}/{len(bot.data_cog.keys())} extensões foram carregadas!\033[m")
+    print(f"\033[1;35m( ✔ ) | {cont + 1}/{len(bot.data_cog.keys()) + 1} extensões foram carregadas!\033[m")
     return bot, _auth['_t__ashley']
 
 

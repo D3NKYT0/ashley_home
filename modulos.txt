@@ -125,5 +125,6 @@ commands.member.genre
 commands.member.skins
 commands.rpg.broken
 commands.event.shop_event
+commands.event.trick
 commands.member.mail
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1

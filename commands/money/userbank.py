@@ -242,7 +242,7 @@ class UserBank(commands.Cog):
         update = data
 
         if self.bot.event_special:
-            self.items_shop_vote += self.items_shop_vote_event
+            self.items_shop_vote.update(self.items_shop_vote_event)
 
         if item is None:
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
