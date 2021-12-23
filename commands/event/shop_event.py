@@ -32,9 +32,9 @@ class ShopEvent(commands.Cog):
         if ctx.invoked_subcommand is None:
             recipes = copy.deepcopy(self.bot.config['events'])
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
-                           f"**EXEMPLO:** `USE` **ASH HALLOWEEN CRAFT MELTED ARTIFACT** "
+                           f"**EXEMPLO:** `USE` **ASH EV CRAFT MELTED ARTIFACT** "
                            f"`PARA COMPRAR UM MELTED ARTIFACT!`")
-            embed = ['🎃 **LOJA HALLOWEEN** 🎃', self.bot.color, '']
+            embed = ['🎊 **LOJA DE EVENTOS** 🎊', self.bot.color, '']
             await paginator(self.bot, self.bot.items, recipes, embed, ctx)
 
     @check_it(no_pm=True)
@@ -96,7 +96,7 @@ class ShopEvent(commands.Cog):
                                '\n⏭ **Craftar o Maximo**\n❌ **Fechar**'.format(maximo)
 
                 embed = disnake.Embed(
-                    title='🎃 **CRAFT HALLOWEEN** 🎃\n(Custo/Quantidade no inventario)',
+                    title='🎊 **CRAFT EV** 🎊\n(Custo/Quantidade no inventario)',
                     color=self.bot.color,
                     description=description)
 
