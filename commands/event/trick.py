@@ -5,28 +5,14 @@ from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from asyncio import sleep
+from resources.moon import get_moon
 
 
 class TrickTreat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.color = self.bot.color
-
-        self.bag_good = {
-            "blessed_enchant_skill": [4, 2],
-            "melted_artifact": [5, 2],
-            "angel_stone": [6, 4],
-            "angel_wing": [10, 5],
-            "frozen_letter": [4, 3],
-            "quest_part_1": [1, 1],
-            "quest_part_2": [1, 1],
-            "quest_part_3": [1, 1],
-            "quest_part_4": [1, 1],
-            "quest_part_5": [1, 1],
-            "quest_part_6": [1, 1],
-            "quest_part_7": [1, 1],
-            "quest_part_final": [1, 1],
-        }
+        self.bag_good = self.bot.config['attribute']['bag_good']
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -57,16 +43,21 @@ class TrickTreat(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
 
         # ESCOLHENDO O PREMIO:
-        list_items, data = list()
+        list_items, _data = [], get_moon()
+        for i_, amount in self.bag_good[_data[0]].items():
+            list_items += [i_] * amount[0]
         reward = choice(list_items)
 
-        numbers, bonus = [int(n) for n in str(data[1]).replace(".", "")], 0
+        numbers, bonus = [int(n) for n in str(_data[1]).replace(".", "")], 0
         for n in numbers:
             bonus += n
 
+        if self.bot.event_special:
+            bonus += 15
+
         if randint(1, 100) + amount_test + bonus > 95:  # 5% + bonus + amount
 
-            msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
+            msg = f"{self.bot.items[reward][0]} `{self.bag_good[_data[0]][reward][1]}` `{self.bot.items[reward][1]}`"
             embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
@@ -78,12 +69,17 @@ class TrickTreat(commands.Cog):
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
             update = data
             try:
-                update['inventory'][reward] += 1
+                update['inventory'][reward] += self.bag_good[_data[0]][reward][1]
             except KeyError:
-                update['inventory'][reward] = 1
+                update['inventory'][reward] = self.bag_good[_data[0]][reward][1]
             await self.bot.db.update_data(data, update, 'users')
             await ctx.send(f"<:confirmed:721581574461587496>│`PREMIO SALVO COM SUCESSO!`", delete_after=5.0)
 
         else:
             await ctx.send(f"> `VOCE NAO ACHOU NADA DENTRO DA(S)` **{amount_test}** `TRICK OR TREAT BAG(S)`",
                            delete_after=30.0)
+
+
+def setup(bot):
+    bot.add_cog(TrickTreat(bot))
+    print('\033[1;32m( 🔶 ) | O comando \033[1;34mTRICK\033[1;32m foi carregado com sucesso!\33[m')

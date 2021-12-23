@@ -566,13 +566,17 @@ class OnReady(commands.Cog):
                                 item_plus = choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal'])
                                 rewards[item_plus] = randint(1, 5)
 
-                            if chance <= 45:
+                            if chance <= 50:
                                 item_plus = choice(['Discharge_Crystal', 'Crystal_of_Energy', 'Acquittal_Crystal'])
                                 rewards[item_plus] = randint(1, 5)
 
-                            if chance <= 5:
+                            if chance <= 25:
                                 item_bonus = choice(['solution_agent_green', 'solution_agent_blue', 'enchanted_stone'])
                                 rewards[item_bonus] = randint(1, 3)
+
+                            if chance <= 5:
+                                item_bonus = choice(['ttbag', 'ttbag', 'ttbag'])
+                                rewards[item_bonus] = randint(5, 15)
 
                             ext = ''.join([f"{self.bot.items[k][0]} **{v}** `{self.bot.items[k][1]}`\n"
                                            for k, v in rewards.items()])
