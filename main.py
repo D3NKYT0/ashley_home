@@ -1,4 +1,4 @@
-# ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA disnake.
+# ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA DISCORD.
 # CRIADO POR: DANIEL AMARAL -> Denky#5960
 # SEGUE ABAIXO OS IMPORTS COMPLETOS
 import disnake
@@ -33,7 +33,7 @@ with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
 
 
-# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA disnake
+# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA DISNAKE
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, shard_count=_auth["shard"], **kwargs)
@@ -114,8 +114,8 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.is_ashley = True  # Default: False
-        self.d_event = [2022, 1, 1, (1, 7)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "ANO NOVO"  # NOME DO EVENTO ATUAL
+        self.d_event = [2022, 12, 23, (12, 31)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "NATAL"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
@@ -181,14 +181,17 @@ class Ashley(commands.AutoShardedBot):
     async def atr_initialize(self):
         self.blacklist = dumps(await self.db.get_all_data("blacklist"))
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mBLACKLIST\033[1;32m foi feita sucesso!\33[m')
+
         self.shutdowns = dumps(await self.db.get_all_data("shutdown"))
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mSHUTDOWN\033[1;32m foi feita sucesso!\33[m')
+
         _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
         _ev_db = False if _event is None else True if _event["status"] else False
         self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
         if self.event_special:
             self.rate_drop = self.rate_drop * 2
         print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{TEXT}\033[1;32m com sucesso!\33[m')
+
         all_data = (await self.db.cd("guilds")).find({"vip": True}, {"_id": 0, "guild_id": 1})
         self.guilds_vips = [d["guild_id"] async for d in all_data]
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mGUILDS_VIP\033[1;32m foi feita sucesso!\33[m')
@@ -1058,11 +1061,10 @@ def main_bot():
     intents.members = True
     bot = Ashley(command_prefix=_auth['prefix'], description=desc, pm_help=True, intents=intents)
     bot.remove_command('help')
-    cont = 0
-    emojis = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}
+    emojis, cont = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}, 0
 
-    print("\033[1;35m( >> ) | Iniciando...\033[m\n")
-    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões...\033[m")
+    print("\033[1;35m( >> ) | Iniciando a ASHLEY!\033[m\n")
+    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões comuns...\033[m")
 
     if bot.maintenance:
         f = open("maintenance.txt", "r")
@@ -1095,7 +1097,6 @@ def main_bot():
     print("\033[1;35m( >> ) | Iniciando o carregamento de extensões SLASHS...\033[m")
 
     f = open("slashs.txt", "r")
-
     for name in f.readlines():
         if len(name.strip()) > 0:
             try:
@@ -1118,9 +1119,11 @@ def main_bot():
                 continue
     f.close()
 
+    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões SLASH...\033[m")
+    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões EXTRAS...\033[m")
     bot.load_extension("jishaku")  # load extenção JISHAKU
     print('\033[1;33m( 🔶 ) | A cog \033[1;34mJISHAKU\033[1;33m foi carregada com sucesso!\33[m')
-
+    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões EXTRAS...\033[m")
     print(f"\033[1;35m( ✔ ) | {cont}/{len(bot.data_cog.keys())} extensões foram carregadas!\033[m")
     return bot, _auth['_t__ashley']
 

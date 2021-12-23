@@ -341,7 +341,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
         elif str(ctx.command) in ["mail", "email"]:
             string = f'**`{items[key]["_id"]}`** - **`{key}{(" " * (35 - len(key)))}`**\n'
 
-        elif str(ctx.command) in ["halloween", "hallo"]:
+        elif str(ctx.command) in ["eventshop", "ev"]:
             if "quest" in key:
                 name = inventory[key]["name"]
             else:
