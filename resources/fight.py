@@ -539,6 +539,9 @@ class Entity(object):
         if self.passive == "warrior" and self.rage_damage > 0:
             description += f"\n**Rage:** `{self.rage_damage}`"
 
+        if self.passive == "paladin" and self.devotion > 0:
+            description += f"\n**Devotion:** `{self.devotion}`"
+
         embed = disnake.Embed(
             title=title,
             description=description,
@@ -637,7 +640,7 @@ class Entity(object):
                                 devotion = {
                                     "queimadura": {"type": "damage", "turns": randint(2, 7), "damage": 50},
                                     "veneno": {"type": "damage", "turns": randint(2, 7), "damage": 50},
-                                    "gelo": {"type": "damage", "turns": 2, "damage": damage * 25},
+                                    "gelo": {"type": "damage", "turns": 2, "damage": 50},
                                     "curse": {"type": "manadrain", "turns": randint(2, 4), "damage": 10}
                                 }
                                 key = choice(list(devotion.keys()))
@@ -1736,14 +1739,29 @@ class Entity(object):
                     else:
                         if test:
                             if mirror_now:
-                                _skills = choice(list(self.skills.keys()))
+                                _list_skills = list()
+                                for _sk in self.skills.keys():
+                                    if self.is_player:
+                                        _effct = self.skills[_sk]['effs'][self.ls]
+                                    else:
+                                        _effct = self.skills[_sk]['effs']
+
+                                    if _effct is not None:
+                                        _list_skills.append(_sk)
+
+                                _skills = choice(_list_skills)
                                 _skills = self.skills[_skills]
 
-                                keys = list(_skills['effs'][self.ls].keys())
+                                if self.is_player:
+                                    _effct = _skills['effs'][self.ls]
+                                else:
+                                    _effct = _skills['effs']
+
+                                keys = list(_effct.keys())
                                 for k in keys:
 
-                                    self.effects[k] = _skills['effs'][self.ls][k]
-                                    min_turn, max_turn = 2, _skills['effs'][self.ls][k]['turns']
+                                    self.effects[k] = _effct[k]
+                                    min_turn, max_turn = 2, _effct[k]['turns']
 
                                     min_turn = 3 if k in _EFFECTS else min_turn
                                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
@@ -1764,14 +1782,28 @@ class Entity(object):
                                 self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
                             if mirror_now:
-                                _skills = choice(list(self.skills.keys()))
+                                _list_skills = list()
+                                for _sk in self.skills.keys():
+                                    if self.is_player:
+                                        _effct = self.skills[_sk]['effs'][self.ls]
+                                    else:
+                                        _effct = self.skills[_sk]['effs']
+
+                                    if _effct is not None:
+                                        _list_skills.append(_sk)
+
+                                _skills = choice(_list_skills)
                                 _skills = self.skills[_skills]
 
-                                keys = list(_skills['effs'].keys())
-                                for k in keys:
+                                if self.is_player:
+                                    _effct = _skills['effs'][self.ls]
+                                else:
+                                    _effct = _skills['effs']
 
-                                    self.effects[k] = _skills['effs'][k]
-                                    min_turn, max_turn = 2, _skills['effs'][k]['turns']
+                                keys = list(_effct.keys())
+                                for k in keys:
+                                    self.effects[k] = _effct[k]
+                                    min_turn, max_turn = 2, _effct[k]['turns']
 
                                     min_turn = 3 if k in _EFFECTS else min_turn
                                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
