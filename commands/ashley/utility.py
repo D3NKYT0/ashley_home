@@ -58,7 +58,7 @@ class UtilityClass(commands.Cog):
         update_member['security']['blocked'] = False
         await self.bot.db.update_data(data_member, update_member, 'users')
         await ctx.send(f"<a:hack:525105069994278913>│🎊 **PARABENS** 🎉 {member.mention} `TODOS OS SEUS STATUS FORAM"
-                       f" RESETADOS COM SUCESSO!` ✨ **AGORA VC JA PODE UASR O BOT NOVAMENTE.** ✨")
+                       f" RESETADOS COM SUCESSO!` ✨ **AGORA VC JA PODE USAR O BOT NOVAMENTE.** ✨")
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

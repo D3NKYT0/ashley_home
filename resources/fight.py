@@ -2133,15 +2133,13 @@ class Entity(object):
         looping_msg, total_bonus_dn = "\n", 0
         if lp:
             for _ in range(self.effects["looping"]["turns"]):
-                bonus_damage = randint(int(damage * 0.40), int(damage * 0.80))
-                total_bonus_dn += bonus_damage
+                total_bonus_dn += randint(int(damage * 0.40), int(damage * 0.80))
             looping_msg += f'\n**{entity.name.upper()}** `adicinou` **{total_bonus_dn}** `de dano a mais, pelo ' \
                            f'efeito` **looping** `ter pego` **{self.effects["looping"]["turns"]}x** ` nesse turno.`'
 
         dualshot_msg, total_bonus_ds = "\n", 0
         if ds:
-            bonus_damage = randint(int(damage * 0.75), int(damage * 0.95))
-            total_bonus_ds += bonus_damage
+            total_bonus_ds += randint(int(damage * 0.75), int(damage * 0.95))
             dualshot_msg += f'\n**{entity.name.upper()}** `adicinou` **{total_bonus_ds}** `de dano a mais, pelo ' \
                             f'efeito` **dualshot** `ter pego nesse turno.`'
 
@@ -2196,6 +2194,7 @@ class Entity(object):
             charge_msg += f'\n**{entity.name.upper()}** `adicinou` **{charge_damage}** `de dano a mais, pelo ' \
                           f'efeito` **charge** `ter pego nesse turno.`'
 
+        damage += total_bonus_ds  # adicional do dano de DUALSHOT
         dn = damage - defended  # dano verdadeiro.
 
         if reflect:
