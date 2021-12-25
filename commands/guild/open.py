@@ -447,6 +447,9 @@ class OpenClass(commands.Cog):
 
                         if len(_event_update["winners"]) >= self.winners_event_special:
                             _event_update["capsules"] = False
+                            await channel.send(f'<a:caralho:525105064873033764>│✨ '
+                                               f'**EVENTO DAS CAPSULAS ENCERRADO!** ✨\n'
+                                               f'`aproveitem os dias restantes do evento global que restam!`')
                     await self.bot.db.update_data(data, update, 'users')
                     await self.bot.db.update_data(_event, _event_update, 'events')
 

@@ -122,9 +122,14 @@ class Ashley(commands.AutoShardedBot):
 
         # inicio automatico do evento
         _DATE, _EVENT = date.localtime(), self.d_event
-        if _DATE[0] == _EVENT[0] and (_DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]) \
-                and (_EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]):
-            self.event_special = True
+        if _DATE[0] == _EVENT[0]:  # verifica o ano
+            if _DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]:  # verifica o mes (inicio ou fim)
+                if _EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]:  # verifica o dia (inicio ou fim)
+                    self.event_special = True
+                else:
+                    self.event_special = False
+            else:
+                self.event_special = False
         else:
             self.event_special = False
         self.winners_event_special = 3  # default: 3
@@ -190,7 +195,7 @@ class Ashley(commands.AutoShardedBot):
         if self.event_special:
             _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
             if _event is None:
-                _data_event = {"_id": self.event_now, "capsules": True, "winners": list()}
+                _data_event = {"_id": self.event_now, "status": True, "capsules": True, "winners": list()}
                 await (await self.db.cd("events")).insert_one(_data_event)
                 _ev_db = True
             else:
