@@ -127,6 +127,7 @@ class Ashley(commands.AutoShardedBot):
             self.event_special = True
         else:
             self.event_special = False
+        self.winners_event_special = 3  # default: 3
 
         # info bot
         self.server_ = "HEROKU"
@@ -185,12 +186,19 @@ class Ashley(commands.AutoShardedBot):
         self.shutdowns = dumps(await self.db.get_all_data("shutdown"))
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mSHUTDOWN\033[1;32m foi feita sucesso!\33[m')
 
-        _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
-        _ev_db = False if _event is None else True if _event["status"] else False
-        self.event_special, TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
+        _TEXT = "DESATIVADA"
         if self.event_special:
-            self.rate_drop = self.rate_drop * 2
-        print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{TEXT}\033[1;32m com sucesso!\33[m')
+            _event = await (await self.db.cd("events")).find_one({"_id": self.event_now}, {"_id": 1, "status": 1})
+            if _event is None:
+                _data_event = {"_id": self.event_now, "capsules": True, "winners": list()}
+                await (await self.db.cd("events")).insert_one(_data_event)
+                _ev_db = True
+            else:
+                _ev_db = True if _event["status"] else False
+            self.event_special, _TEXT = _ev_db, "ATIVADA" if _ev_db else "DESATIVADA"
+            if self.event_special:
+                self.rate_drop = self.rate_drop * 2
+        print(f'\033[1;32m( 🔶 ) | Inicialização do evento especial foi \033[1;34m{_TEXT}\033[1;32m com sucesso!\33[m')
 
         all_data = (await self.db.cd("guilds")).find({"vip": True}, {"_id": 0, "guild_id": 1})
         self.guilds_vips = [d["guild_id"] async for d in all_data]

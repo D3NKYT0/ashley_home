@@ -434,13 +434,20 @@ class OpenClass(commands.Cog):
 
             if cr == 8 and not update['event'][self.bot.event_now]:
                 if _event['capsules']:
-                    update['event'][self.bot.event_now] = True
-                    channel = self.bot.get_channel(543589223467450398)
-                    if channel is not None:
-                        await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ **GANHOU O EVENTO** ✨')
-                    await self.bot.db.update_data(data, update, 'users')
                     _event_update = _event
-                    _event_update["capsules"] = False
+                    if ctx.author.id not in _event_update["winners"]:
+                        _event_update["winners"].append(ctx.author.id)
+                        channel = self.bot.get_channel(543589223467450398)
+                        if channel is not None:
+                            number_winner = len(_event_update["winners"])
+                            update['event'][self.bot.event_now] = True
+                            await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ '
+                                               f'**FOI O {number_winner}º GANHADOR DO EVENTO DE '
+                                               f'{self.bot.event_now}** ✨')
+
+                        if len(_event_update["winners"]) >= self.winners_event_special:
+                            _event_update["capsules"] = False
+                    await self.bot.db.update_data(data, update, 'users')
                     await self.bot.db.update_data(_event, _event_update, 'events')
 
         else:
