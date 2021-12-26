@@ -911,7 +911,7 @@ class Ashley(commands.AutoShardedBot):
                     cl = await self.db.cd("guilds")
                     await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
 
-                if self.flash_event:
+                if self.flash_event:  # SISTEMA DO EVENTO FLASH
                     cl = await self.db.cd("gift_event")
                     flash_event = await cl.find_one({"_id": self.flash_event_now})
                     if flash_event is not None:
@@ -921,7 +921,7 @@ class Ashley(commands.AutoShardedBot):
 
                                 update_flash_event = flash_event
                                 update_flash_event["active"] = False
-                                await cl.update_one({"_id": flash_event["_id"]}, update_flash_event)
+                                await cl.update_one({"_id": flash_event["_id"]}, {"$set": update_flash_event})
 
                                 perms = ctx.channel.permissions_for(ctx.me)
                                 if perms.send_messages and perms.read_messages:
@@ -929,11 +929,19 @@ class Ashley(commands.AutoShardedBot):
                                     await ctx.send(f"{confet} {confet} {confet} {confet} {confet} {confet} **{_name}**"
                                                    f"`VOCE GANHOU O EVENTO FLASH!!!!!`")
 
-                                channel = self.bot.get_channel(543589223467450398)
+                                channel = self.get_channel(543589223467450398)
                                 if channel is not None:
                                     await channel.send(f'<a:caralho:525105064873033764>│{ctx.author.mention} ✨ '
                                                        f'**FOI O GANHADOR DO EVENTO FLASH '
-                                                       f'{self.bot.flash_event_now.upper()}** ✨')
+                                                       f'{self.flash_event_now.upper()}** ✨')
+
+                                try:
+                                    _gift = f"**{flash_event['gift'].upper()}**"
+                                    _value = f"**R$ {flash_event['value']},00**"
+                                    await ctx.author.send(f"EVENT: **{self.flash_event_now.upper()}**\n"
+                                                          f"GIFT: {_gift}\nVALOR: {_value}")
+                                except disnake.errors.Forbidden:
+                                    await ctx.send("<a:blue:525032762256785409>|`PEÇA SEU PREMIO A STAFF!`")
 
                             else:
                                 perms = ctx.channel.permissions_for(ctx.me)

@@ -33,7 +33,7 @@ class KickClass(commands.Cog):
 
             chance = randint(1, 100)
 
-            if member.id == self.bot.owner_ids[0]:
+            if member.id in self.bot.owner_ids[0]:
                 chance = 1
 
             if member.id == self.bot.user.id:
@@ -52,7 +52,7 @@ class KickClass(commands.Cog):
                 kick = "https://media1.tenor.com/images/a120a10ab8905a7b74deebe835a3e65a/tenor.gif?itemid=15126208"
                 end = 'QUE ACABOU COM ELE(A)! **DEPOIS DESSA VAI PRECISAR IR PRO HOSPITAL!**'
 
-            if member.id == self.bot.owner_ids[0]:
+            if member.id in self.bot.owner_ids[0]:
                 text = "Ele(a) levou um chute animal de"
                 kick = "https://media1.tenor.com/images/51dcdf7d7c418d356e86c20112361b26/tenor.gif?itemid=17370976"
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
