@@ -484,6 +484,11 @@ class DataInteraction(object):
             query_user["$inc"] = dict()
             query_user["$inc"]["user.experience"] = exp * data_user['user']['level']
 
+            if "$set" not in query_user.keys():
+                query_user["$set"] = dict()
+            data_user["user"]['xp_time'] = datetime.datetime.today()
+            query_user["$set"]["user.xp_time"] = datetime.datetime.today()
+
         if 10 < data_user['user']['level'] < 20 and data_user['user']['ranking'] is not None:
             if randint(1, 200) == 200 and data_user['user']['ranking'] == "Bronze":
                 if "$set" not in query_user.keys():

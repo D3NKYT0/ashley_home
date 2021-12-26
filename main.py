@@ -734,16 +734,30 @@ class Ashley(commands.AutoShardedBot):
                         query_user["$inc"]["security.strikes_to_ban"] = 1
                         channel_ = self.get_channel(737467830571761786)
                         user = self.get_user(data_user["user_id"])
-                        await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} ESTAVA POSSIVELMENTE USANDO'
-                                            f' MACRO E FOI BLOQUEADO\nNa Data e Hora: {data_}```')
 
-                        await ctx.send(f'<a:red:525032764211200002>│`VOCE FOI BLOQUEADO POR 72 HORAS '
-                                       f'POIS EXTRAPOLOU OS LIMITES HOJE`\n<a:red:525032764211200002>'
-                                       f' **OBS: VOCE AINDA PODE USAR O BOT, POREM PERDEU OS '
-                                       f'PRIVILEGIOS DE GANHAR OS ITENS** `ESSE BLOQUEIO FOI MAIS '
-                                       f'RIGIDO,` **SE VOCE CONTINUAR LEVANDO ESSE BLOQUEIO IRÁ SER'
-                                       f' BANIDO DE USAR MEUS SERVIÇOS** `AVISO PARA BANIMENTO:` '
-                                       f'**{data_user["security"]["strikes_to_ban"]}**/10')
+                        if data_user["user"]['block72'] is None:
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['block72'] = dt.today()
+                            query_user["$set"]["user.block72"] = dt.today()
+
+                        if (dt.today() - data_user["user"]['block72']).seconds > 5:
+
+                            await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} ESTAVA POSSIVELMENTE '
+                                                f'USANDO MACRO E FOI BLOQUEADO\nNa Data e Hora: {data_}```')
+
+                            await ctx.send(f'<a:red:525032764211200002>│`VOCE FOI BLOQUEADO POR 72 HORAS '
+                                           f'POIS EXTRAPOLOU OS LIMITES HOJE`\n<a:red:525032764211200002>'
+                                           f' **OBS: VOCE AINDA PODE USAR O BOT, POREM PERDEU OS '
+                                           f'PRIVILEGIOS DE GANHAR OS ITENS** `ESSE BLOQUEIO FOI MAIS '
+                                           f'RIGIDO,` **SE VOCE CONTINUAR LEVANDO ESSE BLOQUEIO IRÁ SER'
+                                           f' BANIDO DE USAR MEUS SERVIÇOS** `AVISO PARA BANIMENTO:` '
+                                           f'**{data_user["security"]["strikes_to_ban"]}**/10')
+
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['block72'] = dt.today()
+                            query_user["$set"]["user.block72"] = dt.today()
 
                     if data_user['security']['strikes_to_ban'] > 10:
                         answer = await self.ban_(data_user['user_id'], "BANIDO POR USAR MACRO!")
@@ -763,46 +777,116 @@ class Ashley(commands.AutoShardedBot):
 
                         channel_ = self.get_channel(737467830571761786)
                         user = self.get_user(data_user["user_id"])
-                        await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} FOI DETECTADO POSSIVELMENTE'
-                                            f' USANDO MACRO\nNa Data e Hora: {data_}```')
+
+                        if data_user["user"]['macro_time'] is None:
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['macro_time'] = dt.today()
+                            query_user["$set"]["user.macro_time"] = dt.today()
+
+                        if (dt.today() - data_user["user"]['macro_time']).seconds > 5:
+
+                            await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} FOI DETECTADO '
+                                                f'POSSIVELMENTE USANDO MACRO\nNa Data e Hora: {data_}```')
+
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['macro_time'] = dt.today()
+                            query_user["$set"]["user.macro_time"] = dt.today()
 
                         if data_user['security']['strikes'] < 11:
-                            await ctx.send(f'<a:red:525032764211200002>│`EI TENHA CALMA VOCE TA '
-                                           f'USANDO COMANDOS RAPIDO DEMAIS, SE CONTINUAR ASSIM VAI SER'
-                                           f' BLOQUEADO ATE AS 0 HORAS DO DIA DE HOJE.` '
-                                           f'<a:red:525032764211200002>'
-                                           f'**AVISO {data_user["security"]["strikes"]}/10**')
+
+                            if data_user["user"]['block_time'] is None:
+                                if "$set" not in query_user.keys():
+                                    query_user["$set"] = dict()
+                                data_user["user"]['block_time'] = dt.today()
+                                query_user["$set"]["user.block_time"] = dt.today()
+
+                            if (dt.today() - data_user["user"]['block_time']).seconds > 5:
+
+                                await ctx.send(f'<a:red:525032764211200002>│`EI TENHA CALMA VOCE TA '
+                                               f'USANDO COMANDOS RAPIDO DEMAIS, SE CONTINUAR ASSIM VAI SER'
+                                               f' BLOQUEADO ATE AS 0 HORAS DO DIA DE HOJE.` '
+                                               f'<a:red:525032764211200002>'
+                                               f'**AVISO {data_user["security"]["strikes"]}/10**')
+
+                                if "$set" not in query_user.keys():
+                                    query_user["$set"] = dict()
+                                data_user["user"]['block_time'] = dt.today()
+                                query_user["$set"]["user.block_time"] = dt.today()
 
                         if data_user["security"]["strikes_today"] % 5 == 0:
                             query_user["$set"]["security.self_baned"] = True
                             query_user["$set"]["security.captcha_code"] = CreateCaptcha()
-                            await ctx.send(f'<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA SERIE DE 5 STRIKES'
-                                           f' E POR ISSO FOI BANIDO TEMPORARIAMENTE DA ASHLEY POR SUSPEITA DE USAR'
-                                           f' MACRO, PARA VOLTAR A USAR A ASHLEY NORMALMENTE VOCÊ VAI PRECISAR FAZER'
-                                           f' UM TESTE E PROVAR QUE NAO É UM ROBÔ, USANDO O COMANDO:` '
-                                           f'**ASH CAPTCHA** <a:red:525032764211200002>')
+
+                            if data_user["user"]['captcha_time'] is None:
+                                if "$set" not in query_user.keys():
+                                    query_user["$set"] = dict()
+                                data_user["user"]['captcha_time'] = dt.today()
+                                query_user["$set"]["user.captcha_time"] = dt.today()
+
+                            if (dt.today() - data_user["user"]['captcha_time']).seconds > 5:
+
+                                await ctx.send(f'<a:red:525032764211200002>│`VOCÊ ACABOU DE LEVAR UMA SERIE DE 5 '
+                                               f'STRIKES E POR ISSO FOI BANIDO TEMPORARIAMENTE DA ASHLEY POR SUSPEITA'
+                                               f' DE USAR MACRO, PARA VOLTAR A USAR A ASHLEY NORMALMENTE VOCÊ VAI '
+                                               f'PRECISAR FAZER UM TESTE E PROVAR QUE NAO É UM ROBÔ, USANDO O '
+                                               f'COMANDO:` **ASH CAPTCHA** <a:red:525032764211200002>')
+
+                                if "$set" not in query_user.keys():
+                                    query_user["$set"] = dict()
+                                data_user["user"]['captcha_time'] = dt.today()
+                                query_user["$set"]["user.captcha_time"] = dt.today()
 
                     elif m_last_verify < 5:
                         query_user["$inc"]["security.commands"] = 1
 
                     elif m_last_verify >= 5:
-                        query_user["$set"]["security.last_verify"] = dt.today()
-                        query_user["$set"]["security.blocked"] = False
-                        query_user["$set"]["security.commands"] = 0
-                        if data_user['security']['strikes'] > 0:
-                            query_user["$inc"]["security.strikes"] = -1
+
+                        if data_user["user"]['verify_time'] is None:
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['verify_time'] = dt.today()
+                            query_user["$set"]["user.verify_time"] = dt.today()
+
+                        if (dt.today() - data_user["user"]['verify_time']).seconds > 5:
+
+                            query_user["$set"]["security.last_verify"] = dt.today()
+                            query_user["$set"]["security.blocked"] = False
+                            query_user["$set"]["security.commands"] = 0
+                            if data_user['security']['strikes'] > 0:
+                                query_user["$inc"]["security.strikes"] = -1
+
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['verify_time'] = dt.today()
+                            query_user["$set"]["user.verify_time"] = dt.today()
 
                     if data_user['security']['strikes'] == 11:
                         query_user["$set"]["security.status"] = not data_user['security']['status']
                         channel_ = self.get_channel(737467830571761786)
                         user = self.get_user(data_user["user_id"])
-                        await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} ESTAVA POSSIVELMENTE USANDO'
-                                            f' MACRO E FOI BLOQUEADO\nNa Data e Hora: {data_}```')
 
-                        await ctx.send(f'<a:red:525032764211200002>│`VOCE FOI BLOQUEADO ATE AS 0 '
-                                       f'HORAS DO DIA DE HOJE..` <a:red:525032764211200002>'
-                                       f'**OBS: VOCE AINDA PODE USAR O BOT, POREM PERDEU OS '
-                                       f'PRIVILEGIOS DE GANHAR OS ITENS**')
+                        if data_user["user"]['strike_time'] is None:
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['strike_time'] = dt.today()
+                            query_user["$set"]["user.strike_time"] = dt.today()
+
+                        if (dt.today() - data_user["user"]['strike_time']).seconds > 5:
+
+                            await channel_.send(f'```O USUARIO {data_user["user_id"]} {user} ESTAVA POSSIVELMENTE '
+                                                f'USANDO MACRO E FOI BLOQUEADO\nNa Data e Hora: {data_}```')
+
+                            await ctx.send(f'<a:red:525032764211200002>│`VOCE FOI BLOQUEADO ATE AS 0 '
+                                           f'HORAS DO DIA DE HOJE..` <a:red:525032764211200002>'
+                                           f'**OBS: VOCE AINDA PODE USAR O BOT, POREM PERDEU OS '
+                                           f'PRIVILEGIOS DE GANHAR OS ITENS**')
+
+                            if "$set" not in query_user.keys():
+                                query_user["$set"] = dict()
+                            data_user["user"]['strike_time'] = dt.today()
+                            query_user["$set"]["user.strike_time"] = dt.today()
 
                 # -----------------------------------------------------------------------------------------
                 #                                    FIM DO MACRO SYSTEM
