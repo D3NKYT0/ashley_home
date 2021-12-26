@@ -34,7 +34,7 @@ class SlapClass(commands.Cog):
 
             chance = randint(1, 100)
 
-            if member.id in self.bot.owner_ids[0]:
+            if member.id == self.bot.owner_ids[0]:
                 chance = 1
 
             if member.id == self.bot.user.id:
@@ -53,7 +53,7 @@ class SlapClass(commands.Cog):
                 end = 'QUE ACABOU COM A CARA DELE(A)! **DEPOIS DESSA VAI PRECISAR DE OUTRA!**'
                 slap = 'https://media1.tenor.com/images/1ba1ea1786f0b03912b1c9138dac707c/tenor.gif?itemid=5738394'
 
-            if member.id in self.bot.owner_ids[0]:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 text = "Ele(a) levou um tapa animal de"
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 slap = 'https://media1.tenor.com/images/b8ff9e6e9cb5a8652f18cc388c4028b0/tenor.gif?itemid=5389796'

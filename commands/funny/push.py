@@ -33,7 +33,7 @@ class PushClass(commands.Cog):
 
             chance = randint(1, 100)
 
-            if member.id in self.bot.owner_ids[0]:
+            if member.id == self.bot.owner_ids[0]:
                 chance = 1
 
             if member.id == self.bot.user.id:
@@ -52,7 +52,7 @@ class PushClass(commands.Cog):
                 end = 'QUE ACABOU COM ELE(A)! **DEPOIS DESSA VAI PRECISAR IR PARA O HOSPITAL!**'
                 push = 'https://media1.tenor.com/images/2eae03fe2318d2faeda08364834f69b7/tenor.gif?itemid=15113203'
 
-            if member.id in self.bot.owner_ids[0]:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 text = "Ele(a) recebeu um empurrão animal de"
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 push = 'https://media1.tenor.com/images/62ef360ace36ba9e60a11e6dec2edb59/tenor.gif?itemid=5416860'

@@ -39,7 +39,7 @@ class PunchClass(commands.Cog):
 
             chance = randint(1, 100)
 
-            if member.id in self.bot.owner_ids[0]:
+            if member.id == self.bot.owner_ids[0]:
                 chance = 1
 
             if member.id == self.bot.user.id:
@@ -58,7 +58,7 @@ class PunchClass(commands.Cog):
                 end = 'QUE ACABOU COM A CARA DELE(A)! **DEPOIS DESSA VAI PRECISAR DE OUTRA!**'
                 punch = 'https://thumbs.gfycat.com/PeskyApprehensiveCapeghostfrog-size_restricted.gif'
 
-            if member.id in self.bot.owner_ids[0]:
+            if ctx.author.id == self.bot.owner_ids[0]:
                 text = 'Ele(a) levou um soco de'
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 punch = 'https://i.makeagif.com/media/4-09-2016/E9n3n4.gif'
