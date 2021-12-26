@@ -927,7 +927,7 @@ class Ashley(commands.AutoShardedBot):
                                 if perms.send_messages and perms.read_messages:
                                     confet = "<a:confet:853247252998389763>"
                                     await ctx.send(f"{confet} {confet} {confet} {confet} {confet} {confet} **{_name}**"
-                                                   f"`VOCE GANHOU O EVENTO FLASH!!!!!`")
+                                                   f" `VOCE GANHOU O EVENTO FLASH!!!!!`")
 
                                 channel = self.get_channel(543589223467450398)
                                 if channel is not None:
