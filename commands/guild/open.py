@@ -892,7 +892,7 @@ class OpenClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        recipes = ["potion_of_death", "potion_of_death", "celestial_cover_gloves_divine",
+        recipes = ["potion_of_death", "celestial_cover_gloves_divine",
                    "celestial_platinum_gloves_divine", "celestial_leather_gloves_divine"]
 
         if include(recipes, update["recipes"]):
@@ -1060,7 +1060,7 @@ class OpenClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        recipes = ["potion_of_weakening", "potion_of_weakening", "celestial_cover_leggings_divine",
+        recipes = ["potion_of_weakening", "celestial_cover_leggings_divine",
                    "celestial_platinum_leggings_divine", "celestial_leather_leggings_divine",
                    "herb_red", "herb_green", "herb_blue"]
 
