@@ -134,6 +134,10 @@ class Ashley(commands.AutoShardedBot):
             self.event_special = False
         self.winners_event_special = 3  # default: 3
 
+        # Flash Event
+        self.flash_event = True  # Default: False
+        self.flash_event_now = "spotify2021"  # ID do evento
+
         # info bot
         self.server_ = "HEROKU"
         self.github = "https://github.com/D3NKYT0/ashley_home"
@@ -822,6 +826,40 @@ class Ashley(commands.AutoShardedBot):
                 if len(query_guild.keys()) > 0:
                     cl = await self.db.cd("guilds")
                     await cl.update_one({"guild_id": data_guild["guild_id"]}, query_guild)
+
+                if self.flash_event:
+                    cl = await self.db.cd("gift_event")
+                    flash_event = await cl.find_one({"_id": self.flash_event_now})
+                    if flash_event is not None:
+                        if flash_event["active"]:
+                            if randint(1, 10000) <= 2:
+                                self.flash_event = False
+
+                                update_flash_event = flash_event
+                                update_flash_event["active"] = False
+                                await cl.update_one({"_id": flash_event["_id"]}, update_flash_event)
+
+                                perms = ctx.channel.permissions_for(ctx.me)
+                                if perms.send_messages and perms.read_messages:
+                                    confet = "<a:confet:853247252998389763>"
+                                    await ctx.send(f"{confet} {confet} {confet} {confet} {confet} {confet} **{_name}**"
+                                                   f"`VOCE GANHOU O EVENTO FLASH!!!!!`")
+
+                                channel = self.bot.get_channel(543589223467450398)
+                                if channel is not None:
+                                    await channel.send(f'<a:caralho:525105064873033764>│{ctx.author.mention} ✨ '
+                                                       f'**FOI O GANHADOR DO EVENTO FLASH '
+                                                       f'{self.bot.flash_event_now.upper()}** ✨')
+
+                            else:
+                                perms = ctx.channel.permissions_for(ctx.me)
+                                if perms.send_messages and perms.read_messages:
+                                    confet = "<a:confet:853247252998389763>"
+                                    await ctx.send(f"{confet} `ta rolando um Evento Flash,` **{_name}** "
+                                                   f"`quanto mais comandos voce usar mais chances de ganhar!`",
+                                                   delete_after=5.0)
+                        else:
+                            self.flash_event = False
 
                 if str(ctx.command) not in self.no_panning:
                     money = (6, 12)
