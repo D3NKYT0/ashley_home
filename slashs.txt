@@ -1,2 +1,3 @@
 slashs.help.start
+slashs.bot.ping
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1

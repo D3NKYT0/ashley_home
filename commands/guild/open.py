@@ -445,7 +445,7 @@ class OpenClass(commands.Cog):
                                                f'**FOI O {number_winner}º GANHADOR DO EVENTO DE '
                                                f'{self.bot.event_now}** ✨')
 
-                        if len(_event_update["winners"]) >= self.winners_event_special:
+                        if len(_event_update["winners"]) >= self.bot.winners_event_special:
                             _event_update["capsules"] = False
                             await channel.send(f'<a:caralho:525105064873033764>│✨ '
                                                f'**EVENTO DAS CAPSULAS ENCERRADO!** ✨\n'
