@@ -563,9 +563,13 @@ class Raid(commands.Cog):
             desc = "<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨"
             embed = disnake.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
             for texts in response:
-                embed.add_field(name="**Loot Aleatorio**", value=texts, inline=False)
+                if texts is not None:
+                    if len(texts) > 1:
+                        embed.add_field(name="**Loot Aleatorio**", value=texts, inline=False)
             if send_message:
-                embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
+                if msg is not None:
+                    if len(msg) > 1:
+                        embed.add_field(name="**Monstros Mortos**", value=msg, inline=False)
             embed.set_thumbnail(url=ctx.author.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)

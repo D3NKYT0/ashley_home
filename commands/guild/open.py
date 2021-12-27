@@ -441,7 +441,7 @@ class OpenClass(commands.Cog):
                         if channel is not None:
                             number_winner = len(_event_update["winners"])
                             update['event'][self.bot.event_now] = True
-                            await channel.send(f'<a:caralho:525105064873033764>│{ctx.author} ✨ '
+                            await channel.send(f'<a:caralho:525105064873033764>│{ctx.author.mention} ✨ '
                                                f'**FOI O {number_winner}º GANHADOR DO EVENTO DE '
                                                f'{self.bot.event_now}** ✨')
 
