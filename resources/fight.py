@@ -142,7 +142,7 @@ class Entity(object):
 
                 for c in range(5):
                     if self.level >= LVL[c]:
-                        if c == 4:
+                        if c in [1, 4]:
                             _SK = f"N{c}"
                             self.skills_p[CLS[self.data['class_now']][_SK]['name']] = CLS[self.data['class_now']][_SK]
                         else:
@@ -471,6 +471,19 @@ class Entity(object):
             _mana = a_mana if effect_skill != "cura" else rm
             _mana = ru if skills_now[c2]['type'] == "especial" else _mana
             lvn = ls + 1
+
+            concentration, conjure = False, False
+
+            if "conjure" in self.effects.keys():
+                if self.effects["conjure"]['turns'] > 0:
+                    conjure = True
+
+            if "concentration" in self.effects.keys():
+                if self.effects["concentration"]['turns'] > 0:
+                    concentration = True
+
+            if conjure or concentration:
+                _mana = _mana // 2
 
             self.OPTIONS.append(
                 disnake.SelectOption(
@@ -805,6 +818,34 @@ class Entity(object):
 
                     _text3 = f'**{self.name.upper()}** `ativou o efeito` **barrier** `por` ' \
                              f'**{self.effects["barrier"]["turns"]}** `turnos.` {text_duelist}'
+                    msg_return += f"{_text3}\n\n"
+
+                if "conjure" in _skill.keys():
+                    min_turn, max_turn, chance = 2, _skill["conjure"]['turns'], randint(1, 100)
+                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+
+                    if chance <= 25:
+
+                        self.effects["conjure"] = _skill["conjure"]
+                        self.effects["conjure"]['turns'] = randint(min_turn, max_turn)
+
+                        _text3 = f'**{self.name.upper()}** `ativou o efeito` **conjure** `por` ' \
+                                 f'**{self.effects["conjure"]["turns"]}** `turnos.`'
+                        msg_return += f"{_text3}\n\n"
+
+                    else:
+
+                        _text3 = f'**{self.name.upper()}** `NÃO ATIVOU o efeito` **conjure** `nesse turno`'
+                        msg_return += f"{_text3}\n\n"
+
+                if "concentration" in _skill.keys():
+                    min_turn, max_turn = 2, _skill["concentration"]['turns']
+                    max_turn = min_turn + 1 if min_turn > max_turn else max_turn
+                    self.effects["concentration"] = _skill["concentration"]
+                    self.effects["concentration"]['turns'] = randint(min_turn, max_turn)
+
+                    _text3 = f'**{self.name.upper()}** `ativou o efeito` **concentration** `por` ' \
+                             f'**{self.effects["concentration"]["turns"]}** `turnos.`'
                     msg_return += f"{_text3}\n\n"
 
         return msg_return, entity
@@ -1305,8 +1346,21 @@ class Entity(object):
                         if int(c) == int(answer.values[0]) or len(skills) + 2 == int(answer.values[0]):
                             if int(c) == int(answer.values[0]):
 
+                                concentration, conjure = False, False
+
+                                if "conjure" in self.effects.keys():
+                                    if self.effects["conjure"]['turns'] > 0:
+                                        conjure = True
+
+                                if "concentration" in self.effects.keys():
+                                    if self.effects["concentration"]['turns'] > 0:
+                                        concentration = True
+
                                 ls = self.data["skill_level"][skills_now[attacks[c]]['skill'] - 1][0]
                                 remove = skills_now[attacks[c]]['mana'][ls]
+
+                                if concentration or conjure:
+                                    remove = remove // 2
 
                                 try:
                                     skill_effs = [k for k, v in skills_now[attacks[c]]['effs'][self.ls].items()]
@@ -1324,8 +1378,11 @@ class Entity(object):
                                 if skills_now[attacks[c]]['type'] == "especial":
                                     remove = int(self.tot_mp / 100 * 50)
 
-                            else:  # que desgraça é essa ?
-                                remove = 10000
+                                    if concentration or conjure:
+                                        remove = remove // 2
+
+                            else:
+                                remove = self.tot_mp * 2  # limitador para uso de habilidade sem mana
 
                             potion_limit = 3 if not self.is_wave else 3 + (wave_now // 2)
                             if self.potion >= potion_limit and len(skills) + 2 == int(answer.values[0]):
@@ -1644,7 +1701,7 @@ class Entity(object):
             key = [k for k in skill['effs'][self.ls].keys()] if test else [k for k in skill['effs'].keys()]
             for c in key:
 
-                if c in ["barrier"]:  # skills self nao pegam no inimigo
+                if c in ["barrier", "conjure", "concentration"]:  # skills self nao pegam no inimigo
                     continue
 
                 _percent = (1, 100) if not bluff else (25, 100)  # aumenta 25% de chance de pegar efeito de skill

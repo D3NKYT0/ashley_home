@@ -149,14 +149,14 @@ class SlashCommandErrorHandler(commands.Cog):
                 perms = inter.channel.permissions_for(inter.me)
                 if perms.send_messages and perms.read_messages:
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
-                                       f"**{inter.command}**, `no servidor:` **{inter.guild}**, `no canal:` "
-                                       f"**{inter.channel}** `com o membro:` **{inter.author}**  "
+                                       f"**{inter.application_command}**, `no servidor:` **{inter.guild}**, "
+                                       f"`no canal:` **{inter.channel}** `com o membro:` **{inter.author}**  "
                                        f"`com o id:` **{inter.author.id}**, `com o erro:` "
                                        f"**{error.__str__()[:3000]}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)
-                print(f"{cor['verm']}( ❌ ) | error in command: {cor['azul']}{str(inter.command).upper()}\n"
+                print(f"{cor['verm']}( ❌ ) | error in command: {cor['azul']}{str(inter.application_command).upper()}\n"
                       f"{cor['verm']}>> in Guild: "
                       f"{cor['azul']}{inter.guild} {cor['verm']}- {cor['amar']}ID: {inter.guild.id}\n"
                       f"{cor['verm']}>> in Channel: "

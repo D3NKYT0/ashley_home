@@ -53,6 +53,7 @@ class Ashley(commands.AutoShardedBot):
         self.help_emoji = dict()
         self.cmd_event = dict()
         self.cmd_marry = dict()
+        self.protect_msg = dict()
         self.blacklist = list()
         self.shutdowns = list()
         self.guilds_vips = list()
@@ -1080,7 +1081,7 @@ class Ashley(commands.AutoShardedBot):
 
                 else:
                     run_command = True
-                    if message.guild.system_channel is not None and (self.msg_cont % 10) == 0:
+                    if (self.msg_cont % 10) == 0:
                         if await verify_cooldown(self, f"{message.guild.id}_no_register", 86400):
                             embed = disnake.Embed(
                                 color=self.color,
@@ -1088,17 +1089,17 @@ class Ashley(commands.AutoShardedBot):
                                             " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
                                             "VOCES TAMBEM, É MUITO FACIL E RAPIDO. QUALQUER DUVIDA ENTRE EM CONTATO "
                                             "COM MEU SERVIDOR DE SUPORTE` [CLICANDO AQUI](https://discord/rYT6QrM)")
-                            try:
-                                await message.guild.system_channel.send(embed=embed)
-                            except disnake.Forbidden:
-                                try:
-                                    await message.channel.send(embed=embed)
-                                except disnake.Forbidden:
+                            _ctx = await self.get_context(message)
+                            perms = _ctx.channel.permissions_for(_ctx.me)
+                            if perms.send_messages and perms.read_messages:
+                                await _ctx.send(embed=embed)
+                            else:
+                                if message.guild.owner is not None:
                                     try:
-                                        if message.guild.owner is not None:
+                                        if message.guild.id not in self.protect_msg.keys():
                                             await message.guild.owner.send(embed=embed)
                                     except disnake.Forbidden:
-                                        pass
+                                        self.protect_msg[message.guild.id] = False
 
                 if str(ctx.command) in ['channel']:  # exceção dos comandos
                     run_command = True
