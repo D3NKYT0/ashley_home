@@ -210,8 +210,8 @@ class Booster(object):
         if item is None:
             return "<:alert:739251822920728708>│`VOCÊ FALHOU EM COMPRAR O ITEM...`", None
 
-        Empty = False
-        rarity = list(self.legend.keys())[list(self.legend.values()).index(item[1]['data'][3])]
+        _empty = False
+        rarity = list(self.legend.keys())[list(self.legend.values()).index(int(item[1]['data'][3]))]
         query_user["$inc"][f"box.status.{self.bl[rarity]}"] = -1
         query_user["$inc"][f"box.items.{rarity}.{item[0]}.size"] = -1
         query_user["$inc"][f"box.status.size"] = -1
@@ -220,17 +220,13 @@ class Booster(object):
         if data_user['box']['status']['size'] < 1:
             query_user["$set"] = {}
             query_user["$set"]["box.status.active"] = False
-            Empty = True
+            _empty = True
 
         _bonus = ['crystal_fragment_light', 'crystal_fragment_energy', 'crystal_fragment_dark']
-        gem = {"copper": 8, "silver": 8, "gold": 8, "platinum": 8, "sapphire": 4,
-               "ruby": 4, "emerald": 4, "amethyst": 4, "onyx": 2, "diamond": 2}
-        _reward = list()
-        for k in gem.keys():
-            _reward += [k] * gem[k]
 
-        _list = _reward if randint(1, 100) <= 5 else _bonus
-
+        # itens especiais
+        especiais_items = ["ttbag"]
+        _list = especiais_items if randint(1, 100) <= 5 else _bonus
         if bot.event_special and randint(1, 100) <= 5:
             _list = ["halloween1", "halloween2", "halloween3", "halloween4", "halloween5", "halloween6"]
 
@@ -245,7 +241,7 @@ class Booster(object):
         cl = await bot.db.cd("users")
         await cl.update_one({"user_id": data_user["user_id"]}, query_user, upsert=False)
 
-        if Empty:
+        if _empty:
             item_1 = choice(['Unearthly', 'Surpassing', 'Hurricane', 'Heavenly', 'Blazing', 'Augur'])
             item_2 = choice(['Crystal_of_Energy', 'Discharge_Crystal', 'Acquittal_Crystal'])
             item_3 = choice(['SoulStoneYellow', 'SoulStoneRed', 'SoulStonePurple', 'SoulStoneGreen',
