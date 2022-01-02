@@ -2134,8 +2134,8 @@ class Entity(object):
             if entity.TITAN_WALL:  # passiva de def do warrior
                 damage -= int(damage / 100 * randint(60, 80))
 
-        duel, duel_msg = damage + int(damage / 100 * randint(60, 90)), ""  # 60 a 90% de dano a mais
-        damage = damage if not duelist else duel
+        duel, duel_msg = int(damage / 100 * randint(40, 80)), ""  # 40 a 80% de dano a mais
+        damage = damage if not duelist else duel + duel
         if duelist:
             duel_msg += f'\n**{entity.name.upper()}** `adicinou` **{duel}** `de dano a mais, pelo ' \
                            f'efeito` **duelist** `nesse turno.`'

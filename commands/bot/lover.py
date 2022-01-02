@@ -188,7 +188,7 @@ class LoverClass(commands.Cog):
         a7 = ctx.author.id in self.bot.lendo
         a8 = data['config']['provinces']
 
-        vip_msg = f"{'🟢' if vip else '🔴'} `Energy` Se tiver verde está disponivel pra usar.\n"
+        vip_msg = f"{'🟢' if vip else '🔴'} `Vip` Se tiver verde está disponivel pra usar.\n"
 
         embed = disnake.Embed(color=self.bot.color)
 

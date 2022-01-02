@@ -22,6 +22,9 @@ class OpenClass(commands.Cog):
         self.i = self.bot.items
         self.st = []
 
+        self.mini_boss = self.bot.config['attribute']['moon_mini_boss']
+        self.mb = self.bot.config['battle']['miniboss']
+
         self.rewards_moon = self.bot.config['attribute']['moon']
 
         self.chest_choice = {"Baú de Casamento - Rosa": "marry_pink", "Baú de Casamento - Laranja": "marry_orange",
@@ -173,9 +176,13 @@ class OpenClass(commands.Cog):
         for n in numbers:
             bonus += n
 
+        mini_boss_monster = self.mb[self.mini_boss[data[0]]]
+        mini_boss_name = mini_boss_monster["name"].upper()
+
         msg = f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
         msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
-               f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`"
+               f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`\n" \
+               f"`MINIBOSS:` **{mini_boss_name}**"
         if self.bot.event_special:
             msg += f"\n`BONUS ESPECIAL:` **+15%** `({self.bot.event_now})`"
         title = f"MOON BAG DE: {data[0].upper()}"

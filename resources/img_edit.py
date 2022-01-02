@@ -73,7 +73,11 @@ async def get_avatar(display_avatar, x: int = -1, y: int = -1, rect: bool = Fals
         link = str(display_avatar)
     else:
         link = "https://festsonho.com.br/images/sem_foto.png"
-    url_avatar = await requests.get(link)
+
+    try:
+        url_avatar = await requests.get(link)
+    except aiohttp.client_exceptions.ClientConnectorError:
+        url_avatar = await requests.get("https://festsonho.com.br/images/sem_foto.png")
 
     try:
         avatar = Image.open(BytesIO(await url_avatar.read())).convert('RGBA')

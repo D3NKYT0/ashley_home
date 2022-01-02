@@ -88,11 +88,13 @@ class MailClass(commands.Cog):
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
+                    item_mails[id_mail]['status'] = True
                 elif mail_guild or mail_user:
                     for k, v in data.items():
                         if k == '_id':
                             item_mails[v] = data
                     item_mails[id_mail]['title'] = f"{item_mails[id_mail]['title']} [Lido]"
+                    item_mails[id_mail]['status'] = False
                 else:
                     return await ctx.send(f'<:negate:721581573396496464>|`VOCÊ NÃO POSSUI ESSA CORRESPONDÊNCIA.`')
 
@@ -114,15 +116,24 @@ class MailClass(commands.Cog):
 
         benefited = item_mails[id_mail]['benefited']
         if item_mails[id_mail]['global'] and not mail_user or ctx.author.id in benefited:
-            await message.add_reaction('📬')    
+            if item_mails[id_mail]['status']:
+                await message.add_reaction('📬')
+
+        def check_reaction(react, member):
+            try:
+                if react.message.id == message.id:
+                    if member.id == ctx.author.id:
+                        return True
+                return False
+            except AttributeError:
+                return False
 
         try:
-            user_id = ctx.author.id
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=lambda r, u: u.id == user_id)
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check_reaction)
         except TimeoutError:
             return await message.delete()
 
-        if reaction.emoji == '📬':
+        if reaction.emoji == '📬' and item_mails[id_mail]['status']:
             await message.delete()
             loading = await ctx.send(f'<a:loading:520418506567843860>│`LENDO CORRESPONDÊNCIA...`')
             await sleep(3)
@@ -238,7 +249,14 @@ class MailClass(commands.Cog):
         else:
             resp = resp.content.split(', ')
             ids = []
-            [ids.append(int(i)) for i in resp]
+            for i in resp:
+                try:
+                    ids.append(int(i))
+                except ValueError:
+                    _msg = f'<:negate:721581573396496464>│ Comando Cancelado\n' \
+                           f'`use: global ou os IDs dos membros separados por virgula`'
+                    embed = disnake.Embed(color=self.bot.color, description=_msg)
+                    return await ctx.send(embed=embed)
             asks['benefited'] = ids
 
         msg = f"<a:blue:525032762256785409>|`QUAL OS ID DOS SERVIDORES QUE RECEBERÃO O PRESENTE ?`"
@@ -260,7 +278,14 @@ class MailClass(commands.Cog):
         else:
             resp = resp.content.split(', ')
             ids = []
-            [ids.append(int(i)) for i in resp]
+            for i in resp:
+                try:
+                    ids.append(int(i))
+                except ValueError:
+                    _msg = f'<:negate:721581573396496464>│ Comando Cancelado\n' \
+                           f'`use: global ou os IDs das guildas separados por virgula`'
+                    embed = disnake.Embed(color=self.bot.color, description=_msg)
+                    return await ctx.send(embed=embed)
             asks['guilds_benefited'] = ids
 
         mail_collection = await self.bot.db.cd("mails")

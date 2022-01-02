@@ -30,18 +30,18 @@ class CreateClass(commands.Cog):
             "stone_of_crystal_water": 1,
             "stone_of_crystal_fire": 1,
             "frozen_letter": 5,
-            "lost_parchment": 10,
-            "royal_parchment": 10,
-            "sages_scroll": 10
+            "lost_parchment": 1,
+            "royal_parchment": 1,
+            "sages_scroll": 1
         }
         self.cost_enchant = {
             "stone_of_crystal_wind": 1,
             "stone_of_crystal_water": 1,
             "stone_of_crystal_fire": 1,
             "frozen_letter": 5,
-            "essence_cover": 10,
-            "essence_leather": 10,
-            "essence_platinum": 10
+            "essence_cover": 1,
+            "essence_leather": 1,
+            "essence_platinum": 1
         }
 
     @check_it(no_pm=True)
