@@ -29,7 +29,10 @@ class WikiClass(commands.Cog):
             if item in wiki.keys():
                 wiki = wiki[item]
                 desc, rare, how, typew = wiki['description'], wiki['rare'], wiki['how'], wiki['type']
-                why = wiki['why']
+                try:
+                    why = wiki['why']
+                except KeyError:
+                    why = None
                 try:
                     emoji = wiki['emoji']
                 except KeyError:
@@ -47,7 +50,7 @@ class WikiClass(commands.Cog):
                               f'**Tipo**: {typew}\n' \
                               f'**Raridade**: {rare}\n' \
                               f'**Como adquirir**: {how}\n' \
-                              f'**Como usar**: {why}'
+                              f'{f"**Como usar**: {why}" if why is not None else ""}'
                 embed = disnake.Embed(
                     title=f"Wikipedia",
                     color=self.bot.color,

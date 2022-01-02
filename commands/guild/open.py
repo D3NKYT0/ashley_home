@@ -26,6 +26,7 @@ class OpenClass(commands.Cog):
         self.mb = self.bot.config['battle']['miniboss']
 
         self.rewards_moon = self.bot.config['attribute']['moon']
+        self.rewards_trick = self.bot.config['attribute']['bag_good']
 
         self.chest_choice = {"Baú de Casamento - Rosa": "marry_pink", "Baú de Casamento - Laranja": "marry_orange",
                              "Baú de Casamento - Verde": "marry_green", "Baú de Casamento - Azul": "marry_blue"}
@@ -179,13 +180,23 @@ class OpenClass(commands.Cog):
         mini_boss_monster = self.mb[self.mini_boss[data[0]]]
         mini_boss_name = mini_boss_monster["name"].upper()
 
-        msg = f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
-        msg += f"\n\n`CONSIGA OS ITENS COM O COMANDO:` **ASH MOON OPEN**\n" \
-               f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`\n" \
-               f"`MINIBOSS:` **{mini_boss_name}**"
+        msg = f"**PREMIOS DO COMANDO: (ASH MOON OPEN)**\n\n"
+
+        msg += f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_moon[data[0]].items()])
+
+        msg += "\n\n**PREMIOS DO COMANDO: (ASH TRICK)**\n\n"
+
+        msg += f"\n".join([f"{self.i[k][0]} `1` `{self.i[k][1]}`" for k, v in self.rewards_trick[data[0]].items()])
+
+        msg += "\n\n**SESSÃO DE BONUS DA FASE DA LUA**\n\n"
+
+        msg += f"`BONUS ATUAL:`  **{5 + bonus}% + 1%** `para cada MOON BAG usada.`" \
+               f"\n`MINIBOSS:` **{mini_boss_name}**"
+
         if self.bot.event_special:
             msg += f"\n`BONUS ESPECIAL:` **+15%** `({self.bot.event_now})`"
-        title = f"MOON BAG DE: {data[0].upper()}"
+
+        title = f"ESTAMOS NA FASE DA: {data[0].upper() if 'lua' not in data[0].upper() else f'LUA {data[0].upper()}'}"
         embed = disnake.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
         embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
