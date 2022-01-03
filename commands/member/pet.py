@@ -51,7 +51,7 @@ class Pet(commands.Cog):
                 name=ctx.author.name,
                 icon_url=ctx.author.display_avatar
             ).set_thumbnail(
-                url=f'https://cdn.disnakeapp.com/avatars/{_webhook.id}/{_webhook.avatar}{format_1}?size=1024'
+                url=f'https://cdn.discordapp.com/avatars/{_webhook.id}/{_webhook.avatar}{format_1}?size=1024'
             ).to_dict()
             await webhook.send()
             await _webhook.delete()

@@ -23,12 +23,12 @@ class ServerInfo(commands.Cog):
         afk = ctx.guild.afk_channel.name if ctx.guild.afk_channel else "Sem canal de AFK"
         verification_level = {
             "none": "Nenhuma",
-            "low": "Baixo: Precisa ter um e-mail verificado na conta do disnake.",
-            "medium": "Médio: Precisa ter uma conta no disnake há mais de 5 minutos.",
+            "low": "Baixo: Precisa ter um e-mail verificado na conta do discord.",
+            "medium": "Médio: Precisa ter uma conta no discord há mais de 5 minutos.",
             "high": "Alta: Também precisa ser um membro deste servidor há mais de 10 minutos.",
             "table_flip": "Alta: Precisa ser um membro deste servidor há mais de 10 minutos.",
-            "extreme": "Extrema: Precisa ter um telefone verificado na conta do disnake.",
-            "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do disnake."
+            "extreme": "Extrema: Precisa ter um telefone verificado na conta do discord.",
+            "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do discord."
         }
 
         verification = verification_level.get(str(ctx.guild.verification_level))

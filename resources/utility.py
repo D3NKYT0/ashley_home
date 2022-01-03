@@ -205,8 +205,6 @@ def convert_item_name(item, db_items):
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
-    if page is None:
-        pass
     descriptions = []
     cont = 0
     cont_i = 0
@@ -376,8 +374,6 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             cont_i = 0
 
     descriptions.append(description)
-    # cont = 0
-    # emojis = bot.config['emojis']['arrow']
 
     msg = await ctx.send('<:alert:739251822920728708>│`Aguarde...`')
 
@@ -473,16 +469,39 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
                 pass
             return await msg.delete()
 
-    _embed = disnake.Embed(
-        title=embed[0],
-        color=embed[1],
-        description=descriptions[0]
-    )
-    _embed.set_author(name=bot.user, icon_url=bot.user.display_avatar)
-    _embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
-    _embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(1, len(descriptions)))
+    if page is None:
 
-    await msg.edit(content=None, embed=_embed, view=View(ctx.author.id))
+        _embed = disnake.Embed(
+            title=embed[0],
+            color=embed[1],
+            description=descriptions[0]
+        )
+        _embed.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+        _embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+        _embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(1, len(descriptions)))
+
+        await msg.edit(content=None, embed=_embed, view=View(ctx.author.id))
+
+    else:
+
+        if page is not None:
+            if (page + 1) > len(descriptions):
+                cont = len(descriptions) - 1
+            elif page < 0:
+                cont = 0
+            else:
+                cont = page
+
+        _embed = disnake.Embed(
+            title=embed[0],
+            color=embed[1],
+            description=descriptions[cont]
+        )
+        _embed.set_author(name=bot.user, icon_url=bot.user.display_avatar)
+        _embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+        _embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(cont, len(descriptions)))
+
+        await msg.edit(content=None, embed=_embed, view=View(ctx.author.id))
 
 
 async def get_response(message):
@@ -576,12 +595,12 @@ async def guild_info(guild):
 
     verification_level = {
         "none": "Nenhuma",
-        "low": "Baixo: Precisa ter um e-mail verificado na conta do disnake.",
-        "medium": "Médio: Precisa ter uma conta no disnake há mais de 5 minutos.",
+        "low": "Baixo: Precisa ter um e-mail verificado na conta do discord.",
+        "medium": "Médio: Precisa ter uma conta no discord há mais de 5 minutos.",
         "high": "Alta: Também precisa ser um membro deste servidor há mais de 10 minutos.",
         "table_flip": "Alta: Precisa ser um membro deste servidor há mais de 10 minutos.",
-        "extreme": "Extrema: Precisa ter um telefone verificado na conta do disnake.",
-        "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do disnake."
+        "extreme": "Extrema: Precisa ter um telefone verificado na conta do discord.",
+        "double_table_flip": "Extrema: Precisa ter um telefone verificado na conta do discord."
     }
 
     verification = verification_level.get(str(guild.verification_level))

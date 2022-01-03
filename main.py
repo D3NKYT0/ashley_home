@@ -423,7 +423,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(file=file, embed=embed, delete_after=5.0)
+                            await ctx.send(file=file, embed=embed, delete_after=15.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -457,7 +457,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed, delete_after=5.0)
+                            await ctx.send(embed=embed, delete_after=15.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -483,7 +483,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed, delete_after=5.0)
+                            await ctx.send(embed=embed, delete_after=15.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -510,7 +510,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed, delete_after=5.0)
+                            await ctx.send(embed=embed, delete_after=15.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -550,7 +550,7 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(file=file, embed=embed, delete_after=5.0)
+                            await ctx.send(file=file, embed=embed, delete_after=15.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                            "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
@@ -996,7 +996,7 @@ class Ashley(commands.AutoShardedBot):
             msg = "EU FUI RETIRADA DESSE SERVIDOR SEM MOTIVO APARENTE, LOGO VC DEVE ENTRAR COM UM PEDIDO PARA RETIRAR" \
                   " SEU SERVIDOR (GUILD) DA MINHA LISTA NEGRA, VOCÊ PODE FAZER ISSO ENTRANDO NO MEU SERVIDOR (GUILD)" \
                   " DE SUPORTE E FALANDO COM UM DOS MEUS DESENVOLVEDORES\n LINK DO SERVIDOR:\n " \
-                  "https://discord/rYT6QrM"
+                  "https://discord.gg/rYT6QrM"
             try:
                 if guild.system_channel is not None:
                     await guild.system_channel.send(msg)

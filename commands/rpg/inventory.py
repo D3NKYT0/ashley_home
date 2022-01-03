@@ -392,7 +392,7 @@ class InventoryClass(commands.Cog):
             if "sealed" in item:
                 return await ctx.send("<:negate:721581573396496464>│`ESSE ITEM ESTÁ SELADO, ANTES DISSO TIRE O SELO "
                                       "USANDO O COMANDO:` **ASH LIBERAR** `E USE O NOME DO COMANDO:` "
-                                      "**ASH INVENTORY EQUIP** `OU` **ASH I E**")
+                                      "**ASH ES**")
 
             return await ctx.send("<:negate:721581573396496464>│`ESSE ITEM NAO EXISTE...`\n"
                                   "`Verifique se vc digitou o comando corretamente:`\n"

@@ -42,7 +42,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name="<:memory:918166968849289216> | Memoria Usada", value=f'**{self.bot.get_ram()}**',
                             inline=False)
         embed_bot.add_field(name="<:mito:745375589145247804> | Entre no meu servidor",
-                            value="[Clique Aqui](https://disnake.gg/rYT6QrM)", inline=False)
+                            value="[Clique Aqui](https://discord.gg/rYT6QrM)", inline=False)
         embed_bot.add_field(name='`💮 | Nome`', value=ctx.me.name, inline=False)
         embed_bot.add_field(name='`◼ | Id bot`', value=ctx.me.id, inline=False)
         embed_bot.add_field(name='💠 | Criado em', value=f"<t:{dated:%s}:f>",
@@ -55,7 +55,7 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name='<:cool:745375589245911190> Bot  | Version', value=str(ver_), inline=False)
         embed_bot.add_field(name="<a:loading:520418506567843860> | Tempo Online", value=f"{uptime}", inline=False)
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
-                            value="[Clique Aqui](https://disnakeapp.com/oauth2/authorize?client_id=478977311266570242&s"
+                            value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
                                   "cope=bot&permissions=806218998)", inline=False)
         embed_bot.set_footer(text=f"Comando usado por {ctx.author} às {date}",
                              icon_url=ctx.author.display_avatar)
