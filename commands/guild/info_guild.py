@@ -66,7 +66,6 @@ class ServerInfo(commands.Cog):
         embed.add_field(name="Bots:", value=str(len([a for a in ctx.guild.members if a.bot])), inline=True)
         embed.add_field(name="Nível de verificação", value=f"{verification}", inline=True)
         embed.add_field(name="Criado em:", value=f"<t:{created:%s}:f>", inline=True)
-        embed.add_field(name="Região:", value=str(ctx.guild.region).title(), inline=True)
         embed.add_field(name="Comandos Usados: ", value=str(cmds), inline=True)
         embed.add_field(name="Vip: ", value=status, inline=True)
         embed.add_field(name="DataBase:", value=database)

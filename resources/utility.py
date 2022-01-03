@@ -618,7 +618,6 @@ async def guild_info(guild):
     embed.add_field(name="Bots:", value=str(len([a for a in guild.members if a.bot])), inline=True)
     embed.add_field(name="Nível de verificação", value=f"{verification}", inline=True)
     embed.add_field(name="Criado em:", value=guild.created_at.strftime("%d %b %Y %H:%M"), inline=True)
-    embed.add_field(name="Região:", value=str(guild.region).title(), inline=True)
     return embed
 
 
