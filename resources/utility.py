@@ -499,9 +499,9 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
         )
         _embed.set_author(name=bot.user, icon_url=bot.user.display_avatar)
         _embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
-        _embed.set_footer(text="Ashley ® Todos os direitos reservados.  [Pag {}/{}]".format(cont, len(descriptions)))
+        _embed.set_footer(text=f"Ashley ® Todos os direitos reservados.  [Pag {cont + 1}/{len(descriptions)}]")
 
-        await msg.edit(content=None, embed=_embed, view=View(ctx.author.id))
+        await msg.edit(content=None, embed=_embed)
 
 
 async def get_response(message):
