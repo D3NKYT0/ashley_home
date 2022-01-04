@@ -309,7 +309,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             string = f"[>>]: {key.upper()}\n<1 UND = {list_i[key]} ETHERNYAS>\n\n"
 
         elif str(ctx.command) == "shopping":
-            string = f"[>>]: {key.upper()}\n<1 UND = {list_i[key]} BLESSED ETHERNYAS>\n\n"
+            string = f"[>>]: {key.upper()}\n<{list_i[key][1]} UND = {list_i[key][0]} BLESSED ETHERNYAS>\n\n"
 
         elif str(ctx.command) == "shop_vote":
             string = f"[>>]: {key.upper()}\n<1 UND = {list_i[key]} VOTE COINS>\n\n"

@@ -171,7 +171,8 @@ class UserBank(commands.Cog):
 
         if item is None:
             await ctx.send(f"<:alert:739251822920728708>│`ITENS DISPONIVEIS PARA COMPRA ABAIXO`\n"
-                           f"**EXEMPLO:** `USE` **ASH SHOPPING 5 ALGEL WING** `PARA COMPRAR 5 ALGEL WING!`")
+                           f"**EXEMPLO:** `USE` **ASH SHOPPING 5 ALGEL WING** `PARA COMPRAR "
+                           f"{self.items_shopping['Angel Wing'][1] * 5} ANGEL WING!`")
             embed = ['Shopping Premium:', self.bot.color, 'Lista: \n']
 
             if quant is None:
@@ -192,7 +193,7 @@ class UserBank(commands.Cog):
         if name is None:
             return await ctx.send("<:alert:739251822920728708>│`ESSE ITEM NAO EXISTE OU NAO ESTA DISPONIVEL!`")
 
-        if update['true_money']['blessed'] < self.items_shopping[name] * int(quant):
+        if update['true_money']['blessed'] < self.items_shopping[name][0] * int(quant):
             return await ctx.send("<:alert:739251822920728708>│`VOCE NAO TEM BLESSED ETHERNYAS SUFICIENTES!`")
 
         equips_list = list()
@@ -212,23 +213,24 @@ class UserBank(commands.Cog):
 
         if type_item == "inventory":
             try:
-                update['inventory'][item_reward] += int(quant)
+                update['inventory'][item_reward] += int(quant) * self.items_shopping[name][1]
             except KeyError:
-                update['inventory'][item_reward] = int(quant)
+                update['inventory'][item_reward] = int(quant) * self.items_shopping[name][1]
 
         if type_item == "equip":
             try:
-                update['rpg']['items'][item_reward] += int(quant)
+                update['rpg']['items'][item_reward] += int(quant) * self.items_shopping[name][1]
             except KeyError:
-                update['rpg']['items'][item_reward] = int(quant)
+                update['rpg']['items'][item_reward] = int(quant) * self.items_shopping[name][1]
 
-        update['true_money']['blessed'] -= self.items_shopping[name] * int(quant)
+        update['true_money']['blessed'] -= self.items_shopping[name][0] * int(quant)
         await self.bot.db.update_data(data, update, 'users')
-        a = '{:,.2f}'.format(float(self.items_shopping[name] * int(quant)))
+        a = '{:,.2f}'.format(float(self.items_shopping[name][0] * int(quant)))
         b = a.replace(',', 'v')
         c = b.replace('.', ',')
         d = c.replace('v', '.')
-        await ctx.send(f"<:confirmed:721581574461587496>|`SUA COMPRA FOI FEITA COM SUCESSO` **{quant}** "
+        await ctx.send(f"<:confirmed:721581574461587496>|`SUA COMPRA FOI FEITA COM SUCESSO` "
+                       f"**{quant * self.items_shopping[name][1]}** "
                        f"`{name.upper()} ADICIONADO NO SEU INVENTARIO COM SUCESSO QUE CUSTOU` "
                        f"**R$ {d}** `BLESSED ETHERNYAS`")
 

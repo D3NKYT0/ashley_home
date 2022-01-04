@@ -40,7 +40,7 @@ class MerchantClass(commands.Cog):
                        'Para monstrar todas as suas lojas use o comando:\n'
                        'ash ml```')
         num = page - 1 if page > 0 else None
-        await paginator(self.bot, equips_list, data, embed, ctx, num)
+        await paginator(self.bot, equips_list, list(reversed(data)), embed, ctx, num)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
