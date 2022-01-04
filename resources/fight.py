@@ -853,7 +853,7 @@ class Entity(object):
     def self_passive_effect_resolve(self, msg_return, entity):
         if self.skill is not None and self.skill not in ["PASS-TURN-MP", "PASS-TURN-HP", "SKILL-COMBO"]:
             if self.skill['effs'] is not None:
-                if self.is_player and not self.is_passive:
+                if self.is_player and not self.is_passive and self.level > 25:
                     active_passive = True
 
                     if "self_passive" in self.effects.keys():
@@ -2211,6 +2211,7 @@ class Entity(object):
 
         # NOVO SISTEMA DE DEFESA
         armor_now, damage_now = defense // 50, damage // 100
+        damage_now = damage_now if damage_now > 0 else 1  # o dano que que ser no minimo 1
         armor_now, total_percent = 64 if armor_now >= 65 else armor_now, 65
 
         if not self.is_boss and not self.is_mini_boss:

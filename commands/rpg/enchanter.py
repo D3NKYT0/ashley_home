@@ -55,7 +55,7 @@ class EnchanterClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
             self.atacks = {}
-            data_player = extension.set_player(ctx.guild.get_member(ctx.author.id), data)
+            data_player = extension.set_player(ctx.author, data)
             rate = [_class["default"]['rate']['life'], _class["default"]['rate']['mana']]
             if data_player['level'] > 25:
                 rate[0] += _class[data_player['class_now']]['rate']['life']

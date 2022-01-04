@@ -144,7 +144,7 @@ class BrokenClass(commands.Cog):
         if rarity_now is not None:
             gem_now = self.rarity_gem[rarity_now]
             if gem_now is not None:
-                amount = randint(1, 3)
+                amount = 3 if "silver" in item.lower() else randint(2, 3)
                 msg += f"✨ {self.bot.items[gem_now][0]} ✨ `{amount}` **{self.bot.items[gem_now][1]}**\n"
                 try:
                     update['inventory'][gem_now] += amount

@@ -1009,7 +1009,7 @@ class Ashley(commands.AutoShardedBot):
             await entrance.send(embed=embed)
 
     async def on_guild_remove(self, guild):
-        if guild is None:
+        if guild is None or guild.id in [925571069539131422]:
             return
 
         if str(guild.id) not in self.blacklist:
