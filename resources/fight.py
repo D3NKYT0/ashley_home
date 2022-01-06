@@ -13,7 +13,7 @@ LVL, MONSTERS_QUEST = [5, 10, 15, 20, 25], all_data["battle"]['quests']
 SET_ARMOR = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
 _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
 _ini = "<:inimigo:873756815287017552>"
-_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion"]
+_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target"]
 
 # todos os equipamentos
 equips_list = dict()
@@ -1719,6 +1719,12 @@ class Entity(object):
                     if self.effects["detached"]["turns"] > 0:
                         chance = True
 
+                target = False
+                # sistema de target
+                if "headshot" in self.effects.keys():
+                    if self.effects["headshot"]["turns"] > 0:
+                        target = True
+
                 # sistema de mirror
                 mirror_now = False
                 if c == "mirror" and "mirror" in self.effects.keys():
@@ -1732,6 +1738,10 @@ class Entity(object):
                 # o primeiro target sempre vai funcionar ( nos monstros )
                 if c == "target" and not entity.is_target and not self.is_player:
                     entity.is_target, chance = True, True
+
+                # se o inimigo estiver com target headshot sempre vai funcionar
+                if c == "headshot" and target:
+                    chance = True
 
                 # o primeiro charge sempre vai funcionar
                 if c == "charge" and not entity.is_charge:
@@ -2211,7 +2221,8 @@ class Entity(object):
 
         # NOVO SISTEMA DE DEFESA
         armor_now, damage_now = defense // 50, damage // 100
-        damage_now = damage_now if damage_now > 0 else 1  # o dano que que ser no minimo 1
+        if self.is_player:  # sistema de proteção apenas para jogadores
+            damage_now = damage_now if damage_now > 0 else 1  # o dano que que ser no minimo 1
         armor_now, total_percent = 64 if armor_now >= 65 else armor_now, 65
 
         if not self.is_boss and not self.is_mini_boss:

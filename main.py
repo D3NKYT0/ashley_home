@@ -125,7 +125,7 @@ class Ashley(commands.AutoShardedBot):
         _DATE, _EVENT = date.localtime(), self.d_event
         if _DATE[0] == _EVENT[0]:  # verifica o ano
             if _DATE[1] == _EVENT[1] or _DATE[1] == _EVENT[3][0]:  # verifica o mes (inicio ou fim)
-                if _EVENT[2] <= _DATE[2] or _DATE[2] <= _EVENT[3][1]:  # verifica o dia (inicio ou fim)
+                if _EVENT[2] <= _DATE[2] <= _EVENT[3][1]:  # verifica o dia (inicio ou fim)
                     self.event_special = True
                 else:
                     self.event_special = False

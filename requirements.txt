@@ -8,10 +8,8 @@ pyfiglet
 aiohttp_requests
 disnake
 humanize
-captcha
 httplib2
 pycryptodome
 onesignal-notifications
 disnake-jishaku
-aiohttp
 stopwatch.py
