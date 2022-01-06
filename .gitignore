@@ -6,6 +6,8 @@ images/
 log/
 adlink/
 web/
+dungeon/maps/
+captcha/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
