@@ -235,8 +235,8 @@ def create_map(chuncks_now, img_map, show_img=False):
                 if cell == "B2":
                     _text = "X"  # sinalizador do jogador
                     x_, y_ = text_align((x1, y1, x2, y2), _text, font_text)
-                    show.text(xy=(x_ + 1, y_ + 1), text=_text, fill=(68, 29, 114), font=font_text)
-                    show.text(xy=(x_, y_), text=_text, fill=(255, 255, 255), font=font_text)
+                    show.text(xy=(x_ + 3, y_ - 1), text=_text, fill=(0, 0, 0), font=font_text)
+                    show.text(xy=(x_ + 2, y_ - 2), text=_text, fill=(255, 255, 255), font=font_text)
 
         else:
             for _ in range(size[1] - 1):
@@ -257,5 +257,5 @@ if __name__ == "__main__":
         map_now = get_map(name_map, False)
         _matriz, start_x_y = get_matrix(map_now, GUNDEONS[name_map])
         chuncks = get_vision(map_now, start_x_y[1])
-        create_map(chuncks, "vision_map", True)
+        create_map(chuncks, "vision_map", False)
         break

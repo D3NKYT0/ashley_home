@@ -84,9 +84,14 @@ class CreateClass(commands.Cog):
                 cost[i_] = _COST[i_]
 
         if len(cost) > 0:
-            msg = f"\n".join([f"{self.i[key][0]} **{key.upper()}**" for key in cost.keys()])
+            msg = ""
+            for key in cost.keys():
+                amount = cost[key]
+                if key in data['inventory']:
+                    amount = cost[key] - data['inventory'][key]
+                msg += f"\n{self.i[key][0]} `{amount}` **{key.upper()}**"
             return await ctx.send(f"<:alert:739251822920728708>│`Lhe faltam esses itens para criar um encantamento:`"
-                                  f"\n{msg}\n`OLHE SEU INVENTARIO E VEJA A QUANTIDADE QUE ESTÁ FALTANDO.`")
+                                  f"{msg}\n`OLHE SEU INVENTARIO E VEJA A QUANTIDADE QUE ESTÁ FALTANDO.`")
 
         def check_option(m):
             return m.author == ctx.author and m.content == '0' or m.author == ctx.author and m.content == '1'

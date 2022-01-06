@@ -2360,7 +2360,7 @@ class Entity(object):
                 descrip = f'**{entity.name.upper()}** `recebeu` **{damage}** `de dano` {bb}{confusy}'
 
             descrip += msg_drain
-            msg_return += f"{descrip}\n\n" + msg_hl_priest
+            msg_return += f"{descrip}\n" + msg_hl_priest + "\n\n"
 
         monster = not self.is_player if self.is_pvp else self.is_player
         bed_ = embed_creator(msg_return, skill['img'], monster, self.tot_hp, self.status['hp'], self.img, self.name)
