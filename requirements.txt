@@ -12,4 +12,3 @@ httplib2
 pycryptodome
 onesignal-notifications
 disnake-jishaku
-stopwatch.py
