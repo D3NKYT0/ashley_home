@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 _NUM = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30)
@@ -176,6 +176,8 @@ def get_matrix(map_dict, map_size):
 
 
 def create_map(chuncks_now, img_map, show_img=False):
+    # load fonts
+    font_text = ImageFont.truetype(f"fonts/bot.otf", 40)
 
     img_patch = f"dungeon/maps/{img_map}.png"
     size = [3, 3]
@@ -187,6 +189,15 @@ def create_map(chuncks_now, img_map, show_img=False):
     width, height = image.size
     width -= 1
     height -= 1
+
+    # Text Align
+    def text_align(box, text, font_t):
+        nonlocal show
+        _x1, _y1, _x2, _y2 = box
+        w, h = show.textsize(text.upper(), font=font_t)
+        x = (_x2 - _x1 - w) // 2 + _x1
+        y = (_y2 - _y1 - h) // 2 + _y1
+        return x, y
 
     # retangulo inicial
     rectangle_out = [0, 0, 40, 33]
@@ -221,6 +232,12 @@ def create_map(chuncks_now, img_map, show_img=False):
                 color = (239, 179, 16, 255) if chuncks_now[cell] is None else chuncks_now[cell][1]
                 show.rectangle((x1, y1, x2, y2), color)
 
+                if cell == "B2":
+                    _text = "X"  # sinalizador do jogador
+                    x_, y_ = text_align((x1, y1, x2, y2), _text, font_text)
+                    show.text(xy=(x_ + 1, y_ + 1), text=_text, fill=(68, 29, 114), font=font_text)
+                    show.text(xy=(x_, y_), text=_text, fill=(255, 255, 255), font=font_text)
+
         else:
             for _ in range(size[1] - 1):
                 x1 += 40
@@ -239,7 +256,6 @@ if __name__ == "__main__":
         name_map = key
         map_now = get_map(name_map, False)
         _matriz, start_x_y = get_matrix(map_now, GUNDEONS[name_map])
-        print(_matriz)
         chuncks = get_vision(map_now, start_x_y[1])
-        create_map(chuncks, "vision_map", True)
+        create_map(chuncks, "vision_map", False)
         break

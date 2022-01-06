@@ -13,7 +13,7 @@ LVL, MONSTERS_QUEST = [5, 10, 15, 20, 25], all_data["battle"]['quests']
 SET_ARMOR = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
 _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
 _ini = "<:inimigo:873756815287017552>"
-_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target"]
+_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target", "headshot"]
 
 # todos os equipamentos
 equips_list = dict()
@@ -1721,8 +1721,8 @@ class Entity(object):
 
                 target = False
                 # sistema de target
-                if "headshot" in self.effects.keys():
-                    if self.effects["headshot"]["turns"] > 0:
+                if "target" in self.effects.keys():
+                    if self.effects["target"]["turns"] > 0:
                         target = True
 
                 # sistema de mirror
@@ -1735,8 +1735,8 @@ class Entity(object):
                 if c == "rage" and not entity.is_rage:
                     entity.is_rage, chance = True, True
 
-                # o primeiro target sempre vai funcionar ( nos monstros )
-                if c == "target" and not entity.is_target and not self.is_player:
+                # o primeiro target sempre vai funcionar
+                if c == "target" and not entity.is_target:
                     entity.is_target, chance = True, True
 
                 # se o inimigo estiver com target headshot sempre vai funcionar
