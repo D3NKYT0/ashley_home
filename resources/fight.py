@@ -44,6 +44,7 @@ class Entity(object):
         self.is_rage = False
         self.is_target = False
         self.is_confine = True
+        self.is_cegueira = False
 
         # informações gerais
         self.name = self.data['name']
@@ -1123,7 +1124,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "paladin":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(10, 25)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1148,7 +1149,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
                         if self_passive and self.passive == "warrior":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(10, 25)  # velocidade da progreção
 
                             if "impulse" in entity.effects.keys():
                                 if entity.effects["impulse"]["turns"] > 0:
@@ -1179,7 +1180,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "assassin":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(30, 45)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1255,7 +1256,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
 
                         if self_passive and self.passive == "priest":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(30, 45)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1735,6 +1736,10 @@ class Entity(object):
                 if c == "rage" and not entity.is_rage:
                     entity.is_rage, chance = True, True
 
+                # o primeiro cegueira sempre vai funcionar
+                if c == "cegueira" and not entity.is_cegueira:
+                    entity.is_cegueira, chance = True, True
+
                 # o primeiro target sempre vai funcionar
                 if c == "target" and not entity.is_target:
                     entity.is_target, chance = True, True
@@ -1964,9 +1969,7 @@ class Entity(object):
 
         if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
             if not self.is_boss and not self.is_mini_boss:
-                damage = self.status['hp'] // 2  # 50% do HP atual
-            else:
-                damage = self.status['hp'] // 20  # 5% do HP atual
+                damage = (self.status['hp'] // 2) + damage  # 50% do HP atual + atak da skill
 
         return damage
 
@@ -2111,7 +2114,7 @@ class Entity(object):
                 if entity.effects["strike"]['turns'] > 0:
                     act_eff = False
 
-        if stk1 and stk2:
+        if stk1 and stk2 and not self.is_boss and not self.is_mini_boss:
             half_life_priest = True
 
         resp = self.chance_effect_skill(entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance)
@@ -2154,7 +2157,8 @@ class Entity(object):
         lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
 
         msg_hl_priest, lethal = "", lt
-        if stk1 and stk2:
+
+        if stk1 and stk2 and not self.is_boss and not self.is_mini_boss:
             msg_hl_priest += f"**{self.name.upper()}** `levou o combo especial do` **{entity.name.upper()}**"
 
         if test:
@@ -2315,9 +2319,9 @@ class Entity(object):
                     entity.status['hp'] += recovery
                     if entity.status['hp'] > entity.status['con'] * entity.rate[0]:
                         entity.status['hp'] = entity.status['con'] * entity.rate[0]
-                    msg_drain += f'\n**{entity.name.upper()}** `recuperou` **{recovery}** `de HP pelo efeito` **drain**'
+                    msg_drain += f'**{entity.name.upper()}** `recuperou` **{recovery}** `de HP pelo efeito` **drain**'
                 else:
-                    msg_drain += f'\n**{entity.name.upper()}** `não recuperou HP pois está sob o ' \
+                    msg_drain += f'**{entity.name.upper()}** `não recuperou HP pois está sob o ' \
                                  f'efeito de` **presas**'
 
             if not confusion and not hit_kill:

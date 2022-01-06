@@ -257,5 +257,5 @@ if __name__ == "__main__":
         map_now = get_map(name_map, False)
         _matriz, start_x_y = get_matrix(map_now, GUNDEONS[name_map])
         chuncks = get_vision(map_now, start_x_y[1])
-        create_map(chuncks, "vision_map", False)
+        create_map(chuncks, "vision_map", True)
         break
