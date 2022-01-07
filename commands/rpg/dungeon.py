@@ -2,6 +2,8 @@ import disnake
 import asyncio
 
 from io import BytesIO
+from asyncio import sleep
+from random import randint
 from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
@@ -92,7 +94,7 @@ class DugeonClass(commands.Cog):
             _map.save(file, 'PNG')
             file.seek(0)
             embed = disnake.Embed(color=self.bot.color)
-            embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
+            embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
             embed.set_image(file=disnake.File(file, 'map.png'))
             msg = await ctx.send(embed=embed, view=move)
 
@@ -108,16 +110,39 @@ class DugeonClass(commands.Cog):
             try:
                 inter = await self.bot.wait_for('interaction', timeout=60.0, check=check)
             except asyncio.TimeoutError:
-                await ctx.send("Tempo esgotado")
+                await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
                 await msg.delete()
                 break
+
+            if str(inter.component.emoji) == _emoji:  # procurar algo na loc
+                moviment = player.move('loc')
+                if isinstance(moviment, disnake.File):
+                    await msg.delete()
+
+                    # sistema de find item
+                    item = await ctx.send("<a:loading:520418506567843860>│`Procurando alguma coisa...`")
+                    await sleep(2)
+                    await item.delete()
+
+                    find = True if randint(1, 100) <= 25 else False
+                    text = "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!" if not find else "VOCE ENCONTROU ALGO!"
+                    item = await ctx.send(f"<a:loading:520418506567843860>│`{text}`")
+                    await sleep(2)
+                    await item.delete()
+
+                    embed = disnake.Embed(color=self.bot.color)
+                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
+                    embed.set_image(file=moviment)
+                    msg = await ctx.send(embed=embed, view=move)
+                else:
+                    inter.response.is_done()
 
             if str(inter.component.emoji) == "⬆️":
                 moviment = player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
-                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
+                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
@@ -128,7 +153,7 @@ class DugeonClass(commands.Cog):
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
-                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
+                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
@@ -139,7 +164,7 @@ class DugeonClass(commands.Cog):
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
-                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
+                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
@@ -150,7 +175,7 @@ class DugeonClass(commands.Cog):
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
-                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
+                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:

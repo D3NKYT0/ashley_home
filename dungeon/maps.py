@@ -322,3 +322,11 @@ class Player:
                     _map.save(file, 'PNG')
                     file.seek(0)
                     return disnake.File(file, 'map.png')
+
+        elif direction == "loc":  # nao movimenta para lugar algum.
+            vision = self.Map.get_vision(self.map, [self.y, self.x])
+            _map = self.Map.create_map(vision, "vision_map")
+            with BytesIO() as file:
+                _map.save(file, 'PNG')
+                file.seek(0)
+                return disnake.File(file, 'map.png')
