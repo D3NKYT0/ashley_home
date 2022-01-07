@@ -66,6 +66,7 @@ class Ashley(commands.AutoShardedBot):
         self.desafiado = list()  # status de um jogador (OK)
         self.lendo = list()  # status de um jogador (OK)
         self.recovery = list()  # status de um jogador (OK)
+        self.explorando = list()  # status de um jogador (OK)
         # -----------================------------
 
         self.session = self.loop.run_until_complete(self.create_session())
@@ -258,10 +259,11 @@ class Ashley(commands.AutoShardedBot):
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
                         if perms.embed_links and perms.attach_files:
-                            await ctx.send(embed=embed)
+                            await ctx.send(embed=embed, delete_after=5.0)
                         else:
                             await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
-                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
+                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**",
+                                           delete_after=5.0)
             try:
                 _g = await ctx.guild.invites()
             except disnake.errors.Forbidden:

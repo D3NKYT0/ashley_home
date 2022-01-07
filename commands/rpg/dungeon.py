@@ -66,6 +66,13 @@ class DugeonClass(commands.Cog):
     @dungeon.group(name="tower", aliases=['tw'])
     async def _tower(self, ctx):
 
+        if ctx.author.id in self.bot.explorando:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.explorando.append(ctx.author.id)
+
         # area da data do jogador
         #
         # -----------------------
@@ -120,7 +127,7 @@ class DugeonClass(commands.Cog):
                 await sleep(2)
                 await item.delete()
 
-            if str(inter.component.emoji) == _emoji:
+            if str(inter.component.emoji) == _emoji and not player.battle:
                 await inter.response.defer()
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
@@ -151,8 +158,8 @@ class DugeonClass(commands.Cog):
                                           '✨ **[Tower of Alasthor]** ✨')
                     await sleep(2)
                     await item.delete()
-                
-            if str(inter.component.emoji) == "⬆️":
+
+            if str(inter.component.emoji) == "⬆️" and not player.battle:
                 moviment = player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -163,7 +170,7 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "⬇️":
+            elif str(inter.component.emoji) == "⬇️" and not player.battle:
                 moviment = player.move('down')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -174,7 +181,7 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "⬅️":
+            elif str(inter.component.emoji) == "⬅️" and not player.battle:
                 moviment = player.move('left')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -185,7 +192,7 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "➡️":
+            elif str(inter.component.emoji) == "➡️" and not player.battle:
                 moviment = player.move('right')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -195,6 +202,9 @@ class DugeonClass(commands.Cog):
                     msg = await ctx.send(embed=embed, view=move)
                 else:
                     await inter.response.defer()
+
+        if ctx.author.id in self.bot.explorando:
+            self.bot.explorando.remove(ctx.author.id)
 
 
 def setup(bot):
