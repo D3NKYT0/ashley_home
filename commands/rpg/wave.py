@@ -187,7 +187,7 @@ class Raid(commands.Cog):
 
                 if p_raid[ctx.author.id].smoke_now:
                     p_raid[ctx.author.id].smoke_now = False
-                    p_raid[ctx.author.id].status["agi"] -= 60
+                    p_raid[ctx.author.id].status["agi"] -= 120
 
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
@@ -233,7 +233,7 @@ class Raid(commands.Cog):
 
                 if p_raid[ctx.author.id].smoke_now:
                     p_raid[ctx.author.id].smoke_now = False
-                    p_raid[ctx.author.id].status["agi"] -= 60
+                    p_raid[ctx.author.id].status["agi"] -= 120
 
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
@@ -344,7 +344,7 @@ class Raid(commands.Cog):
 
                 if p_raid[ctx.author.id].smoke_now:
                     p_raid[ctx.author.id].smoke_now = False
-                    p_raid[ctx.author.id].status["agi"] -= 60
+                    p_raid[ctx.author.id].status["agi"] -= 120
 
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
@@ -390,7 +390,7 @@ class Raid(commands.Cog):
 
                 if p_raid[ctx.author.id].smoke_now:
                     p_raid[ctx.author.id].smoke_now = False
-                    p_raid[ctx.author.id].status["agi"] -= 60
+                    p_raid[ctx.author.id].status["agi"] -= 120
 
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]

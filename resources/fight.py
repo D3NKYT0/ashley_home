@@ -680,7 +680,7 @@ class Entity(object):
 
                                     if _eff.lower() == "smoke":
                                         entity.smoke_now = False
-                                        entity.status["agi"] -= 60
+                                        entity.status["agi"] -= 120
 
                                     msg_return += f"{reflect}\n\n"
 
@@ -1865,7 +1865,7 @@ class Entity(object):
 
                                     if k.lower() == "smoke":
                                         entity.smoke_now = True
-                                        entity.status["agi"] += 60
+                                        entity.status["agi"] += 120
 
                                     msg_return += f"{_text2}\n\n"
 
@@ -1912,7 +1912,7 @@ class Entity(object):
 
                                     if k.lower() == "smoke":
                                         entity.smoke_now = True
-                                        entity.status["agi"] += 60
+                                        entity.status["agi"] += 120
 
                                     msg_return += f"{_text2}\n\n"
 
@@ -1932,7 +1932,7 @@ class Entity(object):
 
                             if c.lower() == "smoke":
                                 entity.smoke_now = True
-                                entity.status["agi"] += 60
+                                entity.status["agi"] += 120
 
                             msg_return += f"{_text2}\n\n"
                 else:
