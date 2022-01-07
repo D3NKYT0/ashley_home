@@ -13,7 +13,7 @@ LVL, MONSTERS_QUEST = [5, 10, 15, 20, 25], all_data["battle"]['quests']
 SET_ARMOR = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
 _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
 _ini = "<:inimigo:873756815287017552>"
-_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target", "headshot"]
+_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target", "headshot", "smoke"]
 
 # todos os equipamentos
 equips_list = dict()
@@ -45,6 +45,8 @@ class Entity(object):
         self.is_target = False
         self.is_confine = True
         self.is_cegueira = False
+        self.is_bluff = False
+        self.smoke_now = False
 
         # informações gerais
         self.name = self.data['name']
@@ -675,6 +677,11 @@ class Entity(object):
                                     del self.effects["reflect"]
                                     _eff = "reflect"
                                     reflect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{_eff.upper()}!**"
+
+                                    if _eff.lower() == "smoke":
+                                        entity.smoke_now = False
+                                        entity.status["agi"] -= 60
+
                                     msg_return += f"{reflect}\n\n"
 
                             if damage > 0:
@@ -1736,9 +1743,13 @@ class Entity(object):
                 if c == "rage" and not entity.is_rage:
                     entity.is_rage, chance = True, True
 
-                # o primeiro cegueira sempre vai funcionar
-                if c == "cegueira" and not entity.is_cegueira:
-                    entity.is_cegueira, chance = True, True
+                # o primeiro bluff sempre vai funcionar (ou bluff fica 100% ou cegueira)
+                if c == "bluff" and not entity.is_bluff and not entity.is_cegueira:
+                    entity.is_bluff, entity.is_cegueira, chance = True, True, True
+
+                # o primeiro cegueira sempre vai funcionar (ou bluff fica 100% ou cegueira)
+                if c == "cegueira" and not entity.is_cegueira and not entity.is_bluff:
+                    entity.is_cegueira, entity.is_bluff, chance = True, True, True
 
                 # o primeiro target sempre vai funcionar
                 if c == "target" and not entity.is_target:
@@ -1851,6 +1862,11 @@ class Entity(object):
                                     # verde
                                     _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
                                              f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
+
+                                    if k.lower() == "smoke":
+                                        entity.smoke_now = True
+                                        entity.status["agi"] += 60
+
                                     msg_return += f"{_text2}\n\n"
 
                             else:
@@ -1893,6 +1909,11 @@ class Entity(object):
                                     # verde
                                     _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
                                              f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
+
+                                    if k.lower() == "smoke":
+                                        entity.smoke_now = True
+                                        entity.status["agi"] += 60
+
                                     msg_return += f"{_text2}\n\n"
 
                             else:
@@ -1908,6 +1929,11 @@ class Entity(object):
                             # verde
                             _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
                                      f'**{turns}** `turno{"s" if turns > 1 else ""}`'
+
+                            if c.lower() == "smoke":
+                                entity.smoke_now = True
+                                entity.status["agi"] += 60
+
                             msg_return += f"{_text2}\n\n"
                 else:
                     negate = ""

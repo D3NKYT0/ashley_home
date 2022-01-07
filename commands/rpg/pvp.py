@@ -169,6 +169,7 @@ class PVP(commands.Cog):
             dex = int(player_2[_idp2].status['agi'] / 3)
             p1_chance = d20 + lvl_p1 + acc
             p2_chance = d16 + lvl_p2 + dex
+            smoke = False
 
             if player_2[_idp2].effects is not None:
 
@@ -186,8 +187,15 @@ class PVP(commands.Cog):
                     if player_2[_idp2].effects["hold"]["turns"] > 0:
                         p2_chance = 0
 
+                if "smoke" in player_2[_idp2].effects.keys():
+                    if player_2[_idp2].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if player_2[_idp2].evasion >= 3:
-                p2_chance, player_2[_idp2].evasion = 0, 0
+                if smoke:
+                    player_2[_idp2].evasion = 0
+                else:
+                    p2_chance, player_2[_idp2].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 p1_chance, p2_chance = 100, 0
@@ -240,6 +248,7 @@ class PVP(commands.Cog):
             dex = int(player_1[_idp1].status['agi'] / 3)
             p2_chance = d20 + lvl_p2 + acc
             p1_chance = d16 + lvl_p1 + dex
+            smoke = False
 
             if player_1[_idp1].effects is not None:
 
@@ -257,8 +266,15 @@ class PVP(commands.Cog):
                     if player_1[_idp1].effects["hold"]["turns"] > 0:
                         p1_chance = 0
 
+                if "smoke" in player_1[_idp1].effects.keys():
+                    if player_1[_idp1].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if player_1[_idp1].evasion >= 3:
-                p1_chance, player_1[_idp1].evasion = 0, 0
+                if smoke:
+                    player_1[_idp1].evasion = 0
+                else:
+                    p1_chance, player_1[_idp1].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 p2_chance, p1_chance = 100, 0

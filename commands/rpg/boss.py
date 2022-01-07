@@ -132,6 +132,7 @@ class BossSystem(commands.Cog):
             lvlp = int(player[ctx.author.id].level / 10)
             prec = int(player[ctx.author.id].status['prec'] / 2)
             chance_player = d20 + lvlp + prec
+            smoke = False
 
             # monster chance
             d16 = randint(1, 16)
@@ -152,8 +153,15 @@ class BossSystem(commands.Cog):
                     if monster[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_monster = 0
 
+                if "smoke" in monster[ctx.author.id].effects.keys():
+                    if monster[ctx.author.id].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if monster[ctx.author.id].evasion >= 3:
-                chance_monster, monster[ctx.author.id].evasion = 0, 0
+                if smoke:
+                    monster[ctx.author.id].evasion = 0
+                else:
+                    chance_monster, monster[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_player, chance_monster = 100, 0
@@ -212,6 +220,7 @@ class BossSystem(commands.Cog):
             lvlp = int(player[ctx.author.id].level / 10)
             agi = int(player[ctx.author.id].status['agi'] / 3)
             chance_player = d16 + lvlp + agi
+            smoke = False
 
             if player[ctx.author.id].effects is not None:
                 if "gelo" in player[ctx.author.id].effects.keys():
@@ -224,8 +233,15 @@ class BossSystem(commands.Cog):
                     if player[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_player = 0
 
+                if "smoke" in player[ctx.author.id].effects.keys():
+                    if player[ctx.author.id].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if player[ctx.author.id].evasion >= 3:
-                chance_player, player[ctx.author.id].evasion = 0, 0
+                if smoke:
+                    player[ctx.author.id].evasion = 0
+                else:
+                    chance_player, player[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = 100, 0

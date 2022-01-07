@@ -185,6 +185,10 @@ class Raid(commands.Cog):
                 if p_raid[ctx.author.id].passive == "paladin":
                     p_raid[ctx.author.id].devotion = 0
 
+                if p_raid[ctx.author.id].smoke_now:
+                    p_raid[ctx.author.id].smoke_now = False
+                    p_raid[ctx.author.id].status["agi"] -= 60
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -227,6 +231,10 @@ class Raid(commands.Cog):
                 if p_raid[ctx.author.id].passive == "paladin":
                     p_raid[ctx.author.id].devotion = 0
 
+                if p_raid[ctx.author.id].smoke_now:
+                    p_raid[ctx.author.id].smoke_now = False
+                    p_raid[ctx.author.id].status["agi"] -= 60
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -255,6 +263,7 @@ class Raid(commands.Cog):
             lvlm = int(m_raid[ctx.author.id].level / 10)
             agi = int(m_raid[ctx.author.id].status['agi'] / 3)
             chance_monster = d16 + lvlm + agi
+            smoke = False
 
             if m_raid[ctx.author.id].effects is not None:
                 if "gelo" in m_raid[ctx.author.id].effects.keys():
@@ -269,8 +278,15 @@ class Raid(commands.Cog):
                     if m_raid[ctx.author.id].effects["hold"]["turns"] > 0:
                         chance_monster = 0
 
+                if "smoke" in m_raid[ctx.author.id].effects.keys():
+                    if m_raid[ctx.author.id].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if m_raid[ctx.author.id].evasion >= 3:
-                chance_monster, m_raid[ctx.author.id].evasion = 0, 0
+                if smoke:
+                    m_raid[ctx.author.id].evasion = 0
+                else:
+                    chance_monster, m_raid[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_player, chance_monster = 100, 0
@@ -326,6 +342,10 @@ class Raid(commands.Cog):
                 if p_raid[ctx.author.id].passive == "paladin":
                     p_raid[ctx.author.id].devotion = 0
 
+                if p_raid[ctx.author.id].smoke_now:
+                    p_raid[ctx.author.id].smoke_now = False
+                    p_raid[ctx.author.id].status["agi"] -= 60
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -368,6 +388,10 @@ class Raid(commands.Cog):
                 if p_raid[ctx.author.id].passive == "paladin":
                     p_raid[ctx.author.id].devotion = 0
 
+                if p_raid[ctx.author.id].smoke_now:
+                    p_raid[ctx.author.id].smoke_now = False
+                    p_raid[ctx.author.id].status["agi"] -= 60
+
                 if raid_rank[ctx.author.id] % 2 == 0:
                     p_raid[ctx.author.id].limit = [0, 0, 0, 0, 0]
                 money[ctx.author.id] += self.db_monster[ctx.author.id]['ethernya']
@@ -394,6 +418,7 @@ class Raid(commands.Cog):
             lvlm = int(m_raid[ctx.author.id].level / 10)
             prec = int(m_raid[ctx.author.id].status['prec'] / 2)
             chance_monster = d20 + lvlm + prec
+            smoke = False
 
             # player chance
             d16 = randint(1, 16)
@@ -412,8 +437,15 @@ class Raid(commands.Cog):
                     if p_raid[ctx.author.id].effects["gelo"]["turns"] > 0:
                         chance_player = 0
 
+                if "smoke" in p_raid[ctx.author.id].effects.keys():
+                    if p_raid[ctx.author.id].effects["smoke"]["turns"] > 0:
+                        smoke = True
+
             if p_raid[ctx.author.id].evasion >= 3:
-                chance_player, p_raid[ctx.author.id].evasion = 0, 0
+                if smoke:
+                    p_raid[ctx.author.id].evasion = 0
+                else:
+                    chance_player, p_raid[ctx.author.id].evasion = 0, 0
 
             if skill == "PASS-TURN-MP" or skill == "PASS-TURN-HP" or skill is None:
                 chance_monster, chance_player = 100, 0
