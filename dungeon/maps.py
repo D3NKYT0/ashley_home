@@ -269,6 +269,7 @@ class Player:
         self.map = map_now
         self.matriz = matriz
         self.ctx = ctx
+        self.battle = False
         self.Map = Map()
         self.locs = list()
         self.x, self.y = pos
@@ -280,6 +281,10 @@ class Player:
                 return int(self.matriz[y][x - 1])
             else:
                 self.x -= 1
+
+                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                    self.battle = True
+
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
                 with BytesIO() as file:
@@ -292,6 +297,10 @@ class Player:
                 return int(self.matriz[y][x + 1])
             else:
                 self.x += 1
+
+                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                    self.battle = True
+
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
                 with BytesIO() as file:
@@ -304,6 +313,10 @@ class Player:
                 return int(self.matriz[y - 1][x])
             else:
                 self.y -= 1
+
+                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                    self.battle = True
+
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
                 with BytesIO() as file:
@@ -316,6 +329,10 @@ class Player:
                 return [int(self.matriz[y + 1][x]), self.matriz[y]]
             else:
                 self.y += 1
+
+                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                    self.battle = True
+
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
                 with BytesIO() as file:

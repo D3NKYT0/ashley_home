@@ -114,29 +114,44 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
+            if player.battle:
+                await inter.response.defer()
+                item = await ctx.send("<:alert:739251822920728708>│`Você precisa batalhar para se mover!`")
+                await sleep(2)
+                await item.delete()
+
             if str(inter.component.emoji) == _emoji:
                 await inter.response.defer()
-                pos = (player.x, player.y)
-                if pos not in player.locs:
-                    player.locs.append(pos)
 
-                    item = await ctx.send("<a:loading:520418506567843860>│`Procurando alguma coisa...`")
+                if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
+
+                    pos, num = (player.x, player.y), int(player.matriz[player.y][player.x])
+                    if pos not in player.locs:
+                        player.locs.append(pos)
+
+                        item = await ctx.send("<a:loading:520418506567843860>│`Procurando alguma coisa...`")
+                        await sleep(2)
+                        await item.delete()
+
+                        find = True if randint(1, 100) <= 25 else True if num == 5 else False
+                        text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
+                        emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
+                        item = await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`")
+                        await sleep(2)
+                        await item.delete()
+
+                    else:
+
+                        item = await ctx.send("<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`")
+                        await sleep(2)
+                        await item.delete()
+
+                if int(player.matriz[player.y][player.x]) == 3:  # objetivo
+                    item = await ctx.send('<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n'
+                                          '✨ **[Tower of Alasthor]** ✨')
                     await sleep(2)
                     await item.delete()
-
-                    find = True if randint(1, 100) <= 25 else False
-                    text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
-                    emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
-                    item = await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`")
-                    await sleep(2)
-                    await item.delete()
-
-                else:
-
-                    item = await ctx.send("<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`")
-                    await sleep(2)
-                    await item.delete()
-
+                
             if str(inter.component.emoji) == "⬆️":
                 moviment = player.move('up')
                 if isinstance(moviment, disnake.File):
