@@ -4,7 +4,7 @@ import asyncio
 
 from io import BytesIO
 from asyncio import sleep
-from random import randint
+from random import randint, choice
 from disnake.ext import commands
 from resources.db import Database
 from resources.check import check_it
@@ -12,26 +12,14 @@ from disnake.ext.commands.core import is_owner
 from dungeon.maps import Map, MovePlayer, Player
 
 
-GUNDEONS = {
-            "start_floor": [11, 30],
-            "floor-1": [11, 30],
-            "floor-2": [11, 30],
-            "floor-3": [11, 30],
-            "floor-4": [11, 30],
-            "floor-5": [11, 30],
-            "floor-6": [30, 30],
-            "floor-7": [30, 30],
-            "floor-8": [30, 30],
-            "floor-9": [30, 30],
-            "last-floor": [30, 30]
-        }
-
-
 class DugeonClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.st = []
         self.color = self.bot.color
+        self.i = self.bot.items
+        self.dgt = self.bot.config['attribute']['dungeons_tower']
+        self.dgtl = self.bot.config['attribute']['list_tower']
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -67,6 +55,34 @@ class DugeonClass(commands.Cog):
     @dungeon.group(name="tower", aliases=['tw'])
     async def _tower(self, ctx):
 
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if not update['rpg']['active']:
+            msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "tower" not in update['dungeons'].keys():
+            tower = {
+                "active": True,
+                "position_now": (-1, -1),
+                "floor": 0,
+                "block_battle": False,
+                "locs": list()
+            }
+            update['dungeons']["tower"] = tower
+            msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a dungeon` **[Tower of Alasthor]** ' \
+                  '`foi ativada na sua conta com sucesso!`\n**Obs:** `use o comando novamente pra iniciar!`'
+            await self.bot.db.update_data(data, update, 'users')
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         if ctx.author.id in self.bot.explorando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -74,17 +90,20 @@ class DugeonClass(commands.Cog):
 
         self.bot.explorando.append(ctx.author.id)
 
-        # area da data do jogador
-        #
-        # -----------------------
-
-        mapper = Map()
-        map_now = mapper.get_map(img_map='start_floor')
-        matriz, pos = mapper.get_matrix(map_now, GUNDEONS['start_floor'])
+        mapper, map_name = Map(), self.dgtl[update['dungeons']['tower']['floor']]
+        map_now = mapper.get_map(img_map=map_name)
+        matriz, pos = mapper.get_matrix(map_now, self.dgt[map_name])
         x, y = pos[1][1], pos[1][0]
+
+        if update['dungeons']['tower']['position_now'] == (-1, -1):
+            update['dungeons']['tower']['position_now'] = (x, y)
+            await self.bot.db.update_data(data, update, 'users')
+        else:
+            x, y = update['dungeons']['tower']['position_now'][0], update['dungeons']['tower']['position_now'][1]
+
         vision = mapper.get_vision(map_now, [x, y])
         _map = mapper.create_map(vision, "vision_map")
-        _emoji = "<:picket:928779628041080853>"
+        _emoji, emo = "<:picket:928779628041080853>", "<:confirmed:721581574461587496>"
         _style = [disnake.ButtonStyle.gray, disnake.ButtonStyle.primary, disnake.ButtonStyle.green]
 
         move = MovePlayer(ctx.author)
@@ -106,7 +125,9 @@ class DugeonClass(commands.Cog):
             embed.set_image(file=disnake.File(file, 'map.png'))
             msg = await ctx.send(embed=embed, view=move)
 
-        player = Player(map_now, matriz, [x, y], ctx)
+        player = Player(ctx, map_now, matriz, [x, y], "tower")
+        player.battle = data["dungeons"]["tower"]["block_battle"]
+        cl = await self.bot.db.cd("users")
 
         while not ctx.bot.is_closed():
 
@@ -119,64 +140,23 @@ class DugeonClass(commands.Cog):
                 inter = await self.bot.wait_for('interaction', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
-                if ctx.author.id in self.bot.explorando:
-                    self.bot.explorando.remove(ctx.author.id)
-                if ctx.author.id in self.bot.dg_battle:
-                    self.bot.dg_battle.remove(ctx.author.id)
-                    if ctx.author.id in self.bot.dg_battle_now:
-                        self.bot.dg_battle_now.remove(ctx.author.id)
-                    if ctx.author.id in self.bot.dg_battle_loser:
-                        self.bot.dg_battle_loser.remove(ctx.author.id)
-                    if ctx.author.id in self.bot.batalhando:
-                        self.bot.batalhando.remove(ctx.author.id)
-
                 await msg.delete()
-                return
+                break
 
-            if player.battle and ctx.author.id not in self.bot.dg_battle and ctx.author.id not in self.bot.batalhando:
-
+            if player.battle:
                 _msg = "<:alert:739251822920728708>│`Você precisa batalhar para se mover!`"
                 await inter.response.send_message(_msg, delete_after=2.0)
-
-                _messeger = copy.copy(ctx.message)
-                _messeger.content = "ash battle"
-                _ctx = await self.bot.get_context(_messeger)
-                await self.bot.invoke(_ctx)
-                self.bot.dg_battle.append(ctx.author.id)
-                self.bot.dg_battle_now.append(ctx.author.id)
-                self.bot.batalhando.append(ctx.author.id)
-
-            elif player.battle and ctx.author.id in self.bot.dg_battle_loser and\
-                    ctx.author.id not in self.bot.batalhando:
-
-                _msg = "<:alert:739251822920728708>│`Como voce perdeu vai precisar batalhar novamente!`"
-                await inter.response.send_message(_msg, delete_after=2.0)
-
-                _messeger = copy.copy(ctx.message)
-                _messeger.content = "ash battle"
-                _ctx = await self.bot.get_context(_messeger)
-                await self.bot.invoke(_ctx)
-                self.bot.dg_battle.append(ctx.author.id)
-                self.bot.dg_battle_now.append(ctx.author.id)
-                self.bot.batalhando.append(ctx.author.id)
-                self.bot.dg_battle_loser.remove(ctx.author.id)
-
-            elif player.battle and ctx.author.id not in self.bot.dg_battle and ctx.author.id in self.bot.dg_battle_now:
-                player.battle = False
-                self.bot.dg_battle_now.remove(ctx.author.id)
-
-            elif player.battle and ctx.author.id in self.bot.dg_battle and ctx.author.id in self.bot.batalhando:
-
-                _msg = "<:alert:739251822920728708>│`Termine sua batalha primeiro, para se mover!`"
-                await inter.response.send_message(_msg, delete_after=2.0)
+                await msg.delete()
+                break
 
             if str(inter.component.emoji) == _emoji and not player.battle:
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
+                    dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 
                     pos, num = (player.x, player.y), int(player.matriz[player.y][player.x])
-                    if pos not in player.locs:
-                        player.locs.append(pos)
+                    if pos not in dg_data["dungeons"]["tower"]["locs"]:
+                        dg_data["dungeons"]["tower"]["locs"].append(pos)
 
                         _msg = "<a:loading:520418506567843860>│`Procurando alguma coisa...`"
                         await inter.response.send_message(_msg, delete_after=2.0)
@@ -187,6 +167,16 @@ class DugeonClass(commands.Cog):
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
                         await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`", delete_after=2.0)
+
+                        if find:
+                            it, qt = choice(["Energy", "Energy", "Energy"]), randint(1, 3)
+                            if it in dg_data["inventory"].keys():
+                                dg_data["inventory"][it] += qt
+                            else:
+                                dg_data["inventory"][it] = qt
+                            await ctx.send(f"{emo}│{self.i[it][0]} `{qt}` **{self.i[it][1]}**")
+
+                        await cl.update_one({"user_id": ctx.author.id}, {"$set": dg_data})
 
                     else:
 
@@ -200,7 +190,7 @@ class DugeonClass(commands.Cog):
                     await inter.response.send_message(_msg, delete_after=2.0)
 
             if str(inter.component.emoji) == "⬆️" and not player.battle:
-                moviment = player.move('up')
+                moviment = await player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
@@ -211,7 +201,7 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬇️" and not player.battle:
-                moviment = player.move('down')
+                moviment = await player.move('down')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
@@ -222,7 +212,7 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬅️" and not player.battle:
-                moviment = player.move('left')
+                moviment = await player.move('left')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
@@ -233,7 +223,7 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "➡️" and not player.battle:
-                moviment = player.move('right')
+                moviment = await player.move('right')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)

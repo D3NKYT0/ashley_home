@@ -130,6 +130,9 @@ class SlashCommandErrorHandler(commands.Cog):
             if str(inter.command) in self.read:
                 if inter.author.id in self.bot.lendo:
                     self.bot.lendo.remove(inter.author.id)
+            if str(inter.command) in ["dungeon"]:
+                if inter.author.id in self.bot.explorando:
+                    self.bot.explorando.remove(ctx.author.id)
 
             # retorno da msg de erro fora de CTX
             await inter.response.send_message(

@@ -125,6 +125,9 @@ class CommandErrorHandler(commands.Cog):
             if str(ctx.command) in self.read:
                 if ctx.author.id in self.bot.lendo:
                     self.bot.lendo.remove(ctx.author.id)
+            if str(ctx.command) in ["dungeon"]:
+                if ctx.author.id in self.bot.explorando:
+                    self.bot.explorando.remove(ctx.author.id)
 
             # retorno da msg de erro fora de CTX
             await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO DISCORD E SEU"

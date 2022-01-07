@@ -201,7 +201,8 @@ user_data_structure = {
     "mails": dict(),
     "event": dict(),
     "research": dict(),
-    "stickers": dict()
+    "stickers": dict(),
+    "dungeons": dict()
 }
 
 guild_data_structure = {

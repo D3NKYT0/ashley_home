@@ -265,16 +265,16 @@ class MovePlayer(disnake.ui.View):
 
 
 class Player:
-    def __init__(self, map_now, matriz, pos, ctx):
+    def __init__(self, ctx, map_now, matriz, pos, dg):
+        self.ctx = ctx
+        self.dg = dg
         self.map = map_now
         self.matriz = matriz
-        self.ctx = ctx
         self.battle = False
         self.Map = Map()
-        self.locs = list()
         self.x, self.y = pos
 
-    def move(self, direction):
+    async def move(self, direction):
         x, y = self.x, self.y
         if direction == 'up':
             if (int(self.matriz[y][x - 1]) == 0) or y == 0:
@@ -282,8 +282,12 @@ class Player:
             else:
                 self.x -= 1
 
+                cl = await self.ctx.bot.db.cd("users")
+                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
                 if int(self.matriz[self.y][self.x]) == 4:  # batalha
                     self.battle = True
+                    query[f"dungeons.{self.dg}.block_battle"] = True
+                await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
@@ -298,8 +302,12 @@ class Player:
             else:
                 self.x += 1
 
+                cl = await self.ctx.bot.db.cd("users")
+                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
                 if int(self.matriz[self.y][self.x]) == 4:  # batalha
                     self.battle = True
+                    query[f"dungeons.{self.dg}.block_battle"] = True
+                await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
@@ -314,8 +322,12 @@ class Player:
             else:
                 self.y -= 1
 
+                cl = await self.ctx.bot.db.cd("users")
+                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
                 if int(self.matriz[self.y][self.x]) == 4:  # batalha
                     self.battle = True
+                    query[f"dungeons.{self.dg}.block_battle"] = True
+                await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
@@ -330,8 +342,12 @@ class Player:
             else:
                 self.y += 1
 
+                cl = await self.ctx.bot.db.cd("users")
+                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
                 if int(self.matriz[self.y][self.x]) == 4:  # batalha
                     self.battle = True
+                    query[f"dungeons.{self.dg}.block_battle"] = True
+                await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")

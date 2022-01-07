@@ -31,7 +31,7 @@ class Battle(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='battle', aliases=['batalha', 'batalhar', 'bt'])
-    async def battle(self, ctx, moon=None):
+    async def battle(self, ctx, *, moon=None):
         """Comando usado pra batalhar no rpg da ashley
         Use ash battle"""
         global player, monster
@@ -39,7 +39,15 @@ class Battle(commands.Cog):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 
-        mini_boss = False if moon is False or moon != "moon" else True
+        if moon is None:
+            dungeon, mini_boss = None, False
+        else:
+            mini_boss = False if moon != "moon" else True
+            dungeon = None if mini_boss else moon
+
+        if dungeon is not None:
+            if moon.lower() not in ["tower"]:
+                dungeon = None
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
@@ -358,12 +366,6 @@ class Battle(commands.Cog):
         if monster[ctx.author.id].status['hp'] > 0:
             if not self.xp_off[ctx.author.id]:
                 await self.bot.data.add_xp(ctx, xp_reward[2])
-
-            if ctx.author.id in self.bot.dg_battle:
-                self.bot.dg_battle.remove(ctx.author.id)
-                if ctx.author.id not in self.bot.dg_battle_loser:
-                    self.bot.dg_battle_loser.append(ctx.author.id)
-
             embed = disnake.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
                 color=0x000000
@@ -384,13 +386,13 @@ class Battle(commands.Cog):
                 money = money * 2  # bonus de ETHERNYA
 
             answer_ = await self.bot.db.add_money(ctx, money, True)
-
-            if ctx.author.id in self.bot.dg_battle:
-                self.bot.dg_battle.remove(ctx.author.id)
-
             embed = disnake.Embed(
                 description=f"`{ctx.author.name.upper()} GANHOU!` {answer_}",
                 color=0x000000)
+
+            if dungeon is not None:
+                data["dungeons"][dungeon]["block_battle"] = False
+
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
