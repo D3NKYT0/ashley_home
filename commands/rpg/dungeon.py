@@ -63,7 +63,7 @@ class DugeonClass(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @dungeon.group(name="tower", aliases=['tw'])
     async def _tower(self, ctx):
-        
+
         # area da data do jogador
         #
         # -----------------------
@@ -79,21 +79,22 @@ class DugeonClass(commands.Cog):
 
         move = MovePlayer(ctx.author)
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
-        move.add_item(disnake.ui.Button(emoji="⬆️", style=_style[1], custom_id="Up"))
+        move.add_item(disnake.ui.Button(emoji="⬆️", style=_style[1]))
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
-        move.add_item(disnake.ui.Button(emoji="⬅️", style=_style[1], row=1, custom_id="Left"))
-        move.add_item(disnake.ui.Button(emoji=_emoji, style=_style[2], row=1, custom_id="Action"))
-        move.add_item(disnake.ui.Button(emoji="➡️", style=d_style[1], row=1))
-        move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True, row=3, custom_id="Right"))
-        move.add_item(disnake.ui.Button(emoji="⬇️", style=_style[1], row=3, custom_id="Down"))
+        move.add_item(disnake.ui.Button(emoji="⬅️", style=_style[1], row=1))
+        move.add_item(disnake.ui.Button(emoji=_emoji, style=_style[2], row=1))
+        move.add_item(disnake.ui.Button(emoji="➡️", style=_style[1], row=1))
+        move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True, row=3))
+        move.add_item(disnake.ui.Button(emoji="⬇️", style=_style[1], row=3))
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True, row=3))
 
         with BytesIO() as file:
             _map.save(file, 'PNG')
             file.seek(0)
-            embed = disnake.Embed(title=f"Dungeon: {ctx.author.name}", color=self.bot.color)
+            embed = disnake.Embed(color=self.bot.color)
+            embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
             embed.set_image(file=disnake.File(file, 'map.png'))
-            msg = await ctx.send(embed=embed, view=Move)
+            msg = await ctx.send(embed=embed, view=move)
 
         player = Player(map_now, matriz, [x, y], ctx)
 
@@ -105,7 +106,7 @@ class DugeonClass(commands.Cog):
                 return False
 
             try:
-                inter = await self.bot.wait_for('interaction', timeout=30.0, check=check)
+                inter = await self.bot.wait_for('interaction', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await ctx.send("Tempo esgotado")
                 await msg.delete()
@@ -115,9 +116,10 @@ class DugeonClass(commands.Cog):
                 moviment = player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
-                    embed = disnake.Embed(title=f"Dungeon: {ctx.author.name}", color=self.bot.color)
+                    embed = disnake.Embed(color=self.bot.color)
+                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=Move)
+                    msg = await ctx.send(embed=embed, view=move)
                 else:
                     inter.response.is_done()
 
@@ -125,9 +127,10 @@ class DugeonClass(commands.Cog):
                 moviment = player.move('down')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
-                    embed = disnake.Embed(title=f"Dungeon: {ctx.author.name}", color=self.bot.color)
+                    embed = disnake.Embed(color=self.bot.color)
+                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=Move)
+                    msg = await ctx.send(embed=embed, view=move)
                 else:
                     inter.response.is_done()
 
@@ -135,9 +138,10 @@ class DugeonClass(commands.Cog):
                 moviment = player.move('left')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
-                    embed = disnake.Embed(title=f"Dungeon: {ctx.author.name}", color=self.bot.color)
+                    embed = disnake.Embed(color=self.bot.color)
+                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=Move)
+                    msg = await ctx.send(embed=embed, view=move)
                 else:
                     inter.response.is_done()
 
@@ -145,9 +149,10 @@ class DugeonClass(commands.Cog):
                 moviment = player.move('right')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
-                    embed = disnake.Embed(title=f"Dungeon: {ctx.author.name}", color=self.bot.color)
+                    embed = disnake.Embed(color=self.bot.color)
+                    embed.set_author(name=ctx.user, icon_url=ctx.user.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=Move)
+                    msg = await ctx.send(embed=embed, view=move)
                 else:
                     inter.response.is_done()
 
