@@ -127,4 +127,5 @@ commands.rpg.broken
 commands.event.shop_event
 commands.event.trick
 commands.member.mail
+commands.rpg.dungeon
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1
