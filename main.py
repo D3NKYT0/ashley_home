@@ -67,6 +67,9 @@ class Ashley(commands.AutoShardedBot):
         self.lendo = list()  # status de um jogador (OK)
         self.recovery = list()  # status de um jogador (OK)
         self.explorando = list()  # status de um jogador (OK)
+        self.dg_battle = list()  # status de um jogador (OK)
+        self.dg_battle_now = list()  # status de um jogador (OK)
+        self.dg_battle_loser = list()  # status de um jogador (OK)
         # -----------================------------
 
         self.session = self.loop.run_until_complete(self.create_session())

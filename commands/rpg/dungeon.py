@@ -1,3 +1,4 @@
+import copy
 import disnake
 import asyncio
 
@@ -121,9 +122,46 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
-            if player.battle:
+            if player.battle and ctx.author.id not in self.bot.dg_battle and ctx.author.id not in self.bot.batalhando:
+
                 await inter.response.defer()
                 item = await ctx.send("<:alert:739251822920728708>│`Você precisa batalhar para se mover!`")
+                await sleep(2)
+                await item.delete()
+
+                msg = copy.copy(ctx.message)
+                msg.content = "ash battle"
+                _ctx = await self.bot.get_context(msg)
+                await self.bot.invoke(_ctx)
+                self.bot.dg_battle.append(ctx.author.id)
+                self.bot.dg_battle_now.append(ctx.author.id)
+                self.bot.batalhando.append(ctx.author.id)
+
+            elif player.battle and ctx.author.id in self.bot.dg_battle_loser and\
+                    ctx.author.id not in self.bot.batalhando:
+
+                await inter.response.defer()
+                item = await ctx.send("<:alert:739251822920728708>│`Como voce perdeu vai precisar batalhar novamente!`")
+                await sleep(2)
+                await item.delete()
+
+                msg = copy.copy(ctx.message)
+                msg.content = "ash battle"
+                _ctx = await self.bot.get_context(msg)
+                await self.bot.invoke(_ctx)
+                self.bot.dg_battle.append(ctx.author.id)
+                self.bot.dg_battle_now.append(ctx.author.id)
+                self.bot.batalhando.append(ctx.author.id)
+                self.bot.dg_battle_loser.remove(ctx.author.id)
+
+            elif player.battle and ctx.author.id not in self.bot.dg_battle and ctx.author.id in self.bot.dg_battle_now:
+                player.battle = False
+                self.bot.dg_battle_now.remove(ctx.author.id)
+
+            elif player.battle and ctx.author.id in self.bot.dg_battle and ctx.author.id in self.bot.batalhando:
+
+                await inter.response.defer()
+                item = await ctx.send("<:alert:739251822920728708>│`Termine sua batalha primeiro, para se mover!`")
                 await sleep(2)
                 await item.delete()
 
