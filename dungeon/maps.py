@@ -268,10 +268,10 @@ class Player:
     def __init__(self, map_now, matriz, pos, ctx):
         self.map = map_now
         self.matriz = matriz
-        self.pos = pos
         self.ctx = ctx
         self.Map = Map()
-        self.x, self.y = self.pos
+        self.locs = list()
+        self.x, self.y = pos
 
     def move(self, direction):
         x, y = self.x, self.y
@@ -322,11 +322,3 @@ class Player:
                     _map.save(file, 'PNG')
                     file.seek(0)
                     return disnake.File(file, 'map.png')
-
-        elif direction == "loc":  # nao movimenta para lugar algum.
-            vision = self.Map.get_vision(self.map, [self.y, self.x])
-            _map = self.Map.create_map(vision, "vision_map")
-            with BytesIO() as file:
-                _map.save(file, 'PNG')
-                file.seek(0)
-                return disnake.File(file, 'map.png')

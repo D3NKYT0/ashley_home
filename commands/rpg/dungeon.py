@@ -114,28 +114,28 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
-            if str(inter.component.emoji) == _emoji:  # procurar algo na loc
-                moviment = player.move('loc')
-                if isinstance(moviment, disnake.File):
-                    await msg.delete()
+            if str(inter.component.emoji) == _emoji:
+                await inter.response.defer()
+                pos = (player.x, player.y)
+                if pos not in player.locs:
+                    player.locs.append(pos)
 
-                    # sistema de find item
                     item = await ctx.send("<a:loading:520418506567843860>│`Procurando alguma coisa...`")
                     await sleep(2)
                     await item.delete()
 
                     find = True if randint(1, 100) <= 25 else False
-                    text = "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!" if not find else "VOCE ENCONTROU ALGO!"
-                    item = await ctx.send(f"<a:loading:520418506567843860>│`{text}`")
+                    text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
+                    emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
+                    item = await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`")
                     await sleep(2)
                     await item.delete()
 
-                    embed = disnake.Embed(color=self.bot.color)
-                    embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
-                    embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=move)
                 else:
-                    inter.response.is_done()
+
+                    item = await ctx.send("<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`")
+                    await sleep(2)
+                    await item.delete()
 
             if str(inter.component.emoji) == "⬆️":
                 moviment = player.move('up')
@@ -146,7 +146,7 @@ class DugeonClass(commands.Cog):
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
-                    inter.response.is_done()
+                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬇️":
                 moviment = player.move('down')
@@ -157,7 +157,7 @@ class DugeonClass(commands.Cog):
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
-                    inter.response.is_done()
+                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬅️":
                 moviment = player.move('left')
@@ -168,7 +168,7 @@ class DugeonClass(commands.Cog):
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
-                    inter.response.is_done()
+                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "➡️":
                 moviment = player.move('right')
@@ -179,7 +179,7 @@ class DugeonClass(commands.Cog):
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
                 else:
-                    inter.response.is_done()
+                    await inter.response.defer()
 
 
 def setup(bot):
