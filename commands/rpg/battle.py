@@ -360,6 +360,7 @@ class Battle(commands.Cog):
                 await self.bot.data.add_xp(ctx, xp_reward[2])
 
             if ctx.author.id in self.bot.dg_battle:
+                self.bot.dg_battle.remove(ctx.author.id)
                 if ctx.author.id not in self.bot.dg_battle_loser:
                     self.bot.dg_battle_loser.append(ctx.author.id)
 
