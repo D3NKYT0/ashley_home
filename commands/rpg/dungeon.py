@@ -111,7 +111,7 @@ class DugeonClass(commands.Cog):
         while not ctx.bot.is_closed():
 
             def check(m):
-                if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id:
+                if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id and m.message.id == msg.id:
                     return True
                 return False
 
@@ -119,19 +119,28 @@ class DugeonClass(commands.Cog):
                 inter = await self.bot.wait_for('interaction', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
+                if ctx.author.id in self.bot.explorando:
+                    self.bot.explorando.remove(ctx.author.id)
+                if ctx.author.id in self.bot.dg_battle:
+                    self.bot.dg_battle.remove(ctx.author.id)
+                    if ctx.author.id in self.bot.dg_battle_now:
+                        self.bot.dg_battle_now.remove(ctx.author.id)
+                    if ctx.author.id in self.bot.dg_battle_loser:
+                        self.bot.dg_battle_loser.remove(ctx.author.id)
+                    if ctx.author.id in self.bot.batalhando:
+                        self.bot.batalhando.remove(ctx.author.id)
+
                 await msg.delete()
-                break
+                return
 
             if player.battle and ctx.author.id not in self.bot.dg_battle and ctx.author.id not in self.bot.batalhando:
 
-                await inter.response.defer()
-                item = await ctx.send("<:alert:739251822920728708>│`Você precisa batalhar para se mover!`")
-                await sleep(2)
-                await item.delete()
+                _msg = "<:alert:739251822920728708>│`Você precisa batalhar para se mover!`"
+                await inter.response.send_message(_msg, delete_after=2.0)
 
-                msg = copy.copy(ctx.message)
-                msg.content = "ash battle"
-                _ctx = await self.bot.get_context(msg)
+                _messeger = copy.copy(ctx.message)
+                _messeger.content = "ash battle"
+                _ctx = await self.bot.get_context(_messeger)
                 await self.bot.invoke(_ctx)
                 self.bot.dg_battle.append(ctx.author.id)
                 self.bot.dg_battle_now.append(ctx.author.id)
@@ -140,14 +149,12 @@ class DugeonClass(commands.Cog):
             elif player.battle and ctx.author.id in self.bot.dg_battle_loser and\
                     ctx.author.id not in self.bot.batalhando:
 
-                await inter.response.defer()
-                item = await ctx.send("<:alert:739251822920728708>│`Como voce perdeu vai precisar batalhar novamente!`")
-                await sleep(2)
-                await item.delete()
+                _msg = "<:alert:739251822920728708>│`Como voce perdeu vai precisar batalhar novamente!`"
+                await inter.response.send_message(_msg, delete_after=2.0)
 
-                msg = copy.copy(ctx.message)
-                msg.content = "ash battle"
-                _ctx = await self.bot.get_context(msg)
+                _messeger = copy.copy(ctx.message)
+                _messeger.content = "ash battle"
+                _ctx = await self.bot.get_context(_messeger)
                 await self.bot.invoke(_ctx)
                 self.bot.dg_battle.append(ctx.author.id)
                 self.bot.dg_battle_now.append(ctx.author.id)
@@ -160,13 +167,10 @@ class DugeonClass(commands.Cog):
 
             elif player.battle and ctx.author.id in self.bot.dg_battle and ctx.author.id in self.bot.batalhando:
 
-                await inter.response.defer()
-                item = await ctx.send("<:alert:739251822920728708>│`Termine sua batalha primeiro, para se mover!`")
-                await sleep(2)
-                await item.delete()
+                _msg = "<:alert:739251822920728708>│`Termine sua batalha primeiro, para se mover!`"
+                await inter.response.send_message(_msg, delete_after=2.0)
 
             if str(inter.component.emoji) == _emoji and not player.battle:
-                await inter.response.defer()
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
 
@@ -174,28 +178,26 @@ class DugeonClass(commands.Cog):
                     if pos not in player.locs:
                         player.locs.append(pos)
 
-                        item = await ctx.send("<a:loading:520418506567843860>│`Procurando alguma coisa...`")
+                        _msg = "<a:loading:520418506567843860>│`Procurando alguma coisa...`"
+                        await inter.response.send_message(_msg, delete_after=2.0)
+
                         await sleep(2)
-                        await item.delete()
 
                         find = True if randint(1, 100) <= 25 else True if num == 5 else False
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
-                        item = await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`")
-                        await sleep(2)
-                        await item.delete()
+                        await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`", delete_after=2.0)
 
                     else:
 
-                        item = await ctx.send("<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`")
-                        await sleep(2)
-                        await item.delete()
+                        _msg = "<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`"
+                        await inter.response.send_message(_msg, delete_after=2.0)
 
                 if int(player.matriz[player.y][player.x]) == 3:  # objetivo
-                    item = await ctx.send('<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n'
-                                          '✨ **[Tower of Alasthor]** ✨')
-                    await sleep(2)
-                    await item.delete()
+
+                    _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
+                          "✨ **[Tower of Alasthor]** ✨"
+                    await inter.response.send_message(_msg, delete_after=2.0)
 
             if str(inter.component.emoji) == "⬆️" and not player.battle:
                 moviment = player.move('up')
