@@ -390,9 +390,6 @@ class Battle(commands.Cog):
                 description=f"`{ctx.author.name.upper()} GANHOU!` {answer_}",
                 color=0x000000)
 
-            if dungeon is not None:
-                data["dungeons"][dungeon]["block_battle"] = False
-
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=db_player['name'], icon_url=db_player['img'])
@@ -650,6 +647,9 @@ class Battle(commands.Cog):
                 icon, name = self.bot.items[_item][0], self.bot.items[_item][1]
                 await ctx.send(f'<:confirmed:721581574461587496>│`VOCE CONSEGUIU TRANSFORMAR O` '
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
+
+        if dungeon is not None and player[ctx.author.id].status['hp'] > 0:
+            update["dungeons"][dungeon]["block_battle"] = False
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)

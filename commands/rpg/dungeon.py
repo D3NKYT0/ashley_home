@@ -95,7 +95,8 @@ class DugeonClass(commands.Cog):
         matriz, pos = mapper.get_matrix(map_now, self.dgt[map_name])
         x, y = pos[1][1], pos[1][0]
 
-        if update['dungeons']['tower']['position_now'] == (-1, -1):
+        position_now = update['dungeons']['tower']['position_now']
+        if position_now[0] == -1 and position_now[1] == -1:
             update['dungeons']['tower']['position_now'] = (x, y)
             await self.bot.db.update_data(data, update, 'users')
         else:
@@ -110,6 +111,7 @@ class DugeonClass(commands.Cog):
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
         move.add_item(disnake.ui.Button(emoji="⬆️", style=_style[1]))
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
+        move.add_item(disnake.ui.Button(label="❌", style=disnake.ButtonStyle.red))
         move.add_item(disnake.ui.Button(emoji="⬅️", style=_style[1], row=1))
         move.add_item(disnake.ui.Button(emoji=_emoji, style=_style[2], row=1))
         move.add_item(disnake.ui.Button(emoji="➡️", style=_style[1], row=1))
@@ -144,8 +146,14 @@ class DugeonClass(commands.Cog):
                 break
 
             if player.battle:
-                _msg = "<:alert:739251822920728708>│`Você precisa batalhar para se mover!`"
-                await inter.response.send_message(_msg, delete_after=2.0)
+                _msg = "<:alert:739251822920728708>│`Você precisa batalhar para se mover!`\n" \
+                       "**Obs:** `use o comando` **ASH BT TOWER**"
+                await inter.response.send_message(_msg, delete_after=5.0)
+                await msg.delete()
+                break
+
+            if str(inter.component.emoji) == "❌" and not player.battle:
+                await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
                 await msg.delete()
                 break
 
@@ -154,7 +162,7 @@ class DugeonClass(commands.Cog):
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
                     dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 
-                    pos, num = (player.x, player.y), int(player.matriz[player.y][player.x])
+                    pos, num = f"{player.x}{player.y}", int(player.matriz[player.y][player.x])
                     if pos not in dg_data["dungeons"]["tower"]["locs"]:
                         dg_data["dungeons"]["tower"]["locs"].append(pos)
 
@@ -163,13 +171,15 @@ class DugeonClass(commands.Cog):
 
                         await sleep(2)
 
-                        find = True if randint(1, 100) <= 25 else True if num == 5 else False
+                        find = True if randint(1, 100) <= 20 else True if num == 5 else False
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
                         await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`", delete_after=2.0)
 
                         if find:
                             it, qt = choice(["Energy", "Energy", "Energy"]), randint(1, 3)
+                            if num == 5:
+                                qt = choice(["Energy", "Energy", "Energy"])
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
                             else:
