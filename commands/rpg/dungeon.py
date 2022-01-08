@@ -20,6 +20,8 @@ class DugeonClass(commands.Cog):
         self.i = self.bot.items
         self.dgt = self.bot.config['attribute']['dungeons_tower']
         self.dgtl = self.bot.config['attribute']['list_tower']
+        self.reward_tc = self.bot.config['attribute']['reward_tower_comum']
+        self.reward_te = self.bot.config['attribute']['reward_tower_especial']
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -33,7 +35,7 @@ class DugeonClass(commands.Cog):
         if ctx.invoked_subcommand is None:
             self.status()
             embed = disnake.Embed(color=self.color)
-            embed.add_field(name="Dungeons Commands:",
+            embed.add_field(name="Dungeons Commands: [BETA TESTE]",
                             value=f"{self.st[117]} `dg tower` [Tower of Alhastor]\n"
                                   f"{self.st[117]} `dg -` [...]\n"
                                   f"{self.st[117]} `dg -` [...]\n"
@@ -49,7 +51,7 @@ class DugeonClass(commands.Cog):
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)
 
-    @check_it(no_pm=True, is_owner=True)
+    @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @dungeon.group(name="tower", aliases=['tw'])
@@ -60,11 +62,6 @@ class DugeonClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
-        if ctx.author.id in self.bot.batalhando:
-            msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -129,7 +126,6 @@ class DugeonClass(commands.Cog):
 
         player = Player(ctx, map_now, matriz, [x, y], "tower")
         player.battle = data["dungeons"]["tower"]["block_battle"]
-        cl = await self.bot.db.cd("users")
 
         while not ctx.bot.is_closed():
 
@@ -160,6 +156,7 @@ class DugeonClass(commands.Cog):
             if str(inter.component.emoji) == _emoji and not player.battle:
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
+                    cl = await self.bot.db.cd("users")
                     dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 
                     pos, num = f"{player.x}{player.y}", int(player.matriz[player.y][player.x])
@@ -177,9 +174,9 @@ class DugeonClass(commands.Cog):
                         await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`", delete_after=2.0)
 
                         if find:
-                            it, qt = choice(["Energy", "Energy", "Energy"]), randint(1, 3)
+                            it, qt = choice(self.reward_tc), randint(1, 3)
                             if num == 5:
-                                qt = choice(["Energy", "Energy", "Energy"])
+                                qt = choice(self.reward_te)
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
                             else:
@@ -195,9 +192,22 @@ class DugeonClass(commands.Cog):
 
                 if int(player.matriz[player.y][player.x]) == 3:  # objetivo
 
+                    cl = await self.bot.db.cd("users")
+                    dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1})
+                    query = {
+                        "dungeons.tower": {
+                            "active": True,
+                            "position_now": (-1, -1),
+                            "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
+                            "block_battle": False,
+                            "locs": list()
+                        }
+                    }
+                    await cl.update_one({"user_id": ctx.author.id}, {"$set": query})
+
                     _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
-                          "✨ **[Tower of Alasthor]** ✨"
-                    await inter.response.send_message(_msg, delete_after=2.0)
+                           "✨ **[Tower of Alasthor]** ✨\n**Obs:** `use o comando de novo para explorar o novo andar!`"
+                    await inter.response.send_message(_msg)
 
             if str(inter.component.emoji) == "⬆️" and not player.battle:
                 moviment = await player.move('up')
