@@ -1,6 +1,8 @@
 import disnake
+
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+
 
 # ---==== self.self.LEGENDAS ====---
 #  0 - PAREDE

@@ -1,12 +1,11 @@
 import copy
 import disnake
-import asyncio
 
 from io import BytesIO
-from asyncio import sleep
-from random import randint, choice
+from asyncio import sleep, TimeoutError
 from disnake.ext import commands
 from resources.db import Database
+from random import randint, choice
 from resources.check import check_it
 from disnake.ext.commands.core import is_owner
 from dungeon.maps import Map, MovePlayer, Player
@@ -135,8 +134,8 @@ class DugeonClass(commands.Cog):
                 return False
 
             try:
-                inter = await self.bot.wait_for('interaction', timeout=60.0, check=check)
-            except asyncio.TimeoutError:
+                inter = await self.bot.wait_for('interaction', timeout=30.0, check=check)
+            except TimeoutError:
                 await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
                 await msg.delete()
                 break
@@ -148,12 +147,12 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
-            if str(inter.component.emoji) == "❌" and not player.battle:
+            if str(inter.component.emoji) == "❌":
                 await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
                 await msg.delete()
                 break
 
-            if str(inter.component.emoji) == _emoji and not player.battle:
+            if str(inter.component.emoji) == _emoji:
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
                     cl = await self.bot.db.cd("users")
@@ -176,7 +175,7 @@ class DugeonClass(commands.Cog):
                         if find:
                             it, qt = choice(self.reward_tc), randint(1, 3)
                             if num == 5:
-                                qt = choice(self.reward_te)
+                                it = choice(self.reward_te)
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
                             else:
@@ -209,7 +208,7 @@ class DugeonClass(commands.Cog):
                            "✨ **[Tower of Alasthor]** ✨\n**Obs:** `use o comando de novo para explorar o novo andar!`"
                     await inter.response.send_message(_msg)
 
-            if str(inter.component.emoji) == "⬆️" and not player.battle:
+            if str(inter.component.emoji) == "⬆️":
                 moviment = await player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -220,7 +219,7 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "⬇️" and not player.battle:
+            elif str(inter.component.emoji) == "⬇️":
                 moviment = await player.move('down')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -231,7 +230,7 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "⬅️" and not player.battle:
+            elif str(inter.component.emoji) == "⬅️":
                 moviment = await player.move('left')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -242,7 +241,8 @@ class DugeonClass(commands.Cog):
                 else:
                     await inter.response.defer()
 
-            elif str(inter.component.emoji) == "➡️" and not player.battle:
+            elif str(inter.component.emoji) == "➡️":
+
                 moviment = await player.move('right')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -252,6 +252,8 @@ class DugeonClass(commands.Cog):
                     msg = await ctx.send(embed=embed, view=move)
                 else:
                     await inter.response.defer()
+
+            await sleep(1)
 
         if ctx.author.id in self.bot.explorando:
             self.bot.explorando.remove(ctx.author.id)
