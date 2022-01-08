@@ -2,11 +2,11 @@ import copy
 import disnake
 
 from io import BytesIO
-from asyncio import sleep, TimeoutError
 from disnake.ext import commands
 from resources.db import Database
 from random import randint, choice
 from resources.check import check_it
+from asyncio import sleep, TimeoutError
 from disnake.ext.commands.core import is_owner
 from dungeon.maps import Map, MovePlayer, Player
 
@@ -128,6 +128,8 @@ class DugeonClass(commands.Cog):
 
         while not ctx.bot.is_closed():
 
+            loop = False
+
             def check(m):
                 if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id and m.message.id == msg.id:
                     return True
@@ -153,6 +155,7 @@ class DugeonClass(commands.Cog):
                 break
 
             if str(inter.component.emoji) == _emoji:
+                loop = True
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
                     cl = await self.bot.db.cd("users")
@@ -209,6 +212,8 @@ class DugeonClass(commands.Cog):
                     await inter.response.send_message(_msg)
 
             if str(inter.component.emoji) == "⬆️":
+                loop = True
+
                 moviment = await player.move('up')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -220,6 +225,8 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬇️":
+                loop = True
+
                 moviment = await player.move('down')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -231,6 +238,8 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬅️":
+                loop = True
+
                 moviment = await player.move('left')
                 if isinstance(moviment, disnake.File):
                     await msg.delete()
@@ -242,6 +251,7 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "➡️":
+                loop = True
 
                 moviment = await player.move('right')
                 if isinstance(moviment, disnake.File):
@@ -254,6 +264,9 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             await sleep(1)
+
+            if not loop:
+                break
 
         if ctx.author.id in self.bot.explorando:
             self.bot.explorando.remove(ctx.author.id)
