@@ -158,7 +158,7 @@ class DugeonClass(commands.Cog):
                     cl = await self.bot.db.cd("users")
                     dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 
-                    pos, num = f"{player.x}{player.y}", int(player.matriz[player.y][player.x])
+                    pos, num = [player.x, player.y], int(player.matriz[player.y][player.x])
                     if pos not in dg_data["dungeons"]["tower"]["locs"]:
                         dg_data["dungeons"]["tower"]["locs"].append(pos)
 
