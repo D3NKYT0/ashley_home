@@ -45,13 +45,14 @@ class Battle(commands.Cog):
             mini_boss = False if moon != "moon" else True
             dungeon = None if mini_boss else moon
 
-        battle_special = False
+        battle_special, floor = False, 0
         if dungeon is not None:
             if moon.lower() not in ["tower"]:
                 dungeon = None
             else:
                 if update["dungeons"][dungeon]["block_battle"]:
                     battle_special = True
+                floor = update["dungeons"][dungeon]["floor"]
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
@@ -390,7 +391,7 @@ class Battle(commands.Cog):
                 money = money * 2  # bonus de ETHERNYA
 
             answer_ = await self.bot.db.add_money(ctx, money, True)
-            _text_es = "`**A BATALHA ESPECIAL!**"
+            _text_es = "`**DA BATALHA ESPECIAL!**"
             embed = disnake.Embed(
                 description=f"`{ctx.author.name.upper()} GANHOU {_text_es if battle_special else '!`'} {answer_}",
                 color=0x000000)
@@ -655,6 +656,15 @@ class Battle(commands.Cog):
 
         if dungeon is not None and player[ctx.author.id].status['hp'] > 0:
             update["dungeons"][dungeon]["block_battle"] = False
+
+            if randint(1, 100) <= 20:
+                map_name = self.bot.config['attribute']['list_tower'][floor]
+                msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨"
+                file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
+                embed = disnake.Embed(title=msg, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+                embed.set_image(url="attachment://map.gif")
+                await ctx.send(file=file, embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             self.bot.batalhando.remove(ctx.author.id)
