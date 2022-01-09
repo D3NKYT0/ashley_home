@@ -298,6 +298,9 @@ class DugeonClass(commands.Cog):
 
                         await cl.update_one({"user_id": ctx.author.id}, {"$set": query})
 
+                    await msg.delete()
+                    break
+
             if str(inter.component.emoji) == "⬆️":
 
                 moviment = await player.move('up')
