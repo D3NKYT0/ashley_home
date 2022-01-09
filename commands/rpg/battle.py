@@ -689,7 +689,7 @@ class Battle(commands.Cog):
                 update["dungeons"][dungeon]["battle"] -= 1
                 await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU PELA DUNGEON`")
 
-            if randint(1, 100) <= 20:
+            if randint(1, 100) <= 20 and not update["dungeons"][dungeon]["map"]:
                 update["dungeons"][dungeon]["map"] = True
                 map_name = self.bot.config['attribute']['list_tower'][floor]
                 msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨\n" \
