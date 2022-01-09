@@ -152,6 +152,8 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
+            await inter.response.defer()  # respondendo a interação
+
             if player.battle:
 
                 cl = await self.bot.db.cd("users")
@@ -183,7 +185,7 @@ class DugeonClass(commands.Cog):
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
                         _msg = f"{emoji[0] if find else emoji[1]}│`{text}`"
-                        await inter.response.send_message(_msg, delete_after=2.0)
+                        await ctx.send(_msg, delete_after=2.0)
 
                         if find:
                             it, qt = choice(self.reward_tc), randint(1, 3)
@@ -200,7 +202,7 @@ class DugeonClass(commands.Cog):
                     else:
 
                         _msg = "<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`"
-                        await inter.response.send_message(_msg, delete_after=2.0)
+                        await ctx.send(_msg, delete_after=2.0)
 
                 if int(player.matriz[player.y][player.x]) == 3:  # objetivo
 
@@ -212,7 +214,7 @@ class DugeonClass(commands.Cog):
                         _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
                                "✨ **[Tower of Alasthor]** ✨\n" \
                                "**Obs:** `Você ganhou por completar toda a DUNGEON uma` **Key of Hell**"
-                        await inter.response.send_message(_msg)
+                        await ctx.send(_msg)
 
                         query = {
                             "dungeons.tower": {
@@ -234,7 +236,7 @@ class DugeonClass(commands.Cog):
                         _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
                                "✨ **[Tower of Alasthor]** ✨\n" \
                                "**Obs:** `use o comando de novo para explorar o novo andar!`"
-                        await inter.response.send_message(_msg)
+                        await ctx.send(_msg)
 
                         query = {
                             "dungeons.tower": {
@@ -256,8 +258,6 @@ class DugeonClass(commands.Cog):
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
-                else:
-                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬇️":
 
@@ -268,8 +268,6 @@ class DugeonClass(commands.Cog):
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
-                else:
-                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬅️":
 
@@ -280,8 +278,6 @@ class DugeonClass(commands.Cog):
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
-                else:
-                    await inter.response.defer()
 
             elif str(inter.component.emoji) == "➡️":
 
@@ -292,8 +288,6 @@ class DugeonClass(commands.Cog):
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
                     msg = await ctx.send(embed=embed, view=move)
-                else:
-                    await inter.response.defer()
 
             await sleep(1)
 
