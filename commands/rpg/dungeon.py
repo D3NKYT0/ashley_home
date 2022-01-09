@@ -69,23 +69,28 @@ class DugeonClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if ctx.author.id in self.bot.explorando:
-            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
         if "tower" not in update['dungeons'].keys():
             tower = {
                 "active": True,
                 "position_now": (-1, -1),
                 "floor": 0,
-                "block_battle": False,
+                "battle": 0,
                 "locs": list()
             }
             update['dungeons']["tower"] = tower
             msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a dungeon` **[Tower of Alasthor]** ' \
                   '`foi ativada na sua conta com sucesso!`\n**Obs:** `use o comando novamente pra iniciar!`'
             await self.bot.db.update_data(data, update, 'users')
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.explorando:
+            self.bot.explorando.remove(ctx.author.id)
+            update['dungeons']["tower"]["position_now"] = (-1, -1)
+            await self.bot.db.update_data(data, update, 'users')
+            msg = '<:alert:739251822920728708>│`VOCE ESTAVA NUMA DUNGEON, MAS FOI RESETADO!`\n' \
+                  '`a dungeon` **[Tower of Alasthor]** `resetou sua localização!`\n' \
+                  '**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -98,9 +103,17 @@ class DugeonClass(commands.Cog):
             update['dungeons']["tower"]["position_now"] = (-1, -1)
             await self.bot.db.update_data(data, update, 'users')
             msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
-                  '`foi resetada sua localização!`\n**Obs:** `use o comando novamente pra iniciar!`'
+                  '`resetou sua localização!`\n**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
+
+        if update['dungeons']['tower']['floor'] > 0:
+            if update['dungeons']['tower']['position_now'] == (-1, -1):
+                if update['dungeons']['tower']['battle'] > 0:
+                    msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR ANTES DE PROSSEGUIR NA DUNGEON!`\n' \
+                          '**Obs:** `use o comando` **ASH BT TOWER** ``para batalhar'
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    return await ctx.send(embed=embed)
 
         self.bot.explorando.append(ctx.author.id)
 
@@ -141,7 +154,6 @@ class DugeonClass(commands.Cog):
             msg = await ctx.send(embed=embed, view=move)
 
         player = Player(ctx, map_now, matriz, [x, y], "tower")
-        player.battle = data["dungeons"]["tower"]["block_battle"]
 
         while not ctx.bot.is_closed():
 
@@ -168,7 +180,7 @@ class DugeonClass(commands.Cog):
                     dg_data["dungeons"]["tower"]["locs"].append(pos)
                     await cl.update_one({"user_id": ctx.author.id}, {"$set": dg_data})
 
-                _msg = "<:alert:739251822920728708>│`Você ganhou uma batalha especial!`\n" \
+                _msg = "<:alert:739251822920728708>│`Você ganhou uma batalha!`\n" \
                        "**Obs:** `use o comando` **ASH BT TOWER**"
                 await ctx.send(_msg, delete_after=5.0)
 
@@ -226,7 +238,7 @@ class DugeonClass(commands.Cog):
                                 "active": False,
                                 "position_now": (-1, -1),
                                 "floor": 0,
-                                "block_battle": False,
+                                "battle": 0,
                                 "locs": list()
                             }}
 
@@ -248,7 +260,7 @@ class DugeonClass(commands.Cog):
                                 "active": True,
                                 "position_now": (-1, -1),
                                 "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
-                                "block_battle": False,
+                                "battle": dg_data["dungeons"]["tower"]["battle"],
                                 "locs": list()
                             }}
 

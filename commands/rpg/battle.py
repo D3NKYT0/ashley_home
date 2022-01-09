@@ -50,7 +50,7 @@ class Battle(commands.Cog):
             if moon.lower() not in ["tower"]:
                 dungeon = None
             else:
-                if update["dungeons"][dungeon]["block_battle"]:
+                if update["dungeons"][dungeon]["battle"] > 0:
                     battle_special = True
                 floor = update["dungeons"][dungeon]["floor"]
 
@@ -660,7 +660,9 @@ class Battle(commands.Cog):
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
 
         if dungeon is not None and player[ctx.author.id].status['hp'] > 0:
-            update["dungeons"][dungeon]["block_battle"] = False
+            if update["dungeons"][dungeon]["battle"] > 0:
+                update["dungeons"][dungeon]["battle"] -= 1
+                await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU PELA DUNGEON`")
 
             if randint(1, 100) <= 20:
                 map_name = self.bot.config['attribute']['list_tower'][floor]
