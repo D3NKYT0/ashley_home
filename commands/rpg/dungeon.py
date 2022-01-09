@@ -21,6 +21,7 @@ class DugeonClass(commands.Cog):
         self.dgtl = self.bot.config['attribute']['list_tower']
         self.reward_tc = self.bot.config['attribute']['reward_tower_comum']
         self.reward_te = self.bot.config['attribute']['reward_tower_especial']
+        self.reward_ce = self.bot.config['attribute']['reward_chunck_especial']
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -75,7 +76,9 @@ class DugeonClass(commands.Cog):
                 "position_now": [-1, -1],
                 "floor": 0,
                 "battle": 0,
+                "special_chunks": 10,
                 "map": False,
+                "miniboss": False,
                 "locs": list()
             }
             update['dungeons']["tower"] = tower
@@ -132,12 +135,19 @@ class DugeonClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
         if update['dungeons']['tower']['floor'] > 0:
+
             if update['dungeons']['tower']['position_now'] == [-1, -1]:
                 if update['dungeons']['tower']['battle'] > 0:
                     msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR ANTES DE PROSSEGUIR NA DUNGEON!`\n' \
                           '**Obs:** `use o comando` **ASH BT TOWER** `para batalhar`'
                     embed = disnake.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
+
+            if not update['dungeons']['tower']['miniboss']:
+                msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES DE PROSSEGUIR NA' \
+                      ' DUNGEON!`\n**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
         self.bot.explorando.append(ctx.author.id)
 
@@ -229,14 +239,20 @@ class DugeonClass(commands.Cog):
                         await ctx.send(_msg, delete_after=2.0)
 
                         if find:
-                            it, qt = choice(self.reward_tc), randint(1, 3)
+                            it, qt = choice(self.reward_tc), randint(1, 2)
                             if num == 5:
                                 it, qt = choice(self.reward_te), 1
+
+                            chunck_special = ""
+                            if randint(1, 100) <= 10 and dg_data["dungeons"]["tower"]["special_chunks"] > 0:
+                                dg_data["dungeons"]["tower"]["special_chunks"] -= 1
+                                it, qt, chunck_special = choice(self.reward_ce), 1, "`CHUNCK ESPECIAL`"
+
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
                             else:
                                 dg_data["inventory"][it] = qt
-                            await ctx.send(f"{emo}│{self.i[it][0]} `{qt}` **{self.i[it][1]}**")
+                            await ctx.send(f"{emo}│{self.i[it][0]} `{qt}` **{self.i[it][1]}** {chunck_special}")
 
                         await cl.update_one({"user_id": ctx.author.id}, {"$set": dg_data})
 
@@ -268,7 +284,9 @@ class DugeonClass(commands.Cog):
                                 "position_now": [-1, -1],
                                 "floor": 0,
                                 "battle": 0,
+                                "special_chunks": 10,
                                 "map": False,
+                                "miniboss": False,
                                 "locs": list()
                             }}
 
@@ -291,7 +309,9 @@ class DugeonClass(commands.Cog):
                                 "position_now": [-1, -1],
                                 "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
                                 "battle": dg_data["dungeons"]["tower"]["battle"],
+                                "special_chunks": 10,
                                 "map": False,
+                                "miniboss": False,
                                 "locs": list()
                             }}
 

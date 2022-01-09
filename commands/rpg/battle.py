@@ -51,9 +51,26 @@ class Battle(commands.Cog):
                 dungeon = None
             else:
                 dungeon = "tower"
-                if update["dungeons"][dungeon]["battle"] > 0:
-                    battle_special = True
-                floor = update["dungeons"][dungeon]["floor"]
+
+                if dungeon not in update["dungeons"].keys():
+                    msg = '<:negate:721581573396496464>│`VOCE NÃO ATIVOU ESSA DUNGEON AINDA!`\n' \
+                          '**Obs:** `use o comando (ash dg) para ver as dungeons disponiveis!`'
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    return await ctx.send(embed=embed)
+
+                if not update["dungeons"][dungeon]["active"]:
+                    dungeon = None
+
+                else:
+                    if update["dungeons"][dungeon]["battle"] > 0:
+                        battle_special = True
+                    floor = update["dungeons"][dungeon]["floor"]
+
+        special_miniboss = False
+        if mini_boss:
+            if "tower" in update["dungeons"].keys():
+                if update["dungeons"]["tower"]["active"] and not update["dungeons"]["tower"]["miniboss"]:
+                    special_miniboss = True
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
@@ -659,6 +676,10 @@ class Battle(commands.Cog):
                 icon, name = self.bot.items[_item][0], self.bot.items[_item][1]
                 await ctx.send(f'<:confirmed:721581574461587496>│`VOCE CONSEGUIU TRANSFORMAR O` '
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
+
+        if mini_boss and special_miniboss and player[ctx.author.id].status['hp'] > 0:
+            update["dungeons"]["tower"]["miniboss"] = True
+            await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU COM UM MINIBOSS PELA DUNGEON`")
 
         if dungeon is not None and player[ctx.author.id].status['hp'] > 0:
             if update["dungeons"][dungeon]["battle"] > 0:
