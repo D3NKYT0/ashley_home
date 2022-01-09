@@ -172,15 +172,13 @@ class DugeonClass(commands.Cog):
                     if pos not in dg_data["dungeons"]["tower"]["locs"]:
                         dg_data["dungeons"]["tower"]["locs"].append(pos)
 
-                        _msg = "<a:loading:520418506567843860>│`Procurando alguma coisa...`"
-                        await inter.response.send_message(_msg, delete_after=2.0)
-
-                        await sleep(2)
+                        await sleep(1)
 
                         find = True if randint(1, 100) <= 20 else True if num == 5 else False
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
-                        await ctx.send(f"{emoji[0] if find else emoji[1]}│`{text}`", delete_after=2.0)
+                        _msg = f"{emoji[0] if find else emoji[1]}│`{text}`"
+                        await inter.response.send_message(_msg, delete_after=2.0)
 
                         if find:
                             it, qt = choice(self.reward_tc), randint(1, 3)
