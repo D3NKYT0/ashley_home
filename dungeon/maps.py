@@ -287,7 +287,7 @@ class Player:
 
                 cl = await self.ctx.bot.db.cd("users")
                 dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
-                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                query, pos = {f"dungeons.{self.dg}.position_now": [self.y, self.x]}, [self.x, self.y]
                 battle = {}
                 if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
@@ -311,7 +311,7 @@ class Player:
 
                 cl = await self.ctx.bot.db.cd("users")
                 dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
-                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                query, pos = {f"dungeons.{self.dg}.position_now": [self.y, self.x]}, [self.x, self.y]
                 battle = {}
                 if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
@@ -335,7 +335,7 @@ class Player:
 
                 cl = await self.ctx.bot.db.cd("users")
                 dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
-                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                query, pos = {f"dungeons.{self.dg}.position_now": [self.y, self.x]}, [self.x, self.y]
                 battle = {}
                 if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
@@ -359,7 +359,7 @@ class Player:
 
                 cl = await self.ctx.bot.db.cd("users")
                 dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
-                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                query, pos = {f"dungeons.{self.dg}.position_now": [self.y, self.x]}, [self.x, self.y]
                 battle = {}
                 if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True

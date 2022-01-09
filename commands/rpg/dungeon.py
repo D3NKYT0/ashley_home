@@ -72,7 +72,7 @@ class DugeonClass(commands.Cog):
         if "tower" not in update['dungeons'].keys():
             tower = {
                 "active": True,
-                "position_now": (-1, -1),
+                "position_now": [-1, -1],
                 "floor": 0,
                 "battle": 0,
                 "map": False,
@@ -87,7 +87,7 @@ class DugeonClass(commands.Cog):
 
         if ctx.author.id in self.bot.explorando:
             self.bot.explorando.remove(ctx.author.id)
-            update['dungeons']["tower"]["position_now"] = (-1, -1)
+            update['dungeons']["tower"]["position_now"] = [-1, -1]
             await self.bot.db.update_data(data, update, 'users')
             msg = '<:alert:739251822920728708>│`VOCE ESTAVA NUMA DUNGEON, MAS FOI RESETADO!`\n' \
                   '`a dungeon` **[Tower of Alasthor]** `resetou sua localização!`\n' \
@@ -119,7 +119,7 @@ class DugeonClass(commands.Cog):
 
             elif action in ["reset", "r"]:
 
-                update['dungeons']["tower"]["position_now"] = (-1, -1)
+                update['dungeons']["tower"]["position_now"] = [-1, -1]
                 await self.bot.db.update_data(data, update, 'users')
                 msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
                       '`resetou sua localização!`\n**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
@@ -132,7 +132,7 @@ class DugeonClass(commands.Cog):
                 return await ctx.send(embed=embed)
 
         if update['dungeons']['tower']['floor'] > 0:
-            if update['dungeons']['tower']['position_now'] == (-1, -1):
+            if update['dungeons']['tower']['position_now'] == [-1, -1]:
                 if update['dungeons']['tower']['battle'] > 0:
                     msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR ANTES DE PROSSEGUIR NA DUNGEON!`\n' \
                           '**Obs:** `use o comando` **ASH BT TOWER** ``para batalhar'
@@ -148,7 +148,7 @@ class DugeonClass(commands.Cog):
 
         position_now = update['dungeons']['tower']['position_now']
         if position_now[0] == -1 and position_now[1] == -1:
-            update['dungeons']['tower']['position_now'] = (x, y)
+            update['dungeons']['tower']['position_now'] = [x, y]
             await self.bot.db.update_data(data, update, 'users')
         else:
             x, y = update['dungeons']['tower']['position_now'][0], update['dungeons']['tower']['position_now'][1]
@@ -265,7 +265,7 @@ class DugeonClass(commands.Cog):
                         query = {
                             "dungeons.tower": {
                                 "active": False,
-                                "position_now": (-1, -1),
+                                "position_now": [-1, -1],
                                 "floor": 0,
                                 "battle": 0,
                                 "map": False,
@@ -288,7 +288,7 @@ class DugeonClass(commands.Cog):
                         query = {
                             "dungeons.tower": {
                                 "active": True,
-                                "position_now": (-1, -1),
+                                "position_now": [-1, -1],
                                 "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
                                 "battle": dg_data["dungeons"]["tower"]["battle"],
                                 "map": False,
