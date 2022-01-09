@@ -161,7 +161,7 @@ class DugeonClass(commands.Cog):
 
                 _msg = "<:alert:739251822920728708>│`Você ganhou uma batalha especial!`\n" \
                        "**Obs:** `use o comando` **ASH BT TOWER**"
-                await inter.response.send_message(_msg, delete_after=5.0)
+                await ctx.send(_msg, delete_after=5.0)
 
                 player.battle = False
 
