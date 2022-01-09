@@ -113,8 +113,7 @@ class DugeonClass(commands.Cog):
 
             elif action == "map" and not update["dungeons"]['tower']["map"]:
                 msg = '<:negate:721581573396496464>│`Você nao tem o mapa desse andar da dungeon` ' \
-                      '**[Tower of Alasthor]**`\n' \
-                      '**Obs:** `use o comando (ash bt tw) para tentar conseguir o mapa!`'
+                      '**[Tower of Alasthor]**\n**Obs:** `use o comando (ash bt tw) para tentar conseguir o mapa!`'
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
