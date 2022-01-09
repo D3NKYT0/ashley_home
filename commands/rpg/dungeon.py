@@ -102,8 +102,8 @@ class DugeonClass(commands.Cog):
 
         if action is not None:
 
-            if action == "map" and update["dungeons"][dungeon]["map"]:
-                map_name = self.bot.config['attribute']['list_tower'][update["dungeons"][dungeon]["floor"]]
+            if action == "map" and update["dungeons"]['tower']["map"]:
+                map_name = self.bot.config['attribute']['list_tower'][update["dungeons"]['tower']["floor"]]
                 msg = f"`MAPA DA DUNGEON` **Tower of Alasthor** ✨ **ANDAR: {map_name.upper()}!** ✨"
                 file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
                 embed = disnake.Embed(title=msg, color=self.bot.color)
@@ -111,7 +111,7 @@ class DugeonClass(commands.Cog):
                 embed.set_image(url="attachment://map.gif")
                 await ctx.send(file=file, embed=embed)
 
-            elif action == "map" and not update["dungeons"][dungeon]["map"]:
+            elif action == "map" and not update["dungeons"]['tower']["map"]:
                 msg = '<:negate:721581573396496464>│`Você nao tem o mapa desse andar da dungeon` ' \
                       '**[Tower of Alasthor]**`\n' \
                       '**Obs:** `use o comando (ash bt tw) para tentar conseguir o mapa!`'
