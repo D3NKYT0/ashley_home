@@ -218,8 +218,13 @@ class DugeonClass(commands.Cog):
 
                     else:
 
-                        _msg = "<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`"
-                        await ctx.send(_msg, delete_after=2.0)
+                        if int(player.matriz[player.y][player.x]) == 4:
+                            _msg = "<:negate:721581573396496464>│`Você não pode dar loot numa chunck de batalha!`"
+                            await ctx.send(_msg, delete_after=2.0)
+
+                        else:
+                            _msg = "<:alert:739251822920728708>│`Você ja procurou algo nessa chunck!`"
+                            await ctx.send(_msg, delete_after=2.0)
 
                 if int(player.matriz[player.y][player.x]) == 3:  # objetivo
 
