@@ -64,6 +64,16 @@ class DugeonClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        if ctx.author.id in self.bot.batalhando:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id in self.bot.explorando:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         if "tower" not in update['dungeons'].keys():
             tower = {
                 "active": True,
@@ -81,11 +91,6 @@ class DugeonClass(commands.Cog):
 
         if not update['dungeons']['tower']['active']:
             msg = "<:negate:721581573396496464>│`VOCÊ JA FINALIZOU ESSA DUNGEON`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
-        if ctx.author.id in self.bot.explorando:
-            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 

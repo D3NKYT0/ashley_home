@@ -45,6 +45,11 @@ class PVP(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        if ctx.author.id in self.bot.explorando:
+            msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         if member.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`O usuario está jogando, aguarde para quando ele estiver livre!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
