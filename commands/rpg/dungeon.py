@@ -54,7 +54,7 @@ class DugeonClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @dungeon.group(name="tower", aliases=['tw'])
-    async def _tower(self, ctx, reset=None):
+    async def _tower(self, ctx, action=None):
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -75,6 +75,7 @@ class DugeonClass(commands.Cog):
                 "position_now": (-1, -1),
                 "floor": 0,
                 "battle": 0,
+                "map": False,
                 "locs": list()
             }
             update['dungeons']["tower"] = tower
@@ -99,13 +100,25 @@ class DugeonClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if reset is not None:
-            update['dungeons']["tower"]["position_now"] = (-1, -1)
-            await self.bot.db.update_data(data, update, 'users')
-            msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
-                  '`resetou sua localização!`\n**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
+        if action is not None:
+
+            if action == "map" and update["dungeons"][dungeon]["map"]:
+                map_name = self.bot.config['attribute']['list_tower'][update["dungeons"][dungeon]["floor"]]
+                msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨"
+                file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
+                embed = disnake.Embed(title=msg, color=self.bot.color)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
+                embed.set_image(url="attachment://map.gif")
+                await ctx.send(file=file, embed=embed)
+
+            elif action in ["reset", "r"]:
+
+                update['dungeons']["tower"]["position_now"] = (-1, -1)
+                await self.bot.db.update_data(data, update, 'users')
+                msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
+                      '`resetou sua localização!`\n**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
         if update['dungeons']['tower']['floor'] > 0:
             if update['dungeons']['tower']['position_now'] == (-1, -1):
@@ -207,7 +220,7 @@ class DugeonClass(commands.Cog):
                         if find:
                             it, qt = choice(self.reward_tc), randint(1, 3)
                             if num == 5:
-                                it = choice(self.reward_te)
+                                it, qt = choice(self.reward_te), 1
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
                             else:
@@ -244,6 +257,7 @@ class DugeonClass(commands.Cog):
                                 "position_now": (-1, -1),
                                 "floor": 0,
                                 "battle": 0,
+                                "map": False,
                                 "locs": list()
                             }}
 
@@ -266,6 +280,7 @@ class DugeonClass(commands.Cog):
                                 "position_now": (-1, -1),
                                 "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
                                 "battle": dg_data["dungeons"]["tower"]["battle"],
+                                "map": False,
                                 "locs": list()
                             }}
 

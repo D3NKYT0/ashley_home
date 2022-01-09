@@ -47,7 +47,7 @@ class Battle(commands.Cog):
 
         battle_special, floor = False, 0
         if dungeon is not None:
-            if moon.lower() not in ["tower"]:
+            if moon.lower() not in ["tower", "tw"]:
                 dungeon = None
             else:
                 if update["dungeons"][dungeon]["battle"] > 0:
@@ -665,8 +665,10 @@ class Battle(commands.Cog):
                 await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU PELA DUNGEON`")
 
             if randint(1, 100) <= 20:
+                update["dungeons"][dungeon]["map"] = True
                 map_name = self.bot.config['attribute']['list_tower'][floor]
-                msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨"
+                msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨\n" \
+                      f"**Obs:** `use o comando` **ash dg {dungeon} map** `para ver o mapa novamente!`"
                 file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
                 embed = disnake.Embed(title=msg, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
