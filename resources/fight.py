@@ -1696,8 +1696,8 @@ class Entity(object):
 
         if entity.passive == "wizard":
             if entity.SPELLCASTER_FIRER and skill["skill"] == 0:
-                if skill["name"] == "SoD Stack [4]":
-                    # se o stack da passiva do warlock for 4 (o efeito sobrepoe o strike)
+                if skill["name"] == "SF Stack [4]":
+                    # se o stack da passiva do wizard for 4 (o efeito sobrepoe o strike)
                     act_eff = True
 
         luck_skill, eff_now = 0, 0
@@ -1852,8 +1852,16 @@ class Entity(object):
 
                                     self.effects[k] = _effct[k]
                                     min_turn, max_turn = 2, _effct[k]['turns']
-
                                     min_turn = 3 if k in _EFFECTS else min_turn
+
+                                    if c == "looping":
+                                        if "4" in skill["name"]:
+                                            min_turn = 4
+                                        elif "3" in skill["name"]:
+                                            min_turn = 3
+                                        elif "2" in skill["name"]:
+                                            min_turn = 3
+
                                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                                     self.effects[k]['turns'] = randint(min_turn, max_turn)
 
@@ -1873,6 +1881,15 @@ class Entity(object):
                                 self.effects[c] = skill['effs'][self.ls][c]
                                 min_turn, max_turn = 2, skill['effs'][self.ls][c]['turns']
                                 min_turn = 3 if c in _EFFECTS else min_turn
+
+                                if c == "looping":
+                                    if "4" in skill["name"]:
+                                        min_turn = 4
+                                    elif "3" in skill["name"]:
+                                        min_turn = 3
+                                    elif "2" in skill["name"]:
+                                        min_turn = 3
+
                                 max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                                 self.effects[c]['turns'] = randint(min_turn, max_turn)
                         else:
@@ -1899,11 +1916,9 @@ class Entity(object):
                                 for k in keys:
                                     self.effects[k] = _effct[k]
                                     min_turn, max_turn = 2, _effct[k]['turns']
-
                                     min_turn = 3 if k in _EFFECTS else min_turn
                                     max_turn = min_turn + 1 if min_turn > max_turn else max_turn
                                     self.effects[k]['turns'] = randint(min_turn, max_turn)
-
                                     turns = self.effects[k]['turns']
                                     _eff += turns
                                     # verde
@@ -1995,7 +2010,7 @@ class Entity(object):
 
         if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
             if not self.is_boss and not self.is_mini_boss:
-                damage = (self.status['hp'] // 2) + damage  # 50% do HP atual + atak da skill
+                damage = (self.status['hp'] // 4) + damage  # 50% do HP atual + atak da skill
 
         return damage
 
