@@ -79,6 +79,11 @@ class DugeonClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        if not update['dungeons']['tower']['active']:
+            msg = "<:negate:721581573396496464>│`VOCÊ JA FINALIZOU ESSA DUNGEON`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
         if ctx.author.id in self.bot.explorando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -200,21 +205,47 @@ class DugeonClass(commands.Cog):
                 if int(player.matriz[player.y][player.x]) == 3:  # objetivo
 
                     cl = await self.bot.db.cd("users")
-                    dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1})
-                    query = {
-                        "dungeons.tower": {
-                            "active": True,
-                            "position_now": (-1, -1),
-                            "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
-                            "block_battle": False,
-                            "locs": list()
-                        }
-                    }
-                    await cl.update_one({"user_id": ctx.author.id}, {"$set": query})
+                    dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 
-                    _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
-                           "✨ **[Tower of Alasthor]** ✨\n**Obs:** `use o comando de novo para explorar o novo andar!`"
-                    await inter.response.send_message(_msg)
+                    if dg_data['dungeons']['tower']['floor'] == 10:
+
+                        _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
+                               "✨ **[Tower of Alasthor]** ✨\n" \
+                               "**Obs:** `Você ganhou por completar toda a DUNGEON uma` **Key of Hell**"
+                        await inter.response.send_message(_msg)
+
+                        query = {
+                            "dungeons.tower": {
+                                "active": False,
+                                "position_now": (-1, -1),
+                                "floor": 0,
+                                "block_battle": False,
+                                "locs": list()
+                            }}
+
+                        inventory = {
+                            "inventory.key_of_hell": 1
+                        }
+
+                        await cl.update_one({"user_id": ctx.author.id}, {"$set": query, "$int": inventory})
+
+                    else:
+
+                        _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
+                               "✨ **[Tower of Alasthor]** ✨\n" \
+                               "**Obs:** `use o comando de novo para explorar o novo andar!`"
+                        await inter.response.send_message(_msg)
+
+                        query = {
+                            "dungeons.tower": {
+                                "active": True,
+                                "position_now": (-1, -1),
+                                "floor": dg_data["dungeons"]["tower"]["floor"] + 1,
+                                "block_battle": False,
+                                "locs": list()
+                            }}
+
+                        await cl.update_one({"user_id": ctx.author.id}, {"$set": query})
 
             if str(inter.component.emoji) == "⬆️":
 
