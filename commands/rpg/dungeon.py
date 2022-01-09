@@ -135,7 +135,7 @@ class DugeonClass(commands.Cog):
             if update['dungeons']['tower']['position_now'] == [-1, -1]:
                 if update['dungeons']['tower']['battle'] > 0:
                     msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR ANTES DE PROSSEGUIR NA DUNGEON!`\n' \
-                          '**Obs:** `use o comando` **ASH BT TOWER** ``para batalhar'
+                          '**Obs:** `use o comando` **ASH BT TOWER** `para batalhar`'
                     embed = disnake.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
