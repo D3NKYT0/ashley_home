@@ -164,6 +164,9 @@ class Battle(commands.Cog):
             if min_max[0] <= player_level_now <= min_max[1]:
                 xp_bonus_area = True
 
+        if battle_special:
+            min_max, is_xp, is_level = None, False, 0
+
         # configuração do player e monster
         db_player = extension.set_player(ctx.author, data)
 

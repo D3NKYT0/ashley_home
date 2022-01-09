@@ -232,7 +232,7 @@ class DugeonClass(commands.Cog):
 
                         await sleep(1)
 
-                        find = True if randint(1, 100) <= 20 else True if num == 5 else False
+                        find = True if randint(1, 100) <= 15 else True if num == 5 else False
                         text = "VOCE ENCONTROU ALGO!" if find else "NÃO FOI ENCONTRADO NADA NESSE CHUNCK!"
                         emoji = ["<:confirmed:721581574461587496>", "<:negate:721581573396496464>"]
                         _msg = f"{emoji[0] if find else emoji[1]}│`{text}`"
@@ -244,7 +244,7 @@ class DugeonClass(commands.Cog):
                                 it, qt = choice(self.reward_te), 1
 
                             chunck_special = ""
-                            if randint(1, 100) <= 10 and dg_data["dungeons"]["tower"]["special_chunks"] > 0:
+                            if randint(1, 100) <= 20 and dg_data["dungeons"]["tower"]["special_chunks"] > 0:
                                 dg_data["dungeons"]["tower"]["special_chunks"] -= 1
                                 it, qt, chunck_special = choice(self.reward_ce), 1, "`CHUNCK ESPECIAL`"
 
