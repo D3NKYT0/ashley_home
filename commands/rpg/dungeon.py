@@ -115,7 +115,6 @@ class DugeonClass(commands.Cog):
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
         move.add_item(disnake.ui.Button(emoji="⬆️", style=_style[1]))
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
-        move.add_item(disnake.ui.Button(label="❌", style=disnake.ButtonStyle.red))
         move.add_item(disnake.ui.Button(emoji="⬅️", style=_style[1], row=1))
         move.add_item(disnake.ui.Button(emoji=_emoji, style=_style[2], row=1))
         move.add_item(disnake.ui.Button(emoji="➡️", style=_style[1], row=1))
@@ -135,8 +134,6 @@ class DugeonClass(commands.Cog):
         player.battle = data["dungeons"]["tower"]["block_battle"]
 
         while not ctx.bot.is_closed():
-
-            loop = False
 
             def check(m):
                 if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id and m.message.id == msg.id:
@@ -165,13 +162,7 @@ class DugeonClass(commands.Cog):
 
                 player.battle = False
 
-            if str(inter.component.emoji) == "❌":
-                await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
-                await msg.delete()
-                break
-
             if str(inter.component.emoji) == _emoji:
-                loop = True
 
                 if int(player.matriz[player.y][player.x]) in [1, 2, 4, 5]:  # caminho
                     cl = await self.bot.db.cd("users")
@@ -228,7 +219,6 @@ class DugeonClass(commands.Cog):
                     await inter.response.send_message(_msg)
 
             if str(inter.component.emoji) == "⬆️":
-                loop = True
 
                 moviment = await player.move('up')
                 if isinstance(moviment, disnake.File):
@@ -241,7 +231,6 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬇️":
-                loop = True
 
                 moviment = await player.move('down')
                 if isinstance(moviment, disnake.File):
@@ -254,7 +243,6 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "⬅️":
-                loop = True
 
                 moviment = await player.move('left')
                 if isinstance(moviment, disnake.File):
@@ -267,7 +255,6 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             elif str(inter.component.emoji) == "➡️":
-                loop = True
 
                 moviment = await player.move('right')
                 if isinstance(moviment, disnake.File):
@@ -280,9 +267,6 @@ class DugeonClass(commands.Cog):
                     await inter.response.defer()
 
             await sleep(1)
-
-            if not loop:
-                break
 
         if ctx.author.id in self.bot.explorando:
             self.bot.explorando.remove(ctx.author.id)
