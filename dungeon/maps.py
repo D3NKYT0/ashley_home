@@ -278,6 +278,7 @@ class Player:
 
     async def move(self, direction):
         x, y = self.x, self.y
+
         if direction == 'up':
             if (int(self.matriz[y][x - 1]) == 0) or y == 0:
                 return int(self.matriz[y][x - 1])
@@ -285,10 +286,13 @@ class Player:
                 self.x -= 1
 
                 cl = await self.ctx.bot.db.cd("users")
-                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
-                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
+                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
                     query[f"dungeons.{self.dg}.block_battle"] = True
+                    dt["dungeons"]["tower"]["locs"].append(pos)
+                    query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
@@ -305,10 +309,13 @@ class Player:
                 self.x += 1
 
                 cl = await self.ctx.bot.db.cd("users")
-                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
-                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
+                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
                     query[f"dungeons.{self.dg}.block_battle"] = True
+                    dt["dungeons"]["tower"]["locs"].append(pos)
+                    query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
@@ -325,10 +332,13 @@ class Player:
                 self.y -= 1
 
                 cl = await self.ctx.bot.db.cd("users")
-                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
-                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
+                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
                     query[f"dungeons.{self.dg}.block_battle"] = True
+                    dt["dungeons"]["tower"]["locs"].append(pos)
+                    query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
@@ -345,10 +355,13 @@ class Player:
                 self.y += 1
 
                 cl = await self.ctx.bot.db.cd("users")
-                query = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}
-                if int(self.matriz[self.y][self.x]) == 4:  # batalha
+                dt = await cl.find_one({"user_id": self.ctx.author.id}, {"dungeons": 1})
+                query, pos = {f"dungeons.{self.dg}.position_now": (self.y, self.x)}, [self.x, self.y]
+                if int(self.matriz[self.y][self.x]) == 4 and pos not in dt["dungeons"]["tower"]["locs"]:  # batalha
                     self.battle = True
                     query[f"dungeons.{self.dg}.block_battle"] = True
+                    dt["dungeons"]["tower"]["locs"].append(pos)
+                    query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query})
 
                 vision = self.Map.get_vision(self.map, [self.y, self.x])

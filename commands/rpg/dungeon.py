@@ -54,7 +54,7 @@ class DugeonClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @dungeon.group(name="tower", aliases=['tw'])
-    async def _tower(self, ctx):
+    async def _tower(self, ctx, reset=None):
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
@@ -81,6 +81,14 @@ class DugeonClass(commands.Cog):
 
         if ctx.author.id in self.bot.explorando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if reset is not None:
+            update['dungeons']["tower"]["position_now"] = (-1, -1)
+            await self.bot.db.update_data(data, update, 'users')
+            msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
+                  '`foi resetada sua localização!`\n**Obs:** `use o comando novamente pra iniciar!`'
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -143,11 +151,19 @@ class DugeonClass(commands.Cog):
                 break
 
             if player.battle:
-                _msg = "<:alert:739251822920728708>│`Você precisa batalhar para se mover!`\n" \
+
+                cl = await self.bot.db.cd("users")
+                dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1})
+                pos = [player.x, player.y]
+                if pos not in dg_data["dungeons"]["tower"]["locs"]:
+                    dg_data["dungeons"]["tower"]["locs"].append(pos)
+                    await cl.update_one({"user_id": ctx.author.id}, {"$set": dg_data})
+
+                _msg = "<:alert:739251822920728708>│`Você ganhou uma batalha especial!`\n" \
                        "**Obs:** `use o comando` **ASH BT TOWER**"
                 await inter.response.send_message(_msg, delete_after=5.0)
-                await msg.delete()
-                break
+
+                player.battle = False
 
             if str(inter.component.emoji) == "❌":
                 await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
@@ -157,7 +173,7 @@ class DugeonClass(commands.Cog):
             if str(inter.component.emoji) == _emoji:
                 loop = True
 
-                if int(player.matriz[player.y][player.x]) in [1, 2, 5]:  # caminho
+                if int(player.matriz[player.y][player.x]) in [1, 2, 4, 5]:  # caminho
                     cl = await self.bot.db.cd("users")
                     dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
 

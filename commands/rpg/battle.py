@@ -45,9 +45,13 @@ class Battle(commands.Cog):
             mini_boss = False if moon != "moon" else True
             dungeon = None if mini_boss else moon
 
+        battle_special = False
         if dungeon is not None:
             if moon.lower() not in ["tower"]:
                 dungeon = None
+            else:
+                if update["dungeons"][dungeon]["block_battle"]:
+                    battle_special = True
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
@@ -386,8 +390,9 @@ class Battle(commands.Cog):
                 money = money * 2  # bonus de ETHERNYA
 
             answer_ = await self.bot.db.add_money(ctx, money, True)
+            _text_es = "`**A BATALHA ESPECIAL!**"
             embed = disnake.Embed(
-                description=f"`{ctx.author.name.upper()} GANHOU!` {answer_}",
+                description=f"`{ctx.author.name.upper()} GANHOU {_text_es if battle_special else '!`'} {answer_}",
                 color=0x000000)
 
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
