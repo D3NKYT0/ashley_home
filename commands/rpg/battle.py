@@ -50,6 +50,7 @@ class Battle(commands.Cog):
             if moon.lower() not in ["tower", "tw"]:
                 dungeon = None
             else:
+                dungeon = "tower"
                 if update["dungeons"][dungeon]["battle"] > 0:
                     battle_special = True
                 floor = update["dungeons"][dungeon]["floor"]

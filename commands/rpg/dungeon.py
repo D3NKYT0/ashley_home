@@ -104,12 +104,19 @@ class DugeonClass(commands.Cog):
 
             if action == "map" and update["dungeons"][dungeon]["map"]:
                 map_name = self.bot.config['attribute']['list_tower'][update["dungeons"][dungeon]["floor"]]
-                msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨"
+                msg = f"`MAPA DA DUNGEON` **Tower of Alasthor** ✨ **ANDAR: {map_name.upper()}!** ✨"
                 file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
                 embed = disnake.Embed(title=msg, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://map.gif")
                 await ctx.send(file=file, embed=embed)
+
+            elif action == "map" and not update["dungeons"][dungeon]["map"]:
+                msg = '<:negate:721581573396496464>│`Você nao tem o mapa desse andar da dungeon` ' \
+                      '**[Tower of Alasthor]**`\n' \
+                      '**Obs:** `use o comando (ash bt tw) para tentar conseguir o mapa!`'
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
             elif action in ["reset", "r"]:
 
@@ -117,6 +124,11 @@ class DugeonClass(commands.Cog):
                 await self.bot.db.update_data(data, update, 'users')
                 msg = '<:confirmed:721581574461587496>│`a dungeon` **[Tower of Alasthor]** ' \
                       '`resetou sua localização!`\n**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            else:
+                msg = '<:negate:721581573396496464>│`ESSA AÇÃO NAO EXISTE!`'
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
