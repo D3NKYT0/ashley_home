@@ -2570,7 +2570,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 30
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 10) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                     if "mystic" in weapon_name:
 
@@ -2584,7 +2584,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 45
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 20) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                     if"inspiron" in weapon_name:
 
@@ -2598,7 +2598,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 60
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 30) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                     if "violet" in weapon_name:
 
@@ -2612,7 +2612,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 75
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 40) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                     if "hero" in weapon_name:
 
@@ -2626,21 +2626,21 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 90
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 50) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                     if "divine" in weapon_name:
 
                         atk_weapon_bonus = 0
                         if weapon_class in ['assassin', 'priest']:
-                            atk_weapon_bonus += 400
+                            atk_weapon_bonus += 300
 
                         if weapon_class in ['paladin', 'warrior']:
                             atk_weapon_bonus += 200
 
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
-                            atk_weapon_bonus += 300
+                            atk_weapon_bonus += 250
 
-                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 60) + atk_weapon_bonus
+                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
 
                 db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
                 db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']

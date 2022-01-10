@@ -96,7 +96,7 @@ class InventoryClass(commands.Cog):
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
                                 atk_weapon_bonus += 30
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 10) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                         if "mystic" in weapon_name:
 
@@ -110,7 +110,7 @@ class InventoryClass(commands.Cog):
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
                                 atk_weapon_bonus += 45
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 20) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                         if "inspiron" in weapon_name:
 
@@ -124,7 +124,7 @@ class InventoryClass(commands.Cog):
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
                                 atk_weapon_bonus += 60
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 30) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                         if "violet" in weapon_name:
 
@@ -138,7 +138,7 @@ class InventoryClass(commands.Cog):
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
                                 atk_weapon_bonus += 75
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 40) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                         if "hero" in weapon_name:
 
@@ -152,21 +152,21 @@ class InventoryClass(commands.Cog):
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
                                 atk_weapon_bonus += 90
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 50) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                         if "divine" in weapon_name:
 
                             atk_weapon_bonus = 0
                             if weapon_class in ['assassin', 'priest']:
-                                atk_weapon_bonus += 400
+                                atk_weapon_bonus += 300
 
                             if weapon_class in ['paladin', 'warrior']:
                                 atk_weapon_bonus += 200
 
                             if weapon_class in ['necromancer', 'wizard', 'warlock']:
-                                atk_weapon_bonus += 300
+                                atk_weapon_bonus += 250
 
-                            sts["atk"] += (int(_db_class["status"]["atk"]) + 60) + atk_weapon_bonus
+                            sts["atk"] += int(_db_class["status"]["atk"]) + atk_weapon_bonus
 
                     for name in _db_class["status"].keys():
                         if name in ["luk", "pdh"]:
