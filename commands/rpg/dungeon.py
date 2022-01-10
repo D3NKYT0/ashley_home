@@ -79,6 +79,7 @@ class DugeonClass(commands.Cog):
                 "special_chunks": 10,
                 "map": False,
                 "miniboss": False,
+                "miniboss_final": False,
                 "locs": list()
             }
             update['dungeons']["tower"] = tower
@@ -138,8 +139,9 @@ class DugeonClass(commands.Cog):
 
             if update['dungeons']['tower']['position_now'] == [-1, -1]:
                 if update['dungeons']['tower']['battle'] > 0:
-                    msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR ANTES DE PROSSEGUIR NA DUNGEON!`\n' \
-                          '**Obs:** `use o comando` **ASH BT TOWER** `para batalhar`'
+                    _bt = update['dungeons']['tower']['battle']
+                    msg = f'<:negate:721581573396496464>│`VOCE PRECISA BATALHAR {_bt}x ANTES DE PROSSEGUIR NA ' \
+                          f'DUNGEON!`\n**Obs:** `use o comando` **ASH BT TOWER** `para batalhar`'
                     embed = disnake.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
@@ -273,7 +275,24 @@ class DugeonClass(commands.Cog):
 
                     if dg_data['dungeons']['tower']['floor'] == 10:
 
-                        _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU O ANDAR DA DUNGEON:`\n" \
+                        if dg_data['dungeons']['tower']['battle'] > 0:
+                            _bt = dg_data['dungeons']['tower']['battle']
+                            msg = f'<:negate:721581573396496464>│`VOCE PRECISA BATALHAR {_bt}x ANTES DE PROSSEGUIR' \
+                                  f' NA DUNGEON!`\n' \
+                                  f'**Obs:** `use o comando` **ASH BT TOWER** `para batalhar`'
+                            embed = disnake.Embed(color=self.bot.color, description=msg)
+                            await ctx.send(embed=embed)
+                            break
+
+                        if not dg_data['dungeons']['tower']['miniboss_final']:
+                            msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES' \
+                                  ' DE PROSSEGUIR NA DUNGEON!`\n' \
+                                  '**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                            embed = disnake.Embed(color=self.bot.color, description=msg)
+                            await ctx.send(embed=embed)
+                            break
+
+                        _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU TODA A DUNGEON:`\n" \
                                "✨ **[Tower of Alasthor]** ✨\n" \
                                "**Obs:** `Você ganhou por completar toda a DUNGEON uma` **Key of Hell**"
                         await ctx.send(_msg)
@@ -287,6 +306,7 @@ class DugeonClass(commands.Cog):
                                 "special_chunks": 10,
                                 "map": False,
                                 "miniboss": False,
+                                "miniboss_final": False,
                                 "locs": list()
                             }}
 
@@ -294,7 +314,7 @@ class DugeonClass(commands.Cog):
                             "inventory.key_of_hell": 1
                         }
 
-                        await cl.update_one({"user_id": ctx.author.id}, {"$set": query, "$int": inventory})
+                        await cl.update_one({"user_id": ctx.author.id}, {"$set": query, "$inc": inventory})
 
                     else:
 
@@ -312,6 +332,7 @@ class DugeonClass(commands.Cog):
                                 "special_chunks": 10,
                                 "map": False,
                                 "miniboss": False,
+                                "miniboss_final": False,
                                 "locs": list()
                             }}
 

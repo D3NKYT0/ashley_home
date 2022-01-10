@@ -72,6 +72,10 @@ class Battle(commands.Cog):
                 if update["dungeons"]["tower"]["active"] and not update["dungeons"]["tower"]["miniboss"]:
                     special_miniboss = True
 
+                elif update["dungeons"]["tower"]["active"] and not update["dungeons"]["tower"]["miniboss_final"]:
+                    if update['dungeons']['tower']['floor'] == 10:
+                        special_miniboss = True
+
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -681,7 +685,13 @@ class Battle(commands.Cog):
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
 
         if mini_boss and special_miniboss and player[ctx.author.id].status['hp'] > 0:
-            update["dungeons"]["tower"]["miniboss"] = True
+            if not update["dungeons"]["tower"]["miniboss"]:
+                update["dungeons"]["tower"]["miniboss"] = True
+
+            if update['dungeons']['tower']['floor'] == 10:
+                if not update["dungeons"]["tower"]["miniboss_final"]:
+                    update["dungeons"]["tower"]["miniboss_final"] = True
+
             await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU COM UM MINIBOSS PELA DUNGEON`")
 
         if dungeon is not None and player[ctx.author.id].status['hp'] > 0:
