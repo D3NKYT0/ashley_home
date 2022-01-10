@@ -13,7 +13,7 @@ LVL, MONSTERS_QUEST = [5, 10, 15, 20, 25], all_data["battle"]['quests']
 SET_ARMOR = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
 _emo = ["<:versus:873745062192873512>", "<:HP:774699585070825503>", "<:MP:774699585620672534>"]
 _ini = "<:inimigo:873756815287017552>"
-_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target", "headshot", "smoke"]
+_EFFECTS = ["bluff", "ignition", "rage", "impulse", "confusion", "target", "headshot"]
 
 # todos os equipamentos
 equips_list = dict()
@@ -553,10 +553,10 @@ class Entity(object):
             description += soulshot
 
         if self.passive == "warrior" and self.rage_damage > 0:
-            description += f"\n**Rage:** `{self.rage_damage}`"
+            description += f"\n`Rage:` **{self.rage_damage}**"
 
         if self.passive == "paladin" and self.devotion > 0:
-            description += f"\n**Devotion:** `{self.devotion}`"
+            description += f"\n`Devotion:` **{self.devotion}**"
 
         embed = disnake.Embed(
             title=title,
@@ -675,13 +675,7 @@ class Entity(object):
                                     self.effects["reflect"]['turns'] -= 1
                                 if self.effects["reflect"]['turns'] < 1:
                                     del self.effects["reflect"]
-                                    _eff = "reflect"
-                                    reflect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{_eff.upper()}!**"
-
-                                    if _eff.lower() == "smoke":
-                                        entity.smoke_now = False
-                                        entity.status["agi"] -= 120
-
+                                    reflect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **reflect!**"
                                     msg_return += f"{reflect}\n\n"
 
                             if damage > 0:
@@ -746,10 +740,16 @@ class Entity(object):
 
                         if self.effects[c]['turns'] < 1:
                             del self.effects[c]
+
                             if "self" in c:
                                 c = "PASSIVA"
+
                             and_effect = f"❌ **{self.name.upper()}** `perdeu o efeito de` **{c.upper()}!**"
                             msg_return += f"{and_effect}\n\n"
+
+                            if c.lower() == "smoke" and entity.smoke_now:
+                                entity.smoke_now = False
+                                entity.status["agi"] -= 60
 
                             if c == "confine" and not self.is_confine:
                                 self.is_confine = True
@@ -1131,7 +1131,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "paladin":
-                            _action = randint(10, 25)  # velocidade da progreção
+                            _action = randint(15, 25)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1156,7 +1156,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.passive_mode}"]
 
                         if self_passive and self.passive == "warrior":
-                            _action = randint(10, 25)  # velocidade da progreção
+                            _action = randint(15, 25)  # velocidade da progreção
 
                             if "impulse" in entity.effects.keys():
                                 if entity.effects["impulse"]["turns"] > 0:
@@ -1187,7 +1187,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "assassin":
-                            _action = randint(30, 45)  # velocidade da progreção
+                            _action = randint(25, 35)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1212,7 +1212,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "wizard":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(20, 30)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1238,7 +1238,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.stack}"]
 
                         if self_passive and self.passive == "warlock":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(20, 30)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1263,7 +1263,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive'][f"{self.type_skill_passive}"]
 
                         if self_passive and self.passive == "priest":
-                            _action = randint(30, 45)  # velocidade da progreção
+                            _action = randint(25, 35)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1288,7 +1288,7 @@ class Entity(object):
                             self.skill = CLS[self._class]['passive']["0"]
 
                         if self_passive and self.passive == "necromancer":
-                            _action = randint(15, 30)  # velocidade da progreção
+                            _action = randint(20, 30)  # velocidade da progreção
                             self.progress += _action
                             if self.progress >= 100 and not self.is_passive:
                                 self.progress = 100
@@ -1871,9 +1871,9 @@ class Entity(object):
                                     _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
                                              f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
 
-                                    if k.lower() == "smoke":
+                                    if k.lower() == "smoke" and not entity.smoke_now:
                                         entity.smoke_now = True
-                                        entity.status["agi"] += 120
+                                        entity.status["agi"] += 60
 
                                     msg_return += f"{_text2}\n\n"
 
@@ -1925,9 +1925,9 @@ class Entity(object):
                                     _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{k.upper()}** ' \
                                              f'`por` **{turns}** `turno{"s" if turns > 1 else ""}`'
 
-                                    if k.lower() == "smoke":
+                                    if k.lower() == "smoke" and not entity.smoke_now:
                                         entity.smoke_now = True
-                                        entity.status["agi"] += 120
+                                        entity.status["agi"] += 60
 
                                     msg_return += f"{_text2}\n\n"
 
@@ -1945,9 +1945,9 @@ class Entity(object):
                             _text2 = f'🟢 **{self.name.upper()}** `recebeu o efeito de` **{c.upper()}** `por` ' \
                                      f'**{turns}** `turno{"s" if turns > 1 else ""}`'
 
-                            if c.lower() == "smoke":
+                            if c.lower() == "smoke" and not entity.smoke_now:
                                 entity.smoke_now = True
-                                entity.status["agi"] += 120
+                                entity.status["agi"] += 60
 
                             msg_return += f"{_text2}\n\n"
                 else:
@@ -2570,7 +2570,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 30
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                     if "mystic" in weapon_name:
 
@@ -2584,7 +2584,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 45
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                     if"inspiron" in weapon_name:
 
@@ -2598,7 +2598,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 60
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                     if "violet" in weapon_name:
 
@@ -2612,7 +2612,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 75
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                     if "hero" in weapon_name:
 
@@ -2626,7 +2626,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 90
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                     if "divine" in weapon_name:
 
@@ -2640,7 +2640,7 @@ class Ext(object):
                         if weapon_class in ['necromancer', 'wizard', 'warlock']:
                             atk_weapon_bonus += 250
 
-                        db_player["status"]["atk"] += b_player["atk_bonus"] + atk_weapon_bonus
+                        db_player["status"]["atk"] += db_player["atk_bonus"] + atk_weapon_bonus
 
                 db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
                 db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']
