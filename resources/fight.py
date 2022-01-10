@@ -2010,7 +2010,7 @@ class Entity(object):
 
         if half_life_priest and int(skill["skill"]) in [1, 2, 3, 4, 5]:
             if not self.is_boss and not self.is_mini_boss:
-                damage = (self.status['hp'] // 4) + damage  # 50% do HP atual + atak da skill
+                damage = (self.status['hp'] // 4) + damage  # 25% do HP atual + atak da skill
 
         return damage
 
@@ -2554,18 +2554,93 @@ class Ext(object):
                 if c in SET_ARMOR:
                     set_e.append(str(db_player['equipped_items'][c]))
 
-                if c == "sword" and "silver" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 5
-                if c == "sword" and "mystic" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 10
-                if c == "sword" and "inspiron" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 20
-                if c == "sword" and "violet" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 40
-                if c == "sword" and "hero" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 60
-                if c == "sword" and "divine" in db_player["equipped_items"][c]:
-                    db_player["status"]["atk"] += db_player["atk_bonus"] * 120
+                if c == "sword":
+                    weapon_name = all_data['equips']["weapons"][db_player["equipped_items"][c]]["name"]
+                    weapon_class = weapon_name.split()[0]
+
+                    if "silver" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 40
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 20
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 30
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 10) + atk_weapon_bonus
+
+                    if "mystic" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 60
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 30
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 45
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 20) + atk_weapon_bonus
+
+                    if"inspiron" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 80
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 40
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 60
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 30) + atk_weapon_bonus
+
+                    if "violet" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 100
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 50
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 75
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 40) + atk_weapon_bonus
+
+                    if "hero" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 120
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 60
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 90
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 50) + atk_weapon_bonus
+
+                    if "divine" in weapon_name:
+
+                        atk_weapon_bonus = 0
+                        if weapon_class in ['assassin', 'priest']:
+                            atk_weapon_bonus += 400
+
+                        if weapon_class in ['paladin', 'warrior']:
+                            atk_weapon_bonus += 200
+
+                        if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                            atk_weapon_bonus += 300
+
+                        db_player["status"]["atk"] += (db_player["atk_bonus"] + 60) + atk_weapon_bonus
 
                 db_player["pdef"] += self.eq[db_player['equipped_items'][c]]['pdef']
                 db_player["mdef"] += self.eq[db_player['equipped_items'][c]]['mdef']

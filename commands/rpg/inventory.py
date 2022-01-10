@@ -67,27 +67,124 @@ class InventoryClass(commands.Cog):
                 for k, v in self.bot.config['equips'][ky].items():
                     eq[k] = v
 
+            _class = data["rpg"]["class_now"]
+            _db_class = data["rpg"]["sub_class"][_class]
+
             set_armor, full_armor = list(), False
             sts = {"atk": 0, "agi": 0, "prec": 0, "con": 0, "luk": 0}
             set_value = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
-            for key in data['rpg']["equipped_items"].keys():
-                if data['rpg']["equipped_items"][key] is not None:
-                    if key in set_value:
-                        set_armor.append(data['rpg']["equipped_items"][key])
-                    for k in sts.keys():
-                        try:
-                            sts[k] += eq[data['rpg']["equipped_items"][key]]["modifier"][k]
-                        except KeyError:
-                            pass
+
+            for c in data['rpg']['equipped_items'].keys():
+                if data['rpg']["equipped_items"][c] is not None:
+
+                    if c in set_value:
+                        set_armor.append(str(data['rpg']['equipped_items'][c]))
+
+                    if c == "sword":
+                        weapon_name = self.bot.config['equips']["weapons"][data['rpg']["equipped_items"][c]]["name"]
+                        weapon_class = weapon_name.split()[0]
+
+                        if "silver" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 40
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 20
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 30
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 10) + atk_weapon_bonus
+
+                        if "mystic" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 60
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 30
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 45
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 20) + atk_weapon_bonus
+
+                        if "inspiron" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 80
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 40
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 60
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 30) + atk_weapon_bonus
+
+                        if "violet" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 100
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 50
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 75
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 40) + atk_weapon_bonus
+
+                        if "hero" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 120
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 60
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 90
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 50) + atk_weapon_bonus
+
+                        if "divine" in weapon_name:
+
+                            atk_weapon_bonus = 0
+                            if weapon_class in ['assassin', 'priest']:
+                                atk_weapon_bonus += 400
+
+                            if weapon_class in ['paladin', 'warrior']:
+                                atk_weapon_bonus += 200
+
+                            if weapon_class in ['necromancer', 'wizard', 'warlock']:
+                                atk_weapon_bonus += 300
+
+                            sts["atk"] += (int(_db_class["status"]["atk"]) + 60) + atk_weapon_bonus
+
+                    for name in _db_class["status"].keys():
+                        if name in ["luk", "pdh"]:
+                            continue
+                        sts[name] += eq[data['rpg']['equipped_items'][c]]['modifier'][name]
 
             for kkk in self.bot.config["set_equips"].values():
                 if len([e for e in set_armor if e in kkk['set']]) == 5:
                     full_armor = True
                     for name in sts.keys():
-                        try:
-                            sts[name] += kkk['modifier'][name]
-                        except KeyError:
-                            pass
+                        sts[name] += kkk['modifier'][name]
+
+            # sistema de enchants armors
+            enchant = data['rpg']['armors']
+            for key in enchant.keys():
+                for k in enchant[key]:
+                    if k == 16:
+                        sts['con'] += 1
 
             atk = self.bot.config["skills"][data['rpg']['class']]['modifier']['atk']
             dex = self.bot.config["skills"][data['rpg']['class']]['modifier']['agi']
