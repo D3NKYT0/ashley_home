@@ -1645,7 +1645,7 @@ class Entity(object):
         return self.skill
 
     def verify_effect(self):
-        looping, ignition, skull, drain, bluff, hit_kill, hold = False, False, False, False, False, False, False
+        looping, ignition, drain, bluff, hit_kill, hold = False, False, False, False, False, False
         duelist, stk1, stk2, lethal, ds = False, False, False, False, False
         if self.effects is not None:
             if "dualshot" in self.effects.keys():
@@ -1666,9 +1666,6 @@ class Entity(object):
             if "ignition" in self.effects.keys():
                 if self.effects["ignition"]["turns"] > 0:
                     ignition = True
-            if "skull" in self.effects.keys():
-                if self.effects["skull"]["turns"] > 0:
-                    skull = True
             if "drain" in self.effects.keys():
                 if self.effects["drain"]["turns"] > 0:
                     drain = True
@@ -1684,7 +1681,7 @@ class Entity(object):
                     if "bluff" in self.effects.keys() and "cegueira" in self.effects.keys():
                         if self.effects["bluff"]["turns"] > 0 and self.effects["cegueira"]["turns"] > 0:
                             hit_kill = True
-        return looping, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lethal, ds
+        return looping, ignition, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lethal, ds
 
     def chance_effect_skill(self, entity, skill, msg_return, test, act_eff, bluff, confusion, lvs, _eff, chance):
 
@@ -2125,8 +2122,8 @@ class Entity(object):
             return entity
 
         msg_return, lethal, _eff, chance, msg_drain, test = "", False, 0, False, "", not self.is_player or self.is_pvp
-        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
-        half_life_priest, lvs_skill, barrier, rage, charge = False, 1, False, False, False
+        lp, ignition, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
+        half_life_priest, lvs_skill, barrier, rage, charge, skull = False, 1, False, False, False, False
 
         if "barrier" in self.effects.keys():
             if self.effects["barrier"]['turns'] > 0:
@@ -2154,6 +2151,10 @@ class Entity(object):
             if "strike" in entity.effects.keys():
                 if entity.effects["strike"]['turns'] > 0:
                     act_eff = False
+
+            if "skull" in entity.effects.keys():
+                if entity.effects["skull"]["turns"] > 0:
+                    skull = True
 
         if stk1 and stk2 and not self.is_boss and not self.is_mini_boss:
             half_life_priest = True
@@ -2195,7 +2196,7 @@ class Entity(object):
                            f'efeito` **duelist** `nesse turno.`'
 
         # verificação especial para que o EFFECT nao perca o seu primeiro turno
-        lp, ignition, skull, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
+        lp, ignition, drain, bluff, hit_kill, hold, duelist, stk1, stk2, lt, ds = self.verify_effect()
 
         msg_hl_priest, lethal = "", lt
 
