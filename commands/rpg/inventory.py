@@ -73,6 +73,7 @@ class InventoryClass(commands.Cog):
             set_armor, full_armor = list(), False
             sts = {"atk": 0, "agi": 0, "prec": 0, "con": 0, "luk": 0}
             set_value = ["shoulder", "breastplate", "gloves", "leggings", "boots"]
+            dagguer_dual = False
 
             for c in data['rpg']['equipped_items'].keys():
                 if data['rpg']["equipped_items"][c] is not None:
@@ -83,6 +84,9 @@ class InventoryClass(commands.Cog):
                     if c == "sword":
                         weapon_name = self.bot.config['equips']["weapons"][data['rpg']["equipped_items"][c]]["name"]
                         weapon_class = weapon_name.split()[0]
+
+                        if "assassin celestial" in weapon_name:
+                            dagguer_dual = True
 
                         if "silver" in weapon_name:
 
@@ -227,6 +231,8 @@ class InventoryClass(commands.Cog):
                 "set": full_armor,
                 "sex": data['rpg']['sex'],
                 "skin": data['rpg']['skin'],
+
+                "dagguer_dual": dagguer_dual,
 
                 "status_base": {
                     "atk": str(data['rpg']["sub_class"][_class]['status']['atk']),
@@ -533,6 +539,12 @@ class InventoryClass(commands.Cog):
             if item.split()[_n1] != sword.split()[_n2]:
                 return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR SOULSHOT COM UMA ARMA DE "
                                       "RARIDADE DIFERENTE DA MESMA!`")
+
+        if "assassin celestial" in item and update['rpg']["equipped_items"]['shield'] is not None:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSA ARMA JUNTO COM UM ESCUDO!`")
+
+        if item == "celestial leather - shield divine" and update['rpg']["equipped_items"]['sword'] is not None:
+            return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSE ESCUDO JUNTO COM UMA ARMA!`")
 
         equipped_items = list()
         for value in update['rpg']["equipped_items"].values():

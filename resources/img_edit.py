@@ -796,11 +796,23 @@ def equips(data_s):
 
     # add equips to img
     for k in mapped["equipped"].keys():
+
+        if k == "shield" and data_s["class"] in ["warrior", "warlock"]:
+            data_s['equipped'][k] = data_s['equipped']["sword"]
+        if k == "shield" and data_s["dagguer_dual"]:
+            data_s['equipped'][k] = data_s['equipped']["sword"]
+
         if data_s['equipped'][k][0] is not None:
             armor = ['shoulder', 'breastplate', 'gloves', 'leggings', 'boots']
             jewel = ['necklace', 'earring', 'ring']
             if k in armor or k == "shield":
                 e_type = "armor"
+
+                if k == "shield" and data_s["class"] in ["warrior", "warlock"]:
+                    e_type = "weapon"
+                if k == "shield" and data_s["dagguer_dual"]:
+                    e_type = "weapon"
+
             elif k in jewel:
                 e_type = "jewel"
             elif k == "sword":
@@ -816,7 +828,11 @@ def equips(data_s):
                 else:
                     f_t = f"{data_s['equipped'][k][0]}"
             else:
-                f_t = f"shield/{data_s['equipped'][k][0]}"
+                if data_s["class"] in ["warrior", "warlock"] or data_s["dagguer_dual"]:
+                    end = data_s['equipped']["sword"][0].index("_")
+                    f_t = f"{data_s['equipped']['sword'][0][:end + 2]}"
+                else:
+                    f_t = f"shield/{data_s['equipped'][k][0]}"
             equipped = Image.open(f"{_PREFIX}images/equips/{e_type}/{f_t}.jpg").convert('RGBA')
             equipped = equipped.resize((56, 56))
             image.paste(equipped, (mapped["equipped"][k][0] + 1, mapped["equipped"][k][1]), equipped)
