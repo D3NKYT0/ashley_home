@@ -38,7 +38,8 @@ class TopClass(commands.Cog):
                                 f"{self.st[67]} `top fragment` Top 20 dos usuarios com mais FRAGMENTOS.\n"
                                 f"{self.st[67]} `top blessed` Top 20 dos usuarios com mais BLESSEDS.\n"
                                 f"{self.st[67]} `top event` Top 20 das guildas com mais pontos de EVENTO.\n"
-                                f"{self.st[67]} `top pvp` Top 20 dos melhores jogadores de PVP.")
+                                f"{self.st[67]} `top pvp` Top 20 dos melhores jogadores de PVP.\n"
+                                f"{self.st[67]} `top bitash` Top 20 dos usuarios com mais BITASH.")
             top.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             top.set_thumbnail(url=self.bot.user.display_avatar)
             top.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -188,6 +189,19 @@ class TopClass(commands.Cog):
                              "**mesmo que demore, aguarde o fim do processamento...**")
         top = await self.bot.data.get_rank_blessed(20, ctx)
         await ctx.send(f'<:rank:519896825411665930>|**TOP BLESSED**```py\n{top}```')
+        await msg.delete()
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @top.group(name='bitash')
+    async def _bitash(self, ctx):
+        """Comando usado pra retornar o top 20 em questão das blessed
+        Use ash top blessed"""
+        msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                             "**mesmo que demore, aguarde o fim do processamento...**")
+        top = await self.bot.data.get_rank_bitash(20, ctx)
+        await ctx.send(f'<:rank:519896825411665930>|**TOP BITASH**```py\n{top}```')
         await msg.delete()
 
     @check_it(no_pm=True)

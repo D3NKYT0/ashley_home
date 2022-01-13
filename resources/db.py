@@ -968,6 +968,34 @@ class DataInteraction(object):
                 f"{position}º: {player} > {money_(data_user['true_money']['fragment'])}"
         return rank
 
+    async def get_rank_bitash(self, limit, ctx):  # atualizado no banco de dados
+        global cont
+
+        f = {"_id": 0, "user_id": 1, "true_money.bitash": 1}
+        dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("true_money.bitash", -1)]))]
+        position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
+        cont['list'] = 0
+
+        def money_(money):
+            a = '{:,.0f}'.format(float(money))
+            b = a.replace(',', 'v')
+            c = b.replace('.', ',')
+            d = c.replace('v', '.')
+            return d
+
+        def counter():
+            cont['list'] += 1
+            return cont['list']
+
+        rank = "\n".join([str(counter()) + "º: " +
+                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
+                          " > " + str(money_(dt[x]["true_money"]["bitash"])) for x in range(limit)])
+        data_user = await self.db.get_data("user_id", ctx.author.id, "users")
+        player = str(ctx.author).replace("'", "").replace("#", "_")
+        rank += f"\n--------------------------------------------------------------------\n" \
+                f"{position}º: {player} > {money_(data_user['true_money']['bitash'])}"
+        return rank
+
     async def get_rank_pvp(self, limit, ctx):  # atualizado no banco de dados
         global cont
 
