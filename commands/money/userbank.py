@@ -7,6 +7,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, paginator
 
+ETHERNYA_PRICE = 250000   # cotação 12/01/2022
 coin, cost, plus = 0, 0, 0
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -66,44 +67,78 @@ class UserBank(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @wallet.group(name='convert', aliases=['c'])
-    async def _add(self, ctx, amount: int = 0, money: str = None):
+    async def _add(self, ctx, amount: int = 0, money: str = None, font: str = None):
         """Comando para converter os fragmentos de ethernyas em dinheiro real ou blessed ethernyas"""
+
         if amount is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia.`")
+
         if amount < 1:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+
+        if money is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
+                                  "**Obs:** `blessed ou real`")
+
+        if money not in ['blessed', 'real']:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
+                                  "**Obs:** `blessed ou real`")
+
+        if font is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
+                                  "**Obs:** `ethernya ou fragment`")
+
+        if font not in ['ethernya', 'fragment']:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
+                                  "**Obs:** `ethernya ou fragment`")
+
+        if money == "real" and font == "ethernya":
+            return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **ethernya** `em` **real**")
 
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
 
-        if money is None and not data_user["config"]["vip"]:
-            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`")
+        if font == "fragment":
 
-        if update_user["true_money"]["fragment"] < amount * 1000:
-            quantidade = update_user["true_money"]["fragment"] // 1000
-            return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{quantidade}** `conversões.`")
+            if update_user["true_money"]["fragment"] < amount * 1000:
+                tot = update_user["true_money"]["fragment"] // 1000
+                return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{tot}** `conversões.`")
 
-        if not data_user["config"]["vip"]:
-            if money.lower() not in ["blessed", "real", "reais"]:
-                return await ctx.send("<:alert:739251822920728708>│`Você só pode converter para:` **BLESSED e REAIS!**")
+            update_user["true_money"]["fragment"] -= 1000 * amount
 
-        update_user["true_money"]["fragment"] -= 1000 * amount
-        if not data_user["config"]["vip"]:
-            if money.lower() == "blessed":
-                update_user["true_money"]["blessed"] += amount
+            if not data_user["config"]["vip"]:
+                if money.lower() == "blessed":
+                    update_user["true_money"]["blessed"] += amount
+                else:
+                    update_user["true_money"]["real"] += amount
             else:
+                update_user["true_money"]["blessed"] += amount
                 update_user["true_money"]["real"] += amount
-        else:
-            update_user["true_money"]["blessed"] += amount
-            update_user["true_money"]["real"] += amount
-        await self.bot.db.update_data(data_user, update_user, 'users')
+            await self.bot.db.update_data(data_user, update_user, 'users')
 
-        if not data_user["config"]["vip"]:
-            extra = "Blessed Ethernyas" if money == "blessed" else "Reais"
-            return await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
-                                  f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} {extra}!**")
-        await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
-                       f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} [Reais e Blessed Ethernyas]!**")
+            if not data_user["config"]["vip"]:
+                extra = "Blessed Ethernyas" if money == "blessed" else "Reais"
+
+                return await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                                      f"**{amount * 1000}** `fragmentos de ethernyas, por:` **{amount} {extra}!**")
+
+            await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                           f"**{amount * 1000}** `fragmentos de ethernyas, por:` "
+                           f"**{amount} [Reais e Blessed Ethernyas]!**")
+
+        else:
+
+            if update_user['treasure']["money"] < amount * ETHERNYA_PRICE:
+                tot = update_user['treasure']["money"] // ETHERNYA_PRICE
+                return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{tot}** `conversões.`")
+
+            update_user['treasure']["money"] -= ETHERNYA_PRICE * amount
+            update_user["true_money"]["blessed"] += amount
+            await self.bot.db.update_data(data_user, update_user, 'users')
+
+            await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                           f"**R$ {self.format_num(amount * ETHERNYA_PRICE)},00** `Ethernyas, por:` "
+                           f"**{amount} [Blessed Ethernyas]!**")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
