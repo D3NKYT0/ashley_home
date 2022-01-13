@@ -1001,3 +1001,10 @@ class DataInteraction(object):
                 f"LOSE: {money_(data_user['statistic'].get('pvp_lose', 0))} | " \
                 f"TOTAL: {money_(data_user['statistic'].get('pvp_total', 0))}"
         return rank
+
+    async def get_item_amount(self, item):  # atualizado no banco de dados
+        ff, fd, amount = {f'inventory.{item}': {"$exists": True}}, {"_id": 0, "inventory": 1}, 0
+        dt = [d async for d in ((await self.bot.db.cd("users")).find(ff, fd).sort([(f'inventory.{item}', -1)]))]
+        for data in dt:
+            amount += data["inventory"][item]
+        return amount

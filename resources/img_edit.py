@@ -325,10 +325,11 @@ async def profile(data_):
         "entitlement": [281, 209, 564, 312],
         "name": [583, 107, 972, 141],
         "about": [583, 142, 972, 319],
-        "wallet": [766, 327, 972, 348],
+        "wallet": [687, 327, 972, 349],
         "blessed": [418, 485, 527, 507],
         "fragment": [417, 542, 526, 564],
-        "real": [766, 357, 972, 379]
+        "real": [687, 357, 972, 379],
+        "bitash": [281, 354, 564, 390]
     }
 
     # Text Align
@@ -341,7 +342,7 @@ async def profile(data_):
         return x, y
 
     # font number select
-    font_ = ['rec', 'coin', 'wallet', 'xp', 'blessed', 'fragment', 'real']
+    font_ = ['rec', 'coin', 'wallet', 'xp', 'blessed', 'fragment', 'real', "bitash"]
 
     # take vip img
     vip_xy = [[(280, 135), f"{_PREFIX}images/elements/vip_member.png"],

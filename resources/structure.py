@@ -2,7 +2,7 @@ user_data_structure = {
     "user_id": None,
     "guild_id": None,
     "vip_free": False,
-    "version": [1.3, "ashley-db-user-11-2021"],
+    "version": [2.0, "ashley-db-user-01-2022"],
     "recipes": list(),
     "user": {
         "experience": 0,
@@ -39,7 +39,8 @@ user_data_structure = {
         "blessed": 0,
         "fragment": 0,
         "real": 0,
-        "adfly": 0
+        "adfly": 0,
+        "bitash": 0.0
     },
     "ship": dict(),
     "rank": 0,
@@ -209,7 +210,7 @@ guild_data_structure = {
     "guild_id": None,
     "vip": False,
     "vip_free": False,
-    "version": [1.3, "ashley-db-user-11-2021"],
+    "version": [2.0, "ashley-db-guild-01-2022"],
     "available": 0,
     "webhook": None,
     "event": {

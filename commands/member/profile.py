@@ -112,6 +112,7 @@ class ProfileSystem(commands.Cog):
             "artifacts": data['artifacts'],
             "fragment": str(data['true_money']['fragment']),
             "blessed": str(data['true_money']['blessed']),
+            "bitash": str(data['true_money']['bitash']),
             "real": str(data['true_money']['real'])
         }
 

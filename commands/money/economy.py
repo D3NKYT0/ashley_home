@@ -1,6 +1,7 @@
 from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
+from resources.utility import convert_item_name
 
 
 class Economy(commands.Cog):
@@ -79,6 +80,28 @@ class Economy(commands.Cog):
                    f"Tendo `{self.format_num(self.all_account)}` Contas no total!"
 
         await ctx.send(msg)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='balance', aliases=['balanco'])
+    async def balance(self, ctx, *, item=None):
+        if item is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer o nome de um item!`")
+
+        item_key = convert_item_name(item, self.bot.items)
+        if item_key is None:
+            return await ctx.send("<:alert:739251822920728708>│`Item Inválido!`")
+
+        def number_format(amount):
+            a = '{:,.0f}'.format(float(amount))
+            b = a.replace(',', 'v')
+            c = b.replace('.', ',')
+            d = c.replace('v', '.')
+            return d
+
+        balance = number_format(await self.bot.data.get_item_amount(item_key))
+        await ctx.send(f"<:confirmed:721581574461587496>│`Atualmente existem` **{balance}** `{item.upper()} no RPG!`")
 
 
 def setup(bot):
