@@ -7,7 +7,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, paginator
 
-ETHERNYA_PRICE = 500000   # cotação 12/01/2022 (Start 250000)
+ETHERNYA_PRICE, EXCHANGE_RATE = 500000, 50000   # cotação 13/01/2022
 coin, cost, plus = 0, 0, 0
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -137,6 +137,10 @@ class UserBank(commands.Cog):
             if update_user['treasure']["money"] < amount * ETHERNYA_PRICE:
                 tot = update_user['treasure']["money"] // ETHERNYA_PRICE
                 return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{tot}** `conversões.`")
+
+            if update_user['treasure']["money"] < (amount * ETHERNYA_PRICE) + EXCHANGE_RATE:
+                return await ctx.send(f"<:alert:739251822920728708>│`Você precisa ter a taxa de câmbio para fazer"
+                                      f" essa opração. Taxa atual:` **R$ {self.format_num(EXCHANGE_RATE)},00**")
 
             update_user['treasure']["money"] -= ETHERNYA_PRICE * amount
             update_user["true_money"]["blessed"] += amount
