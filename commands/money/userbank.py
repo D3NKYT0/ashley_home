@@ -142,12 +142,12 @@ class UserBank(commands.Cog):
                 return await ctx.send(f"<:alert:739251822920728708>│`Você precisa ter a taxa de câmbio para fazer"
                                       f" essa opração. Taxa atual:` **R$ {self.format_num(EXCHANGE_RATE)},00**")
 
-            update_user['treasure']["money"] -= ETHERNYA_PRICE * amount
+            update_user['treasure']["money"] -= (ETHERNYA_PRICE * amount) + EXCHANGE_RATE
             update_user["true_money"]["blessed"] += amount
             await self.bot.db.update_data(data_user, update_user, 'users')
 
             await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
-                           f"**R$ {self.format_num(amount * ETHERNYA_PRICE)},00** `Ethernyas, por:` "
+                           f"**R$ {self.format_num((amount * ETHERNYA_PRICE) + EXCHANGE_RATE)},00** `Ethernyas, por:` "
                            f"**{amount} Blessed Ethernyas**")
 
         else:

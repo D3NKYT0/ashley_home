@@ -418,7 +418,7 @@ async def profile(data_):
                     y_ = y_ - 2
 
                 colors = [(255, 255, 255), (68, 29, 114)]
-                if k != "bitash":
+                if k == "bitash":
                     colors = [(0, 0, 0), (255, 255, 255)]
 
                 show.text(xy=(x_ + 1, y_ + 1), text=data_[k].upper(), fill=colors[0], font=font_s)
