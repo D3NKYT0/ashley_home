@@ -1,3 +1,5 @@
+import random
+
 import disnake
 import operator
 import datetime
@@ -7,7 +9,6 @@ from random import choice
 from pytz import timezone
 from config import data as config
 from captcha.image import ImageCaptcha
-from hashlib import sha256
 
 responses = config['answers']
 questions = config['questions']
@@ -211,17 +212,10 @@ def push_sha256(text):
 
 
 async def miner_bitash(bot, user_id, limit):
-    hash_bitash, nonce, mined = push_sha256(bot.config["config"]["bitash"]), 0, 0
+    mined = 0
     while not bot.is_closed():
 
-        if len(bot.bitash) == 0:
-            bot.bitash.append(hash_bitash)
-
-        last_hash = ", ".join([_ for _ in bot.bitash])
-        hash_miner = push_sha256(hash_bitash + last_hash + f"{len(bot.bitash)}{nonce}")
-
-        if hash_miner.startswith("0" * 6):  # zeros atualmente!
-            bot.bitash.append(hash_miner)
+        if random.randint(1, 100) <= 5:  # zeros atualmente!
             print(f"{bot.get_user(user_id)} Minerou x Bitash's...")
 
             mined += 1
@@ -231,7 +225,7 @@ async def miner_bitash(bot, user_id, limit):
                 return
 
             await asyncio.sleep(60)
-        nonce += 1
+        await asyncio.sleep(1)
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):

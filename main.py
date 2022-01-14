@@ -160,7 +160,6 @@ class Ashley(commands.AutoShardedBot):
         self.adfly = api_adfly
 
         # miner bitash system
-        self.bitash = list()  # hashs minerados
         self.minelist = dict()  # lista de mineradores para ativar
 
         # lottery system
