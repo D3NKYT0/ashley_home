@@ -20,6 +20,7 @@ from resources.color import random_color
 from bson.json_util import dumps
 from resources.utility import date_format, patent_calculator, guild_info, rank_definition, CreateCaptcha
 from resources.utility import include
+from resources.assets import Broker
 from resources.db import Database, DataInteraction
 from resources.verify_cooldown import verify_cooldown
 from resources.boosters import Booster
@@ -153,6 +154,7 @@ class Ashley(commands.AutoShardedBot):
         self.data: DataInteraction = DataInteraction(self)
         self.booster: Booster = Booster(self.items)
         self.push: OneSignal = OneSignal()
+        self.broker: Broker = Broker()
 
         # system adfly reward
         self.adfly = api_adfly

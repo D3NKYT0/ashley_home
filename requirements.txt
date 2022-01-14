@@ -13,3 +13,4 @@ pycryptodome
 onesignal-notifications
 disnake-jishaku
 stopwatch.py
+aiohttp

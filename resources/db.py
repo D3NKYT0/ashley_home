@@ -977,7 +977,7 @@ class DataInteraction(object):
         cont['list'] = 0
 
         def money_(money):
-            a = '{:,.0f}'.format(float(money))
+            a = '{:,.4f}'.format(float(money))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')

@@ -128,4 +128,5 @@ commands.event.shop_event
 commands.event.trick
 commands.member.mail
 commands.rpg.dungeon
+commands.money.miner
 # O NUMERO DO INDICE É O NUMERO DA LINHA -1

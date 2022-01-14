@@ -1,96 +1,39 @@
+import json
+
 from random import randint, choice
 
-
-ASSETS = {
-    "Gold Cube": 250000,
-    "Golden Apple": 75000,
-    "Golden Egg": 50000,
-    "Transmogrificador": 150000,
-    "Stone of Moon": 111000,
-    "Lost Parchment": 71428,
-    "Royal Parchment": 71428,
-    "Sages Scroll": 71428,
-    "Melted Artifact": 75000,
-    "Unsealed Stone": 45000,
-    "Feather White": 100000,
-    "Feather Gold": 100000,
-    "Feather Black": 100000,
-    "Essence Cover": 35000,
-    "Essence Leather": 35000,
-    "Essence Platinum": 35000,
-    "Teleport Scroll": 50000,
-    "Pass Royal": 50000,
-    "Frozen Letter": 100000,
-    "Angel Stone": 33333,
-    "Angel Wing": 50000,
-    "Herb Red": 100000,
-    "Herb Green": 100000,
-    "Herb Blue": 100000,
-    "Transcendental Stone": 250000,
-    "Transcendental Flower": 250000
-}
-
-EXCHANGES = {
-    "Etheria": ["Gold Cube", "Golden Apple", "Golden Egg"],
-    "Rauberior": ["Stone of Moon", "Transmogrificador"],
-    "Ilumiora": ["Lost Parchment", "Royal Parchment", "Sages Scroll"],
-    "Kerontaris": ["Melted Artifact", "Unsealed Stone"],
-    "Widebor": ["Feather White", "Feather Gold", "Feather Black"],
-    "Jangalor": ["Essence Cover", "Essence Leather", "Essence Platinum"],
-    "Yotungar": ["Teleport Scroll", "Pass Royal"],
-    "Shoguriar": ["Frozen Letter", "Angel Stone", "Angel Wing"],
-    "Dracaris": ["Herb Red", "Herb Green", "Herb Blue"],
-    "Forgerion": ["Transcendental Stone", "Transcendental Flower"]
-}
-
-AMOUNT = {
-    'Gold Cube': 8,
-    'Golden Apple': 35,
-    'Golden Egg': 41,
-    'Transmogrificador': 657,
-    'Stone of Moon': 129,
-    'Lost Parchment': 133,
-    'Royal Parchment': 148,
-    'Sages Scroll': 143,
-    'Melted Artifact': 809,
-    'Unsealed Stone': 1372,
-    'Feather White': 186,
-    'Feather Gold': 61,
-    'Feather Black': 136,
-    'Essence Cover': 154,
-    'Essence Leather': 107,
-    'Essence Platinum': 112,
-    'Teleport Scroll': 184,
-    'Pass Royal': 76,
-    'Frozen Letter': 2832,
-    'Angel Stone': 919,
-    'Angel Wing': 1544,
-    'Herb Red': 387,
-    'Herb Green': 313,
-    'Herb Blue': 416,
-    'Transcendental Stone': 534,
-    'Transcendental Flower': 582
-}
-
-EXCHANGE_VALUE = {
-    "Etheria": 0,
-    "Rauberior": 0,
-    "Ilumiora": 0,
-    "Kerontaris": 0,
-    "Widebor": 0,
-    "Jangalor": 0,
-    "Yotungar": 0,
-    "Shoguriar": 0,
-    "Dracaris": 0,
-    "Forgerion": 0
-}
+HASH, TEST = ["Melted Bone", "Life Crystal", "Energy", "Death Blow", "Stone of Soul", "Vital Force"], False
+if TEST:
+    with open("../data/attribute.json", encoding="utf8") as attribute:
+        all_data = {"attribute": json.loads(attribute.read())}
+else:
+    from config import data as all_data
 
 
 class Broker(object):
     def __init__(self):
-        self.assets = ASSETS
-        self.exchanges = EXCHANGES
-        self.amount = AMOUNT
+        self.assets = all_data['attribute']["assets"]
+        self.exchanges = all_data['attribute']["exchanges"]
+
+    def create_exchanges(self):
+        new_exchanges = dict()
+        for ex in self.exchanges.keys():
+            new_exchanges[ex] = dict()
+            for _ in range(1000):
+
+                if _ in [n for n in range(len(self.exchanges[ex]))]:
+                    _asset = self.assets[self.exchanges[ex][_]]
+                    value = randint(_asset // 2, _asset)
+                    exchange = {"item": self.exchanges[ex][_], "value": value, "owner": None}
+
+                else:
+                    exch = HASH + self.exchanges[ex]
+                    _asset = self.assets[choice(self.exchanges[ex])]
+                    value = randint(_asset // 2, _asset)
+                    exchange = {"item": choice(exch), "value": value, "owner": None}
+
+                new_exchanges[ex][_ + 1] = exchange
+        return new_exchanges
 
     @staticmethod
     def format_value(num):
@@ -108,9 +51,6 @@ class Broker(object):
         d = c.replace('v', '.')
         return d
 
-    def get_asset(self, name):
-        pass
-
     def get_exchange(self, name):
 
         if name not in self.exchanges.keys():
@@ -127,11 +67,14 @@ if __name__ == "__main__":
     broker = Broker()
     cotacao_be = 500000
     tot_global = 0
-    for exchange in EXCHANGE_VALUE.keys():
-        value_now = broker.get_exchange(exchange)
+
+    broker.create_exchanges()
+
+    for _exchange in broker.exchanges.keys():
+        value_now = broker.get_exchange(_exchange)
         be = broker.format_blessed(value_now / cotacao_be)
         be_tot = broker.format_blessed(value_now / cotacao_be * 1000)
         tot_global += value_now / cotacao_be * 1000
-        print(f"{exchange}: {broker.format_value(value_now)} - BE: {be} | Total: {be_tot}")
+        print(f"{_exchange} = Ethernyas: {broker.format_value(value_now)} - BITASH: {be} | Total BITASH: {be_tot}")
     et = broker.format_value(tot_global * cotacao_be)
-    print(f"\nTotal da bolsa: {broker.format_blessed(tot_global)} | Ethernyas: {et}")
+    print(f"\nTotal da bolsa em BITASH: {broker.format_blessed(tot_global)} | Ethernyas: {et}")
