@@ -220,12 +220,14 @@ async def miner_bitash(bot, user_id, limit):
         last_hash = ", ".join([_ for _ in bot.bitash])
         hash_miner = push_sha256(hash_bitash + last_hash + f"{len(bot.bitash)}{nonce}")
 
-        if hash_miner.startswith("0" * 5):  # zeros atualmente!
+        if hash_miner.startswith("0" * 6):  # zeros atualmente!
             bot.bitash.append(hash_miner)
             print(f"{bot.get_user(user_id)} Minerou x Bitash's...")
 
             mined += 1
             if mined >= limit:
+                bot.minelist[f"{user_id}"]["active"] = False
+                print(f">>> MINERADOR DO [{self.bot.get_user(int(miner))}] FOI DESATIVADO <<<")
                 return
 
             await asyncio.sleep(60)
