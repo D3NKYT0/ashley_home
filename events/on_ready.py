@@ -80,22 +80,22 @@ class OnReady(commands.Cog):
         return True if dif < 86400 else False
 
     async def verify_winner(self, raw_data, raw_bets):
-        RAWRES, cl = list(), await self.bot.db.cd("lottery")
-        for RD in [d async for d in raw_data if self.verify_time(d["date"]) and d["active"]]:
-            _RD = ' '.join('%02d' % n for n in RD["bet"])
+        _RAWRES, cl = list(), await self.bot.db.cd("lottery")
+        for rd in [d async for d in raw_data if self.verify_time(d["date"]) and d["active"]]:
+            _RD = ' '.join('%02d' % n for n in rd["bet"])
             for BT in raw_bets:
-                _bet, WIN, ACERTOS = ' '.join('%02d' % n for n in BT), 0, list()
+                _bet, _WIN, _ACERTOS = ' '.join('%02d' % n for n in BT), 0, list()
                 for N in _RD.split():
                     if N in _bet.split():
-                        WIN += 1
+                        _WIN += 1
                         ACERTOS.append(int(N))
-                if WIN > 3:
-                    RD["CONCURSO"] = _bet
-                    RD["ACERTOS"] = ACERTOS
-                    RD["ACC"] = WIN
-                    RAWRES.append(RD)
+                if _WIN > 3:
+                    rd["CONCURSO"] = _bet
+                    rd["ACERTOS"] = _ACERTOS
+                    rd["ACC"] = WIN
+                    _RAWRES.append(rd)
             await cl.update_one({"_id": RD["_id"]}, {"$set": {"active": False}})
-        return RAWRES
+        return _RAWRES
 
     async def treasure_hunt(self, guild):
         while not self.bot.is_closed():
@@ -108,11 +108,11 @@ class OnReady(commands.Cog):
                 channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
                             and str(channel.type) == "text"]
             else:
-                CHANNELS = [847250560067436545, 847250993983782912, 847251016628961310, 847251053485490206,
-                            847251104927318016, 847251147202887680, 847251267638001724, 847251338723065886,
-                            847255755052285962, 847255816415084546, 847256035944038420]
+                _CHANNELS = [847250560067436545, 847250993983782912, 847251016628961310, 847251053485490206,
+                             847251104927318016, 847251147202887680, 847251267638001724, 847251338723065886,
+                             847255755052285962, 847255816415084546, 847256035944038420]
                 channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
-                            and str(channel.type) == "text" and channel.id in CHANNELS]
+                            and str(channel.type) == "text" and channel.id in _CHANNELS]
             channel = choice(channels)
 
             # APARECEU!
@@ -198,8 +198,8 @@ class OnReady(commands.Cog):
     async def reset_pick(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed():
-            DATE = date.localtime()
-            if DATE[4] == 0:
+            _DATE = date.localtime()
+            if _DATE[4] == 0:
 
                 guild = self.bot.get_guild(519894833783898112)
                 for member in guild.members:
@@ -249,12 +249,12 @@ class OnReady(commands.Cog):
     async def lottery_system(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed():
-            DATE, CHANNEL, USERS = date.localtime(), self.bot.get_channel(847578751117295639), list()
-            RAW = (await self.bot.db.cd("lottery")).find()
-            DN = last_day_of_month(dt.today())
-            if DATE[3] in self.bot.lt:
-                if not self.bot.lt_per_day[str(DATE[3])]:
-                    amount, numbers, msg = 2 if DATE[2] != DN.day else 10, 6, "**NUMEROS SORTEADOS**\n"
+            _DATE, _CHANNEL, _USERS = date.localtime(), self.bot.get_channel(847578751117295639), list()
+            _RAW = (await self.bot.db.cd("lottery")).find()
+            _DN = last_day_of_month(dt.today())
+            if _DATE[3] in self.bot.lt:
+                if not self.bot.lt_per_day[str(_DATE[3])]:
+                    amount, numbers, msg = 2 if _DATE[2] != _DN.day else 10, 6, "**NUMEROS SORTEADOS**\n"
                     bets = create(Lottery("megasena"), amount, numbers)
 
                     for bet in bets:
@@ -264,62 +264,62 @@ class OnReady(commands.Cog):
                     ashley_guild = self.bot.get_guild(519894833783898112)
                     lovers = disnake.utils.find(lambda r: r.name == "</Ash_Lovers>", ashley_guild.roles)
                     embed = disnake.Embed(color=self.bot.color, description=msg)
-                    await CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
+                    await _CHANNEL.send(f"{lovers.mention} **SAIU O RESULTADO DA LOTERIA!**", embed=embed)
 
-                    _espera = await CHANNEL.send("<a:loading:520418506567843860>│ `AGUARDEM, ESTOU PROCESSANDO O(S) "
-                                                 "VENCERDOR(ES)...`")
+                    _espera = await _CHANNEL.send("<a:loading:520418506567843860>│ `AGUARDEM, ESTOU PROCESSANDO O(S) "
+                                                  "VENCERDOR(ES)...`")
 
-                    self.bot.lt_per_day[str(DATE[3])] = True
-                    USERS = await self.verify_winner(RAW, bets)
-                    SENA = [U for U in USERS if U["ACC"] == 6]
+                    self.bot.lt_per_day[str(_DATE[3])] = True
+                    _USERS = await self.verify_winner(_RAW, bets)
+                    _SENA = [U for U in _USERS if U["ACC"] == 6]
                     cl = await (await self.bot.db.cd("miscellaneous")).find_one({"_id": "lottery"})
 
-                    if len(USERS) > 0 and DATE[2] != DN.day or DATE[2] == DN.day and len(SENA) > 0:
+                    if len(_USERS) > 0 and _DATE[2] != _DN.day or _DATE[2] == _DN.day and len(_SENA) > 0:
                         await _espera.delete()
-                        for USER in USERS:
-                            winner = self.bot.get_user(USER["user_id"])
-                            ACC, msg = ' '.join('%02d' % n for n in USER['ACERTOS']), ""
+                        for _USER in _USERS:
+                            winner = self.bot.get_user(_USER["user_id"])
+                            _ACC, msg = ' '.join('%02d' % n for n in _USER['ACERTOS']), ""
 
-                            if USER["ACC"] == 3:
+                            if _USER["ACC"] == 3:
                                 reward = cl["terno"]
-                                msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
+                                msg = await self.bot.db.give_money(None, reward, _USER["user_id"], 519894833783898112)
 
-                            if USER["ACC"] == 4:
+                            if _USER["ACC"] == 4:
                                 reward = cl["quadra"]
-                                msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
+                                msg = await self.bot.db.give_money(None, reward, _USER["user_id"], 519894833783898112)
 
-                            if USER["ACC"] == 5:
+                            if _USER["ACC"] == 5:
                                 reward = cl["quina"]
-                                msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
+                                msg = await self.bot.db.give_money(None, reward, _USER["user_id"], 519894833783898112)
 
-                            if USER["ACC"] == 6:
+                            if _USER["ACC"] == 6:
                                 reward, query = cl["sena"] + cl["accumulated"], {"$set": {"accumulated": 0}}
                                 await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
-                                msg = await self.bot.db.give_money(None, reward, USER["user_id"], 519894833783898112)
+                                msg = await self.bot.db.give_money(None, reward, _USER["user_id"], 519894833783898112)
 
                             _winner = f"{winner.mention}" if winner in ashley_guild.members else f"**{winner}**"
-                            await CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria com:`"
-                                               f" **{USER['ACC']}** `acertos` **{ACC}** `no concurso:` "
-                                               f"**{USER['CONCURSO']}**\n{msg}")
+                            await _CHANNEL.send(f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria com:`"
+                                                f" **{_USER['ACC']}** `acertos` **{_ACC}** `no concurso:` "
+                                                f"**{_USER['CONCURSO']}**\n{msg}")
 
-                    elif DATE[2] == DN.day:
+                    elif _DATE[2] == _DN.day:
                         _RAW = (await self.bot.db.cd("lottery")).find()
-                        _BETS = [d async for d in _RAW if d['date'].month == DATE[1]]
-                        BET, query = choice(_BETS), {"$set": {"accumulated": 0}}
-                        winner, reward = self.bot.get_user(BET["user_id"]), cl["accumulated"]
-                        msg = await self.bot.db.give_money(None, reward, BET["user_id"], 519894833783898112)
+                        _BETS = [d async for d in _RAW if d['date'].month == _DATE[1]]
+                        _BET, query = choice(_BETS), {"$set": {"accumulated": 0}}
+                        winner, reward = self.bot.get_user(_BET["user_id"]), cl["accumulated"]
+                        msg = await self.bot.db.give_money(None, reward, _BET["user_id"], 519894833783898112)
                         await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
                         await _espera.delete()
                         _winner = f"{winner.mention}" if winner in ashley_guild.members else f"**{winner}**"
                         _txt = f"`Como ninguem ganhou no sorteio da sena e esse é o ultimo dia do mês, foi sorteado" \
                                f" um dos bilhetes comprados nesse mês para que o total acumulado seja esvaziado!`\n" \
                                f"🎊 **PARABENS** 🎉 - `O membro` {_winner} `ganhou na loteria, com o " \
-                               f"bilhete:` **{BET['bet']}**\n{msg}"
-                        await CHANNEL.send(_txt)
+                               f"bilhete:` **{_BET['bet']}**\n{msg}"
+                        await _CHANNEL.send(_txt)
 
                     else:
                         await _espera.delete()
-                        await CHANNEL.send("**NINGUEM GANHOU!**")
+                        await _CHANNEL.send("**NINGUEM GANHOU!**")
 
             await asyncio.sleep(60)
 
@@ -631,8 +631,8 @@ class OnReady(commands.Cog):
                             for k, v in self.bot.boxes.items():
                                 list_boxes += [k] * v
 
-                            BOX = choice(list_boxes)
-                            box_type = [k for k in self.bot.boxes.keys()].index(BOX)
+                            _BOX = choice(list_boxes)
+                            box_type = [k for k in self.bot.boxes.keys()].index(_BOX)
                             for _ in range(box_type + 1):
                                 if guild.id not in self.bot.box:
                                     self.bot.box[guild.id] = {"quant": 1, "boxes": [box_type]}
@@ -651,7 +651,7 @@ class OnReady(commands.Cog):
                                             f"disponiveis!")
                             embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar)
                             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-                            embed.set_thumbnail(url=BOX)
+                            embed.set_thumbnail(url=_BOX)
                             ash_member = channel__.guild.get_member(self.bot.user.id)
                             perms = channel__.permissions_for(ash_member)
                             if perms.send_messages and perms.read_messages:
