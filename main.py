@@ -159,6 +159,10 @@ class Ashley(commands.AutoShardedBot):
         # system adfly reward
         self.adfly = api_adfly
 
+        # miner bitash system
+        self.bitash = list()
+        self.minelist = dict()  # lista de mineradores para ativar
+
         # lottery system
         self.lt = [23]
         self.lt_per_day = {f"{self.lt[0]}": False}

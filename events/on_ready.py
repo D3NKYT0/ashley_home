@@ -12,6 +12,7 @@ from resources.structure import user_data_structure, guild_data_structure
 from resources.fight import Entity
 from operator import itemgetter
 from resources.lotash import Lottery, create
+from resources.utility import miner_bitash
 
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
@@ -683,6 +684,15 @@ class OnReady(commands.Cog):
         activity = disnake.Streaming(name=status, url=self.url, details=details)
         await self.bot.change_presence(activity=activity)
 
+    async def create_miner(self):
+        await self.bot.wait_until_ready()
+        while not self.bot.is_closed():
+            for miner in self.bot.minelist:
+                if not self.bot.minelist[miner]["active"]:
+                    miner_now = self.bot.minelist[miner]
+                    self.bot.loop.create_task(miner_bitash(self.bot, miner_now["user_id"], miner_now["limit"]))
+            await asyncio.sleep(60)
+
     @commands.Cog.listener()
     async def on_ready(self):
 
@@ -795,6 +805,9 @@ class OnReady(commands.Cog):
         if _auth["reset_pick"]:
             self.bot.loop.create_task(self.reset_pick())
             print('\033[1;32m( 🔶 ) | O loop \033[1;34mRESET_PICK\033[1;32m foi carregado com sucesso!\33[m')
+        if _auth["miner"]:
+            self.bot.loop.create_task(self.create_miner())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mCREATE_MINER\033[1;32m foi carregado com sucesso!\33[m')
         print("\033[1;35m( ✔ ) | Loops internos carregados com sucesso!\033[m\n")
 
         print(cor['cian'], '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬', cor['clear'])
