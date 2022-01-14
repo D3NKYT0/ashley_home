@@ -1,3 +1,5 @@
+import disnake
+
 from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
@@ -34,18 +36,26 @@ class Miner(commands.Cog):
     @miner.group(name='create', aliases=['c'])
     async def _create(self, ctx, limit: int = None):
         if limit is None:
-            return await ctx.send("Voce precisa dizer um limite de mineração!")
+            msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         if limit >= 100:
-            return await ctx.send("O limite de mineração nao pode ser maior que 100!")
+            msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 100`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         if f"{ctx.author.id}" in self.bot.minelist.keys():
             if self.bot.minelist[f"{ctx.author.id}"]["active"]:
-                return await ctx.send("Você ja tem um minerador ativo!")
+                msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit}
         self.bot.minelist[f"{ctx.author.id}"] = miner
-        await ctx.send("Minerador criado com sucesso!")
+        msg = "<:confirmed:721581574461587496>│`Minerador criado com sucesso`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
