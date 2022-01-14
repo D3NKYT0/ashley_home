@@ -2393,7 +2393,7 @@ class Entity(object):
 
             else:
 
-                entity.status['hp'] -= dn
+                entity.status['hp'] -= damage
                 if entity.status['hp'] < 0:
                     entity.status['hp'] = 0
 

@@ -9,6 +9,7 @@ from resources.check import check_it
 from resources.img_edit import gift as gt
 from resources.giftmanage import register_gift
 from resources.utility import convert_item_name, CreateCaptcha
+from resources.assets import Broker
 
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -29,6 +30,22 @@ class UtilityClass(commands.Cog):
         c = b.replace('.', ',')
         d = c.replace('v', '.')
         return d
+
+    @check_it(no_pm=True, is_owner=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.command(name='create_exchanges', aliases=['cex'])
+    async def create_exchanges(self, ctx):
+        cd = await self.bot.db.cd("exchanges")
+        broker = Broker()
+        exchanges = broker.create_exchanges()
+        for exchange in exchanges.keys():
+            data = await cd.find_one({"_id": exchange})
+            if data is None:
+                await cd.insert_one({"_id": exchange, "assets": exchanges[exchange], "sold": dict()})
+            else:
+                await ctx.send(f"<:alert:739251822920728708>│`Já existe uma exchange chamada` **{exchange}**")
+        await ctx.send("<:confirmed:721581574461587496>│`Exchanges criadas com sucesso!`")
 
     @check_it(no_pm=True, is_owner=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

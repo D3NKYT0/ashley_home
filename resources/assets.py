@@ -32,7 +32,7 @@ class Broker(object):
                     value = randint(_asset // 2, _asset)
                     exchange = {"item": choice(exch), "value": value, "owner": None}
 
-                new_exchanges[ex][_ + 1] = exchange
+                new_exchanges[ex][str(_ + 1)] = exchange
         return new_exchanges
 
     @staticmethod
@@ -44,7 +44,7 @@ class Broker(object):
         return d
 
     @staticmethod
-    def format_blessed(num):
+    def format_bitash(num):
         a = '{:,.4f}'.format(float(num))
         b = a.replace(',', 'v')
         c = b.replace('.', ',')
@@ -54,7 +54,7 @@ class Broker(object):
     def get_exchange(self, name):
 
         if name not in self.exchanges.keys():
-            return print("Essa EXCHANGE nao existe!")
+            return -1
 
         value = 0
         for asset in self.exchanges[name]:
@@ -64,17 +64,19 @@ class Broker(object):
 
 
 if __name__ == "__main__":
+
+    def get_balance_now(bk):
+        cotacao_be, tot_global = 500000, 0
+        for _exchange in bk.exchanges.keys():
+            value_now = bk.get_exchange(_exchange)
+            be = bk.format_bitash(value_now / cotacao_be)
+            be_tot = bk.format_bitash(value_now / cotacao_be * 1000)
+            tot_global += value_now / cotacao_be * 1000
+            print(f"{_exchange} = Ethernyas: {bk.format_value(value_now)} - BITASH: {be} | Total BITASH: {be_tot}")
+        et = bk.format_value(tot_global * cotacao_be)
+        print(f"\nTotal da bolsa em BITASH: {bk.format_bitash(tot_global)} | Ethernyas: {et}")
+
     broker = Broker()
-    cotacao_be = 500000
-    tot_global = 0
-
-    broker.create_exchanges()
-
-    for _exchange in broker.exchanges.keys():
-        value_now = broker.get_exchange(_exchange)
-        be = broker.format_blessed(value_now / cotacao_be)
-        be_tot = broker.format_blessed(value_now / cotacao_be * 1000)
-        tot_global += value_now / cotacao_be * 1000
-        print(f"{_exchange} = Ethernyas: {broker.format_value(value_now)} - BITASH: {be} | Total BITASH: {be_tot}")
-    et = broker.format_value(tot_global * cotacao_be)
-    print(f"\nTotal da bolsa em BITASH: {broker.format_blessed(tot_global)} | Ethernyas: {et}")
+    get_balance_now(broker)
+    _exchanges = broker.create_exchanges()
+    print(_exchanges)
