@@ -217,7 +217,7 @@ async def miner_bitash(bot, user_id, limit):
             mined += 1
             if mined >= limit:
                 bot.minelist[f"{user_id}"]["active"] = False
-                print(f">>> MINERADOR DO [{bot.get_user(int(miner))}] FOI DESATIVADO <<<")
+                print(f">>> MINERADOR DO [{bot.get_user(user_id)}] FOI DESATIVADO <<<")
                 return
 
             await asyncio.sleep(60)
