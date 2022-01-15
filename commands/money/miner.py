@@ -144,7 +144,7 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
-        await inter.response.is_done()
+        inter.response.is_done()
 
 
 class Miner(commands.Cog):
@@ -277,7 +277,7 @@ class Miner(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @miner.group(name='stop', aliases=['s'])
+    @miner.group(name='stop', aliases=['st'])
     async def _stop(self, ctx):
 
         if ctx.author.id not in self.bot.minelist.keys():
