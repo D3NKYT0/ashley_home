@@ -2,7 +2,6 @@ import json
 import disnake
 import datetime
 from random import randint
-from collections import Counter
 from disnake.ext import commands
 from motor.motor_asyncio import AsyncIOMotorClient as Client
 from resources.utility import parse_duration, quant_etherny, create_id
@@ -15,7 +14,6 @@ with open("data/config.json") as config:
     config = json.loads(config.read())
 
 epoch = datetime.datetime.utcfromtimestamp(0)
-cont = Counter()
 
 
 class Database(object):
@@ -627,304 +625,398 @@ class DataInteraction(object):
     # ----------------------------------- ============================ -----------------------------------
 
     async def get_rank_level(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "user.level": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("user.experience", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds['user']['level'])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["user"]["level"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['user']['level'])}"
+                f"{position}º: {player} > {money(data_user['user']['level'])}"
         return rank
 
     async def get_rank_money(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "treasure.money": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("treasure.money", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.2f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.2f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            global cont
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["treasure"]["money"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > R$ " + str(money_(dt[x]["treasure"]["money"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > R$ {money_(data_user['treasure']['money'])}"
+                f"{position}º: {player} > R$ {money(data_user['treasure']['money'])}"
         return rank
 
     async def get_rank_gold(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "treasure.gold": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("treasure.gold", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["treasure"]["gold"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["treasure"]["gold"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['treasure']['gold'])}"
+                f"{position}º: {player} > {money(data_user['treasure']['gold'])}"
         return rank
 
     async def get_rank_silver(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "treasure.silver": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("treasure.silver", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["treasure"]["silver"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["treasure"]["silver"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['treasure']['silver'])}"
+                f"{position}º: {player} > {money(data_user['treasure']['silver'])}"
         return rank
 
     async def get_rank_bronze(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "treasure.bronze": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("treasure.bronze", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["treasure"]["bronze"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["treasure"]["bronze"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['treasure']['bronze'])}"
+                f"{position}º: {player} > {money(data_user['treasure']['bronze'])}"
         return rank
 
     async def get_rank_point(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "config.points": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("config.points", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["config"]["points"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["config"]["points"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['config']['points'])}"
+                f"{position}º: {player} > {money(data_user['config']['points'])}"
         return rank
 
     async def get_rank_commands(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "user.commands": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("user.commands", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["user"]["commands"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["user"]["commands"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['user']['commands'])}"
+                f"{position}º: {player} > {money(data_user['user']['commands'])}"
         return rank
 
     async def get_rank_rpg(self, limit, ctx, _class):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, f"rpg.sub_class.{_class}.level": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([(f"rpg.sub_class.{_class}.xp", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds, classe):
+            return money(ds["rpg"]["sub_class"][classe]["level"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["rpg"]["sub_class"][_class]["level"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x], _class)}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['rpg']['sub_class'][_class]['level'])}"
+                f"{position}º: {player} > {money(data_user['rpg']['sub_class'][_class]['level'])}"
         return rank
 
     async def get_rank_raid(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "user.raid": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("user.raid", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["user"]["raid"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["user"]["raid"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['user']['raid'])}"
+                f"{position}º: {player} > {money(data_user['user']['raid'])}"
         return rank
 
     async def get_rank_blessed(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "true_money.blessed": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("true_money.blessed", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["true_money"]["blessed"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["true_money"]["blessed"])) for x in range(limit)])
+        rk = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
-        rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['true_money']['blessed'])}"
-        return rank
+        rk += f"\n--------------------------------------------------------------------\n" \
+              f"{position}º: {player} > {money(data_user['true_money']['blessed'])}"
+
+        return rk
 
     async def get_rank_event(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "guild_id": 1, "event.points": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("guilds")).find({}, f).sort([("event.points", -1)]))]
         position = int([int(_["guild_id"]) for _ in dt].index(ctx.guild.id)) + 1
-        cont['list'] = 0
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
-
-        def counter():
-            cont['list'] += 1
-            return cont['list']
 
         def get_guild(bot, _dt):
             if bot.get_guild(int(_dt["guild_id"])) is not None:
@@ -932,102 +1024,131 @@ class DataInteraction(object):
             else:
                 return "Servidor Fantasma"
 
-        rank = "\n".join([str(counter()) + "º: " + get_guild(self.bot, dt[x]) + " > "
-                          + str(money_(dt[x]["event"]["points"])) for x in range(limit)])
+        rank = "\n".join([f"{x + 1}" + "º: " + get_guild(self.bot, dt[x]) + " > "
+                          + str(money(dt[x]["event"]["points"])) for x in range(limit)])
         data_user = await self.db.get_data("guild_id", ctx.guild.id, "guilds")
         player = str(ctx.guild).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['event']['points'])}"
+                f"{position}º: {player} > {money(data_user['event']['points'])}"
         return rank
 
     async def get_rank_fragment(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "true_money.fragment": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("true_money.fragment", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            return money(ds["true_money"]["fragment"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["true_money"]["fragment"])) for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['true_money']['fragment'])}"
+                f"{position}º: {player} > {money(data_user['true_money']['fragment'])}"
         return rank
 
     async def get_rank_bitash(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "true_money.bitash": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("true_money.bitash", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.4f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds, bot):
+            return bot.broker.format_bitash(ds["true_money"]["bitash"])
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > " + str(money_(dt[x]["true_money"]["bitash"])) for x in range(limit)])
+        rk = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x], self.bot)}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
-        rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > {money_(data_user['true_money']['bitash'])}"
-        return rank
+        rk += f"\n--------------------------------------------------------------------\n" \
+              f"{position}º: {player} > {money(data_user['true_money']['bitash'])}"
+        return rk
 
     async def get_rank_pvp(self, limit, ctx):  # atualizado no banco de dados
-        global cont
 
         f = {"_id": 0, "user_id": 1, "statistic": 1}
         dt = [_ async for _ in ((await self.bot.db.cd("users")).find({}, f).sort([("statistic.pvp_win", -1)]))]
         position = int([int(_["user_id"]) for _ in dt].index(ctx.author.id)) + 1
-        cont['list'] = 0
+        cd = await self.bot.db.cd("discriminators")
+        dl = [_["_id"] async for _ in cd.find()]
 
-        def money_(money):
-            a = '{:,.0f}'.format(float(money))
+        async def gn(bot, cl, user, dlist):
+            _id, name = user["user_id"], ""
+
+            if _id in dlist:
+                data = await cl.find_one({"_id": _id})
+                name = data["discriminator"]
+
+            if len(name) == 0:
+                name = str(await bot.fetch_user(_id))
+                await cl.insert_one({"_id": _id, "discriminator": name})
+
+            return name.replace("'", "").replace("#", "_")
+
+        def money(amount):
+            a = '{:,.0f}'.format(float(amount))
             b = a.replace(',', 'v')
             c = b.replace('.', ',')
             d = c.replace('v', '.')
             return d
 
-        def counter():
-            cont['list'] += 1
-            return cont['list']
+        def gd(ds):
+            texto = f'WIN: {money(ds["statistic"].get("pvp_win", 0))} | ' \
+                    f'LOSE: {money(ds["statistic"].get("pvp_lose", 0))} | ' \
+                    f'TOTAL: {money(ds["statistic"].get("pvp_total", 0))}'
+            return texto
 
-        rank = "\n".join([str(counter()) + "º: " +
-                          str(await self.bot.fetch_user(int(dt[x]["user_id"]))).replace("'", "").replace("#", "_") +
-                          " > "
-                          + "WIN: " + str(money_(dt[x]["statistic"].get("pvp_win", 0))) + " | "
-                          + "LOSE: " + str(money_(dt[x]["statistic"].get("pvp_lose", 0))) + " | "
-                          + "TOTAL: " + str(money_(dt[x]["statistic"].get("pvp_total", 0)))
-                          for x in range(limit)])
+        rank = "\n".join([f'{x + 1}º: {await gn(self.bot, cd, dt[x], dl)} > {gd(dt[x])}' for x in range(limit)])
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rank += f"\n--------------------------------------------------------------------\n" \
-                f"{position}º: {player} > WIN: {money_(data_user['statistic'].get('pvp_win', 0))} | " \
-                f"LOSE: {money_(data_user['statistic'].get('pvp_lose', 0))} | " \
-                f"TOTAL: {money_(data_user['statistic'].get('pvp_total', 0))}"
+                f"{position}º: {player} > WIN: {money(data_user['statistic'].get('pvp_win', 0))} | " \
+                f"LOSE: {money(data_user['statistic'].get('pvp_lose', 0))} | " \
+                f"TOTAL: {money(data_user['statistic'].get('pvp_total', 0))}"
         return rank
 
     async def get_item_amount(self, item):  # atualizado no banco de dados

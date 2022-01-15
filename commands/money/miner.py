@@ -146,7 +146,7 @@ class ProvinceExchange(disnake.ui.View):
 
         msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
-        await inter.response.edit_message(embed=embed)
+        await inter.response.edit_message(embed=embed, view=None)
 
 
 class Miner(commands.Cog):
