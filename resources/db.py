@@ -1139,13 +1139,6 @@ class DataInteraction(object):
 
             return name.replace("'", "").replace("#", "_")
 
-        def money(amount):
-            a = '{:,.0f}'.format(float(amount))
-            b = a.replace(',', 'v')
-            c = b.replace('.', ',')
-            d = c.replace('v', '.')
-            return d
-
         def gd(ds, bot):
             return bot.broker.format_bitash(ds["true_money"]["bitash"])
 
@@ -1153,7 +1146,7 @@ class DataInteraction(object):
         data_user = await self.db.get_data("user_id", ctx.author.id, "users")
         player = str(ctx.author).replace("'", "").replace("#", "_")
         rk += f"\n--------------------------------------------------------------------\n" \
-              f"{position}º: {player} > {money(data_user['true_money']['bitash'])}"
+              f"{position}º: {player} > {self.bot.broker.format_bitash(data_user['true_money']['bitash'])}"
         return rk
 
     async def get_rank_pvp(self, limit, ctx):  # atualizado no banco de dados
