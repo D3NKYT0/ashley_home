@@ -83,18 +83,18 @@ class OnReady(commands.Cog):
         _RAWRES, cl = list(), await self.bot.db.cd("lottery")
         for rd in [d async for d in raw_data if self.verify_time(d["date"]) and d["active"]]:
             _RD = ' '.join('%02d' % n for n in rd["bet"])
-            for BT in raw_bets:
-                _bet, _WIN, _ACERTOS = ' '.join('%02d' % n for n in BT), 0, list()
+            for bt in raw_bets:
+                _bet, _WIN, _ACERTOS = ' '.join('%02d' % n for n in bt), 0, list()
                 for N in _RD.split():
                     if N in _bet.split():
                         _WIN += 1
-                        ACERTOS.append(int(N))
+                        _ACERTOS.append(int(N))
                 if _WIN > 3:
                     rd["CONCURSO"] = _bet
                     rd["ACERTOS"] = _ACERTOS
                     rd["ACC"] = WIN
                     _RAWRES.append(rd)
-            await cl.update_one({"_id": RD["_id"]}, {"$set": {"active": False}})
+            await cl.update_one({"_id": rd["_id"]}, {"$set": {"active": False}})
         return _RAWRES
 
     async def treasure_hunt(self, guild):

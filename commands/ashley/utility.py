@@ -9,7 +9,6 @@ from resources.check import check_it
 from resources.img_edit import gift as gt
 from resources.giftmanage import register_gift
 from resources.utility import convert_item_name, CreateCaptcha
-from resources.assets import Broker
 
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -37,8 +36,7 @@ class UtilityClass(commands.Cog):
     @commands.command(name='create_exchanges', aliases=['cex'])
     async def create_exchanges(self, ctx):
         cd = await self.bot.db.cd("exchanges")
-        broker = Broker()
-        exchanges = broker.create_exchanges()
+        exchanges = self.bot.broker.create_exchanges()
         for exchange in exchanges.keys():
             data = await cd.find_one({"_id": exchange})
             if data is None:

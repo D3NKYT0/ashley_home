@@ -17,63 +17,141 @@ class ViewDefault(disnake.ui.View):
             return True
 
 
-class ProvinceExchange(disnake.ui.View):
-    def __init__(self, province):
-        self.province = province
-        super().__init__()
-
-    @disnake.ui.button(label="Buy", style=disnake.ButtonStyle.green)
-    async def _buy(self, button, inter):
-        pass
-
-    @disnake.ui.button(label="Sell", style=disnake.ButtonStyle.danger)
-    async def _sell(self, button, inter):
-        pass
-
-    @disnake.ui.button(label="Back", style=disnake.ButtonStyle.primary)
-    async def _back(self, button, inter):
-
-        if button:
-            pass
-
-        await inter.response.edit_message(embed=disnake.Embed(description="Menu Principal"), view=View)
-
-
 class SelectProvinces(disnake.ui.Select):
-    def __init__(self, provinces):
+    def __init__(self, provinces, bot):
         self.provinces = provinces
+        self.bot = bot
         super().__init__(
             placeholder="Selecione uma provincia",
             options=[disnake.SelectOption(label=province, value=province) for province in self.provinces],
             min_values=1, max_values=1)
 
     async def callback(self, inter):
-        value = inter.values[0]
-        await inter.response.edit_message(embed=disnake.Embed(description=f"Provincia selecionada: {value}"),
-                                          view=ProvinceExchange(value))
+        exchange = inter.values[0]
+
+        description = f"```\n" \
+                      f"Provincia selecionada: {exchange}" \
+                      f"```"
+
+        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        cd = await self.bot.db.cd("exchanges")
+        tot, emo = 0, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
+
+        value = self.bot.broker.get_exchange(exchange)
+        be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+        be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+
+        data = await cd.find_one({"_id": exchange})
+        ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+
+        text = f"`Able:` **{ast}**`/1000`\n" \
+               f"`Sold:` **{sold}**\n" \
+               f"`Value:` **{be}** `BTA`\n" \
+               f"`Total:` **{be_tot}**"
+
+        _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+        embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+
+        embed.set_thumbnail(url=inter.user.display_avatar)
+        embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
+
+        await inter.response.edit_message(embed=embed, view=ProvinceExchange(value, self.bot))
+
+
+class ProvinceExchange(disnake.ui.View):
+    def __init__(self, province, bot):
+        self.province = province
+        self.bot = bot
+        super().__init__()
+
+    @disnake.ui.button(label="Buy", style=disnake.ButtonStyle.green)
+    async def _buy(self, button, inter):
+
+        if button:
+            pass
+
+        provinces = list(self.bot.broker.exchanges.keys())
+        view = ViewDefault(inter.user)
+        view.add_item(SelectProvinces(provinces, self.bot))
+
+        embed = disnake.Embed(description="COMPRADO!")
+
+        await inter.response.edit_message(embed=embed, view=view)
+
+    @disnake.ui.button(label="Sell", style=disnake.ButtonStyle.primary)
+    async def _sell(self, button, inter):
+
+        if button:
+            pass
+
+        provinces = list(self.bot.broker.exchanges.keys())
+        view = ViewDefault(inter.user)
+        view.add_item(SelectProvinces(provinces, self.bot))
+
+        embed = disnake.Embed(description="VENDIDO!")
+
+        await inter.response.edit_message(embed=embed, view=view)
+
+    @disnake.ui.button(label="Back", style=disnake.ButtonStyle.gray)
+    async def _back(self, button, inter):
+
+        if button:
+            pass
+
+        provinces = list(self.bot.broker.exchanges.keys())
+        view = ViewDefault(inter.user)
+        view.add_item(SelectProvinces(provinces, self.bot))
+
+        description = "```\n" \
+                      "Legenda das Cores:\n" \
+                      "Branco: Todas as ações disponivel\n" \
+                      "Verde: Muitas ações disponiveis\n" \
+                      "Laranja: Poucas ações disponiveis\n" \
+                      "Vermelho: Nenhuma ação disponivel" \
+                      "```"
+
+        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        cd = await self.bot.db.cd("exchanges")
+        tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
+
+        for exchange in provinces:
+            value = self.bot.broker.get_exchange(exchange)
+            be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+            be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+            tot_global += value / self.bot.current_rate * tot
+
+            data = await cd.find_one({"_id": exchange})
+            ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+
+            text = f"`Able:` **{ast}**`/1000`\n" \
+                   f"`Sold:` **{sold}**\n" \
+                   f"`Value:` **{be}** `BTA`\n" \
+                   f"`Total:` **{be_tot}**"
+
+            _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+            embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+
+        embed.set_thumbnail(url=inter.user.display_avatar)
+        et = self.bot.broker.format_value(tot_global * self.bot.current_rate)
+        bk = self.bot.broker.format_bitash(tot_global)
+        embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
+
+        await inter.response.edit_message(embed=embed, view=view)
+
+    @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
+    async def _exit(self, button, inter):
+
+        if button:
+            pass
+
+        await inter.response.is_done()
 
 
 class Miner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.st = []
         self.color = self.bot.color
         self.broker = self.bot.broker
-
-    def status(self):
-        for v in self.bot.data_cog.values():
-            self.st.append(v)
-
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.command(name='bk')
-    async def bk(self, ctx):
-
-        provinces = list(self.bot.broker.exchanges.keys())
-        view = ViewDefault(ctx.author)
-        view.add_item(SelectProvinces(provinces))
-        await ctx.send(embed=disnake.Embed(description=f"SISTEMA DE AÇÕES DA ASHLEY"), view=view)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -81,61 +159,52 @@ class Miner(commands.Cog):
     @commands.group(name='broker', aliases=['corretora'])
     async def broker(self, ctx):
         if ctx.invoked_subcommand is None:
-            self.status()
-            embed = disnake.Embed(color=self.color)
-            embed.add_field(name="Broker Commands: [BETA TESTE]",
-                            value=f"{self.st[117]} `broker buy` **compra ações na corretora**\n"
-                                  f"{self.st[117]} `broker sell` **vende ações na corretora**\n"
-                                  f"{self.st[117]} `broker asset` **mostra informações sobre um ativo**\n"
-                                  f"{self.st[117]} `broker exchange` **mostra    informações sobre uma ação**\n"
-                                  f"{self.st[117]} `broker exchanges` **mostra todas as ações disponiveis**\n"
-                                  f"{self.st[117]} `broker wallet` **mostra todas as ações da sua carteira**")
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
-            embed.set_thumbnail(url=self.bot.user.display_avatar)
-            embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-            await ctx.send(embed=embed)
+            provinces = list(self.bot.broker.exchanges.keys())
+            view = ViewDefault(ctx.author)
+            view.add_item(SelectProvinces(provinces, self.bot))
 
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='buy', aliases=['c', 'comprar'])
-    async def _buy(self, ctx):
-        pass
+            description = "```\n" \
+                          "Legenda das Cores:\n" \
+                          "Branco: Todas as ações disponivel\n" \
+                          "Verde: Muitas ações disponiveis\n" \
+                          "Laranja: Poucas ações disponiveis\n" \
+                          "Vermelho: Nenhuma ação disponivel" \
+                          "```"
 
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='sell', aliases=['v', 'vender'])
-    async def _sell(self, ctx):
-        pass
+            embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+            cd = await self.bot.db.cd("exchanges")
+            tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='asset', aliases=['a', 'ativo'])
-    async def _asset(self, ctx):
-        pass
+            for exchange in provinces:
+                value = self.bot.broker.get_exchange(exchange)
+                be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+                be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+                tot_global += value / self.bot.current_rate * tot
 
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='exchange', aliases=['t', 'troca'])
-    async def _exchange(self, ctx):
-        pass
+                data = await cd.find_one({"_id": exchange})
+                ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='exchanges', aliases=['e', 'ex'])
-    async def _exchanges(self, ctx):
-        pass
+                text = f"`Able:` **{ast}**`/1000`\n" \
+                       f"`Sold:` **{sold}**\n" \
+                       f"`Value:` **{be}** `BTA`\n" \
+                       f"`Total:` **{be_tot}**"
+
+                _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+                embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+
+            embed.set_thumbnail(url=ctx.author.display_avatar)
+            et = self.bot.broker.format_value(tot_global * self.bot.current_rate)
+            bk = self.bot.broker.format_bitash(tot_global)
+            embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
+
+            await ctx.send(embed=embed, view=view)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @broker.group(name='wallet', aliases=['w', 'carteira'])
     async def _wallet(self, ctx):
-        pass
+        await ctx.send("Sua carteira está vazia...")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -146,7 +215,10 @@ class Miner(commands.Cog):
             self.status()
             embed = disnake.Embed(color=self.color)
             embed.add_field(name="Miner Commands: [BETA TESTE]",
-                            value=f"{self.st[117]} `miner create`")
+                            value=f"{self.st[117]} `miner create`\n"
+                                  f"{self.st[117]} `miner config`\n"
+                                  f"{self.st[117]} `miner start`\n"
+                                  f"{self.st[117]} `miner stop`\n")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -156,7 +228,25 @@ class Miner(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @miner.group(name='create', aliases=['c'])
-    async def _create(self, ctx, limit: int = None):
+    async def _create(self, ctx):
+        msg = "<:negate:721581573396496464>│`Comando em criação...`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        return await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @miner.group(name='config', aliases=['configurar', 'cf'])
+    async def _config(self, ctx):
+        msg = "<:negate:721581573396496464>│`Comando em criação...`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        return await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @miner.group(name='start', aliases=['s', 'iniciar', 'inicio'])
+    async def _start(self, ctx, limit: int = None):
         if limit is None:
             msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -180,7 +270,23 @@ class Miner(commands.Cog):
 
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit}
         self.bot.minelist[f"{ctx.author.id}"] = miner
-        msg = "<:confirmed:721581574461587496>│`Minerador criado com sucesso`"
+        msg = "<:confirmed:721581574461587496>│`Minerador iniciado com sucesso`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @miner.group(name='stop', aliases=['s'])
+    async def _stop(self, ctx):
+
+        if ctx.author.id not in self.bot.minelist.keys():
+            msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        self.bot.minelist[f"{ctx.author.id}"]["status"] = False
+        msg = "<:confirmed:721581574461587496>│`Minerador parado com sucesso`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 

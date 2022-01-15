@@ -161,6 +161,7 @@ class Ashley(commands.AutoShardedBot):
 
         # miner bitash system
         self.minelist = dict()  # lista de mineradores para ativar
+        self.current_rate = 500000
 
         # lottery system
         self.lt = [23]
