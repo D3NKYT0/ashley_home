@@ -35,7 +35,7 @@ class SelectProvinces(disnake.ui.Select):
 
         embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
-        tot, emo = 0, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
+        tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
         value = self.bot.broker.get_exchange(exchange)
         be = self.bot.broker.format_bitash(value / self.bot.current_rate)
@@ -144,7 +144,9 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
-        inter.response.is_done()
+        msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await inter.response.edit_message(embed=embed)
 
 
 class Miner(commands.Cog):
