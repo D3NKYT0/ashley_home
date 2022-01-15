@@ -636,12 +636,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -678,12 +678,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -720,12 +720,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -762,12 +762,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -804,12 +804,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -846,12 +846,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -888,12 +888,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -930,12 +930,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -972,12 +972,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -1014,12 +1014,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -1084,12 +1084,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -1126,12 +1126,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
@@ -1168,12 +1168,12 @@ class DataInteraction(object):
             _id, name = user["user_id"], ""
 
             if _id in dlist:
-                user = bot.get_user(_id)
-                if user is None:
+                member = bot.get_user(_id)
+                if member is None:
                     data = await cl.find_one({"_id": _id})
                     name = data["discriminator"]
                 else:
-                    name = str(user)
+                    name = str(member)
 
             if len(name) == 0:
                 name = str(await bot.fetch_user(_id))
