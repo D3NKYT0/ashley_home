@@ -152,8 +152,13 @@ class ProvinceExchange(disnake.ui.View):
 class Miner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.st = []
         self.color = self.bot.color
         self.broker = self.bot.broker
+
+    def status(self):
+        for v in self.bot.data_cog.values():
+            self.st.append(v)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
