@@ -466,13 +466,16 @@ class Miner(commands.Cog):
                 price = value / self.bot.current_rate
                 be_tot += price * provincias[key]
 
+        def perc(num):
+            return num / 1000 * 100
+
         _assets = [cin(_, self.i) for _ in assets]
-        asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in _assets])
-        prov = '\n'.join([f"`{x}:` **{provincias[x]}**" for x in provincias.keys()])
+        asset = '\n'.join([f"{self.i[_][0]} `{self.i[_][1]}`" for _ in _assets])
+        prov = '\n'.join([f"`{x}:` **{provincias[x]}**`/1000` **{perc(provincias[x])}%**" for x in provincias.keys()])
         description = f"```\nInformações da sua Wallet```"
         embed = disnake.Embed(color=self.bot.color, title="BITASH WALLET", description=description)
-        wallet = f"`Total:` **{self.bot.broker.format_bitash(be_tot)}**\n" \
-                 f"`Your Wallet:` **{self.bot.broker.format_bitash(bitash)}**"
+        wallet = f"`Total in Exchanges:` **{self.bot.broker.format_bitash(be_tot)}** `BTA`\n" \
+                 f"`Total in Your Wallet:` **{self.bot.broker.format_bitash(bitash)}** `BTA`"
 
         embed.add_field(name=f"⚖️ Ações", value=prov, inline=False)
         embed.add_field(name=f"💵 Wallet", value=wallet, inline=False)
