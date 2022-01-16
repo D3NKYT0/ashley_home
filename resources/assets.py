@@ -51,6 +51,10 @@ class Broker(object):
         d = c.replace('v', '.')
         return d
 
+    def get_assets(self, name):
+        assets = self.exchanges[name]
+        return assets
+
     def get_exchange(self, name):
 
         if name not in self.exchanges.keys():

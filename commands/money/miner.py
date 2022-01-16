@@ -4,6 +4,7 @@ from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice, randint
+from resources.utility import convert_item_name as cin
 
 
 class ViewDefault(disnake.ui.View):
@@ -22,6 +23,7 @@ class SelectProvinces(disnake.ui.Select):
     def __init__(self, provinces, bot):
         self.provinces = provinces
         self.bot = bot
+        self.i = self.bot.items
         super().__init__(
             placeholder="Selecione uma provincia",
             options=[disnake.SelectOption(label=province, value=province) for province in self.provinces],
@@ -41,6 +43,8 @@ class SelectProvinces(disnake.ui.Select):
         value = self.bot.broker.get_exchange(exchange)
         be = self.bot.broker.format_bitash(value / self.bot.current_rate)
         be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+        assets = [cin(_, self.i) for _ in self.bot.broker.get_assets(exchange)]
+        asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in assets])
 
         data = await cd.find_one({"_id": exchange})
         ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
@@ -48,7 +52,8 @@ class SelectProvinces(disnake.ui.Select):
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
-               f"`Total:` **{be_tot}**"
+               f"`Total:` **{be_tot}**\n\n" \
+               f"`Assets:`\n{asset}"
 
         _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
         embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
@@ -62,6 +67,7 @@ class SelectProvinces(disnake.ui.Select):
 class ProvinceExchange(disnake.ui.View):
     def __init__(self, bot, exchange):
         self.bot = bot
+        self.i = self.bot.items
         self.exchange = exchange
         super().__init__()
 
@@ -92,13 +98,16 @@ class ProvinceExchange(disnake.ui.View):
         ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
         amount = float(be.replace(",", "."))
         price = int(bitash / amount) if int(bitash / amount) > 0 else 0
+        assets = [cin(_, self.i) for _ in self.bot.broker.get_assets(exchange)]
+        asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in assets])
 
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
                f"`Total:` **{be_tot}**\n\n" \
                f"`Your Wallet:` **{self.bot.broker.format_bitash(bitash)}**\n" \
-               f"`Buy Max:` **{price}**"
+               f"`Buy Max:` **{price}**\n\n" \
+               f"`Assets:`\n{asset}"
 
         _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
         embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
@@ -171,6 +180,7 @@ class ProvinceExchange(disnake.ui.View):
 
         embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
+        all_data = [d async for d in cd.find()]
         tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
         for exchange in provinces:
@@ -179,7 +189,7 @@ class ProvinceExchange(disnake.ui.View):
             be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
             tot_global += value / self.bot.current_rate * tot
 
-            data = await cd.find_one({"_id": exchange})
+            data = [d for d in all_data if d["_id"] == exchange][0]
             ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
             text = f"`Able:` **{ast}**`/1000`\n" \
@@ -362,6 +372,7 @@ class Miner(commands.Cog):
         self.st = []
         self.color = self.bot.color
         self.broker = self.bot.broker
+        self.i = self.bot.items
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -391,6 +402,7 @@ class Miner(commands.Cog):
 
             embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
             cd = await self.bot.db.cd("exchanges")
+            all_data = [d async for d in cd.find()]
             tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
             for exchange in provinces:
@@ -399,7 +411,7 @@ class Miner(commands.Cog):
                 be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
                 tot_global += value / self.bot.current_rate * tot
 
-                data = await cd.find_one({"_id": exchange})
+                data = [d for d in all_data if d["_id"] == exchange][0]
                 ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
                 text = f"`Able:` **{ast}**`/1000`\n" \
@@ -423,8 +435,52 @@ class Miner(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @broker.group(name='wallet', aliases=['w', 'carteira'])
     async def _wallet(self, ctx):
-        msg = "<:negate:721581573396496464>│`A carteira ainda nao está disponivel!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+
+        msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                             "**mesmo que demore, aguarde o fim do processamento...**")
+
+        cdc = await self.bot.db.cd("users")
+        data = await cdc.find_one({"user_id": ctx.author.id}, {"true_money": 1})
+        bitash = data["true_money"]["bitash"]
+
+        cd = await self.bot.db.cd("exchanges")
+        all_data = [d async for d in cd.find()]
+
+        provincias, assets = dict(), list()
+        for d in all_data:
+            for asset in d["sold"].keys():
+                if d["sold"][asset]["owner"] == ctx.author.id:
+
+                    if d["_id"] not in provincias.keys():
+                        provincias[d["_id"]] = 1
+                    else:
+                        provincias[d["_id"]] += 1
+
+                    if d["sold"][asset]["item"] not in assets:
+                        assets.append(d["sold"][asset]["item"])
+
+        be_tot = 0.0
+        for key in provincias.keys():
+            value = self.bot.broker.get_exchange(key)
+            if value != -1:
+                price = value / self.bot.current_rate
+                be_tot += price * provincias[key]
+
+        _assets = [cin(_, self.i) for _ in assets]
+        asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in _assets])
+        prov = '\n'.join([f"`{x}:` **{provincias[x]}**" for x in provincias.keys()])
+        description = f"```\nInformações da sua Wallet```"
+        embed = disnake.Embed(color=self.bot.color, title="BITASH WALLET", description=description)
+        wallet = f"`Total:` **{self.bot.broker.format_bitash(be_tot)}**\n" \
+                 f"`Your Wallet:` **{self.bot.broker.format_bitash(bitash)}**"
+
+        embed.add_field(name=f"⚖️ Ações", value=prov, inline=False)
+        embed.add_field(name=f"💵 Wallet", value=wallet, inline=False)
+        embed.add_field(name=f"🪙 Assets", value=asset, inline=False)
+
+        embed.set_thumbnail(url=ctx.author.display_avatar)
+        embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
+        await msg.delete()
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
