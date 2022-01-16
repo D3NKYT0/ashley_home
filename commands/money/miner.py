@@ -3,6 +3,7 @@ import disnake
 from disnake.ext import commands
 from resources.check import check_it
 from resources.db import Database
+from random import choice, randint
 
 
 class ViewDefault(disnake.ui.View):
@@ -70,6 +71,10 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
+        cd = await self.bot.db.cd("users")
+        data = await cd.find_one({"user_id": inter.user.id}, {"true_money": 1})
+        bitash = data["true_money"]["bitash"]
+
         exchange = self.exchange
         description = f"```\n" \
                       f"Provincia selecionada: {exchange}" \
@@ -85,11 +90,15 @@ class ProvinceExchange(disnake.ui.View):
 
         data = await cd.find_one({"_id": exchange})
         ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+        amount = float(be.replace(",", "."))
+        price = int(bitash / amount) if int(bitash / amount) > 0 else 0
 
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
-               f"`Total:` **{be_tot}**"
+               f"`Total:` **{be_tot}**\n\n" \
+               f"`Your Wallet:` **{self.bot.broker.format_bitash(bitash)}**\n" \
+               f"`Buy Max:` **{price}**"
 
         _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
         embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
@@ -121,10 +130,16 @@ class ProvinceExchange(disnake.ui.View):
         data = await cd.find_one({"_id": exchange})
         ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
+        tot_asset = 0
+        for asset in data['sold'].keys():
+            if data['sold'][asset]['owner'] == inter.user.id:
+                tot_asset += 1
+
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
-               f"`Total:` **{be_tot}**"
+               f"`Total:` **{be_tot}**\n\n" \
+               f"`Your Assets:` **{tot_asset}**"
 
         _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
         embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
@@ -139,6 +154,8 @@ class ProvinceExchange(disnake.ui.View):
 
         if button:
             pass
+
+        await inter.response.defer()
 
         provinces = list(self.bot.broker.exchanges.keys())
         view = ViewDefault(inter.user)
@@ -178,7 +195,7 @@ class ProvinceExchange(disnake.ui.View):
         bk = self.bot.broker.format_bitash(tot_global)
         embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
 
-        await inter.response.edit_message(embed=embed, view=view)
+        await inter.edit_original_message(embed=embed, view=view)
 
     @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
@@ -203,8 +220,37 @@ class BuyAndSell(disnake.ui.View):
         if button:
             pass
 
-        embed = disnake.Embed(description="Comprando...")
+        cd = await self.bot.db.cd("users")
+        data = await cd.find_one({"user_id": inter.user.id}, {"true_money": 1})
+        bitash = data["true_money"]["bitash"]
+        value = self.bot.broker.get_exchange(self.exchange)
+        be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+        charged = float(be.replace(",", ".")) - (float(be.replace(",", ".")) * 2)
 
+        if bitash - float(be.replace(",", ".")) < 0:
+            msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
+        cdc = await self.bot.db.cd("exchanges")
+        assets = await cdc.find_one({"_id": self.exchange})
+
+        if len(list(assets['assets'].keys())) <= 0:
+            msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
+        await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
+
+        asset = choice(list(assets['assets'].keys()))
+        assets['sold'][asset] = assets['assets'][asset]
+        assets['sold'][asset]['owner'] = inter.user.id
+        del assets['assets'][asset]
+        await cdc.update_one({"_id": self.exchange}, {"$unset": {f"assets.{asset}": ""},
+                                                      "$set": {f"sold.{asset}": assets['sold'][asset]}})
+
+        msg = f"<:confirmed:721581574461587496>│`Você comprou` **1** `ação da provincia de:` **{self.exchange}**"
+        embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(label="Buy Many", style=disnake.ButtonStyle.green)
@@ -299,9 +345,13 @@ class Miner(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.group(name='broker', aliases=['corretora'])
+    @commands.group(name='broker', aliases=['corretora', 'bk'])
     async def broker(self, ctx):
         if ctx.invoked_subcommand is None:
+
+            msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                 "**mesmo que demore, aguarde o fim do processamento...**")
+
             provinces = list(self.bot.broker.exchanges.keys())
             view = ViewDefault(ctx.author)
             view.add_item(SelectProvinces(provinces, self.bot))
@@ -340,6 +390,7 @@ class Miner(commands.Cog):
             bk = self.bot.broker.format_bitash(tot_global)
             embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
 
+            await msg.delete()
             await ctx.send(embed=embed, view=view)
 
     @check_it(no_pm=True)
