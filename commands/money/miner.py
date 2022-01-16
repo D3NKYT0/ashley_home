@@ -308,8 +308,6 @@ class BuyAndSell(disnake.ui.View):
         embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-        await inter.response.edit_message(embed=embed, view=None)
-
     @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
@@ -333,8 +331,8 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        embed = disnake.Embed(description="Vendendo...")
-
+        msg = "<:negate:721581573396496464>│`A venda de ações ainda não está disponivel!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(label="Sell All", style=disnake.ButtonStyle.primary)
@@ -343,8 +341,8 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        embed = disnake.Embed(description="Vendendo...")
-
+        msg = "<:negate:721581573396496464>│`A venda de ações ainda não está disponivel!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
