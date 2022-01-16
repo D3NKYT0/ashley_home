@@ -374,6 +374,40 @@ class Miner(commands.Cog):
         self.broker = self.bot.broker
         self.i = self.bot.items
 
+        self.art = ["braço_direito", "braço_esquerdo", "perna_direita", "perna_esquerda", "the_one", "anel", "balança",
+                    "chave", "colar", "enigma", "olho", "vara", "aquario", "aries", "cancer", "capricornio",
+                    "escorpiao", "gemeos", "leao", "peixes", "sargitario", "libra", "touro", "virgem"]
+
+        self.cost = {
+            "full_heart": 50,
+
+            "solution_agent_blue": 10,
+            "solution_agent_green": 10,
+
+            "nucleo_xyz": 5,
+            "enchanted_stone": 5,
+            "crystal_of_death": 5,
+
+            "Discharge_Crystal": 50,
+            "Acquittal_Crystal": 50,
+            "Crystal_of_Energy": 50,
+
+            "fused_diamond": 10,
+            "fused_ruby": 10,
+            "fused_sapphire": 10,
+            "fused_emerald": 10,
+
+            "unsealed_stone": 10,
+            "melted_artifact": 10,
+
+            "gold_cube": 5,
+            "golden_apple": 5,
+            "golden_egg": 5,
+
+            "transmogrifador": 50,
+            "adamantium": 50
+        }
+
     def status(self):
         for v in self.bot.data_cog.values():
             self.st.append(v)
@@ -467,7 +501,8 @@ class Miner(commands.Cog):
                 be_tot += price * provincias[key]
 
         def perc(num):
-            return num / 1000 * 100
+            percent = num / 1000 * 100
+            return f"{percent:,.2f}"
 
         _assets = [cin(_, self.i) for _ in assets]
         asset = '\n'.join([f"{self.i[_][0]} `{self.i[_][1]}`" for _ in _assets])
@@ -476,6 +511,9 @@ class Miner(commands.Cog):
         embed = disnake.Embed(color=self.bot.color, title="BITASH WALLET", description=description)
         wallet = f"`Total in Exchanges:` **{self.bot.broker.format_bitash(be_tot)}** `BTA`\n" \
                  f"`Total in Your Wallet:` **{self.bot.broker.format_bitash(bitash)}** `BTA`"
+
+        prov = "`Você não tem ações na sua carteira`" if len(prov) == 0 else prov
+        asset = "`Você não tem ativos na sua carteira`" if len(asset) == 0 else asset
 
         embed.add_field(name=f"⚖️ Ações", value=prov, inline=False)
         embed.add_field(name=f"💵 Wallet", value=wallet, inline=False)
@@ -509,9 +547,107 @@ class Miner(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @miner.group(name='create', aliases=['c'])
     async def _create(self, ctx):
-        msg = "<:negate:721581573396496464>│`Comando em criação...`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
+        msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
+
+        embed = disnake.Embed(
+            title="O CUSTO PARA VOCE CRIAR UM MINERADOR:",
+            color=self.bot.color,
+            description=msg)
+        embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
+        embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
+        embed.set_footer(text="Ashley ® Todos os direitos reservados.")
+        await ctx.send(embed=embed)
+
+        artifacts = []
+        for i_, amount in data['inventory'].items():
+            if i_ in self.art:
+                artifacts += [i_] * amount
+
+        if len(artifacts) < 10:
+            return await ctx.send("<:negate:721581573396496464>│`Voce nao tem o minimo de 10 arfetados...`\n"
+                                  "**Obs:** `VOCE CONSEGUE ARTEFATOS USANDO O COMANDO` **ASH RIFA** `E PEGANDO"
+                                  " UM ARTEFATO REPETIDO.`")
+
+        cost = {}
+        for i_, amount in self.cost.items():
+            if i_ in data['inventory']:
+                if data['inventory'][i_] < self.cost[i_]:
+                    cost[i_] = self.cost[i_]
+            else:
+                cost[i_] = self.cost[i_]
+
+        if len(cost) > 0:
+            msg = ""
+            for key in cost.keys():
+                amount = cost[key]
+                if key in data['inventory']:
+                    amount = cost[key] - data['inventory'][key]
+                msg += f"\n{self.i[key][0]} `{amount}` **{key.upper()}**"
+            return await ctx.send(f"<:alert:739251822920728708>│`Lhe faltam esses itens para criar um minerador:`"
+                                  f"{msg}\n`OLHE SEU INVENTARIO E VEJA A QUANTIDADE QUE ESTÁ FALTANDO.`")
+
+        def check_option(m):
+            return m.author == ctx.author and m.content == '0' or m.author == ctx.author and m.content == '1'
+
+        msg = await ctx.send(f"<:alert:739251822920728708>│`VOCE JA TEM TODOS OS ITEM NECESSARIOS, DESEJA CRIAR SEU"
+                             f" MINERADOR AGORA?`\n**1** para `SIM` ou **0** para `NÃO`")
+        try:
+            answer = await self.bot.wait_for('message', check=check_option, timeout=30.0)
+        except TimeoutError:
+            await msg.delete()
+            return await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
+        if answer.content == "0":
+            await msg.delete()
+            return await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
+        await msg.delete()
+
+        msg = await ctx.send("<a:loading:520418506567843860>│`Escolhendo 10 artefatos para derreter...`")
+        await sleep(2)
+
+        arts = list()
+        for _ in range(10):
+            arts.append(choice(artifacts))
+
+        await msg.edit(content=f"<a:loading:520418506567843860>│`removendo os itens de custo e os artefatos da sua "
+                               f"conta...`")
+
+        for i_, amount in self.cost.items():
+            update['inventory'][i_] -= amount
+            if update['inventory'][i_] < 1:
+                del update['inventory'][i_]
+
+        await sleep(2)
+        await msg.edit(content=f"<a:loading:520418506567843860>│`removendo artefatos...`")
+
+        for _ in range(10):
+
+            update['inventory'][arts[_]] -= 1
+            if update['inventory'][arts[_]] < 1:
+                del update['inventory'][arts[_]]
+
+        await sleep(2)
+        await msg.edit(content=f"<:confirmed:721581574461587496>│`itens retirados com sucesso...`")
+        await sleep(2)
+        await msg.edit(content=f"<a:loading:520418506567843860>│`Adicionando o` **minerador** `para sua conta...`")
+
+        # --------------------------
+        # a parte do codigo que coloca o minerador na conta
+        # --------------------------
+
+        await sleep(2)
+        await msg.edit(content=f"<:confirmed:721581574461587496>│`O` **Minerador** `foi adicionado a sua conta com"
+                               f" sucesso...`")
+
+        img = choice(git)
+        embed = disnake.Embed(color=self.bot.color)
+        embed.set_image(url=img)
+        await ctx.send(embed=embed)
+
+        # await self.bot.db.update_data(data, update, 'users')
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

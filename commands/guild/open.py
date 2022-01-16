@@ -1164,7 +1164,7 @@ class OpenClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         recipes = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation", "celestial_ring_sealed",
-                   "celestial_cover_breastplate_divine", "celestial_platinum_breastplate_divine",
+                   "celestial_cover_breastplate_divine", "celestial_platinum_breastplate_divine", "adamantium",
                    "celestial_leather_breastplate_divine", "feather_white", "feather_gold", "feather_black"]
 
         if include(recipes, update["recipes"]):
