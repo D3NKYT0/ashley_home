@@ -423,7 +423,9 @@ class Miner(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @broker.group(name='wallet', aliases=['w', 'carteira'])
     async def _wallet(self, ctx):
-        await ctx.send("Sua carteira está vazia...")
+        msg = "<:negate:721581573396496464>│`A carteira ainda nao está disponivel!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
