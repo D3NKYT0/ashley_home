@@ -55,13 +55,13 @@ class SelectProvinces(disnake.ui.Select):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=ProvinceExchange(value, self.bot))
+        await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange))
 
 
 class ProvinceExchange(disnake.ui.View):
-    def __init__(self, province, bot):
-        self.province = province
+    def __init__(self, bot, exchange):
         self.bot = bot
+        self.exchange = exchange
         super().__init__()
 
     @disnake.ui.button(label="Buy", style=disnake.ButtonStyle.green)
@@ -70,13 +70,34 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
-        provinces = list(self.bot.broker.exchanges.keys())
-        view = ViewDefault(inter.user)
-        view.add_item(SelectProvinces(provinces, self.bot))
+        exchange = self.exchange
+        description = f"```\n" \
+                      f"Provincia selecionada: {exchange}" \
+                      f"```"
 
-        embed = disnake.Embed(description="COMPRADO!")
+        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        cd = await self.bot.db.cd("exchanges")
+        tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
-        await inter.response.edit_message(embed=embed, view=view)
+        value = self.bot.broker.get_exchange(exchange)
+        be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+        be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+
+        data = await cd.find_one({"_id": exchange})
+        ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+
+        text = f"`Able:` **{ast}**`/1000`\n" \
+               f"`Sold:` **{sold}**\n" \
+               f"`Value:` **{be}** `BTA`\n" \
+               f"`Total:` **{be_tot}**"
+
+        _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+        embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+
+        embed.set_thumbnail(url=inter.user.display_avatar)
+        embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
+
+        await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange))
 
     @disnake.ui.button(label="Sell", style=disnake.ButtonStyle.primary)
     async def _sell(self, button, inter):
@@ -84,13 +105,34 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
-        provinces = list(self.bot.broker.exchanges.keys())
-        view = ViewDefault(inter.user)
-        view.add_item(SelectProvinces(provinces, self.bot))
+        exchange = self.exchange
+        description = f"```\n" \
+                      f"Provincia selecionada: {exchange}" \
+                      f"```"
 
-        embed = disnake.Embed(description="VENDIDO!")
+        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        cd = await self.bot.db.cd("exchanges")
+        tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
-        await inter.response.edit_message(embed=embed, view=view)
+        value = self.bot.broker.get_exchange(exchange)
+        be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+        be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+
+        data = await cd.find_one({"_id": exchange})
+        ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+
+        text = f"`Able:` **{ast}**`/1000`\n" \
+               f"`Sold:` **{sold}**\n" \
+               f"`Value:` **{be}** `BTA`\n" \
+               f"`Total:` **{be_tot}**"
+
+        _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+        embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+
+        embed.set_thumbnail(url=inter.user.display_avatar)
+        embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
+
+        await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange))
 
     @disnake.ui.button(label="Back", style=disnake.ButtonStyle.gray)
     async def _back(self, button, inter):
@@ -137,6 +179,100 @@ class ProvinceExchange(disnake.ui.View):
         embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
 
         await inter.response.edit_message(embed=embed, view=view)
+
+    @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
+    async def _exit(self, button, inter):
+
+        if button:
+            pass
+
+        msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await inter.response.edit_message(embed=embed, view=None)
+
+
+class BuyAndSell(disnake.ui.View):
+    def __init__(self, bot, exchange):
+        self.bot = bot
+        self.exchange = exchange
+        super().__init__()
+
+    @disnake.ui.button(label="Buy 1", style=disnake.ButtonStyle.green)
+    async def _buy_one(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Comprando...")
+
+        await inter.response.edit_message(embed=embed, view=None)
+
+    @disnake.ui.button(label="Buy Many", style=disnake.ButtonStyle.green)
+    async def _buy_many(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Comprando...")
+
+        await inter.response.edit_message(embed=embed, view=None)
+
+    @disnake.ui.button(label="Buy All", style=disnake.ButtonStyle.green)
+    async def _buy_all(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Comprando...")
+
+        await inter.response.edit_message(embed=embed, view=None)
+
+    @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
+    async def _exit(self, button, inter):
+
+        if button:
+            pass
+
+        msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await inter.response.edit_message(embed=embed, view=None)
+
+
+class SellAndBuy(disnake.ui.View):
+    def __init__(self, bot, exchange):
+        self.bot = bot
+        self.exchange = exchange
+        super().__init__()
+
+    @disnake.ui.button(label="Sell 1", style=disnake.ButtonStyle.primary)
+    async def _sell_one(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Vendendo...")
+
+        await inter.response.edit_message(embed=embed, view=None)
+
+    @disnake.ui.button(label="Sell Many", style=disnake.ButtonStyle.primary)
+    async def _sell_many(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Vendendo...")
+
+        await inter.response.edit_message(embed=embed, view=None)
+
+    @disnake.ui.button(label="Sell All", style=disnake.ButtonStyle.primary)
+    async def _sell_all(self, button, inter):
+
+        if button:
+            pass
+
+        embed = disnake.Embed(description="Vendendo...")
+
+        await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
