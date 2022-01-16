@@ -5,6 +5,14 @@ from resources.check import check_it
 from resources.db import Database
 from random import choice, randint
 from resources.utility import convert_item_name as cin
+from asyncio import sleep
+
+
+git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
+       "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
+       "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
+       "https://media1.tenor.com/images/17e1414f1dc91bc1f76159d7c3fa03ea/tenor.gif?itemid=15744166",
+       "https://media1.tenor.com/images/39c363015f2ae22f212f9cd8df2a1063/tenor.gif?itemid=15894886"]
 
 
 class ViewDefault(disnake.ui.View):
@@ -610,7 +618,9 @@ class Miner(commands.Cog):
 
         arts = list()
         for _ in range(10):
-            arts.append(choice(artifacts))
+            artifact = choice(artifacts)
+            arts.append(artifact)
+            artifacts.remove(artifact)
 
         await msg.edit(content=f"<a:loading:520418506567843860>│`removendo os itens de custo e os artefatos da sua "
                                f"conta...`")
