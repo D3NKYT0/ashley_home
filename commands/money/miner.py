@@ -240,6 +240,11 @@ class BuyAndSell(disnake.ui.View):
             embed = disnake.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
+        if len(list(assets['assets'].keys())) - 1 < 0:
+            msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
         await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
 
         asset = choice(list(assets['assets'].keys()))
@@ -253,23 +258,55 @@ class BuyAndSell(disnake.ui.View):
         embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="Buy Many", style=disnake.ButtonStyle.green)
-    async def _buy_many(self, button, inter):
-
-        if button:
-            pass
-
-        embed = disnake.Embed(description="Comprando...")
-
-        await inter.response.edit_message(embed=embed, view=None)
-
     @disnake.ui.button(label="Buy All", style=disnake.ButtonStyle.green)
     async def _buy_all(self, button, inter):
 
         if button:
             pass
 
-        embed = disnake.Embed(description="Comprando...")
+        cd = await self.bot.db.cd("users")
+        data = await cd.find_one({"user_id": inter.user.id}, {"true_money": 1})
+        bitash = data["true_money"]["bitash"]
+        value = self.bot.broker.get_exchange(self.exchange)
+        be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+
+        amount = float(be.replace(",", "."))
+        tot_buy = int(bitash / amount) if int(bitash / amount) > 0 else 0
+        charged = (float(be.replace(",", ".")) - (float(be.replace(",", ".")) * 2)) * tot_buy
+
+        if bitash - (float(be.replace(",", ".")) * tot_buy) < 0:
+            msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
+        cdc = await self.bot.db.cd("exchanges")
+        assets = await cdc.find_one({"_id": self.exchange})
+
+        if len(list(assets['assets'].keys())) <= 0:
+            msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
+        if len(list(assets['assets'].keys())) - tot_buy < 0:
+            msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui {tot_buy} ações!`"
+            embed = disnake.Embed(description=msg)
+            return await inter.response.edit_message(embed=embed, view=None)
+
+        await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
+
+        query = {"$unset": {}, "$set": {}}
+        for _ in range(tot_buy):
+            asset = choice(list(assets['assets'].keys()))
+            assets['sold'][asset] = assets['assets'][asset]
+            assets['sold'][asset]['owner'] = inter.user.id
+            del assets['assets'][asset]
+            query["$unset"][f"assets.{asset}"] = ""
+            query["$set"][f"sold.{asset}"] = assets['sold'][asset]
+        await cdc.update_one({"_id": self.exchange}, query)
+
+        msg = f"<:confirmed:721581574461587496>│`Você comprou` **{tot_buy}** `ações da provincia:` **{self.exchange}**"
+        embed = disnake.Embed(description=msg)
+        await inter.response.edit_message(embed=embed, view=None)
 
         await inter.response.edit_message(embed=embed, view=None)
 
@@ -292,16 +329,6 @@ class SellAndBuy(disnake.ui.View):
 
     @disnake.ui.button(label="Sell 1", style=disnake.ButtonStyle.primary)
     async def _sell_one(self, button, inter):
-
-        if button:
-            pass
-
-        embed = disnake.Embed(description="Vendendo...")
-
-        await inter.response.edit_message(embed=embed, view=None)
-
-    @disnake.ui.button(label="Sell Many", style=disnake.ButtonStyle.primary)
-    async def _sell_many(self, button, inter):
 
         if button:
             pass
