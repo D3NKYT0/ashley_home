@@ -198,13 +198,14 @@ class ProvinceExchange(disnake.ui.View):
             be = self.bot.broker.format_bitash(value / self.bot.current_rate)
             be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
             tot_global += value / self.bot.current_rate * tot
+            flutuation = float(self.bot.tradingview.get_flutuation(exchange))
 
             data = [d for d in all_data if d["_id"] == exchange][0]
             ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
             text = f"`Able:` **{ast}**`/1000`\n" \
                    f"`Sold:` **{sold}**\n" \
-                   f"`Value:` **{be}** `BTA`\n" \
+                   f"`Value:` **{be}** `BTA` **{flutuation}%**\n" \
                    f"`Total:` **{be_tot}**"
 
             _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
@@ -455,13 +456,14 @@ class Miner(commands.Cog):
                 be = self.bot.broker.format_bitash(value / self.bot.current_rate)
                 be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
                 tot_global += value / self.bot.current_rate * tot
+                flutuation = float(self.bot.tradingview.get_flutuation(exchange))
 
                 data = [d for d in all_data if d["_id"] == exchange][0]
                 ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
                 text = f"`Able:` **{ast}**`/1000`\n" \
                        f"`Sold:` **{sold}**\n" \
-                       f"`Value:` **{be}** `BTA`\n" \
+                       f"`Value:` **{be}** `BTA` **{flutuation}%**\n" \
                        f"`Total:` **{be_tot}**"
 
                 _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
