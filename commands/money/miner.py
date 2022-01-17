@@ -53,6 +53,7 @@ class SelectProvinces(disnake.ui.Select):
         be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
         assets = [cin(_, self.i) for _ in self.bot.broker.get_assets(exchange)]
         asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in assets])
+        flutuation = self.bot.tradingview.get_link(exchange)
 
         data = await cd.find_one({"_id": exchange})
         ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
@@ -60,7 +61,8 @@ class SelectProvinces(disnake.ui.Select):
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
-               f"`Total:` **{be_tot}**\n\n" \
+               f"`Total:` **{be_tot}**\n" \
+               f"`Flutuation:` **[{flutuation[1]}]({flutuation[0]})**\n\n" \
                f"`Assets:`\n{asset}"
 
         _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]

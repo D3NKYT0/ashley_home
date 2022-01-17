@@ -14,9 +14,9 @@ class TradingView(object):
     def __init__(self):
         self.flutuation = all_data['attribute']["flutuation"]
 
-    @staticmethod
-    def get_link(exchange):
-        return f"https://br.tradingview.com/symbols/{f'{self.flutuation[exchange][0]}'}"
+    def get_link(self, exchange):
+        company = f'{self.flutuation[exchange][1]}'
+        return f"https://br.tradingview.com/symbols/{f'{self.flutuation[exchange][0]}'}", company
 
     def get_flutuation(self, exchange):
         flutuation = TA_Handler(
