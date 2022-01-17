@@ -11,7 +11,8 @@ else:
 
 
 class Broker(object):
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
         self.assets = all_data['attribute']["assets"]
         self.exchanges = all_data['attribute']["exchanges"]
 
@@ -60,9 +61,16 @@ class Broker(object):
         if name not in self.exchanges.keys():
             return -1
 
+        if self.bot is not None:
+            flutuation = float(self.bot.tradingview.get_flutuation(name))
+        else:
+            flutuation = 0.0
+
         value = 0
         for asset in self.exchanges[name]:
             value += self.assets[asset]
+
+        value += value * flutuation
 
         return value
 
@@ -80,7 +88,7 @@ if __name__ == "__main__":
         et = bk.format_value(tot_global * cotacao_be)
         print(f"\nTotal da bolsa em BITASH: {bk.format_bitash(tot_global)} | Ethernyas: {et}")
 
-    broker = Broker()
+    broker = Broker(None)
     get_balance_now(broker)
     _exchanges = broker.create_exchanges()
     print(_exchanges)

@@ -541,7 +541,7 @@ class Miner(commands.Cog):
         if ctx.invoked_subcommand is None:
             self.status()
             embed = disnake.Embed(color=self.color)
-            embed.add_field(name="Miner Commands: [BETA TESTE]",
+            embed.add_field(name="Miner Commands:",
                             value=f"{self.st[117]} `miner create`\n"
                                   f"{self.st[117]} `miner start`\n"
                                   f"{self.st[117]} `miner stop`\n"
