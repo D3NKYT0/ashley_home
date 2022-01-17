@@ -214,7 +214,7 @@ async def miner_bitash(bot, miner):
             del bot.minelist[f"{miner['user_id']}"]
             miner['data']["active"] = False
             await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
-            cl = await self.bot.db.cd("users")
+            cl = await bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
             return
 
@@ -235,7 +235,7 @@ async def miner_bitash(bot, miner):
                 del bot.minelist[f"{miner['user_id']}"]
                 miner['data']["active"] = False
                 await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
-                cl = await self.bot.db.cd("users")
+                cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
                 return
 

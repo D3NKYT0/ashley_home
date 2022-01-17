@@ -827,7 +827,7 @@ class Miner(commands.Cog):
 
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
         self.bot.minelist[f"{ctx.author.id}"] = miner
-        msg = "<:confirmed:721581574461587496>│`Minerador iniciado com sucesso`"
+        msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
         await ctx.send(embed=embed)
