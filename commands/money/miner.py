@@ -563,8 +563,18 @@ class Miner(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
+        if f"{ctx.author.id}" in self.bot.minelist.keys():
+            if self.bot.minelist[f"{ctx.author.id}"]["active"]:
+                msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            else:
+                msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
         miner = update["miner"]
-        miner["inventory"] = True
 
         if len(miner["inventory"].keys()) == 0 and miner["bitash"] == 0.0:
             msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
