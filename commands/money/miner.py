@@ -731,7 +731,7 @@ class Miner(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if limit >= 100:
+        if limit > 100:
             msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 100`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
@@ -754,6 +754,27 @@ class Miner(commands.Cog):
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
+
+        adamantium = update["inventory"].get("adamantium", 0)
+        energy = update["inventory"].get("Energy", 0)
+
+        if adamantium == 0:
+            msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        update["inventory"]["adamantium"] -= limit
+        if update["inventory"]["adamantium"] <= 0:
+            del update["inventory"]["adamantium"]
+
+        if energy == 0:
+            msg = f"<:negate:721581573396496464>│`Você não tem` **{limit * 500} Energy** `disponiveis!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        update["inventory"]["Energy"] -= limit * 500
+        if update["inventory"]["Energy"] <= 0:
+            del update["inventory"]["Energy"]
 
         cd = await self.bot.db.cd("exchanges")
         all_data = [d async for d in cd.find()]

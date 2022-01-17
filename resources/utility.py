@@ -1,11 +1,9 @@
-import random
-
 import disnake
 import operator
 import datetime
 import asyncio
 
-from random import choice
+from random import choice, uniform
 from pytz import timezone
 from config import data as config
 from captcha.image import ImageCaptcha
@@ -207,17 +205,36 @@ def convert_item_name(item, db_items):
     return None
 
 
-async def miner_bitash(bot, user_id, limit):
-    mined = 0
+async def miner_bitash(bot, miner):
+    mined, percet = 0, miner['data']['percent']
+    channel, user = bot.get_channel(932446926471852083), bot.get_user(miner['user_id'])
     while not bot.is_closed():
 
-        if random.randint(1, 100) <= 5:  # zeros atualmente!
-            print(f"{bot.get_user(user_id)} Minerou x Bitash's...")
+        if not bot.minelist[f"{miner['user_id']}"]["status"]:
+            del bot.minelist[f"{miner['user_id']}"]
+            await channel.send(f">>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
+            cl = await self.bot.db.cd("users")
+            await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
+            return
+
+        if uniform(0.01, 100.00) <= percet:
+            if uniform(0.01, 100.00) <= percet:
+                bitash = uniform(0.0001, 0.1000)
+                await channel.send(f"{user.mention} `Minerou` **{bot.broker.format_bitash(bitash)}** `Bitash's`")
+                miner['data']['bitash'] += bitash
+
+            item = choice(miner['data']['assets'])
+            if item in miner['data']['inventory'].keys():
+                miner['data']['inventory'][item] += 1
+            else:
+                miner['data']['inventory'][item] = 1
 
             mined += 1
-            if mined >= limit:
-                del bot.minelist[f"{user_id}"]
-                print(f">>> MINERADOR DO [{bot.get_user(user_id)}] FOI DESATIVADO <<<")
+            if mined >= miner['limit']:
+                del bot.minelist[f"{miner['user_id']}"]
+                await channel.send(f">>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
+                cl = await self.bot.db.cd("users")
+                await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
                 return
 
             await asyncio.sleep(60)

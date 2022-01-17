@@ -691,7 +691,7 @@ class OnReady(commands.Cog):
                 if not self.bot.minelist[miner]["active"]:
                     self.bot.minelist[miner]["active"] = True
                     miner_now = self.bot.minelist[miner]
-                    self.bot.loop.create_task(miner_bitash(self.bot, miner_now["user_id"], miner_now["limit"]))
+                    self.bot.loop.create_task(miner_bitash(self.bot, miner_now))
                     print(f">>> MINERADOR CRIADO PARA [{self.bot.get_user(int(miner))}] <<<")
             await asyncio.sleep(60)
 
