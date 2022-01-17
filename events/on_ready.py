@@ -692,7 +692,8 @@ class OnReady(commands.Cog):
                     self.bot.minelist[miner]["active"] = True
                     miner_now = self.bot.minelist[miner]
                     self.bot.loop.create_task(miner_bitash(self.bot, miner_now))
-                    print(f">>> MINERADOR CRIADO PARA [{self.bot.get_user(int(miner))}] <<<")
+                    channel, user = self.bot.get_channel(932446926471852083), self.bot.get_user(int(miner))
+                    await channel.send(f"🟢 >>> MINERADOR CRIADO PARA [{user.mention}] <<<")
             await asyncio.sleep(60)
 
     @commands.Cog.listener()
