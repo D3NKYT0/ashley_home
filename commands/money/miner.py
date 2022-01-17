@@ -760,7 +760,7 @@ class Miner(commands.Cog):
 
         if not update["miner"]["active"]:
 
-            if adamantium == 0:
+            if adamantium < limit:
                 msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
@@ -769,7 +769,7 @@ class Miner(commands.Cog):
             if update["inventory"]["adamantium"] <= 0:
                 del update["inventory"]["adamantium"]
 
-            if energy == 0:
+            if energy < limit * 500:
                 msg = f"<:negate:721581573396496464>│`Você não tem` **{limit * 500} Energy** `disponiveis!`"
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
