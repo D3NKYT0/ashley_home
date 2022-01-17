@@ -381,6 +381,7 @@ class Miner(commands.Cog):
         self.color = self.bot.color
         self.broker = self.bot.broker
         self.i = self.bot.items
+        self.b = self.bot.broker
 
         self.art = ["braço_direito", "braço_esquerdo", "perna_direita", "perna_esquerda", "the_one", "anel", "balança",
                     "chave", "colar", "enigma", "olho", "vara", "aquario", "aries", "cancer", "capricornio",
@@ -586,7 +587,7 @@ class Miner(commands.Cog):
             update["true_money"]["bitash"] += bitash
             miner["bitash"] = 0.0
 
-            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{bitash} BTA** `mineradas!`"
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{self.b.format_bitash(bitash)} BTA** `mineradas!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
