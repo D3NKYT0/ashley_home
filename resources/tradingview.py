@@ -26,7 +26,8 @@ class TradingView(object):
             exchange=f"{self.flutuation[exchange][2]}",
             interval=Interval.INTERVAL_1_DAY
         )
-        return flutuation.get_analysis().indicators["change"] * self.exchange_rate
+        change = flutuation.get_analysis().indicators["change"]
+        return change + (change * self.exchange_rate)
 
 
 if __name__ == "__main__":
