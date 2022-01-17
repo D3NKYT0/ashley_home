@@ -205,7 +205,8 @@ class ProvinceExchange(disnake.ui.View):
 
             text = f"`Able:` **{ast}**`/1000`\n" \
                    f"`Sold:` **{sold}**\n" \
-                   f"`Value:` **{be}** `BTA` **{flutuation}%**\n" \
+                   f"`Value:` **{be}** `BTA`\n" \
+                   f"`Flutuation:` **{flutuation}%**\n" \
                    f"`Total:` **{be_tot}**"
 
             _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
@@ -463,7 +464,8 @@ class Miner(commands.Cog):
 
                 text = f"`Able:` **{ast}**`/1000`\n" \
                        f"`Sold:` **{sold}**\n" \
-                       f"`Value:` **{be}** `BTA` **{flutuation}%**\n" \
+                       f"`Value:` **{be}** `BTA`\n" \
+                       f"`Flutuation:` **{flutuation}%**\n" \
                        f"`Total:` **{be_tot}**"
 
                 _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
