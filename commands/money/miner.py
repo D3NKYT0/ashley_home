@@ -778,6 +778,9 @@ class Miner(commands.Cog):
             if update["inventory"]["Energy"] <= 0:
                 del update["inventory"]["Energy"]
 
+        else:
+            limit = update["miner"]["limit"]
+
         mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                                   "**mesmo que demore, aguarde o fim do processamento...**")
 
@@ -818,6 +821,7 @@ class Miner(commands.Cog):
         miner["exchanges"] = [ex for ex in provincias.keys()]
         miner["assets"] = [cin(asset, self.i) for asset in assets]
         miner["percent"] = percent
+        miner["limit"] = limit
         update["miner"] = miner
         await self.bot.db.update_data(data, update, 'users')
 
