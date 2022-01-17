@@ -45,6 +45,14 @@ class Broker(object):
         return d
 
     @staticmethod
+    def format_flutuation(num):
+        a = '{:,.1f}'.format(float(num))
+        b = a.replace(',', 'v')
+        c = b.replace('.', ',')
+        d = c.replace('v', '.')
+        return d
+
+    @staticmethod
     def format_bitash(num):
         a = '{:,.4f}'.format(float(num))
         b = a.replace(',', 'v')

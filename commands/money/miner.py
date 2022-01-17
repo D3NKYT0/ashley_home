@@ -198,7 +198,7 @@ class ProvinceExchange(disnake.ui.View):
             be = self.bot.broker.format_bitash(value / self.bot.current_rate)
             be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
             tot_global += value / self.bot.current_rate * tot
-            flutuation = float(self.bot.tradingview.get_flutuation(exchange))
+            flutuation = self.bot.broker.format_flutuation(float(self.bot.tradingview.get_flutuation(exchange)))
 
             data = [d for d in all_data if d["_id"] == exchange][0]
             ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
@@ -456,7 +456,7 @@ class Miner(commands.Cog):
                 be = self.bot.broker.format_bitash(value / self.bot.current_rate)
                 be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
                 tot_global += value / self.bot.current_rate * tot
-                flutuation = float(self.bot.tradingview.get_flutuation(exchange))
+                flutuation = self.bot.broker.format_flutuation(float(self.bot.tradingview.get_flutuation(exchange)))
 
                 data = [d for d in all_data if d["_id"] == exchange][0]
                 ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
