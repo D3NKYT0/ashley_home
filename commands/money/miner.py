@@ -542,7 +542,6 @@ class Miner(commands.Cog):
             embed = disnake.Embed(color=self.color)
             embed.add_field(name="Miner Commands: [BETA TESTE]",
                             value=f"{self.st[117]} `miner create`\n"
-                                  f"{self.st[117]} `miner config`\n"
                                   f"{self.st[117]} `miner start`\n"
                                   f"{self.st[117]} `miner stop`\n")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
@@ -557,6 +556,11 @@ class Miner(commands.Cog):
     async def _create(self, ctx):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
+
+        if "miner" in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ja criou o minerador!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
@@ -646,6 +650,16 @@ class Miner(commands.Cog):
 
         # --------------------------
         # a parte do codigo que coloca o minerador na conta
+
+        update["miner"] = {
+            "active": False,
+            "exchanges": list(),
+            "inventory": dict(),
+            "bitash": 0.0,
+            "assets": list(),
+            "percent": 0.0
+        }
+
         # --------------------------
 
         await sleep(2)
@@ -657,16 +671,7 @@ class Miner(commands.Cog):
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
-        # await self.bot.db.update_data(data, update, 'users')
-
-    @check_it(no_pm=True)
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @miner.group(name='config', aliases=['configurar', 'cf'])
-    async def _config(self, ctx):
-        msg = "<:negate:721581573396496464>│`Comando em criação...`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
-        return await ctx.send(embed=embed)
+        await self.bot.db.update_data(data, update, 'users')
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -680,6 +685,14 @@ class Miner(commands.Cog):
 
         if limit >= 100:
             msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 100`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if "miner" not in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -705,6 +718,13 @@ class Miner(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @miner.group(name='stop', aliases=['st'])
     async def _stop(self, ctx):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if "miner" not in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
 
         if ctx.author.id not in self.bot.minelist.keys():
             msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
