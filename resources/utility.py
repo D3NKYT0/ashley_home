@@ -206,19 +206,20 @@ def convert_item_name(item, db_items):
 
 
 async def miner_bitash(bot, miner):
-    mined, percet = 0, miner['data']['percent']
+    mined, percent = 0, miner['data']['percent']
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
     while not bot.is_closed():
 
         if not bot.minelist[f"{miner['user_id']}"]["active"]:
             del bot.minelist[f"{miner['user_id']}"]
+            miner['data']["active"] = False
             await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
             cl = await self.bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
             return
 
-        if uniform(0.01, 100.00) <= percet:
-            if uniform(0.01, 100.00) <= percet:
+        if uniform(0.01, 100.00) <= percent + 5.0:
+            if uniform(0.01, 100.00) <= percent:
                 bitash = uniform(0.0001, 0.1000)
                 await channel.send(f"🟠 {user.mention} `Minerou` **{bot.broker.format_bitash(bitash)}** `Bitash's`")
                 miner['data']['bitash'] += bitash
@@ -232,6 +233,7 @@ async def miner_bitash(bot, miner):
             mined += 1
             if mined >= miner['limit']:
                 del bot.minelist[f"{miner['user_id']}"]
+                miner['data']["active"] = False
                 await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
                 cl = await self.bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})

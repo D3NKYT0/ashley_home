@@ -758,26 +758,28 @@ class Miner(commands.Cog):
         adamantium = update["inventory"].get("adamantium", 0)
         energy = update["inventory"].get("Energy", 0)
 
-        if adamantium == 0:
-            msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
+        if not update["miner"]["active"]:
 
-        update["inventory"]["adamantium"] -= limit
-        if update["inventory"]["adamantium"] <= 0:
-            del update["inventory"]["adamantium"]
+            if adamantium == 0:
+                msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
-        if energy == 0:
-            msg = f"<:negate:721581573396496464>│`Você não tem` **{limit * 500} Energy** `disponiveis!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
+            update["inventory"]["adamantium"] -= limit
+            if update["inventory"]["adamantium"] <= 0:
+                del update["inventory"]["adamantium"]
 
-        update["inventory"]["Energy"] -= limit * 500
-        if update["inventory"]["Energy"] <= 0:
-            del update["inventory"]["Energy"]
+            if energy == 0:
+                msg = f"<:negate:721581573396496464>│`Você não tem` **{limit * 500} Energy** `disponiveis!`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
 
-        msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
-                             "**mesmo que demore, aguarde o fim do processamento...**")
+            update["inventory"]["Energy"] -= limit * 500
+            if update["inventory"]["Energy"] <= 0:
+                del update["inventory"]["Energy"]
+
+        mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                  "**mesmo que demore, aguarde o fim do processamento...**")
 
         cd = await self.bot.db.cd("exchanges")
         all_data = [d async for d in cd.find()]
@@ -796,13 +798,13 @@ class Miner(commands.Cog):
                         assets.append(d["sold"][asset]["item"])
 
         if len(provincias.keys()) == 0:
-            await msg.delete()
+            await mensagem.delete()
             msg = "<:negate:721581573396496464>│`Você não tem ações pra minerar!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if len(assets) == 0:
-            await msg.delete()
+            await mensagem.delete()
             msg = "<:negate:721581573396496464>│`Você não tem ativos pra minerar!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
@@ -823,7 +825,7 @@ class Miner(commands.Cog):
         self.bot.minelist[f"{ctx.author.id}"] = miner
         msg = "<:confirmed:721581574461587496>│`Minerador iniciado com sucesso`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
-        await msg.delete()
+        await mensagem.delete()
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
