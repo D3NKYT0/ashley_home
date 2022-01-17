@@ -79,8 +79,7 @@ class Broker(object):
             value += self.assets[asset]
 
         original = float(value)
-
-        value += value * flutuation
+        value += value / 100 * flutuation
 
         if value < original * 0.25:
             value = original * 0.25
