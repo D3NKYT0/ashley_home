@@ -543,11 +543,59 @@ class Miner(commands.Cog):
             embed.add_field(name="Miner Commands: [BETA TESTE]",
                             value=f"{self.st[117]} `miner create`\n"
                                   f"{self.st[117]} `miner start`\n"
-                                  f"{self.st[117]} `miner stop`\n")
+                                  f"{self.st[117]} `miner stop`\n"
+                                  f"{self.st[117]} `miner reward`")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @miner.group(name='reward', aliases=['r'])
+    async def _reward(self, ctx):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if "miner" not in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        miner = update["miner"]
+        miner["inventory"] = True
+
+        if len(miner["inventory"].keys()) == 0 and miner["bitash"] == 0.0:
+            msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if miner["bitash"] > 0:
+            bitash = miner["bitash"]
+            update["true_money"]["bitash"] += bitash
+            miner["bitash"] = 0.0
+
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{bitash} BTA** `mineradas!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await ctx.send(embed=embed)
+
+        if len(miner["inventory"].keys()) > 0:
+            items = dict(miner["inventory"])
+            for item in miner["inventory"].keys():
+                if item in update["inventory"].keys():
+                    update["inventory"][item] += miner["inventory"][item]
+                else:
+                    update["inventory"][item] = miner["inventory"][item]
+            miner["inventory"] = dict()
+
+            asset = '\n'.join([f"{self.i[_][0]} **{items[_]}** `{self.i[_][1]}`" for _ in items])
+            msg = f"<:confirmed:721581574461587496>│`Você obteve os seguintes items:\n`{asset}"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await ctx.send(embed=embed)
+
+        update["miner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -707,7 +755,45 @@ class Miner(commands.Cog):
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-        miner = {"active": False, "user_id": ctx.author.id, "limit": limit}
+        cd = await self.bot.db.cd("exchanges")
+        all_data = [d async for d in cd.find()]
+
+        provincias, assets = dict(), list()
+        for d in all_data:
+            for asset in d["sold"].keys():
+                if d["sold"][asset]["owner"] == ctx.author.id:
+
+                    if d["_id"] not in provincias.keys():
+                        provincias[d["_id"]] = 1
+                    else:
+                        provincias[d["_id"]] += 1
+
+                    if d["sold"][asset]["item"] not in assets:
+                        assets.append(d["sold"][asset]["item"])
+
+        if len(provincias.keys()) == 0:
+            msg = "<:negate:721581573396496464>│`Você não tem ações pra minerar!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if len(assets) == 0:
+            msg = "<:negate:721581573396496464>│`Você não tem ativos pra minerar!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        percent = 0.0
+        for exchange in provincias:
+            percent += provincias[exchange] * 0.01
+
+        miner = update["miner"]
+        miner["active"] = True
+        miner["exchanges"] = [ex for ex in provincias.keys()]
+        miner["assets"] = [cin(asset, self.i) for asset in assets]
+        miner["percent"] = percent
+        update["miner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
+
+        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
         self.bot.minelist[f"{ctx.author.id}"] = miner
         msg = "<:confirmed:721581574461587496>│`Minerador iniciado com sucesso`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -730,6 +816,14 @@ class Miner(commands.Cog):
             msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
+
+        miner = update["miner"]
+        miner["active"] = False
+        miner["exchanges"] = list()
+        miner["assets"] = list()
+        miner["percent"] = 0.0
+        update["miner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
 
         self.bot.minelist[f"{ctx.author.id}"]["status"] = False
         msg = "<:confirmed:721581574461587496>│`Minerador parado com sucesso`"

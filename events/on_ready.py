@@ -92,7 +92,7 @@ class OnReady(commands.Cog):
                 if _WIN > 3:
                     rd["CONCURSO"] = _bet
                     rd["ACERTOS"] = _ACERTOS
-                    rd["ACC"] = WIN
+                    rd["ACC"] = _WIN
                     _RAWRES.append(rd)
             await cl.update_one({"_id": rd["_id"]}, {"$set": {"active": False}})
         return _RAWRES
