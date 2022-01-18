@@ -3,7 +3,7 @@ import operator
 import datetime
 import asyncio
 
-from random import choice, uniform
+from random import choice, uniform, randint
 from pytz import timezone
 from config import data as config
 from captcha.image import ImageCaptcha
@@ -243,6 +243,58 @@ async def miner_bitash(bot, miner):
                 await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
                 cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
+                return
+
+            await asyncio.sleep(60)
+        await asyncio.sleep(1)
+
+
+async def miner_partner(bot, miner):
+    channel, user, mined = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id'])), 0
+    while not bot.is_closed():
+
+        if not bot.minelist_partner[f"{miner['user_id']}"]["active"]:
+            del bot.minelist_partner[f"{miner['user_id']}"]
+            miner['data']["active"] = False
+            await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
+            cl = await bot.db.cd("users")
+            await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
+            return
+
+        if uniform(0.01, 100.00) <= 5.0:
+            clc = await bot.db.cd("treasure")
+            all_data = [dt async for dt in clc.find()]
+            _bitash, _fragment = 0.0, 0
+            for data in all_data:
+                if data["_id"] == "bitash":
+                    _bitash += data["amount"]
+                if data["_id"] == "fragment":
+                    _fragment += data["amount"]
+
+            if uniform(0.01, 100.00) <= 2.5 and _bitash > 0.1000:
+                bitash = uniform(0.0001, 0.1000)
+                price = bitash - (bitash * 2)
+                await clc.update_one({"_id": "bitash"}, {"$inc": {"amount": price}})
+                bit = bot.broker.format_bitash(bitash)
+                msg = "**pelo minerador partner**"
+                await channel.send(f"🟠 {user.mention} `Minerou` **{bit}** `Bitash's` {msg}")
+                miner['data']['bitash'] += bitash
+
+            if uniform(0.01, 100.00) <= 2.5 and _fragment > 3:
+                fragment = randint(1, 3)
+                price = fragment - (fragment * 2)
+                await clc.update_one({"_id": "fragment"}, {"$inc": {"amount": price}})
+                msg = "**pelo minerador partner**"
+                await channel.send(f"🟠 {user.mention} `Minerou` **{fragment}** `Fragment of Blessed Ethernya` {msg}")
+                miner['data']['fragment'] += fragment
+
+            mined += 1
+            if mined >= miner['limit']:
+                del bot.minelist_partner[f"{miner['user_id']}"]
+                miner['data']["active"] = False
+                await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
+                cl = await bot.db.cd("users")
+                await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
                 return
 
             await asyncio.sleep(60)

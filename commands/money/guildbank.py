@@ -99,7 +99,9 @@ class GuildBank(commands.Cog):
             embed.add_field(name="Guilds Commands:",
                             value=f"{self.st[29]} `guild reward` Receba suas recompenças a cada hora.\n"
                                   f"{self.st[29]} `guild convert` Converta as pedras da guilda em ETHERNYAS.\n"
-                                  f"{self.st[29]} `guild warehouse` Mande seus itens de evento para a GUILDA.")
+                                  f"{self.st[29]} `guild warehouse` Mande seus itens de evento para a GUILDA.\n"
+                                  f"{self.st[29]} `guild start` (for patners) Inicia um MINER exclusivo.\n"
+                                  f"{self.st[29]} `guild stop` (for patners) Para um MINER exclusivo.")
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -202,6 +204,52 @@ class GuildBank(commands.Cog):
                        f"**ash tesouro**")
         await self.bot.data.add_sts(ctx.author, "guild_reward", 1)
 
+        # ---------------------------------------------------------------------
+        #              RECOMPENSA DO MINERADOR DE PATNER
+        # ---------------------------------------------------------------------
+
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+
+        if "miner_partner" not in update.keys():
+            return
+
+        if f"{ctx.author.id}" in self.bot.minelist_partner.keys():
+            if self.bot.minelist_partner[f"{ctx.author.id}"]["active"]:
+                return
+
+            else:
+                return
+
+        miner = update["miner_partner"]
+
+        if miner["fragment"] == 0 and miner["bitash"] == 0.0:
+            msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if miner["bitash"] > 0:
+            bitash = miner["bitash"]
+            update["true_money"]["bitash"] += bitash
+            miner["bitash"] = 0.0
+
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{self.b.format_bitash(bitash)} BTA** `mineradas!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await ctx.send(embed=embed)
+
+        if miner["fragment"] > 0:
+            fragment = miner["fragment"]
+            update["true_money"]["fragment"] += fragment
+            miner["fragment"] = 0
+
+            ct = "Fragmentos de Blessed Ethernya"
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{fragment} {ct}** `minerados!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await ctx.send(embed=embed)
+
+        update["miner_partner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
+
     @check_it(no_pm=True, manage_messages=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, g_vip=True, cooldown=True, time=86400))
@@ -290,6 +338,129 @@ class GuildBank(commands.Cog):
                 return await ctx.send(f"<:negate:721581573396496464>│`VOCE NAO TEM ESSE ITEM NO SEU INVENTARIO!`")
         else:
             return await ctx.send(f"<:negate:721581573396496464>│`VOCE PRECISA DIZER UM NOME DE UM ITEM DE EVENTO!`")
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @guild.group(name='start', aliases=['s', 'iniciar', 'inicio'])
+    async def _start(self, ctx, limit: int = None):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+        if ctx.guild.id != data['guild_id'] and ctx.guild.id != 519894833783898112:
+            return await ctx.send("<:alert:739251822920728708>│`VOCE NAO É REGISTRADO NESSA GUILDA, ESSE COMANDO SO"
+                                  " PODE SER EXECUTADO NA SUA GUILDA DE REGISTRO.`\n**Obs:** `Se sua guilda de "
+                                  "registro nao existe mais, use o comando` **ash transfer** `e entre em outra"
+                                  " guilda para que voce possa usufluir desses serviços`")
+
+        if limit is None:
+            msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if limit > 25:
+            msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 25`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if "miner_partner" not in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if f"{ctx.author.id}" in self.bot.minelist_partner.keys():
+            if self.bot.minelist_partner[f"{ctx.author.id}"]["active"]:
+                msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+            else:
+                msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await ctx.send(embed=embed)
+
+        if "miner_partner" not in update.keys():
+            update["miner_partner"] = {
+                "active": False,
+                "fragment": 0,
+                "bitash": 0.0,
+                "limit": limit
+            }
+
+        if not update["miner_partner"]["active"]:
+
+            amount = limit * 25000
+
+            a = '{:,.2f}'.format(float(amount))
+            b = a.replace(',', 'v')
+            c = b.replace('.', ',')
+            d = c.replace('v', '.')
+
+            # DATA DO SERVIDOR ATUAL
+            data_guild = await self.bot.db.get_data("guild_id", ctx.guild.id, "guilds")
+            update_guild = data_guild
+            if update_guild['treasure']['total_money'] > amount:
+                update_guild['treasure']['total_money'] -= amount
+                await self.bot.db.update_data(data_guild, update_guild, 'guilds')
+            else:
+                return await ctx.send(f"<:negate:721581573396496464>│`SUA GUILDA NAO TEM DINHEIRO PARA BANCAR ESSE "
+                                      f"COMANDO ELE IRIA RETIRAR DO TESOURO` **R${d}** `DE ETHERNYAS, MAS NAO"
+                                      f"DESANIME USE O COMANDO` **ASH TESOURO** `E FIQUE TENTE NOVAMENTE!`")
+
+        else:
+            limit = update["miner_partner"]["limit"]
+
+        mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                  "**mesmo que demore, aguarde o fim do processamento...**")
+
+        miner = update["miner_partner"]
+        miner["active"] = True
+        miner["limit"] = limit
+        update["miner_partner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
+
+        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
+        self.bot.minelist_partner[f"{ctx.author.id}"] = miner
+        msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await mensagem.delete()
+        await ctx.send(embed=embed)
+
+    @check_it(no_pm=True)
+    @commands.cooldown(1, 5.0, commands.BucketType.user)
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @guild.group(name='stop', aliases=['st'])
+    async def _stop(self, ctx):
+        data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+        update = data
+        if ctx.guild.id != data['guild_id'] and ctx.guild.id != 519894833783898112:
+            data_ = await self.bot.db.get_data("user_id", ctx.author.id, "users")
+            update_ = data_
+            del update_['cooldown']["guild reward"]
+            await self.bot.db.update_data(data_, update_, 'users')
+            return await ctx.send("<:alert:739251822920728708>│`VOCE NAO É REGISTRADO NESSA GUILDA, ESSE COMANDO SO"
+                                  " PODE SER EXECUTADO NA SUA GUILDA DE REGISTRO.`\n**Obs:** `Se sua guilda de "
+                                  "registro nao existe mais, use o comando` **ash transfer** `e entre em outra"
+                                  " guilda para que voce possa usufluir desses serviços`")
+
+        if "miner_partner" not in update.keys():
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        if ctx.author.id not in self.bot.minelist_partner.keys():
+            msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await ctx.send(embed=embed)
+
+        miner = update["miner_partner"]
+        miner["active"] = False
+        update["miner_partner"] = miner
+        await self.bot.db.update_data(data, update, 'users')
+
+        self.bot.minelist_partner[f"{ctx.author.id}"]["status"] = False
+        msg = "<:confirmed:721581574461587496>│`Minerador parado com sucesso`"
+        embed = disnake.Embed(color=self.bot.color, description=msg)
+        await ctx.send(embed=embed)
 
     @_convert.error
     async def _convert_error(self, ctx, error):

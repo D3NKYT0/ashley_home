@@ -12,7 +12,7 @@ from resources.structure import user_data_structure, guild_data_structure
 from resources.fight import Entity
 from operator import itemgetter
 from resources.lotash import Lottery, create
-from resources.utility import miner_bitash
+from resources.utility import miner_bitash, miner_partner
 
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
@@ -696,6 +696,18 @@ class OnReady(commands.Cog):
                     await channel.send(f"🟢 >>> MINERADOR CRIADO PARA [{user.mention}] <<<")
             await asyncio.sleep(60)
 
+    async def create_miner_partner(self):
+        await self.bot.wait_until_ready()
+        while not self.bot.is_closed():
+            for miner in self.bot.minelist_partner:
+                if not self.bot.minelist_partner[miner]["active"]:
+                    self.bot.minelist_partner[miner]["active"] = True
+                    miner_now = self.bot.minelist_partner[miner]
+                    self.bot.loop.create_task(miner_partner(self.bot, miner_now))
+                    channel, user = self.bot.get_channel(932446926471852083), self.bot.get_user(int(miner))
+                    await channel.send(f"🟢 >>> MINERADOR **PARTNER** CRIADO PARA [{user.mention}] <<<")
+            await asyncio.sleep(60)
+
     @commands.Cog.listener()
     async def on_ready(self):
 
@@ -811,6 +823,8 @@ class OnReady(commands.Cog):
         if _auth["miner"]:
             self.bot.loop.create_task(self.create_miner())
             print('\033[1;32m( 🔶 ) | O loop \033[1;34mCREATE_MINER\033[1;32m foi carregado com sucesso!\33[m')
+            self.bot.loop.create_task(self.create_miner_partner())
+            print('\033[1;32m( 🔶 ) | O loop \033[1;34mCREATE_MINER_PARTNER\033[1;32m foi carregado com sucesso!\33[m')
         print("\033[1;35m( ✔ ) | Loops internos carregados com sucesso!\033[m\n")
 
         print(cor['cian'], '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬', cor['clear'])
