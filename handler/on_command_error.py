@@ -71,6 +71,10 @@ class CommandErrorHandler(commands.Cog):
                     return await ctx.send(embed=embed)
             return
 
+        # Qualquer interação vazia nao gera erro no terminal
+        if isinstance(error, disnake.errors.NotFound):
+            return
+
         # Qualquer comando desabilitado retornará uma mensagem de aviso
         if isinstance(error, commands.DisabledCommand):
             perms = ctx.channel.permissions_for(ctx.me)
