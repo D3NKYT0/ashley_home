@@ -224,7 +224,7 @@ async def miner_bitash(bot, miner):
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
             break
 
-        if uniform(0.01, 100.00) <= percent + 2.5:
+        if uniform(0.01, 100.00) <= percent + 5.0:
             clc = await bot.db.cd("treasure")
             all_data = [dt async for dt in clc.find()]
             _fragment = 0
@@ -237,7 +237,7 @@ async def miner_bitash(bot, miner):
                 await channel.send(f"🟠 {user.mention} `Minerou` **{bot.broker.format_bitash(bitash)}** `Bitash's`")
                 miner['data']['bitash'] += bitash
 
-            if uniform(0.01, 100.00) <= percent + 2.5 and _fragment > 3:
+            if uniform(0.01, 100.00) <= percent and _fragment > 3:
                 fragment = randint(1, 3)
                 price = fragment - (fragment * 2)
                 await clc.update_one({"_id": "fragment"}, {"$inc": {"amount": price}})
@@ -287,7 +287,7 @@ async def miner_partner(bot, miner):
                 if data["_id"] == "fragment":
                     _fragment += data["amount"]
 
-            if uniform(0.01, 100.00) <= 2.5 and _bitash > 0.1000:
+            if uniform(0.01, 100.00) <= 5.0 and _bitash > 0.1000:
                 bitash = uniform(0.0001, 0.1000)
                 price = bitash - (bitash * 2)
                 await clc.update_one({"_id": "bitash"}, {"$inc": {"amount": price}})
@@ -296,7 +296,7 @@ async def miner_partner(bot, miner):
                 await channel.send(f"🟠 {user.mention} `Minerou` **{bit}** `Bitash's` {msg}")
                 miner['data']['bitash'] += bitash
 
-            if uniform(0.01, 100.00) <= 2.5 and _fragment > 3:
+            if uniform(0.01, 100.00) <= 5.0 and _fragment > 3:
                 fragment = randint(1, 3)
                 price = fragment - (fragment * 2)
                 await clc.update_one({"_id": "fragment"}, {"$inc": {"amount": price}})
