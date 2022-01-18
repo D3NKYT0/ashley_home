@@ -11,9 +11,9 @@ else:
 
 
 class TradingView(object):
-    def __init__(self,):
+    def __init__(self):
         self.flutuation = all_data['attribute']["flutuation"]
-        self.exchange_rate = 0.25
+        self.exchange_rate = 1.50
 
     def get_link(self, exchange):
         company = f'{self.flutuation[exchange][1]}'
