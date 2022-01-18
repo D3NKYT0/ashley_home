@@ -262,8 +262,6 @@ async def miner_bitash(bot, miner):
             await asyncio.sleep(60)
         await asyncio.sleep(1)
 
-    asyncio.get_event_loop().stop()
-
 
 async def miner_partner(bot, miner):
     channel, user, mined = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id'])), 0
@@ -315,8 +313,6 @@ async def miner_partner(bot, miner):
 
             await asyncio.sleep(60)
         await asyncio.sleep(1)
-
-    asyncio.get_event_loop().stop()
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
