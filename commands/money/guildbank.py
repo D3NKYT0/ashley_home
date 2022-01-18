@@ -233,7 +233,8 @@ class GuildBank(commands.Cog):
             update["true_money"]["bitash"] += bitash
             miner["bitash"] = 0.0
 
-            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{self.b.format_bitash(bitash)} BTA** `mineradas!`"
+            value = self.bot.broker.format_bitash(bitash)
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{value} BTA** `mineradas!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
@@ -385,7 +386,7 @@ class GuildBank(commands.Cog):
 
         if not update["miner_partner"]["active"]:
 
-            amount = limit * 25000
+            amount = limit * 1000
 
             a = '{:,.2f}'.format(float(amount))
             b = a.replace(',', 'v')
