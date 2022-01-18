@@ -222,7 +222,7 @@ async def miner_bitash(bot, miner):
             await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
             cl = await bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
-            return
+            break
 
         if uniform(0.01, 100.00) <= percent + 2.5:
             clc = await bot.db.cd("treasure")
@@ -257,10 +257,12 @@ async def miner_bitash(bot, miner):
                 await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
                 cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
-                return
+                break
 
             await asyncio.sleep(60)
         await asyncio.sleep(1)
+
+    asyncio.get_event_loop().stop()
 
 
 async def miner_partner(bot, miner):
@@ -273,7 +275,7 @@ async def miner_partner(bot, miner):
             await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
             cl = await bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
-            return
+            break
 
         if uniform(0.01, 100.00) <= 5.0:
             clc = await bot.db.cd("treasure")
@@ -309,10 +311,12 @@ async def miner_partner(bot, miner):
                 await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
                 cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
-                return
+                break
 
             await asyncio.sleep(60)
         await asyncio.sleep(1)
+
+    asyncio.get_event_loop().stop()
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
