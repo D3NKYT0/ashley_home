@@ -381,6 +381,8 @@ class GuildBank(commands.Cog):
                 "limit": limit
             }
 
+        d = 0
+
         if not update["miner_partner"]["active"]:
 
             amount = limit * 25000
@@ -418,7 +420,9 @@ class GuildBank(commands.Cog):
         msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
-        await ctx.send(embed=embed)
+        await ctx.send(f"`Que custou para os cofres do servidor a quantia de` **R${d} ETHERNYAS**, "
+                       f"`Para saber quanto ainda tem no saldo do servidor use o comando` **ash tesouro**",
+                       embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
