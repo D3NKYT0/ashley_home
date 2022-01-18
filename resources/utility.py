@@ -208,7 +208,7 @@ def convert_item_name(item, db_items):
 async def miner_bitash(bot, miner):
     mined, percent, assets = 0, miner['data']['percent'], list(miner['data']['assets'])
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
-    _HASH = ["Melted Bone", "Life Crystal", "Energy", "Death Blow", "Stone of Soul", "Vital Force"]
+    _HASH = ["Melted_Bone", "Life_Crystal", "Energy", "Death_Blow", "Stone_of_Soul", "Vital_Force"]
 
     for i in _HASH:
         if i not in assets:
