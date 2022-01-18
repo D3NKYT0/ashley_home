@@ -206,8 +206,14 @@ def convert_item_name(item, db_items):
 
 
 async def miner_bitash(bot, miner):
-    mined, percent = 0, miner['data']['percent']
+    mined, percent, assets = 0, miner['data']['percent'], list(miner['data']['assets'])
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
+    _HASH = ["Melted Bone", "Life Crystal", "Energy", "Death Blow", "Stone of Soul", "Vital Force"]
+
+    for i in _HASH:
+        if i not in assets:
+            assets.append(i)
+
     while not bot.is_closed():
 
         if not bot.minelist[f"{miner['user_id']}"]["active"]:
@@ -218,13 +224,13 @@ async def miner_bitash(bot, miner):
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
             return
 
-        if uniform(0.01, 100.00) <= percent + 5.0:
+        if uniform(0.01, 100.00) <= percent + 2.5:
             if uniform(0.01, 100.00) <= percent:
                 bitash = uniform(0.0001, 0.1000)
                 await channel.send(f"🟠 {user.mention} `Minerou` **{bot.broker.format_bitash(bitash)}** `Bitash's`")
                 miner['data']['bitash'] += bitash
 
-            item = choice(miner['data']['assets'])
+            item = choice(assets)
             if item in miner['data']['inventory'].keys():
                 miner['data']['inventory'][item] += 1
             else:

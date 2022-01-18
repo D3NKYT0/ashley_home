@@ -11,7 +11,7 @@ else:
 
 
 class TradingView(object):
-    def __init__(self):
+    def __init__(self,):
         self.flutuation = all_data['attribute']["flutuation"]
         self.exchange_rate = 0.25
 
