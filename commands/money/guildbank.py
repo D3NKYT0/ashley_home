@@ -205,7 +205,7 @@ class GuildBank(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "guild_reward", 1)
 
         # ---------------------------------------------------------------------
-        #              RECOMPENSA DO MINERADOR DE PATNER
+        #              RECOMPENSA DO MINERADOR DE PARTNER
         # ---------------------------------------------------------------------
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
@@ -362,11 +362,6 @@ class GuildBank(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if "miner_partner" not in update.keys():
-            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
         if f"{ctx.author.id}" in self.bot.minelist_partner.keys():
             if self.bot.minelist_partner[f"{ctx.author.id}"]["active"]:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
@@ -443,7 +438,7 @@ class GuildBank(commands.Cog):
                                   " guilda para que voce possa usufluir desses serviços`")
 
         if "miner_partner" not in update.keys():
-            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
+            msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador` **partner**"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 

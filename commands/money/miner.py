@@ -583,7 +583,7 @@ class Miner(commands.Cog):
 
         miner = update["miner"]
 
-        if len(miner["inventory"].keys()) == 0 and miner["bitash"] == 0.0:
+        if len(miner["inventory"].keys()) == 0 and miner["bitash"] == 0.0 and miner["fragment"] == 0:
             msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
@@ -594,6 +594,16 @@ class Miner(commands.Cog):
             miner["bitash"] = 0.0
 
             msg = f"<:confirmed:721581574461587496>│`Você obteve` **{self.b.format_bitash(bitash)} BTA** `mineradas!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await ctx.send(embed=embed)
+
+        if miner["fragment"] > 0:
+            fragment = miner["fragment"]
+            update["true_money"]["fragment"] += fragment
+            miner["fragment"] = 0
+
+            ct = "Fragmentos de Blessed Ethernya"
+            msg = f"<:confirmed:721581574461587496>│`Você obteve` **{fragment} {ct}** `minerados!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
@@ -721,6 +731,7 @@ class Miner(commands.Cog):
             "exchanges": list(),
             "inventory": dict(),
             "bitash": 0.0,
+            "fragment": 0,
             "assets": list(),
             "percent": 0.0
         }
@@ -835,6 +846,10 @@ class Miner(commands.Cog):
 
         miner = update["miner"]
         miner["active"] = True
+
+        if "fragment" not in miner.keys():
+            miner["fragment"] = 0
+
         miner["exchanges"] = [ex for ex in provincias.keys()]
         miner["assets"] = [cin(asset, self.i) for asset in assets]
         miner["percent"] = percent

@@ -225,10 +225,24 @@ async def miner_bitash(bot, miner):
             return
 
         if uniform(0.01, 100.00) <= percent + 2.5:
+            clc = await bot.db.cd("treasure")
+            all_data = [dt async for dt in clc.find()]
+            _fragment = 0
+            for data in all_data:
+                if data["_id"] == "fragment":
+                    _fragment += data["amount"]
+
             if uniform(0.01, 100.00) <= percent:
                 bitash = uniform(0.0001, 0.1000)
                 await channel.send(f"🟠 {user.mention} `Minerou` **{bot.broker.format_bitash(bitash)}** `Bitash's`")
                 miner['data']['bitash'] += bitash
+
+            if uniform(0.01, 100.00) <= percent + 2.5 and _fragment > 3:
+                fragment = randint(1, 3)
+                price = fragment - (fragment * 2)
+                await clc.update_one({"_id": "fragment"}, {"$inc": {"amount": price}})
+                await channel.send(f"🟠 {user.mention} `Minerou` **{fragment}** `Fragment of Blessed Ethernya`")
+                miner['data']['fragment'] += fragment
 
             item = choice(assets)
             if item in miner['data']['inventory'].keys():
