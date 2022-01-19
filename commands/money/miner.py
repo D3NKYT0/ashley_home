@@ -81,7 +81,7 @@ class ProvinceExchange(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="<:buy:933202206218416160> Buy", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(label="💎 Buy", style=disnake.ButtonStyle.green)
     async def _buy(self, button, inter):
 
         if button:
@@ -127,7 +127,7 @@ class ProvinceExchange(disnake.ui.View):
 
         await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange))
 
-    @disnake.ui.button(label="<:sell:933202206029672498> Sell", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(label="💸 Sell", style=disnake.ButtonStyle.primary)
     async def _sell(self, button, inter):
 
         if button:
@@ -168,7 +168,7 @@ class ProvinceExchange(disnake.ui.View):
 
         await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange))
 
-    @disnake.ui.button(label="<:back:933204477492744252> Back", style=disnake.ButtonStyle.gray)
+    @disnake.ui.button(label="↩️ Back", style=disnake.ButtonStyle.gray)
     async def _back(self, button, inter):
 
         if button:
@@ -241,7 +241,7 @@ class BuyAndSell(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="<:buy:933202206218416160> Buy 1", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(label="💎 Buy 1", style=disnake.ButtonStyle.green)
     async def _buy_one(self, button, inter):
 
         if button:
@@ -285,7 +285,7 @@ class BuyAndSell(disnake.ui.View):
         embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="<:buy:933202206218416160>Buy All", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(label="💎 Buy All", style=disnake.ButtonStyle.green)
     async def _buy_all(self, button, inter):
 
         if button:
@@ -352,7 +352,7 @@ class SellAndBuy(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="<:sell:933202206029672498> Sell 1", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(label="💸 Sell 1", style=disnake.ButtonStyle.primary)
     async def _sell_one(self, button, inter):
 
         if button:
@@ -362,7 +362,7 @@ class SellAndBuy(disnake.ui.View):
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="<:sell:933202206029672498> Sell All", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(label="💸 Sell All", style=disnake.ButtonStyle.primary)
     async def _sell_all(self, button, inter):
 
         if button:
