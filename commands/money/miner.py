@@ -174,7 +174,12 @@ class ProvinceExchange(disnake.ui.View):
         if button:
             pass
 
-        await inter.response.defer()
+        try:
+            await inter.response.defer()
+        except disnake.errors.NotFound:
+            msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            return await inter.edit_original_message(embed=embed, view=None)
 
         provinces = list(self.bot.broker.exchanges.keys())
         view = ViewDefault(inter.user)

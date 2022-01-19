@@ -213,7 +213,10 @@ class Entity(object):
         async def callback(self, interaction: disnake.Interaction):
             self.value = self.values[0]
             self.disabled = True
-            await interaction.response.edit_message(view=None)
+            try:
+                await interaction.response.edit_message(view=None)
+            except disnake.errors.NotFound:
+                return
 
     @property
     def get_class(self):

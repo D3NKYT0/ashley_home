@@ -415,8 +415,6 @@ async def profile(data_):
                 show.text(xy=(x_, y_), text=data_[k].upper(), fill=(255, 255, 255), font=font_s)
             else:
 
-                _text = data_[k]
-
                 if k != "wallet":
                     y_ = y_ - 2
 
@@ -424,17 +422,8 @@ async def profile(data_):
                 if k == "bitash":
                     colors = [(0, 0, 0), (255, 255, 255)]
 
-                    def money_(money):
-                        a = '{:,.4f}'.format(float(money))
-                        b = a.replace(',', 'v')
-                        c = b.replace('.', ',')
-                        d = c.replace('v', '.')
-                        return d
-
-                    _text = money_(_text)
-
-                show.text(xy=(x_ + 1, y_ + 1), text=_text.upper(), fill=colors[0], font=font_s)
-                show.text(xy=(x_, y_), text=_text.upper(), fill=colors[1], font=font_s)
+                show.text(xy=(x_ + 1, y_ + 1), text=data_[k].upper(), fill=colors[0], font=font_s)
+                show.text(xy=(x_, y_), text=data_[k].upper(), fill=colors[1], font=font_s)
 
     if _TEST:
         image.show()

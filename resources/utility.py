@@ -214,6 +214,8 @@ async def miner_bitash(bot, miner):
         if i not in assets:
             assets.append(i)
 
+    assets += _HASH  # sistema de proteção (para farm de itens)
+
     while not bot.is_closed():
 
         if not bot.minelist[f"{miner['user_id']}"]["active"]:

@@ -95,6 +95,13 @@ class ProfileSystem(commands.Cog):
         except AttributeError:
             guild_link = "https://festsonho.com.br/images/sem_foto.png"
 
+        def money_(money):
+            _a = '{:,.4f}'.format(float(money))
+            _b = _a.replace(',', 'v')
+            _c = _b.replace('.', ',')
+            _d = _c.replace('v', '.')
+            return _d
+
         data_profile = {
             "avatar_member": member.display_avatar.with_format("png"),
             "avatar_married": married,
@@ -112,7 +119,7 @@ class ProfileSystem(commands.Cog):
             "artifacts": data['artifacts'],
             "fragment": str(data['true_money']['fragment']),
             "blessed": str(data['true_money']['blessed']),
-            "bitash": str(data['true_money']['bitash']),
+            "bitash": str(money_(data['true_money']['bitash'])),
             "real": str(data['true_money']['real'])
         }
 
