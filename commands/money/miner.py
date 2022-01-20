@@ -407,7 +407,7 @@ class SellAndBuy(disnake.ui.View):
             cd = await self.bot.db.cd("users")
             await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
 
-            msg = f"<:confirmed:721581574461587496>│`Você vendeu` **1** `ação da provincia de:` " \
+            msg = f"✅│`Você vendeu` **1** `ação da provincia de:` " \
                   f"**{self.exchange}**"
             embed = disnake.Embed(description=msg)
             await _MSG.delete()
@@ -466,7 +466,7 @@ class SellAndBuy(disnake.ui.View):
             cd = await self.bot.db.cd("users")
             await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
 
-            msg = f"<:confirmed:721581574461587496>│`Você vendeu` **{amount}** `ação da provincia de:` " \
+            msg = f"✅│`Você vendeu` **{amount}** `ação da provincia de:` " \
                   f"**{self.exchange}**"
             embed = disnake.Embed(description=msg)
             await _MSG.delete()
