@@ -374,15 +374,11 @@ class SellAndBuy(disnake.ui.View):
 
             cdc = await self.bot.db.cd("exchanges")
             assets = await cdc.find_one({"_id": self.exchange})
-            acoes, amount = dict(), 0
+            acoes, amount = {"sold": dict()}, 0
             for asset in assets["sold"].keys():
                 if assets["sold"][asset]["owner"] == inter.user.id:
                     amount += 1
-
-                    if assets["_id"] not in acoes.keys():
-                        acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
-                    else:
-                        acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
+                    acoes["sold"][asset] = assets["sold"][asset]
 
             value = self.bot.broker.get_exchange(self.exchange)
             be = self.bot.broker.format_bitash(value / self.bot.current_rate)
@@ -442,15 +438,11 @@ class SellAndBuy(disnake.ui.View):
 
             cdc = await self.bot.db.cd("exchanges")
             assets = await cdc.find_one({"_id": self.exchange})
-            acoes, amount = dict(), 0
+            acoes, amount = {"sold": dict()}, 0
             for asset in assets["sold"].keys():
                 if assets["sold"][asset]["owner"] == inter.user.id:
                     amount += 1
-
-                    if assets["_id"] not in acoes.keys():
-                        acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
-                    else:
-                        acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
+                    acoes["sold"][asset] = assets["sold"][asset]
 
             value = self.bot.broker.get_exchange(self.exchange)
             be = self.bot.broker.format_bitash(value / self.bot.current_rate)
