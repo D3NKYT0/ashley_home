@@ -36,35 +36,45 @@ class Adflier(commands.Cog):
                   ("fragment_of_crystal_fire", 4),
                   ("blessed_fragment_of_crystal_wind", 2),
                   ("blessed_fragment_of_crystal_water", 2),
-                  ("blessed_fragment_of_crystal_fire", 2)],
+                  ("blessed_fragment_of_crystal_fire", 2),
+                  ("full_heart", 2),
+                  ("adamantium", 2)],
 
             "2": [("fragment_of_crystal_wind", 8),
                   ("fragment_of_crystal_water", 8),
                   ("fragment_of_crystal_fire", 8),
                   ("blessed_fragment_of_crystal_wind", 4),
                   ("blessed_fragment_of_crystal_water", 4),
-                  ("blessed_fragment_of_crystal_fire", 4)],
+                  ("blessed_fragment_of_crystal_fire", 4),
+                  ("full_heart", 2),
+                  ("adamantium", 4)],
 
             "3": [("fragment_of_crystal_wind", 16),
                   ("fragment_of_crystal_water", 16),
                   ("fragment_of_crystal_fire", 16),
                   ("blessed_fragment_of_crystal_wind", 6),
                   ("blessed_fragment_of_crystal_water", 6),
-                  ("blessed_fragment_of_crystal_fire", 6)],
+                  ("blessed_fragment_of_crystal_fire", 6),
+                  ("full_heart", 2),
+                  ("adamantium", 6)],
 
             "4": [("fragment_of_crystal_wind", 32),
                   ("fragment_of_crystal_water", 32),
                   ("fragment_of_crystal_fire", 32),
                   ("blessed_fragment_of_crystal_wind", 8),
                   ("blessed_fragment_of_crystal_water", 8),
-                  ("blessed_fragment_of_crystal_fire", 8)],
+                  ("blessed_fragment_of_crystal_fire", 8),
+                  ("full_heart", 2),
+                  ("adamantium", 8)],
 
             "5": [("stone_of_crystal_wind", 2),
                   ("stone_of_crystal_water", 2),
                   ("stone_of_crystal_fire", 2),
                   ("blessed_fragment_of_crystal_wind", 12),
                   ("blessed_fragment_of_crystal_water", 12),
-                  ("blessed_fragment_of_crystal_fire", 12)],
+                  ("blessed_fragment_of_crystal_fire", 12),
+                  ("full_heart", 2),
+                  ("adamantium", 10)],
         }
 
     @check_it(no_pm=True)
@@ -243,16 +253,20 @@ class Adflier(commands.Cog):
         update_user['true_money']['fragment'] += frags
         update_user['true_money']['adfly'] += 1
         lucky = "5" if update_user['true_money']['adfly'] % 10 == 0 else choice(['1', '2', '3', '4'])
-        item_discovered = choice(self._reward_adfly[lucky])
-        amount = randint(1, item_discovered[1])
-        try:
-            update_user['inventory'][item_discovered[0]] += amount
-        except KeyError:
-            update_user['inventory'][item_discovered[0]] = amount
+        msg_itens = ""
+
+        for item_discovered in self._reward_adfly[lucky]:
+            amount = randint(1, item_discovered[1])
+            try:
+                update_user['inventory'][item_discovered[0]] += amount
+            except KeyError:
+                update_user['inventory'][item_discovered[0]] = amount
+
+            msg_itens += f"{self.i[item_discovered[0]][0]} `{amount}` **{self.i[item_discovered[0]][1]}**\n"
+
         await self.bot.db.update_data(data_user, update_user, 'users')
         await ctx.send(f"<a:fofo:524950742487007233>│`VOCÊ GANHOU` ✨ **{frags} FRAGMENTO DE BLESSED ETHERNYA** ✨\n"
-                       f"{msg}`Você tambem ganhou:` {self.i[item_discovered[0]][0]} `{amount}` "
-                       f"**{self.i[item_discovered[0]][1]}**")
+                       f"{msg}`Você tambem ganhou:`\n{msg_itens}")
 
 
 def setup(bot):
