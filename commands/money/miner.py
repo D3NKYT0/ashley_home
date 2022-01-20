@@ -455,9 +455,10 @@ class SellAndBuy(disnake.ui.View):
                 return await inter.response.edit_message(embed=embed, view=None)
 
             query = {"$unset": dict(), "$set": dict()}
-
-            for _ in list(acoes['sold'].keys()):
-                asset = choice(list(acoes['sold'].keys()))
+            chaves = list(acoes['sold'].keys())
+            
+            for _ in chaves:
+                asset = acoes['sold'][_]
                 assets['assets'][asset] = assets['sold'][asset]
                 assets['assets'][asset]['owner'] = None
                 del assets['sold'][asset]
