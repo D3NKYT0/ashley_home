@@ -398,8 +398,8 @@ class SellAndBuy(disnake.ui.View):
             del assets['sold'][asset]
             del acoes['sold'][asset]
 
-            query["$unset"] = {f"assets.{asset}": ""}
-            query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
+            query["$set"] = {f"assets.{asset}": assets['assets'][asset]}
+            query["$unset"] = {f"sold.{asset}": ""}
 
             await cdc.update_one({"_id": self.exchange}, query)
 
@@ -463,8 +463,8 @@ class SellAndBuy(disnake.ui.View):
                 del assets['sold'][asset]
                 del acoes['sold'][asset]
 
-                query["$unset"] = {f"assets.{asset}": ""}
-                query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
+                query["$set"] = {f"assets.{asset}": assets['assets'][asset]}
+                query["$unset"] = {f"sold.{asset}": ""}
 
             await cdc.update_one({"_id": self.exchange}, query)
 
