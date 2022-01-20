@@ -9,7 +9,7 @@ from resources.verify_cooldown import verify_cooldown
 from asyncio import sleep
 
 
-cooldown_sell = 3600
+cooldown_sell = 30  # Default: 3600
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -360,7 +360,7 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        if await verify_cooldown(self.bot, f"sell_one_{inter.user.id}", cooldown_sell):
+        if await verify_cooldown(self.bot, f"sell_one_{inter.user.id}", cooldown_sell, exchange=True):
             try:
                 await inter.response.defer()
             except disnake.errors.NotFound:
@@ -428,7 +428,7 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        if await verify_cooldown(self.bot, f"sell_many_{inter.user.id}", cooldown_sell):
+        if await verify_cooldown(self.bot, f"sell_many_{inter.user.id}", cooldown_sell, exchange=True):
             try:
                 await inter.response.defer()
             except disnake.errors.NotFound:

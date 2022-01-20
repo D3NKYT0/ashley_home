@@ -2,7 +2,7 @@ import datetime
 epoch = datetime.datetime.utcfromtimestamp(0)
 
 
-async def verify_cooldown(bot, _id, time_in_seconds, gift=False):
+async def verify_cooldown(bot, _id, time_in_seconds, gift=False, exchange=False):
 
     data = await bot.db.get_data("_id", _id, "cooldown")
 
@@ -10,7 +10,10 @@ async def verify_cooldown(bot, _id, time_in_seconds, gift=False):
         if not gift:
             data = {"_id": _id, "cooldown": (datetime.datetime.utcnow() - epoch).total_seconds()}
             await bot.db.push_data(data, "cooldown")
-            return False
+            if not exchange:
+                return False
+            else:
+                return True
         return False
 
     update = data
