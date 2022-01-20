@@ -5,9 +5,11 @@ from resources.check import check_it
 from resources.db import Database
 from random import choice, randint
 from resources.utility import convert_item_name as cin
+from resources.verify_cooldown import verify_cooldown
 from asyncio import sleep
 
 
+cooldown_sell = 3600
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -358,9 +360,68 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        msg = "<:negate:721581573396496464>│`A venda de ações ainda não está disponivel!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
-        await inter.response.edit_message(embed=embed, view=None)
+        if await verify_cooldown(self.bot, f"sell_one_{inter.user.id}", cooldown_sell):
+            try:
+                await inter.response.defer()
+            except disnake.errors.NotFound:
+                msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await inter.edit_original_message(embed=embed, view=None)
+
+            channel = self.bot.get_channel(inter.channel_id)
+            _MSG = await channel.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                      "**mesmo que demore, aguarde o fim do processamento...**")
+
+            cdc = await self.bot.db.cd("exchanges")
+            assets = await cdc.find_one({"_id": self.exchange})
+            acoes, amount = dict(), 0
+            for asset in assets["sold"].keys():
+                if assets["sold"][asset]["owner"] == inter.user.id:
+                    amount += 1
+
+                    if assets["_id"] not in provincias.keys():
+                        acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
+                    else:
+                        acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
+
+            value = self.bot.broker.get_exchange(self.exchange)
+            be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+            charged = float(be.replace(",", ".")) * amount
+
+            if amount == 0:
+                msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
+                      f"`suficiente para essa operação!`"
+                embed = disnake.Embed(description=msg)
+                return await inter.response.edit_message(embed=embed, view=None)
+
+            query = {"$unset": dict(), "$set": dict()}
+
+            for _ in list(acoes['sold'].keys()):
+                asset = choice(list(acoes['sold'].keys()))
+                assets['assets'][asset] = assets['sold'][asset]
+                assets['assets'][asset]['owner'] = None
+                del assets['sold'][asset]
+                del acoes['sold'][asset]
+
+                query["$unset"] = {f"assets.{asset}": ""}
+                query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
+
+            await cdc.update_one({"_id": self.exchange}, query)
+
+            # dando o bitash paro usuario
+            cd = await self.bot.db.cd("users")
+            await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
+
+            msg = f"<:confirmed:721581574461587496>│`Você vendeu` **{amount}** `ação da provincia de:` " \
+                  f"**{self.exchange}**"
+            embed = disnake.Embed(description=msg)
+            await _MSG.delete()
+            await inter.edit_original_message(embed=embed, view=None)
+
+        else:
+            msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell All", style=disnake.ButtonStyle.primary)
     async def _sell_all(self, button, inter):
@@ -368,9 +429,68 @@ class SellAndBuy(disnake.ui.View):
         if button:
             pass
 
-        msg = "<:negate:721581573396496464>│`A venda de ações ainda não está disponivel!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
-        await inter.response.edit_message(embed=embed, view=None)
+        if await verify_cooldown(self.bot, f"sell_many_{inter.user.id}", cooldown_sell):
+            try:
+                await inter.response.defer()
+            except disnake.errors.NotFound:
+                msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
+                embed = disnake.Embed(color=self.bot.color, description=msg)
+                return await inter.edit_original_message(embed=embed, view=None)
+
+            channel = self.bot.get_channel(inter.channel_id)
+            _MSG = await channel.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                                      "**mesmo que demore, aguarde o fim do processamento...**")
+
+            cdc = await self.bot.db.cd("exchanges")
+            assets = await cdc.find_one({"_id": self.exchange})
+            acoes, amount = dict(), 0
+            for asset in assets["sold"].keys():
+                if assets["sold"][asset]["owner"] == inter.user.id:
+                    amount += 1
+
+                    if assets["_id"] not in provincias.keys():
+                        acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
+                    else:
+                        acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
+
+            value = self.bot.broker.get_exchange(self.exchange)
+            be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+            charged = float(be.replace(",", ".")) * amount
+
+            if amount == 0:
+                msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
+                      f"`suficiente para essa operação!`"
+                embed = disnake.Embed(description=msg)
+                return await inter.response.edit_message(embed=embed, view=None)
+
+            query = {"$unset": dict(), "$set": dict()}
+
+            for _ in list(acoes['sold'].keys()):
+                asset = choice(list(acoes['sold'].keys()))
+                assets['assets'][asset] = assets['sold'][asset]
+                assets['assets'][asset]['owner'] = None
+                del assets['sold'][asset]
+                del acoes['sold'][asset]
+
+                query["$unset"] = {f"assets.{asset}": ""}
+                query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
+
+            await cdc.update_one({"_id": self.exchange}, query)
+
+            # dando o bitash paro usuario
+            cd = await self.bot.db.cd("users")
+            await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
+
+            msg = f"<:confirmed:721581574461587496>│`Você vendeu` **{amount}** `ação da provincia de:` " \
+                  f"**{self.exchange}**"
+            embed = disnake.Embed(description=msg)
+            await _MSG.delete()
+            await inter.edit_original_message(embed=embed, view=None)
+
+        else:
+            msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
+            embed = disnake.Embed(color=self.bot.color, description=msg)
+            await inter.response.edit_message(embed=embed, view=None)
 
     @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
