@@ -454,18 +454,12 @@ class SellAndBuy(disnake.ui.View):
                 embed = disnake.Embed(description=msg)
                 return await inter.response.edit_message(embed=embed, view=None)
 
-            query = {"$unset": dict(), "$set": dict()}
-            chaves = list(acoes['sold'].keys())
-
-            for _ in chaves:
-
+            for _ in list(acoes['sold'].keys()):
                 assets['assets'][_] = assets['sold'][_]
                 assets['assets'][_]['owner'] = None
                 del assets['sold'][_]
 
-                query["$set"] = {f"assets.{_}": assets['assets'][_]}
-                query["$unset"] = {f"sold.{_}": ""}
-
+            query = {"$set": {"assets": assets["assets"], "sold": assets['sold']}}
             await cdc.update_one({"_id": self.exchange}, query)
 
             # dando o bitash paro usuario
