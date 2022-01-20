@@ -379,7 +379,7 @@ class SellAndBuy(disnake.ui.View):
                 if assets["sold"][asset]["owner"] == inter.user.id:
                     amount += 1
 
-                    if assets["_id"] not in provincias.keys():
+                    if assets["_id"] not in acoes.keys():
                         acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
                     else:
                         acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
@@ -447,7 +447,7 @@ class SellAndBuy(disnake.ui.View):
                 if assets["sold"][asset]["owner"] == inter.user.id:
                     amount += 1
 
-                    if assets["_id"] not in provincias.keys():
+                    if assets["_id"] not in acoes.keys():
                         acoes[assets["_id"]] = {"sold": {asset: assets["sold"][asset]}}
                     else:
                         acoes[assets["_id"]]["sold"][asset] = assets["sold"][asset]
