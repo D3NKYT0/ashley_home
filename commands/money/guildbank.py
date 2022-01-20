@@ -342,7 +342,7 @@ class GuildBank(commands.Cog):
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
+    @commands.check(lambda ctx: Database.is_registered(ctx, ctx, g_vip=True, cooldown=True, time=3600))
     @guild.group(name='start', aliases=['s', 'iniciar', 'inicio'])
     async def _start(self, ctx, limit: int = None):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
@@ -410,9 +410,13 @@ class GuildBank(commands.Cog):
         mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                                   "**mesmo que demore, aguarde o fim do processamento...**")
 
+        bonus = 15
+        if self.bot.event_special:
+            bonus += 15
+
         miner = update["miner_partner"]
         miner["active"] = True
-        miner["limit"] = limit
+        miner["limit"] = limit * bonus
         update["miner_partner"] = miner
         await self.bot.db.update_data(data, update, 'users')
 

@@ -81,7 +81,7 @@ class ProvinceExchange(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="💎 Buy", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy", style=disnake.ButtonStyle.green)
     async def _buy(self, button, inter):
 
         if button:
@@ -127,7 +127,7 @@ class ProvinceExchange(disnake.ui.View):
 
         await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange))
 
-    @disnake.ui.button(label="💸 Sell", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell", style=disnake.ButtonStyle.primary)
     async def _sell(self, button, inter):
 
         if button:
@@ -168,7 +168,7 @@ class ProvinceExchange(disnake.ui.View):
 
         await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange))
 
-    @disnake.ui.button(label="↩️ Back", style=disnake.ButtonStyle.gray)
+    @disnake.ui.button(emoji="<:back:933204477492744252>", label="Back", style=disnake.ButtonStyle.gray)
     async def _back(self, button, inter):
 
         if button:
@@ -224,7 +224,7 @@ class ProvinceExchange(disnake.ui.View):
 
         await inter.edit_original_message(embed=embed, view=view)
 
-    @disnake.ui.button(label="❌ Exit", style=disnake.ButtonStyle.danger)
+    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
@@ -241,7 +241,7 @@ class BuyAndSell(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="💎 Buy 1", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy 1", style=disnake.ButtonStyle.green)
     async def _buy_one(self, button, inter):
 
         if button:
@@ -285,7 +285,7 @@ class BuyAndSell(disnake.ui.View):
         embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="💎 Buy All", style=disnake.ButtonStyle.green)
+    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy All", style=disnake.ButtonStyle.green)
     async def _buy_all(self, button, inter):
 
         if button:
@@ -335,7 +335,7 @@ class BuyAndSell(disnake.ui.View):
         embed = disnake.Embed(description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="❌ Exit", style=disnake.ButtonStyle.danger)
+    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
@@ -352,7 +352,7 @@ class SellAndBuy(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(label="💸 Sell 1", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell 1", style=disnake.ButtonStyle.primary)
     async def _sell_one(self, button, inter):
 
         if button:
@@ -362,7 +362,7 @@ class SellAndBuy(disnake.ui.View):
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="💸 Sell All", style=disnake.ButtonStyle.primary)
+    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell All", style=disnake.ButtonStyle.primary)
     async def _sell_all(self, button, inter):
 
         if button:
@@ -372,7 +372,7 @@ class SellAndBuy(disnake.ui.View):
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(label="❌ Exit", style=disnake.ButtonStyle.danger)
+    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
@@ -855,10 +855,14 @@ class Miner(commands.Cog):
         if "fragment" not in miner.keys():
             miner["fragment"] = 0
 
+        bonus = 15
+        if self.bot.event_special:
+            bonus += 15
+
         miner["exchanges"] = [ex for ex in provincias.keys()]
         miner["assets"] = [cin(asset, self.i) for asset in assets]
         miner["percent"] = percent
-        miner["limit"] = limit
+        miner["limit"] = limit * bonus
         update["miner"] = miner
         await self.bot.db.update_data(data, update, 'users')
 
