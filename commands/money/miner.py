@@ -396,15 +396,14 @@ class SellAndBuy(disnake.ui.View):
 
             query = {"$unset": dict(), "$set": dict()}
 
-            for _ in list(acoes['sold'].keys()):
-                asset = choice(list(acoes['sold'].keys()))
-                assets['assets'][asset] = assets['sold'][asset]
-                assets['assets'][asset]['owner'] = None
-                del assets['sold'][asset]
-                del acoes['sold'][asset]
+            asset = choice(list(acoes['sold'].keys()))
+            assets['assets'][asset] = assets['sold'][asset]
+            assets['assets'][asset]['owner'] = None
+            del assets['sold'][asset]
+            del acoes['sold'][asset]
 
-                query["$unset"] = {f"assets.{asset}": ""}
-                query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
+            query["$unset"] = {f"assets.{asset}": ""}
+            query["$set"] = {f"sold.{asset}": assets['sold'][asset]}
 
             await cdc.update_one({"_id": self.exchange}, query)
 
