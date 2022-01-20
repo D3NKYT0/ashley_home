@@ -7,7 +7,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, paginator
 
-ETHERNYA_PRICE, EXCHANGE_RATE = 500000, 50000   # cotação 13/01/2022
+ETHERNYA_PRICE, EXCHANGE_RATE, EXCHANGE_RATE_BTA = 500000, 50000, 0.2584   # cotação 13/01/2022
 coin, cost, plus = 0, 0, 0
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
@@ -55,32 +55,38 @@ class UserBank(commands.Cog):
             real = self.format_num(data['true_money']['real'], True)
             adfly = self.format_num(data['true_money']['adfly'])
             d = self.format_num(self.money, True)
+            bitash = self.bot.broker.format_bitash(data['true_money']['bitash'])
             msg = f"<:coins:519896825365528596>│ **{ctx.author}** No total  você tem **R$ {d}** de `ETHERNYAS` na " \
-                  f"sua carteira!\n {self.bot.money[2]} **{self.format_num(self.gold)}** | " \
+                  f"sua carteira!\n " \
+                  f"{self.bot.money[2]} **{self.format_num(self.gold)}** | " \
                   f"{self.bot.money[1]} **{self.format_num(self.silver)}** | " \
                   f"{self.bot.money[0]} **{self.format_num(self.bronze)}**\n" \
                   f"**{blessed}** - `Blessed Ethernyas` | **{fragment}** - `Fragmentos de Blessed Ethernyas`\n" \
-                  f"**R$ {real}** - `Reais` | **{adfly}** - `ADFLY/ADLINK COMMANDS`"
+                  f"**R$ {real}** - `Reais` | **B$ {bitash}** - `bitash` | **{adfly}** - `ADFLY/ADLINK COMMANDS`"
             await ctx.send(msg)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @wallet.group(name='convert', aliases=['c'])
-    async def _add(self, ctx, amount: int = 0, money: str = None, font: str = None):
+    async def _add(self, ctx, amount: float = 0, money: str = None, font: str = None):
         """Comando para converter os fragmentos de ethernyas em dinheiro real ou blessed ethernyas"""
 
         if amount is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia.`")
 
         if amount < 1:
-            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+            if font == "bitash":
+                if amount < 0:
+                    return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+            else:
+                return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
 
         if money is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
                                   "**Obs:** `blessed ou real`")
 
-        if money not in ['blessed', 'real', 'bitash']:
+        if money not in ['blessed', 'real', 'bitash', 'ethernya']:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
                                   "**Obs:** `blessed ou real`")
 
@@ -88,12 +94,34 @@ class UserBank(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
                                   "**Obs:** `ethernya ou fragment`")
 
-        if font not in ['ethernya', 'fragment', 'blessed']:
+        if font not in ['ethernya', 'fragment', 'blessed', 'bitash', 'real']:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
                                   "**Obs:** `ethernya ou fragment`")
 
+        # -----------------------------------
+        #   proteção (contra conversão iqual)
+        # -----------------------------------
+
+        if money == "bitash" and font == "bitash":
+            return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **bitash** `em` **bitash**")
+
         if money == "blessed" and font == "blessed":
             return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **blessed** `em` **blessed**")
+
+        if money == "fragment" and font == "fragment":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **fragment** `em` **fragment**"
+            return await ctx.send(msg)
+
+        if money == "ethernya" and font == "ethernya":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **ethernya** `em` **ethernya**"
+            return await ctx.send(msg)
+
+        if money == "real" and font == "real":
+            return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **real** `em` **real**")
+
+        # --------------------------
+        #         proteção
+        # --------------------------
 
         if money == "real" and font == "blessed":
             return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **blessed** `em` **real**")
@@ -101,10 +129,55 @@ class UserBank(commands.Cog):
         if money == "real" and font == "ethernya":
             return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **ethernya** `em` **real**")
 
+        if money == "real" and font == "bitash":
+            return await ctx.send("<:alert:739251822920728708>│`Você não pode converter` **bitash** `em` **real**")
+
+        # --------------------------
+        #         proteção
+        # --------------------------
+
+        if money == "ethernya" and font == "fragment":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **fragment** `em` **ethernya**"
+            return await ctx.send(msg)
+
+        if money == "ethernya" and font == "blessed":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **blessed** `em` **ethernya**"
+            return await ctx.send(msg)
+
+        if money == "ethernya" and font == "real":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **ethernya** `em` **ethernya**"
+            return await ctx.send(msg)
+
+        # --------------------------
+        #         proteção
+        # --------------------------
+
+        if money == "bitash" and font == "fragment":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **fragment** `em` **bitash**"
+            return await ctx.send(msg)
+
+        if money == "bitash" and font == "ethernya":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **ethernya** `em` **bitash**"
+            return await ctx.send(msg)
+
+        # --------------------------
+        #         proteção
+        # --------------------------
+
+        if money == "blessed" and font == "bitash":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **bitash** `em` **blessed**"
+            return await ctx.send(msg)
+
+        if money == "blessed" and font == "real":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **real** `em` **blessed**"
+            return await ctx.send(msg)
+
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update_user = data_user
 
         if font == "fragment":
+
+            amount = int(amount)
 
             if update_user["true_money"]["fragment"] < amount * 1000:
                 tot = update_user["true_money"]["fragment"] // 1000
@@ -134,6 +207,8 @@ class UserBank(commands.Cog):
 
         elif font == "ethernya":
 
+            amount = int(amount)
+
             if update_user['treasure']["money"] < amount * ETHERNYA_PRICE:
                 tot = update_user['treasure']["money"] // ETHERNYA_PRICE
                 return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{tot}** `conversões.`")
@@ -150,7 +225,29 @@ class UserBank(commands.Cog):
                            f"**R$ {self.format_num((amount * ETHERNYA_PRICE) + EXCHANGE_RATE)},00** `Ethernyas, por:` "
                            f"**{amount} Blessed Ethernyas**")
 
-        else:
+        elif font == "bitash":
+
+            if update_user["true_money"]["bitash"] < amount:
+                amount = self.bot.broker.format_bitash(amount)
+                return await ctx.send(f"<:alert:739251822920728708>│`Você não tem` **B$ {amount} BTA** `disponiveis.`")
+
+            if update_user["true_money"]["bitash"] < amount + EXCHANGE_RATE_BTA:
+                rate = self.bot.broker.format_bitash(EXCHANGE_RATE_BTA)
+                return await ctx.send(f"<:alert:739251822920728708>│`Você precisa ter a taxa de câmbio para fazer"
+                                      f" essa opração. Taxa atual:` **B$ {rate} BTA**")
+
+            reward = int(amount * ETHERNYA_PRICE)
+            update_user["true_money"]["bitash"] -= amount + EXCHANGE_RATE_BTA
+            update_user['treasure']["money"] += reward
+            await self.bot.db.update_data(data_user, update_user, 'users')
+
+            await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                           f"**B$ {self.bot.broker.format_bitash(amount + EXCHANGE_RATE_BTA)} BTA** `por:` "
+                           f"**R$ {self.format_num(reward)},00 Ethernyas**")
+
+        elif font == "blessed":
+
+            amount = int(amount)
 
             if update_user["true_money"]["blessed"] < amount * 1:
                 tot = update_user["true_money"]["blessed"]
@@ -163,6 +260,24 @@ class UserBank(commands.Cog):
             await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
                            f"**R$ {self.format_num(amount * 1)},00** `Blessed Ethernyas, por:` "
                            f"**{amount} Bitash**")
+
+        elif font == "real":
+            amount = int(amount)
+
+            if update_user["true_money"]["real"] < amount * 1:
+                tot = update_user["true_money"]["real"]
+                return await ctx.send(f"<:alert:739251822920728708>│`Você só pode fazer` **{tot}** `conversões.`")
+
+            update_user['true_money']["real"] -= 1 * amount
+            update_user["true_money"]["bitash"] += float(amount)
+            await self.bot.db.update_data(data_user, update_user, 'users')
+
+            await ctx.send(f"<a:fofo:524950742487007233>│🎊 **PARABENS** 🎉 `Você converteu:` "
+                           f"**R$ {self.format_num(amount * 1)},00** `Reais, por:` "
+                           f"**{amount} Bitash**")
+
+        else:
+            await ctx.send("<:alert:739251822920728708>│`Algo ocoreu erado, por favor tente novamente!`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
