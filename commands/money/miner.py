@@ -382,7 +382,7 @@ class SellAndBuy(disnake.ui.View):
 
             value = self.bot.broker.get_exchange(self.exchange)
             be = self.bot.broker.format_bitash(value / self.bot.current_rate)
-            charged = float(be.replace(",", ".")) * amount
+            charged = float(be.replace(",", "."))
 
             if amount == 0:
                 msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
