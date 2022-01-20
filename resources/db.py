@@ -415,7 +415,12 @@ class Database(object):
                                                     " comando ASH VIP**")
                     return True
                 elif kwargs.get("g_vip") and data_guild['vip'] is False:
-                    if str(ctx.command) in ["guild convert", "guild reward"] and ctx.guild.id == 519894833783898112:
+                    commands_list = ["guild convert", "guild reward", "guild start"]
+                    if str(ctx.command) in commands_list and ctx.guild.id == 519894833783898112:
+                        if not data_user['config']['vip'] and str(ctx.command) == "guild start":
+                            raise commands.CheckFailure("<:alert:739251822920728708>│`APENAS USUARIOS COM VIP ATIVO "
+                                                        "PODEM USAR ESSE COMANDO NO SERVIDOR DA ASHLEY`\n"
+                                                        "**Para saber como ser vip use o comando ASH VIP**")
                         pass
                     else:
                         raise commands.CheckFailure("<:alert:739251822920728708>│`APENAS SERVIDORES COM VIP ATIVO "
