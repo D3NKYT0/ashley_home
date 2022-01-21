@@ -344,7 +344,7 @@ class GuildBank(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, g_vip=True, cooldown=True, time=3600))
     @guild.group(name='start', aliases=['s', 'iniciar', 'inicio'])
-    async def _start(self, ctx, limit: int = None):
+    async def _start(self, ctx, limit: int = None, uptime: str = None):
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
         if ctx.guild.id != data['guild_id'] and ctx.guild.id != 519894833783898112:
@@ -374,11 +374,14 @@ class GuildBank(commands.Cog):
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-        bonus = 10
+        bonus = 5
         if self.bot.event_special:
             bonus += 2
 
         limit = limit * bonus  # adição do bonus
+        _uptime = update["inventory"].get("uptime", 0)
+        d = 0
+        max_time = False
 
         if "miner_partner" not in update.keys():
             update["miner_partner"] = {
@@ -388,11 +391,21 @@ class GuildBank(commands.Cog):
                 "limit": limit
             }
 
-        d = 0
-
         if not update["miner_partner"]["active"]:
 
-            amount = limit * 1000
+            if uptime == "uptime":
+                if _uptime < 1:
+                    msg = f"<:negate:721581573396496464>│`Você não tem` **1 Uptime** `disponivel!`"
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    return await ctx.send(embed=embed)
+
+                update["inventory"]["uptime"] -= 1
+                if update["inventory"]["uptime"] <= 0:
+                    del update["inventory"]["uptime"]
+
+                max_time = True
+
+            amount = limit * 2500
 
             a = '{:,.2f}'.format(float(amount))
             b = a.replace(',', 'v')
@@ -421,11 +434,11 @@ class GuildBank(commands.Cog):
         miner["limit"] = limit
         update["miner_partner"] = miner
         await self.bot.db.update_data(data, update, 'users')
-        
+
         _msg = f"`Que custou para os cofres do servidor a quantia de` **R${d} ETHERNYAS**, " \
                f"`Para saber quanto ainda tem no saldo do servidor use o comando` **ash tesouro**"
 
-        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
+        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner, "uptime": max_time}
         self.bot.minelist_partner[f"{ctx.author.id}"] = miner
         msg = f"<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`\n" \
               f"{_msg if d != 0 else '`Teve custo 0 por que o bot foi reiniciado enquanto o minerador estava ativo!`'}"

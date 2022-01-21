@@ -866,7 +866,7 @@ class Miner(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @miner.group(name='start', aliases=['s', 'iniciar', 'inicio'])
-    async def _start(self, ctx, limit: int = None):
+    async def _start(self, ctx, limit: int = None, uptime: str = None):
         if limit is None:
             msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -896,10 +896,24 @@ class Miner(commands.Cog):
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
+        _uptime = update["inventory"].get("uptime", 0)
         adamantium = update["inventory"].get("adamantium", 0)
         energy = update["inventory"].get("Energy", 0)
+        max_time = False
 
         if not update["miner"]["active"]:
+
+            if uptime == "uptime":
+                if _uptime < 1:
+                    msg = f"<:negate:721581573396496464>│`Você não tem` **1 Uptime** `disponivel!`"
+                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    return await ctx.send(embed=embed)
+
+                update["inventory"]["uptime"] -= 1
+                if update["inventory"]["uptime"] <= 0:
+                    del update["inventory"]["uptime"]
+
+                max_time = True
 
             if adamantium < limit:
                 msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
@@ -919,7 +933,7 @@ class Miner(commands.Cog):
             if update["inventory"]["Energy"] <= 0:
                 del update["inventory"]["Energy"]
 
-            bonus = 10
+            bonus = 5
             if self.bot.event_special:
                 bonus += 2
 
@@ -976,7 +990,7 @@ class Miner(commands.Cog):
         update["miner"] = miner
         await self.bot.db.update_data(data, update, 'users')
 
-        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
+        miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner, "uptime": max_time}
         self.bot.minelist[f"{ctx.author.id}"] = miner
         msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
         embed = disnake.Embed(color=self.bot.color, description=msg)

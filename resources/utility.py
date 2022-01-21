@@ -209,6 +209,7 @@ async def miner_bitash(bot, miner):
     mined, percent, assets = 0, miner['data']['percent'], list(miner['data']['assets'])
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
     _HASH = ["Melted_Bone", "Life_Crystal", "Energy", "Death_Blow", "Stone_of_Soul", "Vital_Force"]
+    uptime = miner["uptime"]
 
     for i in _HASH:
         if i not in assets:
@@ -261,12 +262,19 @@ async def miner_bitash(bot, miner):
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
                 break
 
-            await asyncio.sleep(60)
-        await asyncio.sleep(1)
+            if uptime:
+                await asyncio.sleep(6)
+            else:
+                await asyncio.sleep(60)
+        if uptime:
+            await asyncio.sleep(0.5)
+        else:
+            await asyncio.sleep(1)
 
 
 async def miner_partner(bot, miner):
     channel, user, mined = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id'])), 0
+    uptime = miner["uptime"]
     while not bot.is_closed():
 
         if not bot.minelist_partner[f"{miner['user_id']}"]["active"]:
@@ -313,8 +321,15 @@ async def miner_partner(bot, miner):
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
                 break
 
-            await asyncio.sleep(60)
-        await asyncio.sleep(1)
+            if uptime:
+                await asyncio.sleep(6)
+            else:
+                await asyncio.sleep(60)
+
+        if uptime:
+            await asyncio.sleep(0.5)
+        else:
+            await asyncio.sleep(1)
 
 
 async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
