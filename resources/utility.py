@@ -271,9 +271,9 @@ async def miner_bitash(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(0.25)
+                await asyncio.sleep(6)
             else:
-                await asyncio.sleep(25)
+                await asyncio.sleep(60)
 
         if not uptime:
             await asyncio.sleep(1)
@@ -326,9 +326,9 @@ async def miner_partner(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(0.25)
+                await asyncio.sleep(6)
             else:
-                await asyncio.sleep(25)
+                await asyncio.sleep(60)
 
         if not uptime:
             await asyncio.sleep(1)

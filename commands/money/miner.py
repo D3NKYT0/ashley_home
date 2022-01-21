@@ -30,9 +30,10 @@ class ViewDefault(disnake.ui.View):
 
 
 class SelectProvinces(disnake.ui.Select):
-    def __init__(self, provinces, bot):
+    def __init__(self, provinces, bot, amount):
         self.provinces = provinces
         self.bot = bot
+        self.amount = amount
         self.i = self.bot.items
         super().__init__(
             placeholder="Selecione uma provincia",
@@ -73,12 +74,13 @@ class SelectProvinces(disnake.ui.Select):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange))
+        await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange, self.amount))
 
 
 class ProvinceExchange(disnake.ui.View):
-    def __init__(self, bot, exchange):
+    def __init__(self, bot, exchange, amount):
         self.bot = bot
+        self.amount = amount
         self.i = self.bot.items
         self.exchange = exchange
         super().__init__()
@@ -130,7 +132,7 @@ class ProvinceExchange(disnake.ui.View):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange))
+        await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange, self.amount))
 
     @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell", style=disnake.ButtonStyle.primary)
     async def _sell(self, button, inter):
@@ -171,7 +173,7 @@ class ProvinceExchange(disnake.ui.View):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange))
+        await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange, self.amount))
 
     @disnake.ui.button(emoji="<:back:933204477492744252>", label="Back", style=disnake.ButtonStyle.gray)
     async def _back(self, button, inter):
@@ -184,7 +186,7 @@ class ProvinceExchange(disnake.ui.View):
 
             provinces = list(self.bot.broker.exchanges.keys())
             view = ViewDefault(inter.user)
-            view.add_item(SelectProvinces(provinces, self.bot))
+            view.add_item(SelectProvinces(provinces, self.bot, self.amount))
 
             description = "```\n" \
                           "Legenda das Cores:\n" \
@@ -242,8 +244,9 @@ class ProvinceExchange(disnake.ui.View):
 
 
 class BuyAndSell(disnake.ui.View):
-    def __init__(self, bot, exchange):
+    def __init__(self, bot, exchange, amount):
         self.bot = bot
+        self.amount = amount
         self.exchange = exchange
         super().__init__()
 
@@ -310,6 +313,9 @@ class BuyAndSell(disnake.ui.View):
         cdc = await self.bot.db.cd("exchanges")
         assets = await cdc.find_one({"_id": self.exchange})
 
+        if self.amount is not None:
+            tot_buy = self.amount
+
         if tot_buy > len(list(assets['assets'].keys())):
             tot_buy = len(list(assets['assets'].keys()))
 
@@ -356,8 +362,9 @@ class BuyAndSell(disnake.ui.View):
 
 
 class SellAndBuy(disnake.ui.View):
-    def __init__(self, bot, exchange):
+    def __init__(self, bot, exchange, amount):
         self.bot = bot
+        self.amount = amount
         self.exchange = exchange
         super().__init__()
 
@@ -458,10 +465,27 @@ class SellAndBuy(disnake.ui.View):
                     embed = disnake.Embed(description=msg)
                     return await inter.response.edit_message(embed=embed, view=None)
 
-                for _ in list(acoes['sold'].keys()):
-                    assets['assets'][_] = assets['sold'][_]
-                    assets['assets'][_]['owner'] = None
-                    del assets['sold'][_]
+                if self.amount is None:
+
+                    for _ in list(acoes['sold'].keys()):
+                        assets['assets'][_] = assets['sold'][_]
+                        assets['assets'][_]['owner'] = None
+                        del assets['sold'][_]
+
+                else:
+
+                    if self.amount > amount:
+                        msg = f"<:negate:721581573396496464>│`Você não tem {self.amount} ações de` " \
+                              f"**{self.exchange}** `para essa operação!`"
+                        embed = disnake.Embed(description=msg)
+                        return await inter.response.edit_message(embed=embed, view=None)
+
+                    for _ in range(self.amount):
+                        asset = choice(list(acoes['sold'].keys()))
+                        assets['assets'][asset] = assets['sold'][asset]
+                        assets['assets'][asset]['owner'] = None
+                        del assets['sold'][asset]
+                        del acoes['sold'][asset]
 
                 query = {"$set": {"assets": assets["assets"], "sold": assets['sold']}}
                 await cdc.update_one({"_id": self.exchange}, query)
@@ -470,6 +494,7 @@ class SellAndBuy(disnake.ui.View):
                 cd = await self.bot.db.cd("users")
                 await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
 
+                amount = amount if self.amount is None else self.amount
                 msg = f"✅│`Você vendeu` **{amount}** `ação da provincia de:` " \
                       f"**{self.exchange}**"
                 embed = disnake.Embed(description=msg)
@@ -548,7 +573,7 @@ class Miner(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.group(name='broker', aliases=['corretora', 'bk'])
-    async def broker(self, ctx):
+    async def broker(self, ctx, amount: int = None):
         if ctx.invoked_subcommand is None:
 
             msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
@@ -556,7 +581,7 @@ class Miner(commands.Cog):
 
             provinces = list(self.bot.broker.exchanges.keys())
             view = ViewDefault(ctx.author)
-            view.add_item(SelectProvinces(provinces, self.bot))
+            view.add_item(SelectProvinces(provinces, self.bot, amount))
 
             description = "```\n" \
                           "Legenda das Cores:\n" \
