@@ -374,6 +374,12 @@ class GuildBank(commands.Cog):
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
+        bonus = 10
+        if self.bot.event_special:
+            bonus += 2
+
+        limit = limit * bonus  # adição do bonus
+
         if "miner_partner" not in update.keys():
             update["miner_partner"] = {
                 "active": False,
@@ -410,24 +416,23 @@ class GuildBank(commands.Cog):
         mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                                   "**mesmo que demore, aguarde o fim do processamento...**")
 
-        bonus = 15
-        if self.bot.event_special:
-            bonus += 15
-
         miner = update["miner_partner"]
         miner["active"] = True
-        miner["limit"] = limit * bonus
+        miner["limit"] = limit
         update["miner_partner"] = miner
         await self.bot.db.update_data(data, update, 'users')
+        
+        _msg = f"`Que custou para os cofres do servidor a quantia de` **R${d} ETHERNYAS**, " \
+               f"`Para saber quanto ainda tem no saldo do servidor use o comando` **ash tesouro**"
 
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner}
         self.bot.minelist_partner[f"{ctx.author.id}"] = miner
-        msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
+        msg = f"<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`\n" \
+              f"{_msg if d != 0 else '`Teve custo 0 por que o bot foi reiniciado enquanto o minerador estava ativo!`'}"
+
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
-        await ctx.send(f"`Que custou para os cofres do servidor a quantia de` **R${d} ETHERNYAS**, "
-                       f"`Para saber quanto ainda tem no saldo do servidor use o comando` **ash tesouro**",
-                       embed=embed)
+        await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

@@ -919,6 +919,12 @@ class Miner(commands.Cog):
             if update["inventory"]["Energy"] <= 0:
                 del update["inventory"]["Energy"]
 
+            bonus = 10
+            if self.bot.event_special:
+                bonus += 2
+
+            limit = limit * bonus  # adição do bonus
+
         else:
             limit = update["miner"]["limit"]
 
@@ -963,14 +969,10 @@ class Miner(commands.Cog):
         if "fragment" not in miner.keys():
             miner["fragment"] = 0
 
-        bonus = 15
-        if self.bot.event_special:
-            bonus += 15
-
         miner["exchanges"] = [ex for ex in provincias.keys()]
         miner["assets"] = [cin(asset, self.i) for asset in assets]
         miner["percent"] = percent
-        miner["limit"] = limit * bonus
+        miner["limit"] = limit
         update["miner"] = miner
         await self.bot.db.update_data(data, update, 'users')
 
