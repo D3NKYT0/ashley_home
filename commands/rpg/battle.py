@@ -622,10 +622,10 @@ class Battle(commands.Cog):
 
         if change <= 25 and player[ctx.author.id].status['hp'] > 0 and mini_boss:
             msg_return = False
-            craft = choice(["assassin_celestial_slayer_divine", "necromancer_celestial_staff_divine",
-                            "paladin_celestial_hammer_divine", "priest_celestial_bow_divine",
-                            "warlock_celestial_saint_divine", "warrior_celestial_tallum_divine",
-                            "wizard_celestial_mace_divine"])
+            craft = choice(["assassin_celestial_slayer_divine", "assassin_celestial_knife_divine",
+                            "necromancer_celestial_staff_divine", "paladin_celestial_hammer_divine",
+                            "priest_celestial_bow_divine", "warlock_celestial_saint_divine",
+                            "warrior_celestial_tallum_divine", "wizard_celestial_mace_divine"])
 
             if craft not in update["recipes"]:
                 msg_return = True
