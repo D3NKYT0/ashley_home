@@ -113,6 +113,9 @@ class ProvinceExchange(disnake.ui.View):
         assets = [cin(_, self.i) for _ in self.bot.broker.get_assets(exchange)]
         asset = '\n'.join([f"{self.i[_][0]} **{self.i[_][1]}**" for _ in assets])
 
+        if price > ast:
+            price = ast
+
         text = f"`Able:` **{ast}**`/1000`\n" \
                f"`Sold:` **{sold}**\n" \
                f"`Value:` **{be}** `BTA`\n" \
