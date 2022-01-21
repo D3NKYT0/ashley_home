@@ -7,7 +7,7 @@ from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name, paginator
 
-ETHERNYA_PRICE, EXCHANGE_RATE, EXCHANGE_RATE_BTA = 500000, 50000, 0.2584   # cotação 13/01/2022
+ETHERNYA_PRICE, EXCHANGE_RATE, EXCHANGE_RATE_BTA = 500000, 50000, 1.5537   # cotação 13/01/2022
 coin, cost, plus = 0, 0, 0
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",

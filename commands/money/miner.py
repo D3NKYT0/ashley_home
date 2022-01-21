@@ -9,7 +9,7 @@ from resources.verify_cooldown import verify_cooldown
 from asyncio import sleep
 
 
-cooldown_sell = 3600  # Default: 3600
+cooldown_sell = 86400  # Default: 86400 24 horas
 git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.gif?itemid=5613535",
        "https://media1.tenor.com/images/daf94e676837b6f46c0ab3881345c1a3/tenor.gif?itemid=9582062",
        "https://media1.tenor.com/images/0d8ed44c3d748aed455703272e2095a8/tenor.gif?itemid=3567970",
@@ -304,13 +304,16 @@ class BuyAndSell(disnake.ui.View):
         tot_buy = int(bitash / amount) if int(bitash / amount) > 0 else 0
         charged = (float(be.replace(",", ".")) - (float(be.replace(",", ".")) * 2)) * tot_buy
 
+        cdc = await self.bot.db.cd("exchanges")
+        assets = await cdc.find_one({"_id": self.exchange})
+
+        if tot_buy > len(list(assets['assets'].keys())):
+            tot_buy = len(list(assets['assets'].keys()))
+
         if bitash - (float(be.replace(",", ".")) * tot_buy) < 0:
             msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
             embed = disnake.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
-
-        cdc = await self.bot.db.cd("exchanges")
-        assets = await cdc.find_one({"_id": self.exchange})
 
         if len(list(assets['assets'].keys())) <= 0:
             msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
@@ -872,8 +875,8 @@ class Miner(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if limit > 100:
-            msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 100`"
+        if limit > 25:
+            msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 25`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
@@ -933,13 +936,14 @@ class Miner(commands.Cog):
             if update["inventory"]["Energy"] <= 0:
                 del update["inventory"]["Energy"]
 
-            bonus = 5
+            bonus = 2
             if self.bot.event_special:
-                bonus += 2
+                bonus += 1
 
             limit = limit * bonus  # adição do bonus
 
         else:
+            max_time = True
             limit = update["miner"]["limit"]
 
         mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"

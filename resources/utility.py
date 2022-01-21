@@ -209,8 +209,7 @@ async def miner_bitash(bot, miner):
     mined, percent, assets = 0, miner['data']['percent'], list(miner['data']['assets'])
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
     _HASH = ["Melted_Bone", "Life_Crystal", "Energy", "Death_Blow", "Stone_of_Soul", "Vital_Force"]
-    uptime, limits = miner["uptime"], bot.config['attribute']['limits']
-    gets = dict()
+    uptime, limits, gets = miner["uptime"], bot.config['attribute']['limits'], dict()
 
     for i in _HASH:
         if i not in assets:
@@ -230,11 +229,8 @@ async def miner_bitash(bot, miner):
 
         if uniform(0.01, 100.00) <= percent + 5.0:
             clc = await bot.db.cd("treasure")
-            all_data = [dt async for dt in clc.find()]
-            _fragment = 0
-            for data in all_data:
-                if data["_id"] == "fragment":
-                    _fragment += data["amount"]
+            data = await clc.find_one({"_id": "fragment"})
+            _fragment = data["amount"]
 
             if uniform(0.01, 100.00) <= percent:
                 bitash = uniform(0.0001, 0.1000)
@@ -265,7 +261,7 @@ async def miner_bitash(bot, miner):
                         else:
                             miner['data']['inventory'][item] = 1
 
-            mined += 1
+            mined += randint(1, 2)
             if mined >= miner['limit']:
                 del bot.minelist[f"{miner['user_id']}"]
                 miner['data']["active"] = False
@@ -275,12 +271,11 @@ async def miner_bitash(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.25)
             else:
-                await asyncio.sleep(30)
-        if uptime:
-            await asyncio.sleep(0.2)
-        else:
+                await asyncio.sleep(25)
+
+        if not uptime:
             await asyncio.sleep(1)
 
 
@@ -299,13 +294,10 @@ async def miner_partner(bot, miner):
 
         if uniform(0.01, 100.00) <= 5.0:
             clc = await bot.db.cd("treasure")
-            all_data = [dt async for dt in clc.find()]
-            _bitash, _fragment = 0.0, 0
-            for data in all_data:
-                if data["_id"] == "bitash":
-                    _bitash += data["amount"]
-                if data["_id"] == "fragment":
-                    _fragment += data["amount"]
+            data = await clc.find_one({"_id": "fragment"})
+            _fragment = data["amount"]
+            data = await clc.find_one({"_id": "bitash"})
+            _bitash = data["amount"]
 
             if uniform(0.01, 100.00) <= 5.0 and _bitash > 0.1000:
                 bitash = uniform(0.0001, 0.1000)
@@ -324,7 +316,7 @@ async def miner_partner(bot, miner):
                 await channel.send(f"🟠 {user} `Minerou` **{fragment}** `Fragment of Blessed Ethernya` {msg}")
                 miner['data']['fragment'] += fragment
 
-            mined += 1
+            mined += randint(1, 2)
             if mined >= miner['limit']:
                 del bot.minelist_partner[f"{miner['user_id']}"]
                 miner['data']["active"] = False
@@ -334,13 +326,11 @@ async def miner_partner(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.25)
             else:
-                await asyncio.sleep(30)
+                await asyncio.sleep(25)
 
-        if uptime:
-            await asyncio.sleep(0.2)
-        else:
+        if not uptime:
             await asyncio.sleep(1)
 
 

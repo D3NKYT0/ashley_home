@@ -374,9 +374,9 @@ class GuildBank(commands.Cog):
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
-        bonus = 5
+        bonus = 2
         if self.bot.event_special:
-            bonus += 2
+            bonus += 1
 
         limit = limit * bonus  # adição do bonus
         _uptime = update["inventory"].get("uptime", 0)
@@ -424,6 +424,7 @@ class GuildBank(commands.Cog):
                                       f"DESANIME USE O COMANDO` **ASH TESOURO** `E FIQUE TENTE NOVAMENTE!`")
 
         else:
+            max_time = True
             limit = update["miner_partner"]["limit"]
 
         mensagem = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
