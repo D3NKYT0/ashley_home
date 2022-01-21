@@ -209,7 +209,8 @@ async def miner_bitash(bot, miner):
     mined, percent, assets = 0, miner['data']['percent'], list(miner['data']['assets'])
     channel, user = bot.get_channel(932446926471852083), bot.get_user(int(miner['user_id']))
     _HASH = ["Melted_Bone", "Life_Crystal", "Energy", "Death_Blow", "Stone_of_Soul", "Vital_Force"]
-    uptime = miner["uptime"]
+    uptime, limits = miner["uptime"], bot.config['attribute']['limits']
+    gets = dict()
 
     for i in _HASH:
         if i not in assets:
@@ -247,11 +248,22 @@ async def miner_bitash(bot, miner):
                 await channel.send(f"🟠 {user} `Minerou` **{fragment}** `Fragment of Blessed Ethernya`")
                 miner['data']['fragment'] += fragment
 
-            item = choice(assets)
-            if item in miner['data']['inventory'].keys():
-                miner['data']['inventory'][item] += 1
-            else:
-                miner['data']['inventory'][item] = 1
+            if uniform(0.01, 100.00) <= percent + 20:
+
+                item = choice(assets)
+
+                if item in gets.keys():
+                    gets[item] += 1
+                else:
+                    gets[item] = 1
+
+                if bot.config['items'][item][1] in limits.keys():
+                    if gets[item] < limits[bot.config['items'][item][1]]:
+
+                        if item in miner['data']['inventory'].keys():
+                            miner['data']['inventory'][item] += 1
+                        else:
+                            miner['data']['inventory'][item] = 1
 
             mined += 1
             if mined >= miner['limit']:
@@ -263,11 +275,11 @@ async def miner_bitash(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(6)
+                await asyncio.sleep(1)
             else:
-                await asyncio.sleep(60)
+                await asyncio.sleep(30)
         if uptime:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.2)
         else:
             await asyncio.sleep(1)
 
@@ -322,12 +334,12 @@ async def miner_partner(bot, miner):
                 break
 
             if uptime:
-                await asyncio.sleep(6)
+                await asyncio.sleep(1)
             else:
-                await asyncio.sleep(60)
+                await asyncio.sleep(30)
 
         if uptime:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.2)
         else:
             await asyncio.sleep(1)
 

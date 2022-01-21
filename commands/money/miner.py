@@ -1010,7 +1010,7 @@ class Miner(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if ctx.author.id not in self.bot.minelist.keys():
+        if str(ctx.author.id) not in self.bot.minelist.keys():
             msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
