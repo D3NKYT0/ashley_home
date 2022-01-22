@@ -84,19 +84,19 @@ class UserBank(commands.Cog):
 
         if money is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
-                                  "**Obs:** `blessed ou real`")
+                                  "**Obs:** `blessed, real, bitash ou ethernya`")
 
         if money not in ['blessed', 'real', 'bitash', 'ethernya']:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda quer converter.`\n"
-                                  "**Obs:** `blessed ou real`")
+                                  "**Obs:** `blessed, real, bitash ou ethernya`")
 
         if font is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
-                                  "**Obs:** `ethernya ou fragment`")
+                                  "**Obs:** `ethernya, fragment, blessed, bitash  ou real`")
 
         if font not in ['ethernya', 'fragment', 'blessed', 'bitash', 'real']:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
-                                  "**Obs:** `ethernya ou fragment`")
+                                  "**Obs:** `ethernya, fragment, blessed, bitash  ou real`")
 
         # -----------------------------------
         #   proteção (contra conversão iqual)
@@ -489,48 +489,135 @@ class UserBank(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='pay', aliases=['pagar'])
-    async def pay(self, ctx, member: disnake.Member = None, amount: int = None):
+    async def pay(self, ctx, member: disnake.Member = None, amount: float = None, font: str = "ethernya"):
         """Pague aquele dinheiro que voce ficou devendo"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
         if amount is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia.`")
         if amount < 1:
-            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+            if font == "bitash":
+                if amount < 0:
+                    return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
+            else:
+                return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer uma quantia maior que 0.`")
         if member.id == ctx.author.id:
             return await ctx.send("<:alert:739251822920728708>│`Você não pode pagar a si mesmo.`")
 
+        if font is None:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
+                                  "**Obs:** `ethernya, fragment, blessed, bitash  ou real`")
+
+        if font not in ['ethernya', 'fragment', 'blessed', 'bitash', 'real']:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer qual moeda vai ser consumida.`\n"
+                                  "**Obs:** `ethernya, fragment, blessed, bitash  ou real`")
+
         data_user = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         data_member = await self.bot.db.get_data("user_id", member.id, "users")
-        update_user = data_user
-        update_member = data_member
+        update_user, update_member = data_user, data_member
+
         if data_member is None:
             return await ctx.send('<:alert:739251822920728708>│**ATENÇÃO** : '
                                   '`esse usuário não está cadastrado!`', delete_after=5.0)
+
         if member.id in self.bot.jogando:
             return await ctx.send("<:alert:739251822920728708>│`O membro está jogando, aguarde para quando"
                                   " ele estiver livre!`")
 
-        data_guild_native = await self.bot.db.get_data("guild_id", data_user['guild_id'], "guilds")
-        data_guild_native_member = await self.bot.db.get_data("guild_id", data_member['guild_id'], "guilds")
-        update_guild_native = data_guild_native
-        update_guild_native_member = data_guild_native_member
+        if font == "ethernya":
 
-        if data_user['treasure']["money"] >= amount:
-            update_user['treasure']['money'] -= amount
-            update_guild_native['data'][f'total_money'] -= amount
-            update_member['treasure']['money'] += amount
-            update_guild_native_member['data'][f'total_money'] += amount
+            amount = int(amount)
+
+            data_guild_native = await self.bot.db.get_data("guild_id", data_user['guild_id'], "guilds")
+            data_guild_native_member = await self.bot.db.get_data("guild_id", data_member['guild_id'], "guilds")
+            update_guild_native = data_guild_native
+            update_guild_native_member = data_guild_native_member
+
+            if data_user['treasure']["money"] >= amount:
+                update_user['treasure']['money'] -= amount
+                update_guild_native['data'][f'total_money'] -= amount
+                update_member['treasure']['money'] += amount
+                update_guild_native_member['data'][f'total_money'] += amount
+                await self.bot.db.update_data(data_user, update_user, 'users')
+                await self.bot.db.update_data(data_member, update_member, 'users')
+                await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
+                await self.bot.db.update_data(data_guild_native_member, update_guild_native_member, 'guilds')
+                await ctx.send(f'<:coins:519896825365528596>│`PARABENS, VC PAGOU R$ {self.format_num(amount)},00 '
+                               f'DE ETHERNYAS PARA {member.name} COM SUCESSO!`')
+                await self.bot.data.add_sts(ctx.author, "pay", 1)
+            else:
+                await ctx.send(f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DISPONIVEL DE "
+                               f"ETHERNYAS!`")
+
+        elif font == "fragment":
+
+            amount = int(amount)
+
+            if update_user["true_money"]["fragment"] < amount:
+                msg = f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DE FRAGMENTOS DE BLESSED ETHERNYA!`"
+                return await ctx.send(msg)
+
+            await self.bot.data.add_sts(ctx.author, "pay", 1)
+            update_user["true_money"]["fragment"] -= amount
+            update_member["true_money"]["fragment"] += amount
             await self.bot.db.update_data(data_user, update_user, 'users')
             await self.bot.db.update_data(data_member, update_member, 'users')
-            await self.bot.db.update_data(data_guild_native, update_guild_native, 'guilds')
-            await self.bot.db.update_data(data_guild_native_member, update_guild_native_member, 'guilds')
-            await ctx.send(f'<:coins:519896825365528596>│`PARABENS, VC PAGOU R$ {self.format_num(amount)},00 '
-                           f'DE ETHERNYAS PARA {member.name} COM SUCESSO!`')
+            msg = f'<:coins:519896825365528596>│`PARABENS, VC PAGOU {self.format_num(amount)} DE FRAGMENTOS' \
+                  f' DE BLESSED ETHERNYA PARA {member.name} COM SUCESSO!`'
+            await ctx.send(msg)
+
+        elif font == "blessed":
+
+            amount = int(amount)
+
+            if update_user["true_money"]["blessed"] < amount:
+                msg = f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DISPONIVEL DE BLESSED ETHERNYAS!`"
+                return await ctx.send(msg)
+
             await self.bot.data.add_sts(ctx.author, "pay", 1)
+            update_user["true_money"]["blessed"] -= amount
+            update_member["true_money"]["blessed"] += amount
+            await self.bot.db.update_data(data_user, update_user, 'users')
+            await self.bot.db.update_data(data_member, update_member, 'users')
+            msg = f'<:coins:519896825365528596>│`PARABENS, VC PAGOU {self.format_num(amount)} DE BLESSED ' \
+                  f'ETHERNYAS PARA {member.name} COM SUCESSO!`'
+            await ctx.send(msg)
+
+        elif font == "bitash":
+
+            if update_user["true_money"]["bitash"] < amount:
+                msg = f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DISPONIVEL DE BITASH!`"
+                return await ctx.send(msg)
+
+            await self.bot.data.add_sts(ctx.author, "pay", 1)
+            update_user["true_money"]["bitash"] -= amount
+            update_member["true_money"]["bitash"] += amount
+            await self.bot.db.update_data(data_user, update_user, 'users')
+            await self.bot.db.update_data(data_member, update_member, 'users')
+            quantidade = self.bot.broker.format_bitash(amount)
+            msg = f'<:coins:519896825365528596>│`PARABENS, VC PAGOU B$ {quantidade} DE BITASH ' \
+                  f'PARA {member.name} COM SUCESSO!`'
+            await ctx.send(msg)
+
+        elif font == "real":
+
+            amount = int(amount)
+
+            if update_user["true_money"]["real"] < amount:
+                msg = f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DISPONIVEL DE REAIS!`"
+                return await ctx.send(msg)
+
+            await self.bot.data.add_sts(ctx.author, "pay", 1)
+            update_user["true_money"]["real"] -= amount
+            update_member["true_money"]["real"] += amount
+            await self.bot.db.update_data(data_user, update_user, 'users')
+            await self.bot.db.update_data(data_member, update_member, 'users')
+            msg = f'<:coins:519896825365528596>│`PARABENS, VC PAGOU R$ {self.format_num(amount)},00 REAIS ' \
+                  f'PARA {member.name} COM SUCESSO!`'
+            await ctx.send(msg)
+
         else:
-            await ctx.send(f"<:alert:739251822920728708>│`VOCÊ NÃO TEM ESSE VALOR DISPONIVEL DE "
-                           f"ETHERNYAS!`")
+            await ctx.send("<:alert:739251822920728708>│`Algo ocoreu erado, por favor tente novamente!`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)

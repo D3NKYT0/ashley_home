@@ -217,7 +217,11 @@ async def miner_bitash(bot, miner):
 
     bonus = 0
     if miner["uptime"]:
-        bonus += 25
+        bonus += 30
+
+    chance_item = percent
+    if percent > 30:
+        chance_item = 30
 
     assets += _HASH  # sistema de proteção (para farm de itens)
 
@@ -251,7 +255,7 @@ async def miner_bitash(bot, miner):
                 await channel.send(f"🟠 {user} `Minerou` **{fragment}** `Fragment of Blessed Ethernya`")
                 miner['data']['fragment'] += fragment
 
-            if uniform(0.01, 100.00) <= percent + 25 + bonus:
+            if uniform(0.01, 100.00) <= chance_item + 30 + bonus:
 
                 item = choice(assets)
 
