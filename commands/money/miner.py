@@ -74,7 +74,10 @@ class SelectProvinces(disnake.ui.Select):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange, self.amount))
+        try:
+            await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange, self.amount))
+        except disnake.errors.NotFound:
+            pass
 
 
 class ProvinceExchange(disnake.ui.View):
@@ -132,7 +135,10 @@ class ProvinceExchange(disnake.ui.View):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange, self.amount))
+        try:
+            await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange, self.amount))
+        except disnake.errors.NotFound:
+            pass
 
     @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell", style=disnake.ButtonStyle.primary)
     async def _sell(self, button, inter):
@@ -173,7 +179,10 @@ class ProvinceExchange(disnake.ui.View):
         embed.set_thumbnail(url=inter.user.display_avatar)
         embed.set_footer(text=f"Ashley ® Todos os direitos reservados.")
 
-        await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange, self.amount))
+        try:
+            await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange, self.amount))
+        except disnake.errors.NotFound:
+            pass
 
     @disnake.ui.button(emoji="<:back:933204477492744252>", label="Back", style=disnake.ButtonStyle.gray)
     async def _back(self, button, inter):
@@ -240,7 +249,10 @@ class ProvinceExchange(disnake.ui.View):
 
         msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
-        await inter.response.edit_message(embed=embed, view=None)
+        try:
+            await inter.response.edit_message(embed=embed, view=None)
+        except disnake.errors.NotFound:
+            pass
 
 
 class BuyAndSell(disnake.ui.View):
@@ -292,7 +304,10 @@ class BuyAndSell(disnake.ui.View):
 
         msg = f"<:confirmed:721581574461587496>│`Você comprou` **1** `ação da provincia de:` **{self.exchange}**"
         embed = disnake.Embed(description=msg)
-        await inter.response.edit_message(embed=embed, view=None)
+        try:
+            await inter.response.edit_message(embed=embed, view=None)
+        except disnake.errors.NotFound:
+            pass
 
     @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy All", style=disnake.ButtonStyle.green)
     async def _buy_all(self, button, inter):
@@ -348,7 +363,10 @@ class BuyAndSell(disnake.ui.View):
 
         msg = f"<:confirmed:721581574461587496>│`Você comprou` **{tot_buy}** `ações da provincia:` **{self.exchange}**"
         embed = disnake.Embed(description=msg)
-        await inter.response.edit_message(embed=embed, view=None)
+        try:
+            await inter.response.edit_message(embed=embed, view=None)
+        except disnake.errors.NotFound:
+            pass
 
     @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
@@ -572,62 +590,61 @@ class Miner(commands.Cog):
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @commands.group(name='broker', aliases=['corretora', 'bk'])
+    @commands.command(name='broker', aliases=['corretora', 'bk'])
     async def broker(self, ctx, amount: int = None):
-        if ctx.invoked_subcommand is None:
 
-            msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
-                                 "**mesmo que demore, aguarde o fim do processamento...**")
+        msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
+                             "**mesmo que demore, aguarde o fim do processamento...**")
 
-            provinces = list(self.bot.broker.exchanges.keys())
-            view = ViewDefault(ctx.author)
-            view.add_item(SelectProvinces(provinces, self.bot, amount))
+        provinces = list(self.bot.broker.exchanges.keys())
+        view = ViewDefault(ctx.author)
+        view.add_item(SelectProvinces(provinces, self.bot, amount))
 
-            description = "```\n" \
-                          "Legenda das Cores:\n" \
-                          "Branco: Todas as ações disponivel\n" \
-                          "Verde: Muitas ações disponiveis\n" \
-                          "Laranja: Poucas ações disponiveis\n" \
-                          "Vermelho: Nenhuma ação disponivel" \
-                          "```"
+        description = "```\n" \
+                      "Legenda das Cores:\n" \
+                      "Branco: Todas as ações disponivel\n" \
+                      "Verde: Muitas ações disponiveis\n" \
+                      "Laranja: Poucas ações disponiveis\n" \
+                      "Vermelho: Nenhuma ação disponivel" \
+                      "```"
 
-            embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
-            cd = await self.bot.db.cd("exchanges")
-            all_data = [d async for d in cd.find()]
-            tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
+        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        cd = await self.bot.db.cd("exchanges")
+        all_data = [d async for d in cd.find()]
+        tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
-            for exchange in provinces:
-                value = self.bot.broker.get_exchange(exchange)
-                be = self.bot.broker.format_bitash(value / self.bot.current_rate)
-                be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
-                tot_global += value / self.bot.current_rate * tot
-                flutuation = self.bot.broker.format_flutuation(float(self.bot.tradingview.get_flutuation(exchange)))
+        for exchange in provinces:
+            value = self.bot.broker.get_exchange(exchange)
+            be = self.bot.broker.format_bitash(value / self.bot.current_rate)
+            be_tot = self.bot.broker.format_bitash(value / self.bot.current_rate * tot)
+            tot_global += value / self.bot.current_rate * tot
+            flutuation = self.bot.broker.format_flutuation(float(self.bot.tradingview.get_flutuation(exchange)))
 
-                data = [d for d in all_data if d["_id"] == exchange][0]
-                ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
+            data = [d for d in all_data if d["_id"] == exchange][0]
+            ast, sold = len(data['assets'].keys()), len(data['sold'].keys())
 
-                text = f"`Able:` **{ast}**`/1000`\n" \
-                       f"`Sold:` **{sold}**\n" \
-                       f"`Value:` **{be}** `BTA`\n" \
-                       f"`Flutuation:` **{flutuation}%**\n" \
-                       f"`Total:` **{be_tot}**"
+            text = f"`Able:` **{ast}**`/1000`\n" \
+                   f"`Sold:` **{sold}**\n" \
+                   f"`Value:` **{be}** `BTA`\n" \
+                   f"`Flutuation:` **{flutuation}%**\n" \
+                   f"`Total:` **{be_tot}**"
 
-                _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
-                embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
+            _emo = emo[3] if ast == tot else emo[0] if 100 <= ast <= 999 else emo[2] if 1 <= ast <= 99 else emo[1]
+            embed.add_field(name=f"{_emo} {exchange}", value=text, inline=True)
 
-            embed.set_thumbnail(url=ctx.author.display_avatar)
-            et = self.bot.broker.format_value(tot_global * self.bot.current_rate)
-            bk = self.bot.broker.format_bitash(tot_global)
-            embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
+        embed.set_thumbnail(url=ctx.author.display_avatar)
+        et = self.bot.broker.format_value(tot_global * self.bot.current_rate)
+        bk = self.bot.broker.format_bitash(tot_global)
+        embed.set_footer(text=f"Valor Total da bolsa: {bk} BTA (bitash) | {et} ethernyas")
 
-            await msg.delete()
-            await ctx.send(embed=embed, view=view)
+        await msg.delete()
+        await ctx.send(embed=embed, view=view)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
-    @broker.group(name='wallet', aliases=['w', 'carteira'])
-    async def _wallet(self, ctx):
+    @commands.command(name='bkw', aliases=['bkwallet'])
+    async def bkw(self, ctx):
 
         msg = await ctx.send("<a:loading:520418506567843860>│ `AGUARDE, ESTOU PROCESSANDO SEU PEDIDO!`\n"
                              "**mesmo que demore, aguarde o fim do processamento...**")

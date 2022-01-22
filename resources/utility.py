@@ -222,7 +222,10 @@ async def miner_bitash(bot, miner):
         if not bot.minelist[f"{miner['user_id']}"]["active"]:
             del bot.minelist[f"{miner['user_id']}"]
             miner['data']["active"] = False
-            await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
+            msg = ""
+            if miner["uptime"]:
+                msg += "**com o uptime**"
+            await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<< {msg}")
             cl = await bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
             break
@@ -265,7 +268,10 @@ async def miner_bitash(bot, miner):
             if mined >= miner['limit']:
                 del bot.minelist[f"{miner['user_id']}"]
                 miner['data']["active"] = False
-                await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<<")
+                msg = ""
+                if miner["uptime"]:
+                    msg += "**com o uptime**"
+                await channel.send(f"🔴 >>> MINERADOR DO [{user.mention}] FOI DESATIVADO <<< {msg}")
                 cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner": miner['data']}})
                 break
@@ -287,7 +293,10 @@ async def miner_partner(bot, miner):
         if not bot.minelist_partner[f"{miner['user_id']}"]["active"]:
             del bot.minelist_partner[f"{miner['user_id']}"]
             miner['data']["active"] = False
-            await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
+            msg = ""
+            if miner["uptime"]:
+                msg += "**com o uptime**"
+            await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<< {msg}")
             cl = await bot.db.cd("users")
             await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
             break
@@ -320,7 +329,10 @@ async def miner_partner(bot, miner):
             if mined >= miner['limit']:
                 del bot.minelist_partner[f"{miner['user_id']}"]
                 miner['data']["active"] = False
-                await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<<")
+                msg = ""
+                if miner["uptime"]:
+                    msg += "**com o uptime**"
+                await channel.send(f"🔴 >>> MINERADOR **PARTNER** DO [{user.mention}] FOI DESATIVADO <<< {msg}")
                 cl = await bot.db.cd("users")
                 await cl.update_one({"user_id": miner['user_id']}, {"$set": {"miner_partner": miner['data']}})
                 break
