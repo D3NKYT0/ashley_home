@@ -205,7 +205,10 @@ class DugeonClass(commands.Cog):
                 await msg.delete()
                 break
 
-            await inter.response.defer()  # respondendo a interação
+            try:
+                await inter.response.defer()  # respondendo a interação
+            except disnake.errors.NotFound:
+                pass
 
             if player.battle:
 
@@ -216,9 +219,7 @@ class DugeonClass(commands.Cog):
                     dg_data["dungeons"]["tower"]["locs"].append(pos)
                     await cl.update_one({"user_id": ctx.author.id}, {"$set": dg_data})
 
-                _msg = "<:alert:739251822920728708>│`Você ganhou uma batalha!`\n" \
-                       "**Obs:** `use o comando` **ASH BT TOWER**"
-                await ctx.send(_msg, delete_after=5.0)
+                await ctx.send("<:alert:739251822920728708>│`Você acumulou uma batalha!`", delete_after=5.0)
 
                 player.battle = False
 
@@ -345,41 +346,45 @@ class DugeonClass(commands.Cog):
 
                 moviment = await player.move('up')
                 if isinstance(moviment, disnake.File):
-                    await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=move)
+                    msg = await msg.edit(embed=embed, view=move)
+                else:
+                    await ctx.send("<:alert:739251822920728708>│`Tente outra direção`", delete_after=5.0)
 
             elif str(inter.component.emoji) == "⬇️":
 
                 moviment = await player.move('down')
                 if isinstance(moviment, disnake.File):
-                    await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=move)
+                    msg = await msg.edit(embed=embed, view=move)
+                else:
+                    await ctx.send("<:alert:739251822920728708>│`Tente outra direção`", delete_after=5.0)
 
             elif str(inter.component.emoji) == "⬅️":
 
                 moviment = await player.move('left')
                 if isinstance(moviment, disnake.File):
-                    await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=move)
+                    msg = await msg.edit(embed=embed, view=move)
+                else:
+                    await ctx.send("<:alert:739251822920728708>│`Tente outra direção`", delete_after=5.0)
 
             elif str(inter.component.emoji) == "➡️":
 
                 moviment = await player.move('right')
                 if isinstance(moviment, disnake.File):
-                    await msg.delete()
                     embed = disnake.Embed(color=self.bot.color)
                     embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     embed.set_image(file=moviment)
-                    msg = await ctx.send(embed=embed, view=move)
+                    msg = await msg.edit(embed=embed, view=move)
+                else:
+                    await ctx.send("<:alert:739251822920728708>│`Tente outra direção`", delete_after=5.0)
 
             await sleep(1)
 

@@ -481,7 +481,7 @@ class GuildBank(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
 
         self.bot.minelist_partner[f"{ctx.author.id}"]["status"] = False
-        msg = "<:confirmed:721581574461587496>│`Minerador parado com sucesso`"
+        msg = "<:confirmed:721581574461587496>│`Minerador esta esperando para ser parado com sucesso`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 

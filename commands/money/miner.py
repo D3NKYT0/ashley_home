@@ -948,6 +948,7 @@ class Miner(commands.Cog):
         adamantium = update["inventory"].get("adamantium", 0)
         energy = update["inventory"].get("Energy", 0)
         max_time = False
+        msg_return = ""
 
         if not update["miner"]["active"]:
 
@@ -988,6 +989,7 @@ class Miner(commands.Cog):
             limit = limit * bonus  # adição do bonus
 
         else:
+            msg_return += '`Que teve custo 0 por que o bot foi reiniciado enquanto o minerador estava ativo!`'
             max_time = True
             limit = update["miner"]["limit"]
 
@@ -1041,7 +1043,7 @@ class Miner(commands.Cog):
 
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner, "uptime": max_time}
         self.bot.minelist[f"{ctx.author.id}"] = miner
-        msg = "<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`"
+        msg = f"<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!` {msg_return}"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
         await ctx.send(embed=embed)
@@ -1073,7 +1075,7 @@ class Miner(commands.Cog):
         await self.bot.db.update_data(data, update, 'users')
 
         self.bot.minelist[f"{ctx.author.id}"]["status"] = False
-        msg = "<:confirmed:721581574461587496>│`Minerador parado com sucesso`"
+        msg = "<:confirmed:721581574461587496>│`Minerador esta esperando para ser parado com sucesso`"
         embed = disnake.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
