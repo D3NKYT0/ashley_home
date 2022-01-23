@@ -15,7 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 class Map:
-    def __init__(self):
+    def __init__(self, dungeons):
         self._NUM = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                      16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30)
         self._LETTERS = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
@@ -30,19 +30,7 @@ class Map:
             "5": (255, 255, 0, 255),
         }
 
-        self.GUNDEONS = {
-            "start_floor": [11, 30],
-            "floor-1": [11, 30],
-            "floor-2": [11, 30],
-            "floor-3": [11, 30],
-            "floor-4": [11, 30],
-            "floor-5": [11, 30],
-            "floor-6": [30, 30],
-            "floor-7": [30, 30],
-            "floor-8": [30, 30],
-            "floor-9": [30, 30],
-            "last-floor": [30, 30]
-        }
+        self.GUNDEONS = dungeons
 
     def get_map(self, img_map=None, show_img=False):
 
@@ -269,13 +257,13 @@ class MovePlayer(disnake.ui.View):
 
 
 class Player:
-    def __init__(self, ctx, map_now, matriz, pos, dg):
+    def __init__(self, ctx, map_now, matriz, pos, dg, dungeons):
         self.ctx = ctx
         self.dg = dg
         self.map = map_now
         self.matriz = matriz
         self.battle = False
-        self.Map = Map()
+        self.Map = Map(dungeons)
         self.x, self.y = pos
 
     async def move(self, direction):

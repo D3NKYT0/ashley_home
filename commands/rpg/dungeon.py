@@ -137,7 +137,7 @@ class DugeonClass(commands.Cog):
 
         self.bot.explorando.append(ctx.author.id)
 
-        mapper, map_name = Map(), self.dgtl[update['dungeons']['tower']['floor']]
+        mapper, map_name = Map(self.dgt), self.dgtl[update['dungeons']['tower']['floor']]
         map_now = mapper.get_map(img_map=map_name)
         matriz, pos = mapper.get_matrix(map_now, self.dgt[map_name])
         x, y = pos[1][1], pos[1][0]
@@ -174,7 +174,7 @@ class DugeonClass(commands.Cog):
             embed.set_image(file=disnake.File(file, 'map.png'))
             msg = await ctx.send(embed=embed, view=move)
 
-        player = Player(ctx, map_now, matriz, [x, y], "tower")
+        player = Player(ctx, map_now, matriz, [x, y], "tower", self.dgt)
 
         while not ctx.bot.is_closed():
 
@@ -471,7 +471,7 @@ class DugeonClass(commands.Cog):
 
         self.bot.explorando.append(ctx.author.id)
 
-        mapper, map_name = Map(), self.dgpl[update['dungeons']['pyramid']['floor']]
+        mapper, map_name = Map(self.dgp), self.dgpl[update['dungeons']['pyramid']['floor']]
         map_now = mapper.get_map(img_map=map_name)
         matriz, pos = mapper.get_matrix(map_now, self.dgp[map_name])
         x, y = pos[1][1], pos[1][0]
@@ -508,7 +508,7 @@ class DugeonClass(commands.Cog):
             embed.set_image(file=disnake.File(file, 'map.png'))
             msg = await ctx.send(embed=embed, view=move)
 
-        player = Player(ctx, map_now, matriz, [x, y], "pyramid")
+        player = Player(ctx, map_now, matriz, [x, y], "pyramid", self.dgp)
 
         while not ctx.bot.is_closed():
 
