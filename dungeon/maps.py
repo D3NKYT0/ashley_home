@@ -123,7 +123,7 @@ class Map:
 
     def get_vision(self, map_dict, loc_now):    
         # loc start
-        y, x = loc_now
+        x, y = loc_now
 
         # vision 3 x 3
         up_left = x - 1, y + 1
@@ -281,7 +281,7 @@ class Player:
     async def move(self, direction):
         x, y = self.x, self.y
 
-        if direction == 'left':
+        if direction == 'up':
 
             wall = False
 
@@ -315,7 +315,7 @@ class Player:
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'right':
+        elif direction == 'down':
 
             wall = False
 
@@ -349,7 +349,7 @@ class Player:
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'up':
+        elif direction == 'left':
 
             wall = False
 
@@ -383,7 +383,7 @@ class Player:
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'down':
+        elif direction == 'right':
 
             wall = False
 
