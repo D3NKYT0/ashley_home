@@ -47,10 +47,13 @@ class Battle(commands.Cog):
 
         battle_special, floor = False, 0
         if dungeon is not None:
-            if moon.lower() not in ["tower", "tw"]:
+            if moon.lower() not in ["tower", "tw", "py", "pyramid"]:
                 dungeon = None
             else:
-                dungeon = "tower"
+                if moon.lower() in ["tower", "tw"]:
+                    dungeon = "tower"
+                elif moon.lower() in ["py", "pyramid"]:
+                    dungeon = "pyramid"
 
                 if dungeon not in update["dungeons"].keys():
                     msg = '<:negate:721581573396496464>│`VOCE NÃO ATIVOU ESSA DUNGEON AINDA!`\n' \
@@ -68,11 +71,11 @@ class Battle(commands.Cog):
 
         special_miniboss = False
         if mini_boss:
-            if "tower" in update["dungeons"].keys():
-                if update["dungeons"]["tower"]["active"] and not update["dungeons"]["tower"]["miniboss"]:
+            if dungeon in update["dungeons"].keys():
+                if update["dungeons"][dungeon]["active"] and not update["dungeons"][dungeon]["miniboss"]:
                     special_miniboss = True
 
-                elif update["dungeons"]["tower"]["active"] and not update["dungeons"]["tower"]["miniboss_final"]:
+                elif update["dungeons"][dungeon]["active"] and not update["dungeons"][dungeon]["miniboss_final"]:
                     if update['dungeons']['tower']['floor'] == 10:
                         special_miniboss = True
 
@@ -685,12 +688,13 @@ class Battle(commands.Cog):
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
 
         if mini_boss and special_miniboss and player[ctx.author.id].status['hp'] > 0:
-            if not update["dungeons"]["tower"]["miniboss"]:
-                update["dungeons"]["tower"]["miniboss"] = True
+            if not update["dungeons"][dungeon]["miniboss"]:
+                update["dungeons"][dungeon]["miniboss"] = True
 
-            if update['dungeons']['tower']['floor'] == 10:
-                if not update["dungeons"]["tower"]["miniboss_final"]:
-                    update["dungeons"]["tower"]["miniboss_final"] = True
+            floor_limit = 10 if dungeon == "tower" else 4
+            if update['dungeons'][dungeon]['floor'] == floor_limit:
+                if not update["dungeons"][dungeon]["miniboss_final"]:
+                    update["dungeons"][dungeon]["miniboss_final"] = True
 
             await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU COM UM MINIBOSS PELA DUNGEON`")
 
@@ -701,7 +705,10 @@ class Battle(commands.Cog):
 
             if randint(1, 100) <= 20 and not update["dungeons"][dungeon]["map"]:
                 update["dungeons"][dungeon]["map"] = True
-                map_name = self.bot.config['attribute']['list_tower'][floor]
+                if dungeon == "tower":
+                    map_name = self.bot.config['attribute']['list_tower'][floor]
+                else:
+                    map_name = self.bot.config['attribute']['list_pyramid'][floor]
                 msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨\n" \
                       f"**Obs:** `use o comando` **ash dg {dungeon} map** `para ver o mapa novamente!`"
                 file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
