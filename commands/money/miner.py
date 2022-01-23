@@ -191,6 +191,7 @@ class ProvinceExchange(disnake.ui.View):
             pass
 
         try:
+
             await inter.response.defer()
 
             provinces = list(self.bot.broker.exchanges.keys())
@@ -237,9 +238,7 @@ class ProvinceExchange(disnake.ui.View):
             await inter.edit_original_message(embed=embed, view=view)
 
         except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
-            msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await inter.edit_original_message(embed=embed, view=None)
+            pass
 
     @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
     async def _exit(self, button, inter):
@@ -442,9 +441,7 @@ class SellAndBuy(disnake.ui.View):
                 await inter.edit_original_message(embed=embed, view=None)
 
             except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
-                msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
-                return await inter.edit_original_message(embed=embed, view=None)
+                pass
 
         else:
             msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
@@ -520,9 +517,7 @@ class SellAndBuy(disnake.ui.View):
                 await inter.edit_original_message(embed=embed, view=None)
 
             except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
-                msg = "<:alert:739251822920728708>│`Algo ocorreu errado, por favor tente novamente!`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
-                return await inter.edit_original_message(embed=embed, view=None)
+                pass
 
         else:
             msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
