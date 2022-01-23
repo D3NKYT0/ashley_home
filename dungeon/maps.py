@@ -37,15 +37,17 @@ class Map:
         _MAP = dict()
 
         if img_map is None:
-            img_patch = f"dungeon/maps/start_floor.png"
-            size = self.GUNDEONS["start_floor"]
+            _map = list(self.GUNDEONS.keys())[0]
+            img_patch = f"dungeon/maps/{_map}.png"
+            size = self.GUNDEONS[_map]
         else:
             if img_map in self.GUNDEONS.keys():
                 img_patch = f"dungeon/maps/{img_map}.png"
                 size = self.GUNDEONS[img_map]
             else:
-                img_patch = f"dungeon/maps/start_floor.png"
-                size = self.GUNDEONS["start_floor"]
+                _map = list(self.GUNDEONS.keys())[0]
+                img_patch = f"dungeon/maps/{_map}.png"
+                size = self.GUNDEONS[_map]
 
         # load image
         image = Image.open(img_patch).convert('RGBA')
