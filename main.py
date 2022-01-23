@@ -107,7 +107,7 @@ class Ashley(commands.AutoShardedBot):
 
         # definição do inicio e o fim da manutenção
         self.maintenance = False  # Default: False
-        self.maintenance_ini_end = ["13:00", "22:00"]  # inicio e fim da manutenção
+        self.maintenance_ini_end = ["23:00", "01:00"]  # inicio e fim da manutenção
         self.maintenance_msg = f"<a:xablau:525105065460105226>│`DESCULPE ESTOU EM MANUTENÇÃO. MAS DENTRO DE ALGUMAS" \
                                f" HORAS TUDO ESTARÁ NORMALIZADO. MANUTENÇÃO INICOU HOJE AS " \
                                f"({self.maintenance_ini_end[0]}) PREVISAO DE TERMINO " \
@@ -118,8 +118,8 @@ class Ashley(commands.AutoShardedBot):
 
         # status
         self.is_ashley = True  # Default: False
-        self.d_event = [2022, 1, 1, (1, 3)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "NATAL"  # NOME DO EVENTO ATUAL
+        self.d_event = [2022, 1, 25, (1, 31)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "BOLSA_DE_VALORES"  # NOME DO EVENTO ATUAL
         self.rate_drop = 4
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False

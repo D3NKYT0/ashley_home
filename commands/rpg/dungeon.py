@@ -89,16 +89,6 @@ class DugeonClass(commands.Cog):
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
-        if ctx.author.id in self.bot.explorando:
-            self.bot.explorando.remove(ctx.author.id)
-            update['dungeons']["tower"]["position_now"] = [-1, -1]
-            await self.bot.db.update_data(data, update, 'users')
-            msg = '<:alert:739251822920728708>│`VOCE ESTAVA NUMA DUNGEON, MAS FOI RESETADO!`\n' \
-                  '`a dungeon` **[Tower of Alasthor]** `resetou sua localização!`\n' \
-                  '**Obs:** `use o comando (ash dg tw) novamente pra iniciar!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
-            return await ctx.send(embed=embed)
-
         if not update['dungeons']['tower']['active']:
             msg = "<:negate:721581573396496464>│`VOCÊ JA FINALIZOU ESSA DUNGEON`"
             embed = disnake.Embed(color=self.bot.color, description=msg)
@@ -174,6 +164,7 @@ class DugeonClass(commands.Cog):
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
         move.add_item(disnake.ui.Button(emoji="⬆️", style=_style[1]))
         move.add_item(disnake.ui.Button(label="‏", style=_style[0], disabled=True))
+        move.add_item(disnake.ui.Button(emoji="❌", style=disnake.ButtonStyle.red))
         move.add_item(disnake.ui.Button(emoji="⬅️", style=_style[1], row=1))
         move.add_item(disnake.ui.Button(emoji=_emoji, style=_style[2], row=1))
         move.add_item(disnake.ui.Button(emoji="➡️", style=_style[1], row=1))
@@ -222,6 +213,11 @@ class DugeonClass(commands.Cog):
                 await ctx.send("<:alert:739251822920728708>│`Você acumulou uma batalha!`", delete_after=5.0)
 
                 player.battle = False
+
+            if str(inter.component.emoji) == "❌" and not player.battle:
+                await ctx.send("<:negate:721581573396496464>│`COMANDO CANCELADO!`")
+                await msg.delete()
+                break
 
             if str(inter.component.emoji) == _emoji:
 
@@ -385,8 +381,6 @@ class DugeonClass(commands.Cog):
                     msg = await msg.edit(embed=embed, view=move)
                 else:
                     await ctx.send("<:alert:739251822920728708>│`Tente outra direção`", delete_after=5.0)
-
-            await sleep(1)
 
         if ctx.author.id in self.bot.explorando:
             self.bot.explorando.remove(ctx.author.id)

@@ -123,18 +123,20 @@ class Map:
 
     def get_vision(self, map_dict, loc_now):    
         # loc start
-        x, y = loc_now
+        y, x = loc_now
 
         # vision 3 x 3
-        down_left = x - 1, y - 1
-        cell_left = x - 1, y
         up_left = x - 1, y + 1
-        down_center = x, y - 1
         up_center = x, y + 1
         up_right = x + 1, y + 1
-        down_right = x + 1, y - 1
-        cell_right = x + 1, y
+
+        cell_left = x - 1, y
         cell_center = x, y
+        cell_right = x + 1, y
+
+        down_left = x - 1, y - 1
+        down_center = x, y - 1
+        down_right = x + 1, y - 1
 
         vision = [down_left, cell_left, up_left,
                   down_center, cell_center, up_center,
@@ -279,9 +281,19 @@ class Player:
     async def move(self, direction):
         x, y = self.x, self.y
 
-        if direction == 'up':
-            if (int(self.matriz[y][x - 1]) == 0) or y == 0:
-                return int(self.matriz[y][x - 1])
+        if direction == 'left':
+
+            wall = False
+
+            if x - 1 < 0:
+                wall = True
+
+            elif int(self.matriz[y][x - 1]) == 0:
+                wall = True
+
+            if wall:
+                return int(self.matriz[y][x])
+
             else:
                 self.x -= 1
 
@@ -295,17 +307,27 @@ class Player:
                     dt["dungeons"]["tower"]["locs"].append(pos)
                     query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query, "$inc": battle})
-
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
+
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'down':
-            if (int(self.matriz[y][x + 1]) == 0) or x == len(self.matriz) - 1:
-                return int(self.matriz[y][x + 1])
+        elif direction == 'right':
+
+            wall = False
+
+            if x + 1 > len(self.matriz[y]):
+                wall = True
+
+            elif int(self.matriz[y][x + 1]) == 0:
+                wall = True
+
+            if wall:
+                return int(self.matriz[y][x])
+
             else:
                 self.x += 1
 
@@ -319,17 +341,27 @@ class Player:
                     dt["dungeons"]["tower"]["locs"].append(pos)
                     query[f"dungeons.{self.dg}.locs"] = dt["dungeons"]["tower"]["locs"]
                 await cl.update_one({"user_id": self.ctx.author.id}, {"$set": query, "$inc": battle})
-
                 vision = self.Map.get_vision(self.map, [self.y, self.x])
                 _map = self.Map.create_map(vision, "vision_map")
+
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'left':
-            if (int(self.matriz[y - 1][x]) >= len(self.matriz) - 1) or (int(self.matriz[y - 1][x]) == 0):
-                return int(self.matriz[y - 1][x])
+        elif direction == 'up':
+
+            wall = False
+
+            if y - 1 < 0:
+                wall = True
+
+            elif int(self.matriz[y - 1][x]) == 0:
+                wall = True
+
+            if wall:
+                return int(self.matriz[y][x])
+
             else:
                 self.y -= 1
 
@@ -351,10 +383,21 @@ class Player:
                     file.seek(0)
                     return disnake.File(file, 'map.png')
 
-        elif direction == 'right':
-            if (int(self.matriz[y + 1][x]) == 0) or x == 0:
-                return [int(self.matriz[y + 1][x]), self.matriz[y]]
+        elif direction == 'down':
+
+            wall = False
+
+            if y + 1 > len(self.matriz):
+                wall = True
+
+            elif int(self.matriz[y + 1][x]) == 0:
+                wall = True
+
+            if wall:
+                return int(self.matriz[y][x])
+
             else:
+
                 self.y += 1
 
                 cl = await self.ctx.bot.db.cd("users")
