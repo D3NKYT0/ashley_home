@@ -47,12 +47,12 @@ class Battle(commands.Cog):
 
         battle_special, floor = False, 0
         if dungeon is not None:
-            if moon.lower() not in ["tower", "tw", "py", "pyramid"]:
+            if moon.lower() not in ["tower", "tw", "py", "pyramid", "pm"]:
                 dungeon = None
             else:
                 if moon.lower() in ["tower", "tw"]:
                     dungeon = "tower"
-                elif moon.lower() in ["py", "pyramid"]:
+                elif moon.lower() in ["py", "pyramid", "pm"]:
                     dungeon = "pyramid"
 
                 if dungeon not in update["dungeons"].keys():
@@ -76,7 +76,11 @@ class Battle(commands.Cog):
                     special_miniboss = True
 
                 elif update["dungeons"][dungeon]["active"] and not update["dungeons"][dungeon]["miniboss_final"]:
+
                     if update['dungeons']['tower']['floor'] == 10:
+                        special_miniboss = True
+
+                    if update['dungeons']['pyramid']['floor'] == 4:
                         special_miniboss = True
 
         if ctx.author.id in self.bot.desafiado:
