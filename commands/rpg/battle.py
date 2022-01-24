@@ -40,19 +40,20 @@ class Battle(commands.Cog):
         update = data
 
         if moon is None:
-            dungeon, mini_boss = None, False
+            dungeon, mini_boss, moon_dg = None, False, ""
         else:
-            mini_boss = False if moon != "moon" else True
-            dungeon = None if mini_boss else moon
+            moon_dg = "" if len(moon.split()) < 2 else str(moon.split()[1])
+            mini_boss = False if str(moon.split()[0]) != "moon" else True
+            dungeon = None if mini_boss else str(moon.split()[0])
 
         battle_special, floor = False, 0
         if dungeon is not None:
-            if moon.lower() not in ["tower", "tw", "py", "pyramid", "pm"]:
+            if str(moon.split()[0]).lower() not in ["tower", "tw", "py", "pyramid", "pm"]:
                 dungeon = None
             else:
-                if moon.lower() in ["tower", "tw"]:
+                if str(moon.split()[0]).lower() in ["tower", "tw"]:
                     dungeon = "tower"
-                elif moon.lower() in ["py", "pyramid", "pm"]:
+                elif str(moon.split()[0]).lower() in ["py", "pyramid", "pm"]:
                     dungeon = "pyramid"
 
                 if dungeon not in update["dungeons"].keys():
@@ -69,13 +70,24 @@ class Battle(commands.Cog):
                         battle_special = True
                     floor = update["dungeons"][dungeon]["floor"]
 
+        if moon_dg not in ["tower", "tw", "py", "pyramid", "pm"]:
+            moon_dg = None
+
+        else:
+
+            if moon_dg in ["tower", "tw"]:
+                moon_dg = "tower"
+
+            elif moon_dg in ["py", "pyramid", "pm"]:
+                moon_dg = "pyramid"
+
         special_miniboss = False
-        if mini_boss:
-            if dungeon in update["dungeons"].keys():
-                if update["dungeons"][dungeon]["active"] and not update["dungeons"][dungeon]["miniboss"]:
+        if mini_boss and moon_dg is not None:
+            if moon_dg in update["dungeons"].keys():
+                if update["dungeons"][moon_dg]["active"] and not update["dungeons"][moon_dg]["miniboss"]:
                     special_miniboss = True
 
-                elif update["dungeons"][dungeon]["active"] and not update["dungeons"][dungeon]["miniboss_final"]:
+                elif update["dungeons"][moon_dg]["active"] and not update["dungeons"][moon_dg]["miniboss_final"]:
 
                     if update['dungeons']['tower']['floor'] == 10:
                         special_miniboss = True

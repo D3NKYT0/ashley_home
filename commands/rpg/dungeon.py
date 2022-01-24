@@ -131,7 +131,7 @@ class DugeonClass(commands.Cog):
 
             if not update['dungeons']['tower']['miniboss']:
                 msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES DE PROSSEGUIR NA' \
-                      ' DUNGEON!`\n**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                      ' DUNGEON!`\n**Obs:** `use o comando` **ASH BT MOON TW** `para batalhar com um miniboss`'
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
@@ -278,7 +278,7 @@ class DugeonClass(commands.Cog):
                         if not dg_data['dungeons']['tower']['miniboss_final']:
                             msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES' \
                                   ' DE PROSSEGUIR NA DUNGEON!`\n' \
-                                  '**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                                  '**Obs:** `use o comando` **ASH BT MOON TW** `para batalhar com um miniboss`'
                             embed = disnake.Embed(color=self.bot.color, description=msg)
                             await ctx.send(embed=embed)
                             break
@@ -465,7 +465,7 @@ class DugeonClass(commands.Cog):
 
             if not update['dungeons']['pyramid']['miniboss']:
                 msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES DE PROSSEGUIR NA' \
-                      ' DUNGEON!`\n**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                      ' DUNGEON!`\n**Obs:** `use o comando` **ASH BT MOON PM** `para batalhar com um miniboss`'
                 embed = disnake.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
@@ -612,7 +612,7 @@ class DugeonClass(commands.Cog):
                         if not dg_data['dungeons']['pyramid']['miniboss_final']:
                             msg = '<:negate:721581573396496464>│`VOCE PRECISA BATALHAR COM UM MINIBOSS ANTES' \
                                   ' DE PROSSEGUIR NA DUNGEON!`\n' \
-                                  '**Obs:** `use o comando` **ASH BT MOON** `para batalhar com um miniboss`'
+                                  '**Obs:** `use o comando` **ASH BT MOON PM** `para batalhar com um miniboss`'
                             embed = disnake.Embed(color=self.bot.color, description=msg)
                             await ctx.send(embed=embed)
                             break
