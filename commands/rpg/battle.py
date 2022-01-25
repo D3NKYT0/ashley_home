@@ -160,26 +160,32 @@ class Battle(commands.Cog):
 
         _class = data["rpg"]["class_now"]
         _db_class = data["rpg"]["sub_class"][_class]
-        player_level_now = _db_class['level']
+        player_level_now, level_active_xp_low = _db_class['level'], False
 
         min_max, is_xp, is_level = None, False, 0
         if ctx.channel.id in [911688232159301685, 911784419633811466]:
             min_max = [1, 11]  # lvl 1 a 11
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(1, 11)
         if ctx.channel.id in [911784453167271966, 911689145150234714]:
             min_max = [11, 21]  # lvl 11 a 21
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(11, 21)
         if ctx.channel.id in [911689195410563112, 911784469982236732]:
             min_max = [21, 41]  # lvl 21 a 41
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(21, 41)
         if ctx.channel.id in [911689231687090187, 911784517788905514]:
             min_max = [41, 61]  # lvl 41 a 61
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(41, 61)
         if ctx.channel.id in [911689266705367060, 911784553180434432]:
             min_max = [61, 81]  # lvl 61 a 81
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(61, 81)
         if ctx.channel.id in [911784615780446219, 911784631592964136]:
             min_max = [81, 99]  # lvl 81 a 99
+            level_active_xp_low = True if min_max[0] <= player_level_now <= min_max[1] else False
             is_xp, is_level = True, randint(81, 99)
 
         xp_bonus_area = False
@@ -419,7 +425,11 @@ class Battle(commands.Cog):
         # depois da batalha
         if monster[ctx.author.id].status['hp'] > 0:
             if not self.xp_off[ctx.author.id]:
-                await self.bot.data.add_xp(ctx, xp_reward[2])
+                if is_xp:
+                    if level_active_xp_low:
+                        await self.bot.data.add_xp(ctx, xp_reward[2])
+                else:
+                    await self.bot.data.add_xp(ctx, xp_reward[2])
             embed = disnake.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
                 color=0x000000
@@ -704,13 +714,13 @@ class Battle(commands.Cog):
                                f'✨ **SCROLL OF SHIRT** ✨ `EM`\n{icon} **1** `{name}`')
 
         if mini_boss and special_miniboss and player[ctx.author.id].status['hp'] > 0:
-            if not update["dungeons"][dungeon]["miniboss"]:
-                update["dungeons"][dungeon]["miniboss"] = True
+            if not update["dungeons"][moon_dg]["miniboss"]:
+                update["dungeons"][moon_dg]["miniboss"] = True
 
-            floor_limit = 10 if dungeon == "tower" else 4
-            if update['dungeons'][dungeon]['floor'] == floor_limit:
-                if not update["dungeons"][dungeon]["miniboss_final"]:
-                    update["dungeons"][dungeon]["miniboss_final"] = True
+            floor_limit = 10 if moon_dg == "tower" else 4
+            if update['dungeons'][moon_dg]['floor'] == floor_limit:
+                if not update["dungeons"][moon_dg]["miniboss_final"]:
+                    update["dungeons"][moon_dg]["miniboss_final"] = True
 
             await ctx.send(f"<:confirmed:721581574461587496>|`VOCE BATALHOU COM UM MINIBOSS PELA DUNGEON`")
 

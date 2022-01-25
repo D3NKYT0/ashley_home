@@ -177,6 +177,14 @@ class DugeonClass(commands.Cog):
         player = Player(ctx, map_now, matriz, [x, y], "tower", self.dgt)
 
         while not ctx.bot.is_closed():
+        
+            try:
+                if int(player.matriz[player.y][player.x]) == 1:
+                    pass
+            except IndexError:
+                x, y = player.x, player.y
+                player.x =  y
+                player.y = x
 
             def check(m):
                 if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id and m.message.id == msg.id:
@@ -511,6 +519,14 @@ class DugeonClass(commands.Cog):
         player = Player(ctx, map_now, matriz, [x, y], "pyramid", self.dgp)
 
         while not ctx.bot.is_closed():
+        
+            try:
+                if int(player.matriz[player.y][player.x]) == 1:
+                    pass
+            except IndexError:
+                x, y = player.x, player.y
+                player.x =  y
+                player.y = x
 
             def check(m):
                 if m.user.id == ctx.author.id and m.channel.id == ctx.channel.id and m.message.id == msg.id:
@@ -548,7 +564,6 @@ class DugeonClass(commands.Cog):
                 break
 
             if str(inter.component.emoji) == _emoji:
-
                 if int(player.matriz[player.y][player.x]) in [1, 2, 4, 5]:  # caminho
                     cl = await self.bot.db.cd("users")
                     dg_data = await cl.find_one({"user_id": ctx.author.id}, {"dungeons": 1, "inventory": 1})
