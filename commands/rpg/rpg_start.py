@@ -113,13 +113,13 @@ class RpgStart(commands.Cog):
         if not data['rpg']['active']:
 
             if asks['class_now'] in ["paladin", "warrior"]:
-                set_ini = {"16": 1, "17": 1, "18": 1, "19": 1, "20": 1}
+                set_ini = {"16": 1, "17": 1, "18": 1, "19": 1, "20": 1, "paladin_1": 1, "warrior_1": 1}
 
             elif asks['class_now'] in ["necromancer", "wizard", "warlock"]:
-                set_ini = {"61": 1, "62": 1, "63": 1, "64": 1, "65": 1}
+                set_ini = {"61": 1, "62": 1, "63": 1, "64": 1, "65": 1, "necromancer_1": 1, "wizard_1": 1, "warlock_1": 1}
 
             else:
-                set_ini = {"11": 1, "12": 1, "13": 1, "14": 1, "15": 1}
+                set_ini = {"11": 1, "12": 1, "13": 1, "14": 1, "15": 1, "assassin_1": 1, "priest_1": 1}
 
             update['rpg']["active"] = True
             update['rpg']["class_now"] = asks['class_now']
