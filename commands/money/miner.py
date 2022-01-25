@@ -322,7 +322,6 @@ class BuyAndSell(disnake.ui.View):
 
         amount = float(be.replace(",", "."))
         tot_buy = int(bitash / amount) if int(bitash / amount) > 0 else 0
-        charged = (float(be.replace(",", ".")) - (float(be.replace(",", ".")) * 2)) * tot_buy
 
         cdc = await self.bot.db.cd("exchanges")
         assets = await cdc.find_one({"_id": self.exchange})
@@ -332,6 +331,8 @@ class BuyAndSell(disnake.ui.View):
 
         if tot_buy > len(list(assets['assets'].keys())):
             tot_buy = len(list(assets['assets'].keys()))
+            
+        charged = (float(be.replace(",", ".")) - (float(be.replace(",", ".")) * 2)) * tot_buy
 
         if bitash - (float(be.replace(",", ".")) * tot_buy) < 0:
             msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
@@ -472,7 +473,6 @@ class SellAndBuy(disnake.ui.View):
 
                 value = self.bot.broker.get_exchange(self.exchange)
                 be = self.bot.broker.format_bitash(value / self.bot.current_rate)
-                charged = float(be.replace(",", ".")) * amount
 
                 if amount == 0:
                     msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
@@ -501,6 +501,9 @@ class SellAndBuy(disnake.ui.View):
                         assets['assets'][asset]['owner'] = None
                         del assets['sold'][asset]
                         del acoes['sold'][asset]
+                        
+                amount = self.amount if self.amount is not None else amount
+                charged = float(be.replace(",", ".")) * amount
 
                 query = {"$set": {"assets": assets["assets"], "sold": assets['sold']}}
                 await cdc.update_one({"_id": self.exchange}, query)
@@ -509,7 +512,6 @@ class SellAndBuy(disnake.ui.View):
                 cd = await self.bot.db.cd("users")
                 await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
 
-                amount = amount if self.amount is None else self.amount
                 msg = f"✅│`Você vendeu` **{amount}** `ação da provincia de:` " \
                       f"**{self.exchange}**"
                 embed = disnake.Embed(description=msg)
