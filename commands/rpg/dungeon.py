@@ -24,6 +24,8 @@ class DugeonClass(commands.Cog):
         self.reward_tc = self.bot.config['attribute']['reward_tower_comum']
         self.reward_te = self.bot.config['attribute']['reward_tower_especial']
         self.reward_ce = self.bot.config['attribute']['reward_chunck_especial']
+        self.reward_tep = self.bot.config['attribute']['reward_pyramid_especial']
+        self.reward_cep = self.bot.config['attribute']['reward_chunck_especial_py']
 
     def status(self):
         for v in self.bot.data_cog.values():
@@ -245,7 +247,7 @@ class DugeonClass(commands.Cog):
                                 it, qt = choice(self.reward_te), 1
 
                             chunck_special = ""
-                            if randint(1, 100) <= 20 and dg_data["dungeons"]["tower"]["special_chunks"] > 0:
+                            if randint(1, 100) <= 20 and dg_data["dungeons"]["tower"]["special_chunks"] > 0 and num != 5:
                                 dg_data["dungeons"]["tower"]["special_chunks"] -= 1
                                 it, qt, chunck_special = choice(self.reward_ce), 1, "`CHUNCK ESPECIAL`"
 
@@ -597,12 +599,12 @@ class DugeonClass(commands.Cog):
                         if find:
                             it, qt = choice(self.reward_tc), randint(1, 2)
                             if num == 5:
-                                it, qt = choice(self.reward_te), 1
+                                it, qt = choice(self.reward_tep), 1
 
                             chunck_special = ""
-                            if randint(1, 100) <= 20 and dg_data["dungeons"]["pyramid"]["special_chunks"] > 0:
+                            if randint(1, 100) <= 20 and dg_data["dungeons"]["pyramid"]["special_chunks"] > 0 and num != 5:
                                 dg_data["dungeons"]["pyramid"]["special_chunks"] -= 1
-                                it, qt, chunck_special = choice(self.reward_ce), 1, "`CHUNCK ESPECIAL`"
+                                it, qt, chunck_special = choice(self.reward_cep), 1, "`CHUNCK ESPECIAL`"
 
                             if it in dg_data["inventory"].keys():
                                 dg_data["inventory"][it] += qt
@@ -648,7 +650,7 @@ class DugeonClass(commands.Cog):
 
                         _msg = "<a:fofo:524950742487007233>│`PARABENS VOCÊ FINALIZOU TODA A DUNGEON:`\n" \
                                "✨ **[Pyramid of Aka'Du]** ✨\n" \
-                               "**Obs:** `Você ganhou por completar toda a DUNGEON uma` **Blessed Armor Divine**"
+                               "**Obs:** `Você ganhou por completar toda a DUNGEON 3` **Blessed Armor Divine**"
                         await ctx.send(_msg)
 
                         query = {
@@ -665,7 +667,7 @@ class DugeonClass(commands.Cog):
                             }}
 
                         inventory = {
-                            "inventory.blessed_armor_divine": 1
+                            "inventory.blessed_armor_divine": 3
                         }
 
                         await cl.update_one({"user_id": ctx.author.id}, {"$set": query, "$inc": inventory})
