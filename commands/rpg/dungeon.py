@@ -426,7 +426,21 @@ class DugeonClass(commands.Cog):
             return await ctx.send(embed=embed)
 
         if not update['dungeons']['pyramid']['active']:
-            msg = "<:negate:721581573396496464>│`VOCÊ JA FINALIZOU ESSA DUNGEON`"
+            pyramid = {
+                "active": True,
+                "position_now": [-1, -1],
+                "floor": 0,
+                "battle": 0,
+                "special_chunks": 10,
+                "map": False,
+                "miniboss": False,
+                "miniboss_final": False,
+                "locs": list()
+            }
+            update['dungeons']["pyramid"] = pyramid
+            msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a dungeon` **[Pyramid of Aka\'Du]** ' \
+                  '`foi resetada na sua conta com sucesso!`\n**Obs:** `use o comando novamente pra iniciar!`'
+            await self.bot.db.update_data(data, update, 'users')
             embed = disnake.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
