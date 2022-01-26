@@ -416,7 +416,8 @@ class SellAndBuy(disnake.ui.View):
                     msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
                           f"`suficiente para essa operação!`"
                     embed = disnake.Embed(description=msg)
-                    return await inter.response.edit_message(embed=embed, view=None)
+                    await _MSG.delete()
+                    return await inter.edit_original_message(embed=embed, view=None)
 
                 query = {"$unset": dict(), "$set": dict()}
 
@@ -478,7 +479,8 @@ class SellAndBuy(disnake.ui.View):
                     msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
                           f"`suficiente para essa operação!`"
                     embed = disnake.Embed(description=msg)
-                    return await inter.response.edit_message(embed=embed, view=None)
+                    await _MSG.delete()
+                    return await inter.edit_original_message(embed=embed, view=None)
 
                 if self.amount is None:
 
@@ -493,7 +495,8 @@ class SellAndBuy(disnake.ui.View):
                         msg = f"<:negate:721581573396496464>│`Você não tem {self.amount} ações de` " \
                               f"**{self.exchange}** `para essa operação!`"
                         embed = disnake.Embed(description=msg)
-                        return await inter.response.edit_message(embed=embed, view=None)
+                        await _MSG.delete()
+                        return await inter.edit_original_message(embed=embed, view=None)
 
                     for _ in range(self.amount):
                         asset = choice(list(acoes['sold'].keys()))
