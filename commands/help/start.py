@@ -48,6 +48,8 @@ class Helper(commands.Cog):
 
             embed.add_field(name="**Extras:**",
                             value="ℹ [Sobre a Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Sobre)\n"
+                                  "📄 [Política de Privacidade](https://github.com/D3NKYT0/ashley_home/wiki/Pol%C3%ADtica"
+                                  "-de-Privacidade)\n"
                                   "📓 [Iniciando na Ashley](https://github.com/D3NKYT0/ashley_home/wiki/Iniciando-na"
                                   "-Ashley)\n "
                                   "👑 [Benefícios VIP](https://github.com/D3NKYT0/ashley_home/wiki/Beneficios-VIP)\n"
