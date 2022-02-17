@@ -147,7 +147,7 @@ class Ashley(commands.AutoShardedBot):
         self.github = "https://github.com/D3NKYT0/ashley_home"
         self.progress = f"V.2 -> {_auth['version']}"
         self.python_version = platform.python_version()
-        self.version_str = f"2.2.5"
+        self.version_str = f"2.5.0"
         self.version = f"API: {disnake.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes
@@ -1004,15 +1004,6 @@ class Ashley(commands.AutoShardedBot):
 
     async def on_guild_join(self, guild):
         if str(guild.id) in self.blacklist:
-            msg = "EU FUI RETIRADA DESSE SERVIDOR SEM MOTIVO APARENTE, LOGO VC DEVE ENTRAR COM UM PEDIDO PARA RETIRAR" \
-                  " SEU SERVIDOR (GUILD) DA MINHA LISTA NEGRA, VOCÊ PODE FAZER ISSO ENTRANDO NO MEU SERVIDOR (GUILD)" \
-                  " DE SUPORTE E FALANDO COM UM DOS MEUS DESENVOLVEDORES\n LINK DO SERVIDOR:\n " \
-                  "https://discord.gg/rYT6QrM"
-            try:
-                if guild.system_channel is not None:
-                    await guild.system_channel.send(msg)
-            except disnake.errors.Forbidden:
-                pass
             await guild.leave()
         else:
             entrance = self.get_channel(619899848082063372)
@@ -1027,15 +1018,11 @@ class Ashley(commands.AutoShardedBot):
             data = await self.db.get_data("guild_id", guild.id, "guilds")
             if data is not None:
                 blacklist = self.get_channel(542134573010518017)
-                msg = f"> **{guild.id}:** {guild.name} `ME RETIROU DO SERVIDOR LOGO ENTROU NA BLACKLIST`"
-                await blacklist.send(msg)
                 embed = await guild_info(guild)
                 await blacklist.send(embed=embed)
-                await self.ban_(guild.id, msg)
             else:
                 blacklist = self.get_channel(542134573010518017)
-                msg = f"> **{guild.id}:** {guild.name} `ME RETIROU DO SERVIDOR MAS NÃO TINHA FEITO O RESGISTRO, " \
-                      f"ENTÃO NÃO ENTROU NA MINHA BLACKLIST!`"
+                msg = f"> **{guild.id}:** {guild.name} `ME RETIROU DO SERVIDOR MAS NÃO TINHA FEITO O REGISTRO !`"
                 await blacklist.send(msg)
                 embed = await guild_info(guild)
                 await blacklist.send(embed=embed)
