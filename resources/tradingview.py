@@ -13,7 +13,7 @@ else:
 class TradingView(object):
     def __init__(self):
         self.flutuation = all_data['attribute']["flutuation"]
-        self.exchange_rate = 0.50
+        self.exchange_rate = 0.15
 
     def get_link(self, exchange):
         company = f'{self.flutuation[exchange][1]}'
@@ -29,11 +29,11 @@ class TradingView(object):
         change = flutuation.get_analysis().indicators["change"]
         change = change + (change * self.exchange_rate)
 
-        if change < -15:
-            change = -15.0
+        if change < -5:
+            change = -5.0
 
-        if change > 15:
-            change = 15.0
+        if change > 5:
+            change = 5.0
 
         return change
 

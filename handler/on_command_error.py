@@ -35,7 +35,8 @@ class CommandErrorHandler(commands.Cog):
             "Command raised an exception: discordServerError: 503 Service Unavailable (error code: 0): upstream"
             "connect error or disconnect/reset before headers. reset reason: connection failure",
             "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe",
-            "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer"
+            "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer",
+            "disnake.errors.DiscordServerError: 500 Internal Server Error (error code: 0): 500: Internal Server Error"
         ]
 
     def error_check(self, error):
@@ -136,7 +137,7 @@ class CommandErrorHandler(commands.Cog):
             # retorno da msg de erro fora de CTX
             await ctx.send(f"<:alert:739251822920728708>│{ctx.author.mention} `HOUVE UM ERRO NA API DO DISCORD E SEU"
                            f" COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O COMANDO"
-                           f" NOVAMENTE!`", delete_after=5.0)
+                           f" NOVAMENTE!`", delete_after=30.0)
 
         # Todos os outros erros não retornados vêm aqui... E podemos mostrar o TraceBack padrão.
         # como nao quero print de comando esperando para ser usado, faço a exceção
@@ -152,7 +153,7 @@ class CommandErrorHandler(commands.Cog):
                     await channel.send(f"<:negate:721581573396496464>│`Ocorreu um erro no comando:` "
                                        f"**{ctx.command}**, `no servidor:` **{ctx.guild}**, `no canal:` "
                                        f"**{ctx.channel}** `com o membro:` **{ctx.author}**  "
-                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()[:3000]}**")
+                                       f"`com o id:` **{ctx.author.id}**, `com o erro:` **{error.__str__()[:1500]}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)

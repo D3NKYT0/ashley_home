@@ -10,10 +10,10 @@
 
 
 ## Sobre Mim
->Meu primeiro projeto no GITHUB - Daniel Amaral (27 Anos) Recife/PE
+>Meu primeiro projeto no GITHUB - Daniel Amaral (28 Anos) Recife/PE
 - Email: danielamaral.f@hotmail.com
-- Criado por: Denky#5960🤴
-Adicione ela em seu servidor [clicando aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&scope=bot&permissions=806218998)!😁
+- Criado por: Denky#9370🤴
+Adicione ela em seu servidor [clicando aqui](https://discordapp.com/oauth2/authorize?client_id=1012217155141517312&scope=bot&permissions=0)!😁
 Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 ## [Ashley Wiki](https://github.com/Ashley-Lab/ashley_home/wiki)  
@@ -41,7 +41,7 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 **Núcleo de Programação**
 
-- Denky#5960 (Daniel Amaral)
+- Denky#9370 (Daniel Amaral)
 - Patchouli Knowledge#9732 (Olivia Martins)
 - Eduardo Rodrigues#9999 (Eduardo Rodrigues)
 
@@ -53,5 +53,5 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 **Scripts da IA**
 
-- Denky#5960 (Daniel Amaral)
+- Denky#9370 (Daniel Amaral)
 - Bublee#9482 (Geórgia Bezerra)

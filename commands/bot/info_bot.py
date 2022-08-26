@@ -55,8 +55,8 @@ class BotInfo(commands.Cog):
         embed_bot.add_field(name='<:cool:745375589245911190> Bot  | Version', value=str(ver_), inline=False)
         embed_bot.add_field(name="<a:loading:520418506567843860> | Tempo Online", value=f"{uptime}", inline=False)
         embed_bot.add_field(name="<:yep:745375589564809216> | Me add em seu Servidor",
-                            value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id=478977311266570242&s"
-                                  "cope=bot&permissions=806218998)", inline=False)
+                            value="[Clique Aqui](https://discordapp.com/oauth2/authorize?client_id="
+                                  "1012217155141517312&scope=bot&permissions=0)", inline=False)
         embed_bot.set_footer(text=f"Comando usado por {ctx.author} às {date}",
                              icon_url=ctx.author.display_avatar)
         await ctx.send(delete_after=120, embed=embed_bot)

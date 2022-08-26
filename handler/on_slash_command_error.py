@@ -35,7 +35,8 @@ class SlashCommandErrorHandler(commands.Cog):
             "Command raised an exception: discordServerError: 503 Service Unavailable (error code: 0): upstream"
             "connect error or disconnect/reset before headers. reset reason: connection failure",
             "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe",
-            "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer"
+            "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer",
+            "disnake.errors.DiscordServerError: 500 Internal Server Error (error code: 0): 500: Internal Server Error"
         ]
 
     def error_check(self, error):
@@ -142,7 +143,7 @@ class SlashCommandErrorHandler(commands.Cog):
             await inter.response.send_message(
                 f"<:alert:739251822920728708>│{inter.author.mention} `HOUVE UM ERRO NA API DO DISCORD E "
                 f"SEU COMANDO FOI PARADO NO MEIO DO PROCESSO, INFELIZMENTE VOCÊ VAI TERÁ QUE USAR O "
-                f"COMANDO NOVAMENTE!`", delete_after=5.0)
+                f"COMANDO NOVAMENTE!`", delete_after=30.0)
 
         # Todos os outros erros não retornados vêm aqui... E podemos mostrar o TraceBack padrão.
         # como nao quero print de comando esperando para ser usado, faço a exceção
@@ -159,7 +160,7 @@ class SlashCommandErrorHandler(commands.Cog):
                                        f"**{inter.application_command}**, `no servidor:` **{inter.guild}**, "
                                        f"`no canal:` **{inter.channel}** `com o membro:` **{inter.author}**  "
                                        f"`com o id:` **{inter.author.id}**, `com o erro:` "
-                                       f"**{error.__str__()[:3000]}**")
+                                       f"**{error.__str__()[:1500]}**")
 
                 # aqui so passa os logs dos erros nao tratados
                 # PRINT EXTERNO (PAPERTRAIL LOG)

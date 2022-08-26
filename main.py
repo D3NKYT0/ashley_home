@@ -1,5 +1,5 @@
 # ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA DISCORD.
-# CRIADO POR: DANIEL AMARAL -> Denky#5960
+# CRIADO POR: DANIEL AMARAL -> Denky#9370
 # SEGUE ABAIXO OS IMPORTS COMPLETOS
 import disnake
 import aiohttp
@@ -39,7 +39,7 @@ with open("data/auth.json") as auth:
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, shard_count=_auth["shard"], **kwargs)
-        self.owner_ids = [300592580381376513, 416606375498481686]
+        self.owner_ids = [1002003843330084946, 416606375498481686]
         self.msg_cont = 0
         self.start_time = dt.utcnow()
         self.commands_used = Counter()
@@ -101,7 +101,7 @@ class Ashley(commands.AutoShardedBot):
         self.staff = self.config['staff']['list']
         self.testers = self.config['staff']['testers'] + self.config['staff']['list']
         self.team = self.staff
-        self.admin = [416606375498481686, 300592580381376513]
+        self.admin = [416606375498481686, 1002003843330084946]
         self.shortcut = self.config['attribute']['shortcut']
         self.block = self.config['attribute']['block']
 
@@ -690,7 +690,7 @@ class Ashley(commands.AutoShardedBot):
                                 await ctx.send("<:alert:739251822920728708>│`Agora você pode comprar "
                                                "VIP GUILD ENTRANDO NO MEU SERVIDOR!`\n **Saiba mais usando ASH "
                                                "INVITE**")
-                    except AttributeError:
+                    except (AttributeError, TypeError):
                         pass
 
                 # -----------------------------------------------------------------------------------------
@@ -1200,8 +1200,7 @@ def main_bot():
            f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
            f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
-    intents = disnake.Intents.default()
-    intents.members = True
+    intents = disnake.Intents.all()
     bot = Ashley(command_prefix=_auth['prefix'], description=desc, pm_help=True, intents=intents)
     bot.remove_command('help')
     emojis, cont = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}, 0
