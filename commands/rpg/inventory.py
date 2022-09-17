@@ -542,11 +542,13 @@ class InventoryClass(commands.Cog):
 
         if "assassin celestial" in item and update['rpg']["equipped_items"]['shield'] is not None:
             if "knife" not in item:
-                return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSA ARMA JUNTO COM UM ESCUDO!`")
+                return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSA ARMA JUNTO COM UM "
+                                      "ESCUDO!`")
 
         if item == "celestial leather - shield divine" and update['rpg']["equipped_items"]['sword'] is not None:
-            if update['rpg']["equipped_items"]['sword'] not in ["assassin_8", "assassin_9"]:
-                return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSE ESCUDO JUNTO COM UMA ARMA!`")
+            if update['rpg']["equipped_items"]['sword'] not in self.bot.config["attribute"]["weapons_no_dual"]:
+                return await ctx.send("<:negate:721581573396496464>│`VOCÊ NAO PODE USAR ESSE ESCUDO JUNTO COM UMA "
+                                      "ARMA!`")
 
         equipped_items = list()
         for value in update['rpg']["equipped_items"].values():

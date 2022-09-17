@@ -1,0 +1,41 @@
+version: '3.9'
+
+networks:
+  ashley: ~
+
+services:
+  db:
+    image: mongo:4.4.12-rc0-focal
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ashleydocker
+    networks:
+      - ashley
+
+    ports:
+      - "27017:27017"
+    volumes:
+      - dbdata:/data/db
+      
+  ashley:
+    image: python:3.10.7
+    container_name: ashley
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - ashley
+    volumes:
+      - ./:/ashley/
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+volumes:
+  dbdata:
+    driver: local
+    
