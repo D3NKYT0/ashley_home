@@ -32,6 +32,12 @@ class RecipeClass(commands.Cog):
     async def craft(self, ctx, *, item=None):
         """Comando para criar itens de receitas, para fabricar suas armaduras."""
         global quant
+
+        perms = ctx.channel.permissions_for(ctx.me)
+        if not perms.add_reactions:
+            return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
         query = {"_id": 0, "user_id": 1, "inventory": 1, "recipes": 1, "rpg": 1, "config": 1}
         data_user = await (await self.bot.db.cd("users")).find_one({"user_id": ctx.author.id}, query)
         query_user = {"$inc": {}}

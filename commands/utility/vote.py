@@ -17,9 +17,8 @@ class Vote(commands.Cog):
     async def vote(self, ctx):
         """Comando usado pra votar na ashley
         Use ash vote"""
-        link_gg = "https://top.gg/bot/478977311266570242/vote"
-        link_best = "https://bestlist.online/bots/478977311266570242"
-        description = f"`Top.gg`\n**[Clique Aqui]({link_gg})**\n\n`Bestlist`\n**[Clique Aqui]({link_best})**"
+        link_gg = "https://top.gg/bot/1012217155141517312/vote"
+        description = f"`Top.gg`\n**[Clique Aqui]({link_gg})**"
         embed = disnake.Embed(description=description, color=self.color)
         embed.set_footer(text=f"Pedido por {ctx.author}")
         await ctx.send(embed=embed)

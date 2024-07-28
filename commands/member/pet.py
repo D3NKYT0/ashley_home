@@ -38,7 +38,8 @@ class Pet(commands.Cog):
 
             avatar = open(link_, 'rb')
             _webhook = await ctx.channel.create_webhook(name=pet_n, avatar=avatar.read())
-            if 'a_' in _webhook.avatar:
+            avatar_webhook = _webhook.avatar
+            if 'a_' in avatar_webhook.url:
                 format_1 = '.gif'
             else:
                 format_1 = '.webp'
@@ -51,7 +52,7 @@ class Pet(commands.Cog):
                 name=ctx.author.name,
                 icon_url=ctx.author.display_avatar
             ).set_thumbnail(
-                url=f'https://cdn.discordapp.com/avatars/{_webhook.id}/{_webhook.avatar}{format_1}?size=1024'
+                url=f'https://cdn.discordapp.com/avatars/{_webhook.id}/{avatar_webhook.url}{format_1}?size=1024'
             ).to_dict()
             await webhook.send()
             await _webhook.delete()

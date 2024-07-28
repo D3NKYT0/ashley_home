@@ -761,9 +761,9 @@ def equips(data_s):
                 for i in mapped[key][k].keys():
                     font = ImageFont.truetype(f"{_PREFIX}fonts/times.ttf", 20)
                     x_, y_ = text_align(mapped[key][k][i], f"{data_s[key][k][int(i) - 1]}", font)
-                    if 0 < int(data_s[key][k][int(i) - 1]) < 16:
+                    if 0 < int(data_s[key][k][int(i) - 1]) < 20:
                         show.rectangle(mapped[key][k][i], (91, 65, 124))
-                    if int(data_s[key][k][int(i) - 1]) >= 16:
+                    if int(data_s[key][k][int(i) - 1]) >= 20:
                         show.rectangle(mapped[key][k][i], (237, 31, 36))
                     show.text(xy=(x_ + 1, y_ - 1), text=f"{data_s[key][k][int(i) - 1]}", fill=(0, 0, 0), font=font)
                     show.text(xy=(x_, y_ - 2), text=f"{data_s[key][k][int(i) - 1]}", fill=(255, 255, 255), font=font)

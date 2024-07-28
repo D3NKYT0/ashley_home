@@ -64,6 +64,12 @@ class MailClass(commands.Cog):
     @mail.command(name='read', aliases=['ler'])
     async def _read_mail(self, ctx, *, id_mail: str = None):
         """Leia suas correnpondecias, para ver os IDs olhe o comando 'ash mail' la tem uma lista!"""
+
+        perms = ctx.channel.permissions_for(ctx.me)
+        if not perms.add_reactions:
+            return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
         id_mail = id_mail.upper() if id_mail else None
         mails, item_mails, items, find_id = list(), dict(), list(), False
         if id_mail is None:

@@ -167,6 +167,11 @@ class UserBank(commands.Cog):
         if money == "blessed" and font == "bitash":
             msg = "<:alert:739251822920728708>│`Você não pode converter` **bitash** `em` **blessed**"
             return await ctx.send(msg)
+        
+
+        if money == "ethernya" and font == "bitash":
+            msg = "<:alert:739251822920728708>│`Você não pode converter` **bitash** `em` **ethernya**"
+            return await ctx.send(msg)
 
         if money == "blessed" and font == "real":
             msg = "<:alert:739251822920728708>│`Você não pode converter` **real** `em` **blessed**"

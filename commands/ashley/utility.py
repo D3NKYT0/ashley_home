@@ -383,12 +383,14 @@ class UtilityClass(commands.Cog):
         """Comando usado apelas por DEVS para presentar eventos e doadores"""
         if time is None:
             return await ctx.send("<:alert:739251822920728708>│`Digite o tempo de cooldown do gift.`")
-        if time < 1:
-            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer um time maior que 0.`")
+
         try:
             time = int(time)
         except ValueError:
             return await ctx.send("<:alert:739251822920728708>│`O tempo de cooldown deve ser em numeros.`")
+
+        if time < 1:
+            return await ctx.send("<:alert:739251822920728708>│`Você precisa dizer um time maior que 0.`")
 
         gift = await register_gift(self.bot, time)
         gt(gift, f"{time} SEGUNDOS")

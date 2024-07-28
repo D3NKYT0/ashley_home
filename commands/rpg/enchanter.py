@@ -8,7 +8,7 @@ from config import data as _data
 from random import randint
 from resources.utility import create_id, convert_item_name
 from resources.fight import Ext
-limit, limit_weapon, extension, _class = 16, 20, Ext(), _data['skills']
+limit, limit_weapon, extension, _class = 20, 35, Ext(), _data['skills']
 levels = [5, 10, 15, 20, 25]
 
 
@@ -36,6 +36,11 @@ class EnchanterClass(commands.Cog):
                 member = ctx.message.mentions[0]
             except IndexError:
                 member = ctx.author
+
+            perms = ctx.channel.permissions_for(ctx.me)
+            if not perms.add_reactions:
+                return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                    "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
             try:
                 if self.he[ctx.author.id]:
@@ -433,6 +438,10 @@ class EnchanterClass(commands.Cog):
 
         up_chance = self.chance_armor[str(tt + 1)][data['rpg']['armors'][armor][tt]]
         chance = randint(1, 100) if "blessed" not in enchant.lower() else 1
+        if data['rpg']['armors'][armor][tt] >= 16 and "blessed" in enchant.lower():
+            chance = randint(1, 100)
+            if chance > up_chance:
+                chance = up_chance
         if chance < up_chance:
             data['rpg']['armors'][armor][tt] += 1
             msg = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `SEU ENCANTAMENTO PASSOU " \
@@ -534,6 +543,10 @@ class EnchanterClass(commands.Cog):
 
         up_chance = self.chance_weapon[str(tt + 1)][lw]
         chance = randint(1, 100) if "blessed" not in enchant.lower() else 1
+        if lw >= 20 and "blessed" in enchant.lower():
+            chance = randint(1, 100)
+            if chance > up_chance:
+                chance = up_chance
         if chance < up_chance:
             sn = " ".join(sword.split()[:]) if lw == 0 else " ".join(sword.split()[:-1])
             sn += f" +{lw + 1}"

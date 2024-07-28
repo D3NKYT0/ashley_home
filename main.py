@@ -1,5 +1,5 @@
 # ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA DISCORD.
-# CRIADO POR: DANIEL AMARAL -> Denky#9370
+# CRIADO POR: DANIEL AMARAL -> denkyto
 # SEGUE ABAIXO OS IMPORTS COMPLETOS
 import disnake
 import aiohttp
@@ -27,9 +27,9 @@ from resources.verify_cooldown import verify_cooldown
 from resources.boosters import Booster
 from resources.push import OneSignal
 from config import data as config
-from adlink.adfly_api_instance import api as api_adfly
 from disnake import Webhook
 from resources.check import validate_url
+from shortio.api import ShortioLinkGenerator
 
 with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
@@ -117,10 +117,10 @@ class Ashley(commands.AutoShardedBot):
                                f" TRANSTORNO!`"
 
         # status
-        self.is_ashley = True  # Default: False
-        self.d_event = [2022, 9, 20, (9, 30)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
-        self.event_now = "BOLSA_DE_VALORES_2"  # NOME DO EVENTO ATUAL
-        self.rate_drop = 4
+        self.is_ashley = False  # Default: False
+        self.d_event = [2023, 10, 1, (10, 15)]  # [ANO / MES /DIA INI ]/ MES END e DIA END
+        self.event_now = "RETORNO_DA_ASHLEY"  # NOME DO EVENTO ATUAL
+        self.rate_drop = 3
         self.fastboot = True  # Default: True
         self.db_struct = False  # Default: False
 
@@ -140,14 +140,14 @@ class Ashley(commands.AutoShardedBot):
 
         # Flash Event
         self.flash_event = True  # Default: False
-        self.flash_event_now = "spotify2021"  # ID do evento
+        self.flash_event_now = "stream2023"  # ID do evento
 
         # info bot
-        self.server_ = "ORACLE"
+        self.server_ = "HEROKU"
         self.github = "https://github.com/D3NKYT0/ashley_home"
         self.progress = f"V.2 -> {_auth['version']}"
         self.python_version = platform.python_version()
-        self.version_str = f"2.6.1"  # LAST UPDATE: 17/09/2022
+        self.version_str = f"2.7.1"  # LAST UPDATE: 01/10/2023
         self.version = f"API: {disnake.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes
@@ -159,7 +159,7 @@ class Ashley(commands.AutoShardedBot):
         self.tradingview: TradingView = TradingView()
 
         # system adfly reward
-        self.adfly = api_adfly
+        self.adfly: ShortioLinkGenerator = ShortioLinkGenerator()
 
         # miner bitash system
         self.minelist = dict()  # lista de mineradores para ativar
@@ -184,12 +184,12 @@ class Ashley(commands.AutoShardedBot):
 
     # create link adfly
     def adlinks(self, code):
-        _link = self.adfly.shorten(f'{self.config["config"]["site"]}/adfly/{code}')
-        return _link["data"][0]["id"], _link["data"][0]["short_url"]
+        dataShortLink = self.adfly.shorten_link(f'{self.config["config"]["site"]}/adfly/{code}')
+        return dataShortLink
 
     # delete link adfly
     def addelete(self, linkid):
-        self.adfly.delete_url(linkid)
+        self.adfly.delete_link(linkid)
 
     @staticmethod
     async def create_session():
@@ -1134,6 +1134,9 @@ class Ashley(commands.AutoShardedBot):
                                                    "ASH CHANNEL**")
 
             if message.channel.id == 837054554637467648:  # canal de sugestões da ASHLEY!
+                if not perms.add_reactions:
+                    return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                          "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
                 await message.add_reaction("<:confirmed:721581574461587496>")
                 await message.add_reaction("<:negate:721581573396496464>")
 
@@ -1196,12 +1199,12 @@ class Ashley(commands.AutoShardedBot):
 
 
 def main_bot():
-    desc = f"Um bot de assistencia para servidores criado por: Denky#5960\n" \
+    desc = f"Um bot de assistencia para servidores criado por: denkyto\n" \
            f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
            f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
     intents = disnake.Intents.all()
-    bot = Ashley(command_prefix=_auth['prefix'], description=desc, pm_help=True, intents=intents)
+    bot = Ashley(command_prefix=_auth['prefix'], description=desc, intents=intents)
     bot.remove_command('help')
     emojis, cont = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}, 0
 

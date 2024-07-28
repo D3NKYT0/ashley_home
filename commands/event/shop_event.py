@@ -45,6 +45,11 @@ class ShopEvent(commands.Cog):
         """Comando usado pra comprar um item usando item de evento."""
         if ctx.author.id in self.bot.comprando:
             return await ctx.send('<:alert:739251822920728708>│`VOCE JA ESTA EM PROCESSO DE COMPRA...`')
+        
+        perms = ctx.channel.permissions_for(ctx.me)
+        if not perms.add_reactions:
+            return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
         self.bot.comprando.append(ctx.author.id)
         recipes = copy.deepcopy(self.bot.config['events'])

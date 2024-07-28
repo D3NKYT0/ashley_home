@@ -128,7 +128,7 @@ class Adflier(commands.Cog):
         _update = _data
         if _update is not None:
             if _update['pending']:
-                text = f'<:alert:739251822920728708>│Você ainda tem esse link pendente:\n{_update["adlink"][1]}'
+                text = f'<:alert:739251822920728708>│Você ainda tem esse link pendente:\n{_update["adlink"]["secureShortURL"]}'
                 embed = disnake.Embed(color=self.color, description=text)
                 try:
                     await ctx.author.send(embed=embed)
@@ -140,16 +140,16 @@ class Adflier(commands.Cog):
                 _code1, _code2 = generate_gift()
                 code = encrypt_text(_code1)
                 codelink = code[0].replace("/", "denky")
-                link = self.bot.adlinks(codelink)
+                dataShorlink = self.bot.adlinks(codelink)
                 _update['code'] = [code[0], _code2]
-                _update['adlink'] = [link[0], link[1]]
+                _update['adlink'] = [dataShorlink, dataShorlink]
                 _update['bonus'] = _bonus
                 _update['pending'] = True
                 _update['key'] = code[2]
                 _update['iv'] = code[1]
                 await self.bot.db.update_data(_data, _update, 'adfly')
 
-                text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
+                text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{dataShorlink["secureShortURL"]}'
                 embed = disnake.Embed(color=self.color, description=text)
                 try:
                     await ctx.author.send(embed=embed)
@@ -162,10 +162,10 @@ class Adflier(commands.Cog):
             _code1, _code2 = generate_gift()
             code = encrypt_text(_code1)
             codelink = code[0].replace("/", "denky")
-            link = self.bot.adlinks(codelink)
-            await register_code(self.bot, ctx.author.id, code[0], _code2, link[0], link[1], _bonus, code[1], code[2])
+            dataShorlink = self.bot.adlinks(codelink)
+            await register_code(self.bot, ctx.author.id, code[0], _code2, dataShorlink, dataShorlink, _bonus, code[1], code[2])
 
-            text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{link[1]}'
+            text = f'<:confirmed:721581574461587496>│Clique no link para pegar seu fragmento:\n{dataShorlink["secureShortURL"]}'
             embed = disnake.Embed(color=self.color, description=text)
             try:
                 await ctx.author.send(embed=embed)
@@ -233,7 +233,7 @@ class Adflier(commands.Cog):
                            f' **{self.i[update["bonus"]][1]}** `NA HORA DE GERAR O CODIGO E GANHOU A MAIS` '
                            f'{self.i[_bonus][0]} `1` **{self.i[_bonus][1]}**')
 
-        self.bot.addelete(int(update['adlink'][0]))
+        self.bot.addelete(update['adlink'][0]['idString'])
         update['pending'] = False
         await self.bot.db.update_data(data, update, 'adfly')
 

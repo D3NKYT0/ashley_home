@@ -657,7 +657,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
 async def get_response(message):
     if len(message.content) > 10:
         if include(message.content, ['denky', 'pai', 'criador']):
-            if message.author.id != 300592580381376513:
+            if message.author.id != 1002003843330084946:
                 response = choice(responses['denky_f'])
                 return response
             else:

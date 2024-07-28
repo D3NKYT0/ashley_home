@@ -36,6 +36,11 @@ class Battle(commands.Cog):
         Use ash battle"""
         global player, monster
 
+        perms = ctx.channel.permissions_for(ctx.me)
+        if not perms.add_reactions:
+            return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
         update = data
 

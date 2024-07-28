@@ -256,6 +256,11 @@ class FarmClass(commands.Cog):
                                 query = {"$inc": {f"inventory.teleport_scroll": -1}}
                             await cl.update_one({"user_id": ctx.author.id}, query)
 
+                            perms = ctx.channel.permissions_for(ctx.me)
+                            if not perms.add_reactions:
+                                return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                                    "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
                             await botmsg.add_reaction('🔮')
                             await botmsg.add_reaction('🦁')
                             await botmsg.add_reaction('🕯')

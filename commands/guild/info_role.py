@@ -35,6 +35,11 @@ class RoleInfo(commands.Cog):
         if not role:
             return await ctx.send('<:alert:739251822920728708>│`Você precisa colocar um cargo para ver as '
                                   'informações!`')
+        
+        perms = ctx.channel.permissions_for(ctx.me)
+        if not perms.add_reactions:
+            return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
 
         created_at = role.created_at
         perms_channel = perms_check(role.permissions)

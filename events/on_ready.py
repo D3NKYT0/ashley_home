@@ -102,7 +102,7 @@ class OnReady(commands.Cog):
 
             # ESCOLHENDO O CANAL QUE VAI APARECER
             guild = self.bot.get_guild(guild.id)
-            user = guild.get_member(478977311266570242)
+            user = guild.get_member(1012217155141517312)
 
             if guild.id != 519894833783898112:
                 channels = [channel for channel in guild.channels if channel.permissions_for(user).send_messages
@@ -241,7 +241,7 @@ class OnReady(commands.Cog):
                         continue
 
                     # verificando as permissões da ashley
-                    user = guild.get_member(478977311266570242)
+                    user = guild.get_member(1012217155141517312)
                     if user.guild_permissions.external_emojis and user.guild_permissions.add_reactions:
                         # cria um loop pra cada guilda separadamente
                         self.bot.loop.create_task(self.treasure_hunt(guild))

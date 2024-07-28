@@ -47,6 +47,11 @@ class InventoryClass(commands.Cog):
         if ctx.invoked_subcommand is None:
             data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
 
+            perms = ctx.channel.permissions_for(ctx.me)
+            if not perms.add_reactions:
+                return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
+                                    "REAÇÕES, PARA PODER FUNCIONAR CORRETAMENTE!**")
+
             try:
                 if self.he[ctx.author.id]:
                     if str(ctx.command) in self.he[ctx.author.id].keys():

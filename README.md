@@ -12,7 +12,7 @@
 ## Sobre Mim
 >Meu primeiro projeto no GITHUB - Daniel Amaral (28 Anos) Recife/PE
 - Email: danielamaral.f@hotmail.com
-- Criado por: Denky#9370🤴
+- Criado por: denkyto🤴
 Adicione ela em seu servidor [clicando aqui](https://discordapp.com/oauth2/authorize?client_id=1012217155141517312&scope=bot&permissions=0)!😁
 Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
@@ -41,7 +41,7 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 **Núcleo de Programação**
 
-- Denky#9370 (Daniel Amaral)
+- denkyto (Daniel Amaral)
 - Patchouli Knowledge#9732 (Olivia Martins)
 - Eduardo Rodrigues#9999 (Eduardo Rodrigues)
 
@@ -53,5 +53,5 @@ Entre no servidor de suporte [clicando aqui](https://discord.gg/rYT6QrM)!👈
 
 **Scripts da IA**
 
-- Denky#9370 (Daniel Amaral)
+- denkyto (Daniel Amaral)
 - Bublee#9482 (Geórgia Bezerra)

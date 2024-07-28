@@ -72,7 +72,7 @@ class Economy(commands.Cog):
               f"{self.bot.money[1]} **{self.format_num(self.silver)}** | " \
               f"{self.bot.money[0]} **{self.format_num(self.bronze)}**\n\n" \
 
-        if ctx.author.id == 300592580381376513:
+        if ctx.author.id == 1002003843330084946:
             msg += f"Tenho **{self.format_num(tot_guild)}** Guildas\n" \
                    f"**{self.format_num(self.global_ranking['Bronze'])}** `no ranking Bronze` | " \
                    f"**{self.format_num(self.global_ranking['Silver'])}** `no ranking Silver` | " \
