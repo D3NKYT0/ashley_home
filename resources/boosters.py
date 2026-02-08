@@ -1,4 +1,4 @@
-from random import randint, choice
+﻿from random import randint, choice
 
 
 class Booster(object):

@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class ChannelPinUpdate(commands.Cog):
@@ -30,7 +30,7 @@ class ChannelPinUpdate(commands.Cog):
             else:
                 fix_ = "dex" + fix_
 
-            embed = disnake.Embed(color=self.color,
+            embed = discord.Embed(color=self.color,
                                   title=f":bangbang: **Uma mensagem foi {fix_}**",
                                   description=f"**Canal de texto:** {channel!s} \n{time_}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -46,6 +46,6 @@ class ChannelPinUpdate(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(ChannelPinUpdate(bot))
+async def setup(bot):
+    await bot.add_cog(ChannelPinUpdate(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mCHANNEL_PINS_UPDATE\033[1;33m foi carregado com sucesso!\33[m')

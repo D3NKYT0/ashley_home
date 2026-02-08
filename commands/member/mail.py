@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
@@ -107,7 +107,7 @@ class MailClass(commands.Cog):
         if not find_id:
             return await ctx.send(f'<:negate:721581573396496464>|`ID INVALIDO!`')
 
-        embed = disnake.Embed(title=item_mails[id_mail]["title"], color=self.bot.color)
+        embed = discord.Embed(title=item_mails[id_mail]["title"], color=self.bot.color)
         embed.description = decompress(item_mails[id_mail]["text"]).decode('utf-8')
         a = "\n"
         if item_mails[id_mail]['gift']:
@@ -175,7 +175,7 @@ class MailClass(commands.Cog):
             else:
                 msg = f"🎊 **CORRESPONDÊNCIA LIDA COM SUCESSO !!**"
             await loading.delete()
-            embed = disnake.Embed(title='📄 CORRESPONDÊNCIA', color=self.bot.color, description=msg)
+            embed = discord.Embed(title='📄 CORRESPONDÊNCIA', color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
     @check_it(no_pm=True, is_owner=True)
@@ -187,47 +187,47 @@ class MailClass(commands.Cog):
                 'global': False, 'benefited': [], 'guilds_benefited': []}
 
         msg = f"<a:blue:525032762256785409>|`QUAL O TITULO DO E-MAIL ?`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
         try:
             tittle = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if tittle.content.lower() == 'cancelar':
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         asks['title'] = tittle.content
         msg = f"<a:blue:525032762256785409>|`QUAL O CONTEUDO DO E-MAIL ?`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         try:
             text = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if text.content.lower() == 'cancelar':
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         asks['text'] = compress(bytes(text.content, encoding='utf-8'))
 
         msg = f"<a:blue:525032762256785409>|`QUAL O ITEM QUE DESEJA ADICIONAR AO PRESENTE ?`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         try:
             item = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if item.content.lower() == 'cancelar':
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if item.content.lower() in ['nenhum', 'nada']:
@@ -236,17 +236,17 @@ class MailClass(commands.Cog):
             asks['gift'] = eval(item.content)
 
         msg = f"<a:blue:525032762256785409>|`QUAL OS ID DOS USUARIOS QUE RECEBERÃO O PRESENTE ?`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         try:
             resp = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if resp.content.lower() == 'cancelar':
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if resp.content.lower() == 'global':
@@ -261,22 +261,22 @@ class MailClass(commands.Cog):
                 except ValueError:
                     _msg = f'<:negate:721581573396496464>│ Comando Cancelado\n' \
                            f'`use: global ou os IDs dos membros separados por virgula`'
-                    embed = disnake.Embed(color=self.bot.color, description=_msg)
+                    embed = discord.Embed(color=self.bot.color, description=_msg)
                     return await ctx.send(embed=embed)
             asks['benefited'] = ids
 
         msg = f"<a:blue:525032762256785409>|`QUAL OS ID DOS SERVIDORES QUE RECEBERÃO O PRESENTE ?`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         try:
             resp = await self.bot.wait_for('message', timeout=60, check=lambda message: message.author == ctx.author)
         except TimeoutError:
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if resp.content.lower() == 'cancelar':
-            embed = disnake.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
+            embed = discord.Embed(color=self.bot.color, description=f'<:negate:721581573396496464>│ Comando Cancelado')
             return await ctx.send(embed=embed)
 
         if resp.content.lower() == 'global':
@@ -290,7 +290,7 @@ class MailClass(commands.Cog):
                 except ValueError:
                     _msg = f'<:negate:721581573396496464>│ Comando Cancelado\n' \
                            f'`use: global ou os IDs das guildas separados por virgula`'
-                    embed = disnake.Embed(color=self.bot.color, description=_msg)
+                    embed = discord.Embed(color=self.bot.color, description=_msg)
                     return await ctx.send(embed=embed)
             asks['guilds_benefited'] = ids
 
@@ -300,7 +300,7 @@ class MailClass(commands.Cog):
         await mail_collection.insert_one(asks)
 
         msg = f"<:confirmed:721581574461587496>│`E-MAIL CRIADO COM SUCESSO !`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         return await ctx.send(embed=embed)
 
     @check_it(no_pm=True, is_owner=True)
@@ -312,14 +312,14 @@ class MailClass(commands.Cog):
         data = await mail_collection.find_one({'_id': id_mail.upper()})
         if data is None:
             msg = f"<:confirmed:721581574461587496>│`ID INVALIDO`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
         await mail_collection.update_one({'_id': id_mail.upper()}, {"$set": {"active": False}})
         msg = f"<:confirmed:721581574461587496>│`E-MAIL DESABILITADO COM SUCESSO!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(MailClass(bot))
+async def setup(bot):
+    await bot.add_cog(MailClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mMAIL_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

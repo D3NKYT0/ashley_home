@@ -1,5 +1,5 @@
-import disnake
-from disnake.ext import commands
+import discord
+from discord.ext import commands
 from random import choice
 from resources.check import check_it
 from resources.db import Database
@@ -18,13 +18,13 @@ class Inverse(commands.Cog):
         Use ash palin"""
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         palin = self.bot.config['palin']['list']
         answer = choice(palin)
         await ctx.send('''```Markdown\n [>]: {}```'''.format(answer.upper()))
 
 
-def setup(bot):
-    bot.add_cog(Inverse(bot))
+async def setup(bot):
+    await bot.add_cog(Inverse(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mPALINDROMO\033[1;32m foi carregado com sucesso!\33[m')

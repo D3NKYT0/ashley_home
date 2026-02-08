@@ -1,4 +1,4 @@
-from disnake.ext import commands
+﻿from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -60,6 +60,6 @@ class TransferClass(commands.Cog):
             await ctx.send('<:negate:721581573396496464>│`Desculpe, seu pedido de transferencia foi negado!`')
 
 
-def setup(bot):
-    bot.add_cog(TransferClass(bot))
+async def setup(bot):
+    await bot.add_cog(TransferClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTRANSFER_CLASS\033[1;32m foi carregado com sucesso!\33[m')

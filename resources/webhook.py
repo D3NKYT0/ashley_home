@@ -1,4 +1,4 @@
-import json
+﻿import json
 import aiohttp
 
 from datetime import datetime

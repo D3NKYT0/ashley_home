@@ -1,4 +1,4 @@
-import disnake
+import discord
 import operator
 import datetime
 import asyncio
@@ -163,7 +163,7 @@ def embed_creator(description, img_url, monster, hp_max, hp, monster_img, monste
         for c in range(0, 3):
             if color_value >= checkpoints[c]:
                 color_embed = color[c]
-    embed = disnake.Embed(
+    embed = discord.Embed(
         description=description,
         color=color_embed
     )
@@ -527,7 +527,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
 
     msg = await ctx.send('<:alert:739251822920728708>│`Aguarde...`')
 
-    class View(disnake.ui.View):
+    class View(discord.ui.View):
         def __init__(self, author):
             self.author_id = author
             self.current_page = 0
@@ -541,10 +541,10 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             else:
                 return True
 
-        @disnake.ui.button(emoji="<:inicio:749090949157748821>")
+        @discord.ui.button(emoji="<:inicio:749090949157748821>")
         async def _init(self, button, interaction):
             self.current_page = 0
-            embeds = disnake.Embed(
+            embeds = discord.Embed(
                 title=embed[0],
                 color=embed[1],
                 description=descriptions[self.current_page]
@@ -560,11 +560,11 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             if button:
                 pass
 
-        @disnake.ui.button(emoji="<:voltar:749090948931256381>")
+        @discord.ui.button(emoji="<:voltar:749090948931256381>")
         async def back(self, button, interaction):
             if self.current_page > 0:
                 self.current_page -= 1
-                embeds = disnake.Embed(
+                embeds = discord.Embed(
                     title=embed[0],
                     color=embed[1],
                     description=descriptions[self.current_page]
@@ -577,11 +577,11 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
                 button.disabled = True if self.current_page == 0 else None
                 await interaction.response.edit_message(embed=embeds, view=self)
 
-        @disnake.ui.button(emoji="<:passar:749090949136646202>")
+        @discord.ui.button(emoji="<:passar:749090949136646202>")
         async def next(self, button, interaction):
             if self.current_page < len(descriptions) - 1:
                 self.current_page += 1
-                embeds = disnake.Embed(
+                embeds = discord.Embed(
                     title=embed[0],
                     color=embed[1],
                     description=descriptions[self.current_page]
@@ -594,10 +594,10 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
                 button.disabled = True if self.current_page == len(descriptions) - 1 else None
                 await interaction.response.edit_message(embed=embeds, view=self)
 
-        @disnake.ui.button(emoji="<:fim:749090949346361435>")
+        @discord.ui.button(emoji="<:fim:749090949346361435>")
         async def end(self, button, interaction):
             self.current_page = len(descriptions) - 1
-            embeds = disnake.Embed(
+            embeds = discord.Embed(
                 title=embed[0],
                 color=embed[1],
                 description=descriptions[self.current_page]
@@ -613,7 +613,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             if button:
                 pass
 
-        @disnake.ui.button(emoji="<:fechar:749090949413732352>", style=disnake.ButtonStyle.danger)
+        @discord.ui.button(emoji="<:fechar:749090949413732352>", style=discord.ButtonStyle.danger)
         async def _close(self, button, interaction):
             if button or interaction:
                 pass
@@ -621,7 +621,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
 
     if page is None:
 
-        _embed = disnake.Embed(
+        _embed = discord.Embed(
             title=embed[0],
             color=embed[1],
             description=descriptions[0]
@@ -642,7 +642,7 @@ async def paginator(bot, items, inventory, embed, ctx, page=None, equips=None):
             else:
                 cont = page
 
-        _embed = disnake.Embed(
+        _embed = discord.Embed(
             title=embed[0],
             color=embed[1],
             description=descriptions[cont]
@@ -754,7 +754,7 @@ async def guild_info(guild):
     }
 
     verification = verification_level.get(str(guild.verification_level))
-    embed = disnake.Embed(color=int("ff00c1", 16), description="Abaixo está as informaçoes principais do servidor!")
+    embed = discord.Embed(color=int("ff00c1", 16), description="Abaixo está as informaçoes principais do servidor!")
     if guild.icon is not None:
         embed.set_thumbnail(url=guild.icon)
     embed.add_field(name="Nome:", value=guild.name, inline=True)
@@ -841,7 +841,7 @@ X
 X==:== 
 X  :   
 X  O   
-X \| 
+X \\| 
 X 
 X 
 ===========
@@ -850,7 +850,7 @@ X
 X==:== 
 X  :   
 X  O   
-X \|/ 
+X \\|/ 
 X  
 X  
 ===========
@@ -859,7 +859,7 @@ X
 X==:== 
 X  :   
 X  O   
-X \|/ 
+X \\|/ 
 X /  
 X  
 ===========
@@ -869,8 +869,8 @@ X
 X==:== 
 X  :   
 X  O   
-X \|/ 
-X / \ 
+X \\|/ 
+X / \\ 
 X 
 ===========
 ```''']

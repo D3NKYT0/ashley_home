@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import randint
@@ -95,7 +95,7 @@ class GuildBank(commands.Cog):
                 Use ash guild"""
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = disnake.Embed(color=self.bot.color)
+            embed = discord.Embed(color=self.bot.color)
             embed.add_field(name="Guilds Commands:",
                             value=f"{self.st[29]} `guild reward` Receba suas recompenças a cada hora.\n"
                                   f"{self.st[29]} `guild convert` Converta as pedras da guilda em ETHERNYAS.\n"
@@ -225,7 +225,7 @@ class GuildBank(commands.Cog):
 
         if miner["fragment"] == 0 and miner["bitash"] == 0.0:
             msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if miner["bitash"] > 0:
@@ -235,7 +235,7 @@ class GuildBank(commands.Cog):
 
             value = self.bot.broker.format_bitash(bitash)
             msg = f"<:confirmed:721581574461587496>│`Você obteve` **{value} BTA** `mineradas!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
         if miner["fragment"] > 0:
@@ -245,7 +245,7 @@ class GuildBank(commands.Cog):
 
             ct = "Fragmentos de Blessed Ethernya"
             msg = f"<:confirmed:721581574461587496>│`Você obteve` **{fragment} {ct}** `minerados!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
         update["miner_partner"] = miner
@@ -355,23 +355,23 @@ class GuildBank(commands.Cog):
 
         if limit is None:
             msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if limit > 25:
             msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 25`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if f"{ctx.author.id}" in self.bot.minelist_partner.keys():
             if self.bot.minelist_partner[f"{ctx.author.id}"]["active"]:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             else:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
         bonus = 2
@@ -396,7 +396,7 @@ class GuildBank(commands.Cog):
             if uptime == "uptime":
                 if _uptime < 1:
                     msg = f"<:negate:721581573396496464>│`Você não tem` **1 Uptime** `disponivel!`"
-                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    embed = discord.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
                 update["inventory"]["uptime"] -= 1
@@ -444,7 +444,7 @@ class GuildBank(commands.Cog):
         msg = f"<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!`\n" \
               f"{_msg if d != 0 else '`Teve custo 0 por que o bot foi reiniciado enquanto o minerador estava ativo!`'}"
 
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
         await ctx.send(embed=embed)
 
@@ -467,12 +467,12 @@ class GuildBank(commands.Cog):
 
         if "miner_partner" not in update.keys():
             msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador` **partner**"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if str(ctx.author.id) not in self.bot.minelist_partner.keys():
             msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         miner = update["miner_partner"]
@@ -482,7 +482,7 @@ class GuildBank(commands.Cog):
 
         self.bot.minelist_partner[f"{ctx.author.id}"]["status"] = False
         msg = "<:confirmed:721581574461587496>│`Minerador esta esperando para ser parado com sucesso`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @_convert.error
@@ -497,6 +497,6 @@ class GuildBank(commands.Cog):
                     return await ctx.send(f"{error}")
 
 
-def setup(bot):
-    bot.add_cog(GuildBank(bot))
+async def setup(bot):
+    await bot.add_cog(GuildBank(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mGUILDBANK\033[1;32m foi carregado com sucesso!\33[m')

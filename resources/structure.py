@@ -1,4 +1,4 @@
-user_data_structure = {
+﻿user_data_structure = {
     "user_id": None,
     "guild_id": None,
     "vip_free": False,

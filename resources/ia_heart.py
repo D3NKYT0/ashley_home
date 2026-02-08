@@ -1,4 +1,4 @@
-import unicodedata
+﻿import unicodedata
 
 
 def clear_content(string):

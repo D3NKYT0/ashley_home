@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -41,14 +41,14 @@ class TradeClass(commands.Cog):
                                   " vocÊ estiver livre!`")
 
         if not data_user['rpg']['active']:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         item_key = None
@@ -82,7 +82,7 @@ class TradeClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='trade', aliases=['trocar'])
-    async def trade(self, ctx, member: disnake.Member = None, amount: int = None, *, item=None):
+    async def trade(self, ctx, member: discord.Member = None, amount: int = None, *, item=None):
         """Comando usado para trocar equipamentos com os jogadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -116,14 +116,14 @@ class TradeClass(commands.Cog):
                                   " vocÊ estiver livre!`")
 
         if not data_user['rpg']['active']:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if data_member is None:
@@ -135,14 +135,14 @@ class TradeClass(commands.Cog):
                                   " ele estiver livre!`")
 
         if not data_member['rpg']['active']:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`O USUARIO DEVE USAR O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
 
         if member.id in self.bot.jogando:
             msg = '<:negate:721581573396496464>│`O USUARIO ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         item_key = None
@@ -171,6 +171,6 @@ class TradeClass(commands.Cog):
                                   f"{item_key[1]['name'].upper()}!`")
 
 
-def setup(bot):
-    bot.add_cog(TradeClass(bot))
+async def setup(bot):
+    await bot.add_cog(TradeClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTRADE_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

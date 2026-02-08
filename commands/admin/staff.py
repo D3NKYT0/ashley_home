@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from asyncio import TimeoutError
 from resources.check import check_it
 from resources.db import Database
@@ -25,7 +25,7 @@ class StaffAdmin(commands.Cog):
         Use ash staff"""
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = disnake.Embed(color=self.color)
+            embed = discord.Embed(color=self.color)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url="http://mieinfo.com/wp-content/uploads/2013/08/policia-mie.png")
             embed.add_field(name="Staffs Commands:",
@@ -50,7 +50,7 @@ class StaffAdmin(commands.Cog):
             return await ctx.send("<:negate:721581573396496464>│`Você nao pode apagar mais do que 100 mensagens`")
         try:
             await ctx.message.channel.purge(limit=number)
-        except disnake.Forbidden:
+        except discord.Forbidden:
             await ctx.send("<:negate:721581573396496464>│`Não tenho permissão para apagar mensagens nesse "
                            "servidor!`")
 
@@ -58,7 +58,7 @@ class StaffAdmin(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @staff.command(name='ban', aliases=['banir'])
-    async def _ban(self, ctx, member: disnake.Member = None, *, reason: str = None):
+    async def _ban(self, ctx, member: discord.Member = None, *, reason: str = None):
         """Comando usado pra banir usuarios
         Use ash staff ban <@usario a ser banido>"""
         try:
@@ -72,7 +72,7 @@ class StaffAdmin(commands.Cog):
             await ctx.guild.ban(member, delete_message_days=1, reason=reason)
             await ctx.send(f"<:confirmed:721581574461587496>│`O usuario(a)` {member.mention} `foi banido com sucesso "
                            f"do servidor.`")
-        except disnake.Forbidden:
+        except discord.Forbidden:
             await ctx.send("<:negate:721581573396496464>│`Não posso banir o usuário, o cargo dele está acima de mim "
                            "ou não tenho permissão para banir membros!`")
 
@@ -95,7 +95,7 @@ class StaffAdmin(commands.Cog):
                            "servidor.`".format(user.id))
         except IndexError:
             await ctx.send("<:alert:739251822920728708>│`Você deve especificar um usuario para expulsar!`")
-        except disnake.Forbidden:
+        except discord.Forbidden:
             await ctx.send("<:negate:721581573396496464>│`Não posso expulsar o usuário, o cargo dele está acima de"
                            " mim ou não tenho permissão para banir membros!`")
 
@@ -110,13 +110,13 @@ class StaffAdmin(commands.Cog):
             if timer is None:
                 if ctx.channel.slowmode_delay == 0:
                     await ctx.channel.edit(slowmode_delay=2)
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         color=self.color,
                         description="<:confirmed:721581574461587496>│`MODO DALEY ATIVADO!`")
                     await ctx.send(embed=embed)
                 else:
                     await ctx.channel.edit(slowmode_delay=0)
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         color=self.color,
                         description="<:confirmed:721581574461587496>│`MODO DALEY DESATIVADO!`")
                     await ctx.send(embed=embed)
@@ -125,18 +125,18 @@ class StaffAdmin(commands.Cog):
                     timer = 120
                 await ctx.channel.edit(slowmode_delay=int(timer))
                 if int(timer) == 0:
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         color=self.color,
                         description="<:confirmed:721581574461587496>│`MODO DALEY DESATIVADO!`")
                     await ctx.send(embed=embed)
                 else:
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         color=self.color,
                         description="<:confirmed:721581574461587496>│`MODO DALEY ATIVADO!`")
                     await ctx.send(embed=embed)
             else:
                 await ctx.send("<:negate:721581573396496464>│`POR FAVOR DIGITE UM NUMERO`")
-        except disnake.Forbidden:
+        except discord.Forbidden:
             await ctx.send("<:negate:721581573396496464>│`NÃO TENHO PERMISSÃO PARA ALTERAR ESSE CANAL`")
 
     @check_it(no_pm=True)
@@ -184,7 +184,7 @@ class StaffAdmin(commands.Cog):
                 except TimeoutError:
                     return await ctx.author.send('<:negate:721581573396496464>│`Desculpe, você demorou muito!`')
                 await msg_4.delete()
-                embed = disnake.Embed(colour=self.color,
+                embed = discord.Embed(colour=self.color,
                                       description="O Úsuario: {} acabou de denunciar um "
                                                   "membro!".format(ctx.author.mention))
                 embed.add_field(name='✏Motivo:', value=report.content)
@@ -201,7 +201,7 @@ class StaffAdmin(commands.Cog):
                 await ctx.author.send("<:negate:721581573396496464>│`Recurso Desabilitado, peça para um ADM "
                                       "habilizar o recurso usando` **ash config report**")
 
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             await ctx.send('<:negate:721581573396496464>│`INFELIZMENTE NÃO TENHO PERMISSÃO DE ENVIAR A MENSAGEM '
                            'PRA VOCÊ!`')
         except KeyError:
@@ -229,6 +229,6 @@ class StaffAdmin(commands.Cog):
             await ctx.send('<:negate:721581573396496464>│`Você não tem permissão para usar esse comando!`')
 
 
-def setup(bot):
-    bot.add_cog(StaffAdmin(bot))
+async def setup(bot):
+    await bot.add_cog(StaffAdmin(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSTAFF_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

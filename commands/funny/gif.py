@@ -1,10 +1,10 @@
 import json
-import disnake
+import discord
 import requests
 
 from random import randrange
 from resources.db import Database
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 
 
@@ -33,7 +33,7 @@ class GetGif(commands.Cog):
         Use ash gif <palavra chave>"""
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         if tag is None:
             return await ctx.send('<:negate:721581573396496464>│`DIGITE UMA TAG PARA O GIF`')
@@ -41,7 +41,7 @@ class GetGif(commands.Cog):
             answer = gif_api(tag)
             if answer is None:
                 return await ctx.send('<:negate:721581573396496464>│`DIGITE UMA TAG VALIDA PARA O GIF`')
-            embed_gif = disnake.Embed(title="\n", description='\n', color=self.color)
+            embed_gif = discord.Embed(title="\n", description='\n', color=self.color)
             embed_gif.set_image(url=answer)
             embed_gif.set_footer(text=self.bot.user.name, icon_url=self.bot.user.display_avatar)
             await ctx.send(embed=embed_gif)
@@ -49,6 +49,6 @@ class GetGif(commands.Cog):
             await ctx.send('<:negate:721581573396496464>│`Não encontrei nenhuma gif para essa tag!`')
 
 
-def setup(bot):
-    bot.add_cog(GetGif(bot))
+async def setup(bot):
+    await bot.add_cog(GetGif(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mGIF\033[1;32m foi carregado com sucesso!\33[m')

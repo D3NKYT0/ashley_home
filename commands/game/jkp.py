@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 
 from random import choice, randint
 from asyncio import TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from datetime import datetime
@@ -36,7 +36,7 @@ class JoKenPo(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -178,6 +178,6 @@ class JoKenPo(commands.Cog):
                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
 
 
-def setup(bot):
-    bot.add_cog(JoKenPo(bot))
+async def setup(bot):
+    await bot.add_cog(JoKenPo(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mJOKENPO\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 import pytz
 
 from datetime import datetime
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -51,7 +51,7 @@ class ServerInfo(commands.Cog):
             cmds = str(self.bot.guilds_commands[ctx.guild.id]) + "comandos usados desde que fiquei online"
         hour = datetime.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
         created = ctx.guild.created_at
-        embed = disnake.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
+        embed = discord.Embed(title="\n", color=self.color, description="Abaixo está as informaçoes principais do "
                                                                         "servidor!")
         embed.set_thumbnail(url=ctx.guild.icon)
         embed.set_footer(text="{} • {}".format(ctx.author, hour))
@@ -72,6 +72,6 @@ class ServerInfo(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(ServerInfo(bot))
+async def setup(bot):
+    await bot.add_cog(ServerInfo(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSERVERINFO\033[1;32m foi carregado com sucesso!\33[m')

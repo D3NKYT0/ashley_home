@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -27,7 +27,7 @@ class AllEmoji(commands.Cog):
                 emojis_2 = ""
                 for emoji in emojis_list[int(num / 2):]:
                     emojis_2 += "".join(emoji)
-                embed1 = disnake.Embed(colour=self.color)
+                embed1 = discord.Embed(colour=self.color)
                 embed1.add_field(name="Emojis [ PARTE 1 ]", value=emojis_1)
                 embed1.add_field(name="Emojis [ PARTE 2 ]", value=emojis_2)
                 await ctx.send(embed=embed1)
@@ -44,16 +44,16 @@ class AllEmoji(commands.Cog):
                 emojis_4 = ""
                 for emoji in emojis_list[int(num / 2)+int(num / 4):]:
                     emojis_4 += "".join(emoji)
-                embed1 = disnake.Embed(colour=self.color)
+                embed1 = discord.Embed(colour=self.color)
                 embed1.add_field(name="Emojis [ PARTE 1 ]", value=emojis_1)
                 embed1.add_field(name="Emojis [ PARTE 2 ]", value=emojis_2)
                 embed1.add_field(name="Emojis [ PARTE 3 ]", value=emojis_3)
                 embed1.add_field(name="Emojis [ PARTE 4 ]", value=emojis_4)
                 await ctx.send(embed=embed1)
-        except disnake.errors.HTTPException:
+        except discord.HTTPException:
             await ctx.send('<:negate:721581573396496464>|`Você não tem emojis em seu servidor!`')
 
 
-def setup(bot):
-    bot.add_cog(AllEmoji(bot))
+async def setup(bot):
+    await bot.add_cog(AllEmoji(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mEMOJIS\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,9 +1,9 @@
-import disnake
+﻿import discord
 
 from random import choice
 from asyncio import sleep
 from datetime import datetime as dt
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.img_edit import gift as gt
@@ -49,7 +49,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='reset_user', aliases=['ru'])
-    async def reset_user(self, ctx, member: disnake.Member = None):
+    async def reset_user(self, ctx, member: discord.Member = None):
         """Comando usado apelas por DEVS para resetar status bugados..."""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
@@ -79,7 +79,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='create_vip', aliases=['cv'])
-    async def create_vip(self, ctx, member: disnake.Member = None):
+    async def create_vip(self, ctx, member: discord.Member = None):
         """Comando usado apelas por DEVS para dar vip para doadores."""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem.`")
@@ -104,8 +104,8 @@ class UtilityClass(commands.Cog):
                                f"**{self.bot.items[reward][1]}** `REPETIDO, PELO MENOS VOCE GANHOU ESSA "
                                f"RELIQUIA NO SEU INVENTARIO`")
             else:
-                file = disnake.File(awards[reward]["url"], filename="reward.png")
-                embed = disnake.Embed(title='VOCÊ GANHOU! 🎊 **PARABENS** 🎉', color=self.bot.color)
+                file = discord.File(awards[reward]["url"], filename="reward.png")
+                embed = discord.Embed(title='VOCÊ GANHOU! 🎊 **PARABENS** 🎉', color=self.bot.color)
                 embed.set_author(name=member.name, icon_url=str(member.display_avatar))
                 embed.set_image(url="attachment://reward.png")
                 await ctx.send(file=file, embed=embed)
@@ -118,7 +118,7 @@ class UtilityClass(commands.Cog):
             await sleep(1)
 
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await self.bot.db.update_data(data_member, update_member, 'users')
         await ctx.send(embed=embed)
@@ -129,7 +129,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='create_money', aliases=['cm'])
-    async def create_money(self, ctx, member: disnake.Member = None, amount: int = None):
+    async def create_money(self, ctx, member: discord.Member = None, amount: int = None):
         """
         Comando usado apelas por DEVS para criar money para usuarios doadores
         """
@@ -162,7 +162,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='add_skin', aliases=['as'])
-    async def add_skin(self, ctx, member: disnake.Member = None, *, skin: str = None):
+    async def add_skin(self, ctx, member: discord.Member = None, *, skin: str = None):
         """
         Comando usado apelas por DEVS para add skin para usuarios doadores
         """
@@ -174,7 +174,7 @@ class UtilityClass(commands.Cog):
 
         if skin not in self.skins:
             msg = f"<:negate:721581573396496464>│`Essa skin nao existe`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data_member = await self.bot.db.get_data("user_id", member.id, "users")
@@ -186,7 +186,7 @@ class UtilityClass(commands.Cog):
 
         if skin in update_member["rpg"]["skins"]:
             msg = f"<:negate:721581573396496464>│`Esse membro ja tem essa skin!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update_member["rpg"]["skins"].append(skin)
@@ -198,7 +198,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='create_item', aliases=['ci'])
-    async def create_item(self, ctx, member: disnake.Member = None, amount: int = None, *, item=None):
+    async def create_item(self, ctx, member: discord.Member = None, amount: int = None, *, item=None):
         """Comando usado apelas por DEVS para criar itens de crafts para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -238,7 +238,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='true_money', aliases=['tm'])
-    async def true_money(self, ctx, member: disnake.Member = None, amount: int = None, *, money="blessed"):
+    async def true_money(self, ctx, member: discord.Member = None, amount: int = None, *, money="blessed"):
         """Comando usado apelas por DEVS para dinheiro real para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -269,7 +269,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='create_equip', aliases=['ce'])
-    async def create_equip(self, ctx, member: disnake.Member = None, amount: int = None, *, item=None):
+    async def create_equip(self, ctx, member: discord.Member = None, amount: int = None, *, item=None):
         """Comando usado apelas por DEVS para criar equipamentos para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -300,7 +300,7 @@ class UtilityClass(commands.Cog):
                                   " ele estiver livre!`")
 
         if not data_member['rpg']['active']:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`O USUARIO DEVE USAR O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
@@ -329,7 +329,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='set_level', aliases=['sl'])
-    async def set_level(self, ctx, member: disnake.Member = None, lvl: int = None):
+    async def set_level(self, ctx, member: discord.Member = None, lvl: int = None):
         """Comando usado apelas por DEVS para dar leveis para doadores"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -350,7 +350,7 @@ class UtilityClass(commands.Cog):
                                   " ele estiver livre!`")
 
         if not data_member['rpg']['active']:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`O USUARIO DEVE USAR O COMANDO` **ASH RPG** `ANTES!`')
             return await ctx.send(embed=embed)
@@ -394,7 +394,7 @@ class UtilityClass(commands.Cog):
 
         gift = await register_gift(self.bot, time)
         gt(gift, f"{time} SEGUNDOS")
-        await ctx.send(file=disnake.File('giftcard.png'))
+        await ctx.send(file=discord.File('giftcard.png'))
         await ctx.send(f"> 🎊 **PARABENS** 🎉 `VOCÊ GANHOU UM GIFT`\n"
                        f"`USE O COMANDO:` **ASH GIFT** `PARA RECEBER SEU PRÊMIO!!`")
 
@@ -402,7 +402,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='create_star', aliases=['cs'])
-    async def create_stars(self, ctx, member: disnake.Member = None, stars: int = None):
+    async def create_stars(self, ctx, member: discord.Member = None, stars: int = None):
         """Comando para DEVs, adicionar ou retirar estrelas de um usuario"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -425,7 +425,7 @@ class UtilityClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='softban', aliases=['sb'])
-    async def softban(self, ctx, member: disnake.Member = None):
+    async def softban(self, ctx, member: discord.Member = None):
         """Comando para DEVs, adicionar softban em um usuario"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
@@ -441,6 +441,6 @@ class UtilityClass(commands.Cog):
         await ctx.send(f'<a:hack:525105069994278913>│`PARABENS, VC BANIU` **{member.name}** `COM SUCESSO!`')
 
 
-def setup(bot):
-    bot.add_cog(UtilityClass(bot))
+async def setup(bot):
+    await bot.add_cog(UtilityClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mUTILITY_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

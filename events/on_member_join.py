@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from resources.img_edit import welcome
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class OnMemberJoin(commands.Cog):
@@ -29,7 +29,7 @@ class OnMemberJoin(commands.Cog):
 
                         await welcome(data_welcome)
 
-                        file = disnake.File('welcome.png')
+                        file = discord.File('welcome.png')
                         if file is not None:
                             ashley = canal.guild.get_member(self.bot.user.id)
                             perms = canal.permissions_for(ashley)
@@ -42,10 +42,10 @@ class OnMemberJoin(commands.Cog):
                                     try:
                                         msg = "> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`"
                                         await canal.send(file=file, content=msg)
-                                    except disnake.errors.HTTPException:
+                                    except discord.HTTPException:
                                         pass
                         else:
-                            embed = disnake.Embed(
+                            embed = discord.Embed(
                                 title=f"{member.name.upper()} Entrou!", color=self.bot.color,
                                 description=f"Seja bem vindo ao servidor {member.guild.name.upper()}, divirta-se!")
                             userjoinedat = str(member.joined_at).split('.', 1)[0]
@@ -64,11 +64,11 @@ class OnMemberJoin(commands.Cog):
                                 else:
                                     await canal.send(embed=embed)
 
-                except disnake.errors.Forbidden:
+                except discord.Forbidden:
                     pass
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
 
             if data['func_config']['cont_users']:
@@ -93,9 +93,9 @@ class OnMemberJoin(commands.Cog):
                                                  " CORRETAMENTE!**")
                             else:
                                 await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-                except disnake.errors.Forbidden:
+                except discord.Forbidden:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
 
             if self.bot.config['config']['default_guild'] == member.guild.id:
@@ -114,7 +114,7 @@ class OnMemberJoin(commands.Cog):
                             if cargos[c].name not in ["@everyone", 'Server Booster']:
                                 await member.remove_roles(cargos[c])
 
-                        role = disnake.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
+                        role = discord.utils.find(lambda r: r.name == "👺Mobrau👺", member.guild.roles)
                         await member.add_roles(role)
                         canal = self.bot.get_channel(576795574783705104)
                         return await canal.send(f"<a:blue:525032762256785409>│{member.mention} `SAIR SEM"
@@ -126,6 +126,6 @@ class OnMemberJoin(commands.Cog):
                         await self.bot.db.update_data(data, update, "users")
 
 
-def setup(bot):
-    bot.add_cog(OnMemberJoin(bot))
+async def setup(bot):
+    await bot.add_cog(OnMemberJoin(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_JOIN\033[1;33m foi carregado com sucesso!\33[m')

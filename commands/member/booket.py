@@ -1,9 +1,9 @@
-import disnake
+﻿import discord
 import requests
 
 from random import choice
 from io import BytesIO
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from PIL import Image, ImageDraw, ImageOps
@@ -17,7 +17,7 @@ class Booket(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, vip=True))
     @commands.command(name='bok', aliases=['boquete', 'glubglub', 'blowjob'])
-    async def bok(self, ctx, member: disnake.Member = None):
+    async def bok(self, ctx, member: discord.Member = None):
         """eu não vou explicar oq isso faz
         Use ash bok <@pessoa que vc é casado/a>"""
         if member is not None:
@@ -63,7 +63,7 @@ class Booket(commands.Cog):
 
                     await ctx.send('O casal {} e {} acabam de trocar alguns carinhos orais... '
                                    ':smirk: :flushed:'.format(ctx.author.mention, mens.mention),
-                                   file=disnake.File('marrysend.png'))
+                                   file=discord.File('marrysend.png'))
                 else:
                     await ctx.send("<:alert:739251822920728708>│`VOCÊ NÃO ESTÁ CASADO COM ESSA PESSOA!`")
             elif data_member['user']['married'] is False:
@@ -77,7 +77,7 @@ class Booket(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=3600))
     @commands.command(name='love')
-    async def love(self, ctx, member: disnake.Member = None):
+    async def love(self, ctx, member: discord.Member = None):
         if member is not None:
 
             query = {"_id": 0, "user_id": 1, "user": 1}
@@ -160,6 +160,6 @@ class Booket(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`Você precisa mencionar alguem.`')
 
 
-def setup(bot):
-    bot.add_cog(Booket(bot))
+async def setup(bot):
+    await bot.add_cog(Booket(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mBOOKET\033[1;32m foi carregado com sucesso!\33[m')

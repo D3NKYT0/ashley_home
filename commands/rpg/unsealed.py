@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -118,7 +118,7 @@ class UnseleadClass(commands.Cog):
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR OS COMANDOS` " \
                "**ASH MELTED, ASH STONE**  `E` **ASH BOX**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE TIRAR O SELO DE UM EQUIPAMENTO:",
             color=self.bot.color,
             description=msg)
@@ -262,7 +262,7 @@ class UnseleadClass(commands.Cog):
         await sleep(2)
         await msg.edit(content=msg_return)
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
@@ -295,6 +295,6 @@ class UnseleadClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "unsealed", 1)
 
 
-def setup(bot):
-    bot.add_cog(UnseleadClass(bot))
+async def setup(bot):
+    await bot.add_cog(UnseleadClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mUNSEALED\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.lotash import Lottery, create
@@ -58,7 +58,7 @@ class LotteryClass(commands.Cog):
 
         query = {"$inc": {"accumulated": amount * 1000}}
         await (await self.bot.db.cd("miscellaneous")).update_one({"_id": "lottery"}, query)
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
         await ctx.send(f'<:coins:519896825365528596>│`PARABENS, VC COMPROU {amount} BILHETES E GASTOU '
@@ -73,7 +73,7 @@ class LotteryClass(commands.Cog):
         cl = await (await self.bot.db.cd("miscellaneous")).find_one({"_id": "lottery"})
         msg = f'<:coins:519896825365528596>│`Atualmente o total acumulado é de:` ' \
               f'**{self.format_num(cl["accumulated"])}**'
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -92,11 +92,11 @@ class LotteryClass(commands.Cog):
 
         msg = f'<:coins:519896825365528596>│`Atualmente você tem:` **{len(actives)}** `bilhetes ativos e `' \
               f'**{len(tot)}** `bilhetes comprados no total!`'
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await _await.delete()
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(LotteryClass(bot))
+async def setup(bot):
+    await bot.add_cog(LotteryClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mLOTTERY\033[1;32m foi carregado com sucesso!\33[m')

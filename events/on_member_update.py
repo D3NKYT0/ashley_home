@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class MemberUpdate(commands.Cog):
@@ -18,7 +18,7 @@ class MemberUpdate(commands.Cog):
                         if before.name != after.name:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is not None:
-                                to_send = disnake.Embed(
+                                to_send = discord.Embed(
                                     title=":star2: **Nome de usuário alterado**",
                                     color=self.color,
                                     description=f"**membro:** {before.name}")
@@ -28,9 +28,9 @@ class MemberUpdate(commands.Cog):
                                 await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
-                except disnake.errors.HTTPException:
+                except discord.HTTPException:
                     pass
                 except TypeError:
                     pass
@@ -48,13 +48,13 @@ class MemberUpdate(commands.Cog):
                                 format_2 = '.gif'
                             else:
                                 format_2 = '.webp'
-                            to_send = disnake.Embed(
+                            to_send = discord.Embed(
                                 title=":star2: **Avatar de usuário alterado**",
                                 color=self.color,
                                 description=f"**Membro:** {before.name}")
-                            to_send.set_thumbnail(url=f'https://cdn.disnakeapp.com/avatars/{before.id}/{before.avatar}'
+                            to_send.set_thumbnail(url=f'https://cdn.discordapp.com/avatars/{before.id}/{before.avatar}'
                                                       f'{format_1}?size=1024')
-                            to_send.set_image(url=f'https://cdn.disnakeapp.com/avatars/{after.id}/{after.avatar}'
+                            to_send.set_image(url=f'https://cdn.discordapp.com/avatars/{after.id}/{after.avatar}'
                                                   f'{format_2}?size=1024')
                             to_send.set_footer(text="Ashley ® Todos os direitos reservados.")
                             ashley = canal.guild.get_member(self.bot.user.id)
@@ -68,14 +68,14 @@ class MemberUpdate(commands.Cog):
                                     await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
-                except disnake.errors.HTTPException:
+                except discord.HTTPException:
                     pass
                 except TypeError:
                     pass
 
 
-def setup(bot):
-    bot.add_cog(MemberUpdate(bot))
+async def setup(bot):
+    await bot.add_cog(MemberUpdate(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_UPDATE\033[1;33m foi carregado com sucesso!\33[m')

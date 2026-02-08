@@ -1,7 +1,7 @@
 import datetime
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -141,7 +141,7 @@ class RegisterAnnounce(commands.Cog):
             try:
                 member = self.bot.get_user(data['_id'])
                 await member.send(f"{self.em['negate']}│`Seu anuncio foi verificado, mas não foi aprovado!`")
-            except disnake.errors.Forbidden:
+            except discord.Forbidden:
                 pass
             return await ctx.send(f'{self.em["alert"]}│ **ANUNCIO DELETADO**')
 
@@ -154,10 +154,10 @@ class RegisterAnnounce(commands.Cog):
             member = self.bot.get_user(data['_id'])
             await member.send(f"{self.em['confirm']}│`Seu anuncio foi verificado e foi aprovado"
                               f" parabens!`")
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
 
 
-def setup(bot):
-    bot.add_cog(RegisterAnnounce(bot))
+async def setup(bot):
+    await bot.add_cog(RegisterAnnounce(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mREGISTER_ANNOUNCE\033[1;32m foi carregado com sucesso!\33[m')

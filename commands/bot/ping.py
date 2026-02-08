@@ -1,4 +1,4 @@
-from disnake.ext import commands
+﻿from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -19,6 +19,6 @@ class PingMS(commands.Cog):
             await ctx.send("🏓 `Pong:` **{}ms**".format(ping))
 
 
-def setup(bot):
-    bot.add_cog(PingMS(bot))
+async def setup(bot):
+    await bot.add_cog(PingMS(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mPINGMS\033[1;32m foi carregado com sucesso!\33[m')

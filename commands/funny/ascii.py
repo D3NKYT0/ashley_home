@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from pyfiglet import Figlet
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,13 +19,13 @@ class AsciiText(commands.Cog):
         Use ash ascii <texto desejado>"""
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         f = Figlet(font='slant')
         text = f.renderText(msg)
         await ctx.send("```{}```".format(text))
 
 
-def setup(bot):
-    bot.add_cog(AsciiText(bot))
+async def setup(bot):
+    await bot.add_cog(AsciiText(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mASCII\033[1;32m foi carregado com sucesso!\33[m')

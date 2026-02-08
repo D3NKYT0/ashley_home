@@ -1,4 +1,4 @@
-from random import choice, randint
+﻿from random import choice, randint
 from resources.verify_cooldown import verify_cooldown
 
 

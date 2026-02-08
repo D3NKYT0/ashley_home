@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from resources.check import check_it
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 
 
@@ -19,11 +19,11 @@ class Vote(commands.Cog):
         Use ash vote"""
         link_gg = "https://top.gg/bot/1012217155141517312/vote"
         description = f"`Top.gg`\n**[Clique Aqui]({link_gg})**"
-        embed = disnake.Embed(description=description, color=self.color)
+        embed = discord.Embed(description=description, color=self.color)
         embed.set_footer(text=f"Pedido por {ctx.author}")
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Vote(bot))
+async def setup(bot):
+    await bot.add_cog(Vote(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mVOTE\033[1;32m foi carregado com sucesso!\33[m')

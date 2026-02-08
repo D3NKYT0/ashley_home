@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from asyncio import sleep, TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.utility import ERRORS
 from resources.db import Database
@@ -26,7 +26,7 @@ class ConfigClass(commands.Cog):
         Use ash config pra ver as configurações disponiveis"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = disnake.Embed(color=self.color)
+            top = discord.Embed(color=self.color)
             top.add_field(name="Config Commands:",
                           value=f"{self.st[0]} `config action_log` Registra as ações do servidor.\n"
                                 f"{self.st[0]} `config member_count` Exibe a quantidade de membros.\n"
@@ -130,7 +130,7 @@ class ConfigClass(commands.Cog):
                 await channel_.edit(topic="<a:caralho:525105064873033764> **Membros:** " + ''.join(list_))
 
                 await ctx.send('<:confirmed:721581574461587496>│`Contador de membros ativado!`')
-            except disnake.Forbidden:
+            except discord.Forbidden:
                 await ctx.send("<:negate:721581573396496464>│`Não tenho permissão para editar canais "
                                "nesse servidor!`", delete_after=5.0)
 
@@ -496,6 +496,6 @@ class ConfigClass(commands.Cog):
                                   '**manage_guild / Gerenciar Servidor**')
 
 
-def setup(bot):
-    bot.add_cog(ConfigClass(bot))
+async def setup(bot):
+    await bot.add_cog(ConfigClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCONFIG\033[1;32m foi carregado com sucesso!\33[m')

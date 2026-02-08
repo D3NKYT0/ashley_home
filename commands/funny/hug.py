@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from random import choice
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class HugClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='hug', aliases=['abraço', 'abraco'])
-    async def hug(self, ctx, member: disnake.Member = None):
+    async def hug(self, ctx, member: discord.Member = None):
         """Comando de gifs de abraço
         Use ash hug <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         try:
             hug_img = ['http://media1.tenor.com/images/e58eb2794ff1a12315665c28d5bc3f5e/tenor.gif?itemid=10195705',
@@ -33,7 +33,7 @@ class HugClass(commands.Cog):
                        'https://media1.tenor.com/images/1069921ddcf38ff722125c8f65401c28/tenor.gif?itemid=11074788',
                        'https://media1.tenor.com/images/3c83525781dc1732171d414077114bc8/tenor.gif?itemid=7830142']
             hug = choice(hug_img)
-            hug_embed = disnake.Embed(title='Abraço :heart:',
+            hug_embed = discord.Embed(title='Abraço :heart:',
                                       description='**{}** Ele(a) recebeu um abraço de **{}**! Que casal fofo! '
                                                   ':heart_eyes: '.format(member.name, ctx.author.name),
                                       color=self.color)
@@ -54,6 +54,6 @@ class HugClass(commands.Cog):
                 '<:negate:721581573396496464>│`Você precisa mencionar um usuário específico para abraçar!`')
 
 
-def setup(bot):
-    bot.add_cog(HugClass(bot))
+async def setup(bot):
+    await bot.add_cog(HugClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mABRAÇO\033[1;32m foi carregado com sucesso!\33[m')

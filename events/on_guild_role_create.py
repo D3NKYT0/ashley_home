@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class RoleCreate(commands.Cog):
@@ -22,7 +22,7 @@ class RoleCreate(commands.Cog):
             if not canal:
                 return
 
-            embed = disnake.Embed(color=self.bot.color,
+            embed = discord.Embed(color=self.bot.color,
                                   title=":star2: **Cargo Criado**",
                                   description=f"**Cargo:** {role.mention}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -38,6 +38,6 @@ class RoleCreate(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(RoleCreate(bot))
+async def setup(bot):
+    await bot.add_cog(RoleCreate(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mROLE_CREATE\033[1;33m foi carregado com sucesso!\33[m')

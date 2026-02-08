@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 
 from random import choice, randint
 from asyncio import sleep, TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from datetime import datetime
@@ -39,7 +39,7 @@ class HeadsOrTails(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -136,7 +136,7 @@ class HeadsOrTails(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='caraoucoroa', aliases=['match'])
-    async def caraoucoroa(self, ctx, member: disnake.Member = None):
+    async def caraoucoroa(self, ctx, member: discord.Member = None):
         if member is not None:
             if member.id == ctx.author.id:
                 return await ctx.send("<:alert:739251822920728708>│`Você não pode jogar consigo mesmo!`")
@@ -214,6 +214,6 @@ class HeadsOrTails(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`Você precisa marcar alguem pra jogar!`")
 
 
-def setup(bot):
-    bot.add_cog(HeadsOrTails(bot))
+async def setup(bot):
+    await bot.add_cog(HeadsOrTails(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCARA_OU_COROA\033[1;32m foi carregado com sucesso!\33[m')

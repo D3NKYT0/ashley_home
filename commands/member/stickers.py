@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.img_edit import stickers, remove_acentos_e_caracteres_especiais
@@ -25,7 +25,7 @@ class StickerClass(commands.Cog):
         Use ash sticker"""
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = disnake.Embed(color=self.color)
+            embed = discord.Embed(color=self.color)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.add_field(name="Stickers Commands:",
@@ -41,7 +41,7 @@ class StickerClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='yugioh', aliases=["ygo", "y"])
-    async def _yugioh(self, ctx, member: disnake.Member = None):
+    async def _yugioh(self, ctx, member: discord.Member = None):
         """cartela de figurinhas"""
         if member is None:
             member = ctx.author
@@ -58,13 +58,13 @@ class StickerClass(commands.Cog):
         }
 
         await stickers(data_stickers)
-        await ctx.send(file=disnake.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='kozmo', aliases=["k"])
-    async def _kozmo(self, ctx, member: disnake.Member = None):
+    async def _kozmo(self, ctx, member: discord.Member = None):
         """cartela de figurinhas"""
         if member is None:
             member = ctx.author
@@ -81,13 +81,13 @@ class StickerClass(commands.Cog):
         }
 
         await stickers(data_stickers)
-        await ctx.send(file=disnake.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='especial', aliases=["e"])
-    async def _especial(self, ctx, member: disnake.Member = None):
+    async def _especial(self, ctx, member: discord.Member = None):
         """cartela de figurinhas"""
         if member is None:
             member = ctx.author
@@ -104,13 +104,13 @@ class StickerClass(commands.Cog):
         }
 
         await stickers(data_stickers)
-        await ctx.send(file=disnake.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='cdz', aliases=["c"])
-    async def _cdz(self, ctx, member: disnake.Member = None):
+    async def _cdz(self, ctx, member: discord.Member = None):
         """cartela de figurinhas"""
         if member is None:
             member = ctx.author
@@ -127,13 +127,13 @@ class StickerClass(commands.Cog):
         }
 
         await stickers(data_stickers)
-        await ctx.send(file=disnake.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @sticker.command(name='bleach', aliases=["b"])
-    async def _bleach(self, ctx, member: disnake.Member = None):
+    async def _bleach(self, ctx, member: discord.Member = None):
         """cartela de figurinhas"""
         if member is None:
             member = ctx.author
@@ -150,9 +150,9 @@ class StickerClass(commands.Cog):
         }
 
         await stickers(data_stickers)
-        await ctx.send(file=disnake.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('stickers.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
 
-def setup(bot):
-    bot.add_cog(StickerClass(bot))
+async def setup(bot):
+    await bot.add_cog(StickerClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSTICKER_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

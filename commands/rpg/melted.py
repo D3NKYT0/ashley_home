@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -45,7 +45,7 @@ class MeltedClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE DERRETER UM ARTEFATO:",
             color=self.bot.color,
             description=msg)
@@ -150,7 +150,7 @@ class MeltedClass(commands.Cog):
                                f"**Melted Artifact** `adicionado ao seu inventario com sucesso...`")
 
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
@@ -174,6 +174,6 @@ class MeltedClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "melted", 1)
 
 
-def setup(bot):
-    bot.add_cog(MeltedClass(bot))
+async def setup(bot):
+    await bot.add_cog(MeltedClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mMELTED\033[1;32m foi carregado com sucesso!\33[m')

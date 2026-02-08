@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from random import choice
 from resources.utility import enforcado
 from resources.check import check_it
@@ -33,7 +33,7 @@ class ForceCass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -163,6 +163,6 @@ Dica: **{}**'''.format(senha, dica))
                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
 
 
-def setup(bot):
-    bot.add_cog(ForceCass(bot))
+async def setup(bot):
+    await bot.add_cog(ForceCass(bot))
     print('\033[1;32m( 🔶 ) | O comando de \033[1;34mFORCECLASS\033[1;32m foi carregado com sucesso!\33[m')

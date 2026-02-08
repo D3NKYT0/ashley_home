@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import parse_duration as pd
@@ -41,7 +41,7 @@ class DailyClass(commands.Cog):
         Use ash daily"""
         if ctx.invoked_subcommand is None:
             self.status()
-            daily = disnake.Embed(color=self.color)
+            daily = discord.Embed(color=self.color)
             daily.add_field(name="Daily Commands:",
                             value=f"{self.st[66]} `daily coin` Receba suas fichas diarias.\n"
                                   f"{self.st[66]} `daily energy` Receba suas energias diarias.\n"
@@ -200,7 +200,7 @@ class DailyClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='rec', aliases=['recomendação', 'rep', 'reputação'])
-    async def rec(self, ctx, member: disnake.Member = None):
+    async def rec(self, ctx, member: discord.Member = None):
         """Comando usado pra dar um rec da Ashley pra algum usuario
         Use ash rec <usuario desejado>"""
         if member is None:
@@ -245,7 +245,7 @@ class DailyClass(commands.Cog):
         # o rec é dado aqui (acima é apenas testes, e abaixo as premiações.)
         update_user['user']['rec'] += 1
 
-        embed = disnake.Embed(color=self.color)
+        embed = discord.Embed(color=self.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="https://i.pinimg.com/originals/1f/48/c4/1f48c47b7803eca495d237be1d0cfaba.gif")
 
@@ -298,6 +298,6 @@ class DailyClass(commands.Cog):
         await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ENERGIA 5x** ✨ {response}')
 
 
-def setup(bot):
-    bot.add_cog(DailyClass(bot))
+async def setup(bot):
+    await bot.add_cog(DailyClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mDAILYCLASS\033[1;32m foi carregado com sucesso!\33[m')

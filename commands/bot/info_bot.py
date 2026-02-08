@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 import psutil
 import pytz
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from humanize import i18n, precisedelta
 from resources.db import Database
@@ -25,13 +25,13 @@ class BotInfo(commands.Cog):
         """Comando para ter informações sobre a Ashley
         Use ash botinfo"""
         total_members = sum(len(s.members) for s in self.bot.guilds)
-        channel_types = Counter(isinstance(c, disnake.TextChannel) for c in self.bot.get_all_channels())
+        channel_types = Counter(isinstance(c, discord.TextChannel) for c in self.bot.get_all_channels())
         ver_, voice, text = self.bot.version, channel_types[False], channel_types[True]
         owner, dated = str(self.bot.get_user(self.bot.owner_ids[0])), ctx.me.created_at
         uptime = precisedelta(dt.utcnow() - self.bot.start_time, format='%0.0f')
         date = dt.utcnow().astimezone(pytz.timezone('America/Sao_Paulo')).strftime("%H:%M")
 
-        embed_bot = disnake.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
+        embed_bot = discord.Embed(title='🤖 **Informações da Ashley**', color=self.color, description='\n')
         embed_bot.set_thumbnail(url=ctx.me.display_avatar)
         embed_bot.add_field(name="📨 | Comandos Executados",
                             value='**{}** `comandos`'.format(sum(self.bot.commands_used.values())), inline=False)
@@ -62,6 +62,6 @@ class BotInfo(commands.Cog):
         await ctx.send(delete_after=120, embed=embed_bot)
 
 
-def setup(bot):
-    bot.add_cog(BotInfo(bot))
+async def setup(bot):
+    await bot.add_cog(BotInfo(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mBOTINFO\033[1;32m foi carregado com sucesso!\33[m')

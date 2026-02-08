@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -26,7 +26,7 @@ class LogClass(commands.Cog):
             for log in self.logs:
                 description += '[>>]: {}\n<Status: {}>\n\n'.format(log, data['log_config'][log])
             description += '```'
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 title='Logs Disponíveis',
                 description=description,
                 color=self.bot.color
@@ -71,6 +71,6 @@ class LogClass(commands.Cog):
             await ctx.send('<:negate:721581573396496464>│`Você não tem permissão para usar esse comando!`')
 
 
-def setup(bot):
-    bot.add_cog(LogClass(bot))
+async def setup(bot):
+    await bot.add_cog(LogClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mLOG\033[1;32m foi carregado com sucesso!\33[m')

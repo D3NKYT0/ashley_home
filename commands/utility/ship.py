@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from PIL import Image
@@ -15,7 +15,7 @@ class Ship(commands.Cog):
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.command(name='ship', aliases=['s', 'chip'])
-    async def ship(self, ctx, member_1: disnake.Member = None, member_2: disnake.Member = None):
+    async def ship(self, ctx, member_1: discord.Member = None, member_2: discord.Member = None):
         """Comando de Ship entre duas pessoas
         Use ash ship"""
 
@@ -91,9 +91,9 @@ class Ship(commands.Cog):
 
         image.save('ship.png')
         await msg.delete()
-        await ctx.send(file=disnake.File('ship.png'))
+        await ctx.send(file=discord.File('ship.png'))
 
 
-def setup(bot):
-    bot.add_cog(Ship(bot))
+async def setup(bot):
+    await bot.add_cog(Ship(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSHIP\033[1;32m foi carregado com sucesso!\33[m')

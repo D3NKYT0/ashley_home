@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from random import choice, randint
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from asyncio import sleep
@@ -58,7 +58,7 @@ class TrickTreat(commands.Cog):
         if randint(1, 100) + amount_test + bonus > 95:  # 5% + bonus + amount
 
             msg = f"{self.bot.items[reward][0]} `{self.bag_good[_data[0]][reward][1]}` `{self.bot.items[reward][1]}`"
-            embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
+            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
@@ -80,6 +80,6 @@ class TrickTreat(commands.Cog):
                            delete_after=30.0)
 
 
-def setup(bot):
-    bot.add_cog(TrickTreat(bot))
+async def setup(bot):
+    await bot.add_cog(TrickTreat(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTRICK\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,8 +1,8 @@
 import re
-import disnake
+import discord
 import unicodedata
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from PIL import Image, ImageDraw, ImageFont
@@ -21,13 +21,13 @@ class RankingClass(commands.Cog):
         palavra_sem_acento = u"".join([c for c in nfkd if not unicodedata.combining(c)])
 
         # Usa expressão regular para retornar a palavra apenas com números, letras e espaço
-        return re.sub('[^a-zA-Z \\\]', '', palavra_sem_acento)
+        return re.sub(r'[^a-zA-Z \]', '', palavra_sem_acento)
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='rank', aliases=['r'])
-    async def rank(self, ctx, member: disnake.Member = None):
+    async def rank(self, ctx, member: discord.Member = None):
         """Mostra seu rank da Ashley
         Use ash rank"""
         if member is None:
@@ -144,9 +144,9 @@ class RankingClass(commands.Cog):
 
         image.save('rank.png')
         await msg.delete()
-        await ctx.send(file=disnake.File('rank.png'))
+        await ctx.send(file=discord.File('rank.png'))
 
 
-def setup(bot):
-    bot.add_cog(RankingClass(bot))
+async def setup(bot):
+    await bot.add_cog(RankingClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mRANKING\033[1;32m foi carregado com sucesso!\33[m')

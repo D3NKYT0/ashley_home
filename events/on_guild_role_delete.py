@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class RoleDelete(commands.Cog):
@@ -23,7 +23,7 @@ class RoleDelete(commands.Cog):
             if not canal:
                 return
 
-            embed = disnake.Embed(color=self.color, title=":put_litter_in_its_place: **Cargo Deletado**",
+            embed = discord.Embed(color=self.color, title=":put_litter_in_its_place: **Cargo Deletado**",
                                   description=f"**Cargo:** {role.mention}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
             ashley = canal.guild.get_member(self.bot.user.id)
@@ -37,6 +37,6 @@ class RoleDelete(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(RoleDelete(bot))
+async def setup(bot):
+    await bot.add_cog(RoleDelete(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mROLE_DELETE\033[1;33m foi carregado com sucesso!\33[m')

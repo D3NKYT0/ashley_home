@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -35,7 +35,7 @@ class QuestClass(commands.Cog):
         if ctx.channel.id != 840007934967808030:
             msg = "<:negate:721581573396496464>│`VOCÊ APENAS PODE USAR ESSE COMANDO NO CANAL:` **QUESTS** " \
                   "`NO SERVIDOR DE SUPORTE DA ASHLEY!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
@@ -43,12 +43,12 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         completed = False
@@ -62,7 +62,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 1 Release]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -84,7 +84,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 2 Loves]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -106,7 +106,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 3 Holy Scrolls]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -128,7 +128,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 4 Crowns]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -150,7 +150,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 5 Shirts]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -172,7 +172,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 6 Potions]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -194,7 +194,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 7 Lost Souls]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -216,7 +216,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 8 Evils of the Moon]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -239,7 +239,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 9 Villages]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -261,7 +261,7 @@ class QuestClass(commands.Cog):
 
                         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` ' \
                               '**[The 10 Provinces]** `foi terminada com sucesso!`'
-                        embed = disnake.Embed(color=self.bot.color, description=msg)
+                        embed = discord.Embed(color=self.bot.color, description=msg)
                         await ctx.send(embed=embed)
 
                         reward = list()
@@ -278,7 +278,7 @@ class QuestClass(commands.Cog):
 
         if not completed:
             msg = '<:alert:739251822920728708>│`VOCE NAO TEM NENHUMA QUEST PARA COMPLETAR!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -317,7 +317,7 @@ class QuestClass(commands.Cog):
                         ten = True
 
             emoji = "<:confirmado:519896822072999937>"
-            embed = disnake.Embed(color=self.color)
+            embed = discord.Embed(color=self.color)
             embed.add_field(name="Quest Commands:",
                             value=f"{self.st[117]} `quest one` [The 1 Release] {emoji if one else ''}\n"
                                   f"{self.st[117]} `quest two` [The 2 Loves] {emoji if two else ''}\n"
@@ -345,19 +345,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_one_release" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_one_release"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 1 Release]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
@@ -371,7 +371,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n' \
                   f'`[PROGRESS]:` **{len(_QUEST["unsealed"])}/1**\n' \
                   f'<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_one_release = {"unsealed": list(), "status": "in progress"}
@@ -379,7 +379,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 1 Release]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -393,19 +393,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_two_loves" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_two_loves"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 2 Loves]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             status = _QUEST["status"]
@@ -421,7 +421,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` ' \
                   f'**{len(_QUEST["loves"])}/2**\n<:afs:530031864350507028> {description}'
 
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_two_loves = {"loves": list(), "status": "in progress"}
@@ -429,7 +429,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 2 Loves]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -443,19 +443,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_three_sacred_scrolls" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_three_sacred_scrolls"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 3 Holy Scrolls]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["scroll"]]), _QUEST["status"]
@@ -469,7 +469,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` ' \
                   f'**{len(_QUEST["scroll"])}/3**\n<:afs:530031864350507028> {description}'
 
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_three_sacred_scrolls = {"scroll": list(), "status": "in progress"}
@@ -477,7 +477,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 3 Holy Scrolls]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -491,19 +491,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_four_crowns" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_four_crowns"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 4 Crowns]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["crowns"]]), _QUEST["status"]
@@ -518,7 +518,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["crowns"])}/4**\n' \
                   f'`[CROWNS]:`\n{_MB}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_four_crowns = {"crowns": list(), "status": "in progress"}
@@ -526,7 +526,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 4 Crowns]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -540,19 +540,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_five_shirts" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_five_shirts"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 5 Shirts]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["shirts"]]), _QUEST["status"]
@@ -568,7 +568,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["shirts"])}/5**\n' \
                   f'`[SHIRTS]:`\n{_MB}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_five_shirts = {"shirts": list(), "status": "in progress"}
@@ -576,7 +576,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 5 Shirts]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -590,19 +590,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_six_potions" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_six_potions"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 6 Potions]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["potions"]]), _QUEST["status"]
@@ -617,7 +617,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["potions"])}/6**\n' \
                   f'`[POTIONS]:`\n{_MB}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_six_potions = {"potions": list(), "status": "in progress"}
@@ -625,7 +625,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 6 Potions]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -639,19 +639,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_seven_lost_souls" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_seven_lost_souls"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 7 Lost Souls]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             souls = {
@@ -676,7 +676,7 @@ class QuestClass(commands.Cog):
                   f'`[STATUS]:` **{status}**\n`[PROGRESS]:` **{len(_QUEST["souls"])}/7**\n' \
                   f'`[SOULS]:`\n{_MB}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_seven_lost_souls = {"souls": list(), "status": "in progress"}
@@ -684,7 +684,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 7 Lost Souls]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -698,19 +698,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_eight_evils_of_the_moon" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_eight_evils_of_the_moon"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 8 Evils of the Moon]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             _MB, status = "\n".join([f"**{str(b).upper()}**" for b in _QUEST["mini-boss"]]), _QUEST["status"]
@@ -725,7 +725,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["mini-boss"])}/8**\n' \
                   f'`[MINI-BOSSES]:`\n{_MB}' \
                   f'\n<:ash:834120294469730315> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_eight_evils_of_the_moon = {"mini-boss": list(), "status": "in progress"}
@@ -733,7 +733,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 8 Evils of the Moon]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -747,19 +747,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_nine_villages" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_nine_villages"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 9 Villages]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             names = ""
@@ -777,7 +777,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["villages"])}/9**\n' \
                   f'`[VILLAGES]`:\n{names}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_nine_villages = {"villages": list(), "status": "in progress"}
@@ -785,7 +785,7 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 9 Villages]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -799,19 +799,19 @@ class QuestClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "the_ten_provinces" in update['rpg']['quests'].keys():
             _QUEST = update['rpg']['quests']["the_ten_provinces"]
             if _QUEST["status"] == "completed":
                 msg = '<:confirmed:721581574461587496>│`A QUEST:` **[The 10 Provinces]** `já foi terminada!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             names = ""
@@ -830,7 +830,7 @@ class QuestClass(commands.Cog):
                   f'`[PROGRESS]:` **{len(_QUEST["provinces"])}/10**\n' \
                   f'`[PROVINCES]`:\n{names}' \
                   f'\n<:afs:530031864350507028> {description}'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         the_ten_provinces = {"provinces": list(), "status": "in progress"}
@@ -838,10 +838,10 @@ class QuestClass(commands.Cog):
         msg = '<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `a quest` **[The 10 Provinces]** ' \
               '`foi ativada na sua conta com sucesso!`'
         await self.bot.db.update_data(data, update, 'users')
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(QuestClass(bot))
+async def setup(bot):
+    await bot.add_cog(QuestClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mQUESTCLASS\033[1;32m foi carregado com sucesso!\33[m')

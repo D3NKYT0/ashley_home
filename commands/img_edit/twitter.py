@@ -1,9 +1,9 @@
-import random
-import disnake
+﻿import random
+import discord
 import requests
 
 from io import BytesIO
-from disnake.ext import commands
+from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from resources.check import check_it
 from resources.db import Database
@@ -134,13 +134,13 @@ class TwitterClass(commands.Cog):
             image.paste(avatar, rede[0][1], avatar)
             image.paste(img, rede[1][1], img)
             image.save('social.png')
-            await ctx.send(file=disnake.File('social.png'))
+            await ctx.send(file=discord.File('social.png'))
             await msg.delete()
             rede[2][0][0] = um
             rede[2][1][0] = dois
             rede[2][2][0] = tres
 
 
-def setup(bot):
-    bot.add_cog(TwitterClass(bot))
+async def setup(bot):
+    await bot.add_cog(TwitterClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTWITTERCLASS\033[1;32m foi carregado com sucesso!\33[m')

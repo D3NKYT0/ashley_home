@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class SystemMessage(commands.Cog):
@@ -32,7 +32,7 @@ class SystemMessage(commands.Cog):
                                                        '`para cadastrar sua guilda no meu` **banco de dados!**')
                 except IndexError:
                     pass
-                except disnake.errors.Forbidden:
+                except discord.Forbidden:
                     pass
 
             if message.channel.id == 867509677402488872:
@@ -59,10 +59,10 @@ class SystemMessage(commands.Cog):
                     if USER is not None:
                         MSG = "<a:confet:853247252998389763>│`Por votar na` **ASHLEY** `você ganhou:`"
                         await USER.send(f"{MSG} {self.i['vote_coin'][0]} **{amount}** `{self.i['vote_coin'][1]}`")
-                except disnake.errors.Forbidden:
+                except discord.Forbidden:
                     pass
 
 
-def setup(bot):
-    bot.add_cog(SystemMessage(bot))
+async def setup(bot):
+    await bot.add_cog(SystemMessage(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mON_MESSAGE\033[1;33m foi carregado com sucesso!\33[m')

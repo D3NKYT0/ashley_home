@@ -1,7 +1,7 @@
-import copy
-import disnake
+﻿import copy
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import paginator
@@ -104,7 +104,7 @@ class RecipeClass(commands.Cog):
                                '\n▶ **Craftar** `1`\n⏩ **Craftar** `2+`' \
                                '\n⏭ **Craftar o Maximo**\n❌ **Fechar**'.format(maximo)
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     title='Craft\n(Custo/Quantidade no inventario)',
                     color=self.bot.color,
                     description=description)
@@ -304,6 +304,6 @@ class RecipeClass(commands.Cog):
         await paginator(self.bot, self.bot.items, recipes, embed, ctx, num, equips=self.eq)
 
 
-def setup(bot):
-    bot.add_cog(RecipeClass(bot))
+async def setup(bot):
+    await bot.add_cog(RecipeClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mRECIPE_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

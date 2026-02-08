@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class OnMessageDelete(commands.Cog):
@@ -24,7 +24,7 @@ class OnMessageDelete(commands.Cog):
                             return
                         if message.author.bot:
                             return
-                        to_send = disnake.Embed(
+                        to_send = discord.Embed(
                             title=":pencil: **Mensagem de texto deletada**",
                             color=self.color,
                             description=f"**Canal de texto:** {message.channel.mention}")
@@ -43,14 +43,14 @@ class OnMessageDelete(commands.Cog):
                                 await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
-                except disnake.errors.HTTPException:
+                except discord.HTTPException:
                     pass
                 except TypeError:
                     pass
 
 
-def setup(bot):
-    bot.add_cog(OnMessageDelete(bot))
+async def setup(bot):
+    await bot.add_cog(OnMessageDelete(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_DELETE\033[1;33m foi carregado com sucesso!\33[m')

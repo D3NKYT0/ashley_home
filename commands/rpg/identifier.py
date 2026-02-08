@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -44,7 +44,7 @@ class IdentifierClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISAR USAR O COMANDO` **ASH BOX**"
 
-        embed = disnake.Embed(title="O CUSTO PARA VOCE IDENTIFICAR UMA ?-BOLLASH:", color=self.c, description=msg)
+        embed = discord.Embed(title="O CUSTO PARA VOCE IDENTIFICAR UMA ?-BOLLASH:", color=self.c, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
         embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -143,6 +143,6 @@ class IdentifierClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "identifier", 1)
 
 
-def setup(bot):
-    bot.add_cog(IdentifierClass(bot))
+async def setup(bot):
+    await bot.add_cog(IdentifierClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mIDENTIFIER\033[1;32m foi carregado com sucesso!\33[m')

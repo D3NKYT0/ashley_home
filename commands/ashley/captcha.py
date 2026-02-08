@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import captcha as cap
@@ -25,7 +25,7 @@ class CaptchaClass(commands.Cog):
             return await ctx.send('<:alert:739251822920728708>│`Você nao precisa provar que é um humano!`')
 
         cap(data_user["security"]["captcha_code"])
-        await ctx.send(file=disnake.File('captcha.png'), content="> `DIGITE O CODIGO DA IMAGEM`")
+        await ctx.send(file=discord.File('captcha.png'), content="> `DIGITE O CODIGO DA IMAGEM`")
 
         def check(m):
             return m.author.id == ctx.author.id
@@ -48,6 +48,6 @@ class CaptchaClass(commands.Cog):
             await ctx.send('<:negate:721581573396496464>│`O Código que você utilizou está errado!`')
 
 
-def setup(bot):
-    bot.add_cog(CaptchaClass(bot))
+async def setup(bot):
+    await bot.add_cog(CaptchaClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCAPTCHA\033[1;32m foi carregado com sucesso!\33[m')

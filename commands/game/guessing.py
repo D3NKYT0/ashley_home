@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 
 from asyncio import TimeoutError
 from random import choice, randint
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from datetime import datetime
@@ -33,7 +33,7 @@ class GameThinker(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -108,6 +108,6 @@ class GameThinker(commands.Cog):
                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
 
 
-def setup(bot):
-    bot.add_cog(GameThinker(bot))
+async def setup(bot):
+    await bot.add_cog(GameThinker(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mGAME\033[1;32m foi carregado com sucesso!\33[m')

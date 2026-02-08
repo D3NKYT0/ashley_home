@@ -1,6 +1,6 @@
-import disnake
-
-from disnake.ext import commands
+import discord
+from discord import app_commands
+from discord.ext import commands
 
 
 class HelperSlash(commands.Cog):
@@ -8,13 +8,13 @@ class HelperSlash(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
 
-    @commands.cooldown(1, 5.0, commands.BucketType.user)
-    @commands.slash_command(name="help", description="Artigos de Ajuda")
-    async def help(self, inter, *, command_help=None):
+    @app_commands.command(name="help", description="Artigos de Ajuda")
+    @app_commands.describe(command_help="Nome do comando para detalhar")
+    async def help_slash(self, interaction: discord.Interaction, command_help: str = None):
         """há fala serio!"""
         if command_help is None:
-            embed = disnake.Embed(title="-==Artigo de Ajuda==-\nPara detalhar o comando use: ash help <command>",
-                                  color=self.color, description=f"Olá {inter.author.name}, eu sou a **Ashley**, um bot"
+            embed = discord.Embed(title="-==Artigo de Ajuda==-\nPara detalhar o comando use: ash help <command>",
+                                  color=self.color, description=f"Olá {interaction.user.name}, eu sou a **Ashley**, um bot"
                                                                 f" de diversão e jogos, incluindo RPG de turnos e "
                                                                 f"sistemas de economia completo!")
 
@@ -62,10 +62,10 @@ class HelperSlash(commands.Cog):
                             value="[Clique Aqui](https://github.com/D3NKYT0/ashley_home/wiki)",
                             inline=False)
 
-            embed.set_author(name=inter.me.name, icon_url=inter.me.display_avatar)
+            embed.set_author(name=interaction.client.user.name, icon_url=interaction.client.user.display_avatar.url)
             embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
-            await inter.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
 
             all_commands = []
@@ -83,15 +83,15 @@ class HelperSlash(commands.Cog):
 
                 if command.help is not None:
                     text = f"ash `{command.qualified_name + ' ' + command.signature}`"
-                    return await inter.response.send_message(f"**Modo de Uso:** {text}\n```{command.help}```")
+                    return await interaction.response.send_message(f"**Modo de Uso:** {text}\n```{command.help}```")
 
-                await inter.response.send_message("<:alert:739251822920728708>│`Comando Ainda nao tem uma ajuda"
+                await interaction.response.send_message("<:alert:739251822920728708>│`Comando Ainda nao tem uma ajuda"
                                                   " definida`")
 
             else:
-                await inter.response.send_message("<:alert:739251822920728708>│`Comando Inválido`")
+                await interaction.response.send_message("<:alert:739251822920728708>│`Comando Inválido`")
 
 
-def setup(bot):
-    bot.add_cog(HelperSlash(bot))
+async def setup(bot):
+    await bot.add_cog(HelperSlash(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mAJUDA\033[1;32m foi carregado com sucesso!\33[m')

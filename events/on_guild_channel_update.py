@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class ChannelUpdate(commands.Cog):
@@ -18,7 +18,7 @@ class ChannelUpdate(commands.Cog):
                         if before.name != after.name:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is not None:
-                                to_send = disnake.Embed(
+                                to_send = discord.Embed(
                                     title=":star2: **Canal de Texto Editado**",
                                     color=self.color,
                                     description=f"**Canal de texto:** {before.name}")
@@ -36,9 +36,9 @@ class ChannelUpdate(commands.Cog):
                                         await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
-                except disnake.errors.HTTPException:
+                except discord.HTTPException:
                     pass
                 except TypeError:
                     pass
@@ -48,7 +48,7 @@ class ChannelUpdate(commands.Cog):
                         if before.topic != after.topic:
                             canal = self.bot.get_channel(data['log_config']['log_channel_id'])
                             if canal is not None:
-                                to_send = disnake.Embed(
+                                to_send = discord.Embed(
                                     title=":star2: **Canal de Texto Editado**",
                                     color=self.color,
                                     description=f"**Canal de texto:** {before.name}")
@@ -66,14 +66,14 @@ class ChannelUpdate(commands.Cog):
                                         await canal.send(embed=to_send)
                 except AttributeError:
                     pass
-                except disnake.errors.NotFound:
+                except discord.NotFound:
                     pass
-                except disnake.errors.HTTPException:
+                except discord.HTTPException:
                     pass
                 except TypeError:
                     pass
 
 
-def setup(bot):
-    bot.add_cog(ChannelUpdate(bot))
+async def setup(bot):
+    await bot.add_cog(ChannelUpdate(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mCHANNEL_UPDATE\033[1;33m foi carregado com sucesso!\33[m')

@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from asyncio import sleep
-from disnake.ext import commands
+from discord.ext import commands
 from random import randint, choice
 from resources.fight import Entity, Ext
 from resources.check import check_it
@@ -41,27 +41,27 @@ class Raid(commands.Cog):
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.explorando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`Você está jogando, aguarde para quando você estiver livre!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id not in self.bot.recovery:
@@ -89,7 +89,7 @@ class Raid(commands.Cog):
         if player_level_now < 26:
             msg = '<:negate:721581573396496464>│`VOCE PRECISA ESTA NO NIVEL 26 OU MAIOR PARA IR UMA WAVE!\n' \
                   'OLHE O SEU NIVEL NO COMANDO:` **ASH SKILL**'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id not in self.bot.recovery:
@@ -105,12 +105,12 @@ class Raid(commands.Cog):
                 if data['inventory']['coins'] < ct:
                     msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
                           f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
-                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    embed = discord.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
             except KeyError:
                 msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             update['inventory']['coins'] -= ct
@@ -176,7 +176,7 @@ class Raid(commands.Cog):
 
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
-                embed = disnake.Embed(color=self.bot.color, title=msg)
+                embed = discord.Embed(color=self.bot.color, title=msg)
                 embed.set_image(url=self.db_monster[ctx.author.id]['img'])
                 await ctx.send(embed=embed)
                 # criando as entidade do monstro...
@@ -222,7 +222,7 @@ class Raid(commands.Cog):
 
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
-                embed = disnake.Embed(color=self.bot.color, title=msg)
+                embed = discord.Embed(color=self.bot.color, title=msg)
                 embed.set_image(url=self.db_monster[ctx.author.id]['img'])
                 await ctx.send(embed=embed)
                 # criando as entidade do monstro...
@@ -303,7 +303,7 @@ class Raid(commands.Cog):
             else:
                 m_raid[ctx.author.id].evasion += 1
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     description=f"`{m_raid[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -333,7 +333,7 @@ class Raid(commands.Cog):
 
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
-                embed = disnake.Embed(color=self.bot.color, title=msg)
+                embed = discord.Embed(color=self.bot.color, title=msg)
                 embed.set_image(url=self.db_monster[ctx.author.id]['img'])
                 await ctx.send(embed=embed)
                 # criando as entidade do monstro...
@@ -379,7 +379,7 @@ class Raid(commands.Cog):
 
                 self.db_monster[ctx.author.id] = _mon
                 msg = f"Voce derrotou o {raid_rank[ctx.author.id]}° monstro, proximo..."
-                embed = disnake.Embed(color=self.bot.color, title=msg)
+                embed = discord.Embed(color=self.bot.color, title=msg)
                 embed.set_image(url=self.db_monster[ctx.author.id]['img'])
                 await ctx.send(embed=embed)
                 # criando as entidade do monstro...
@@ -462,7 +462,7 @@ class Raid(commands.Cog):
             else:
                 p_raid[ctx.author.id].evasion += 1
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -530,7 +530,7 @@ class Raid(commands.Cog):
 
         # depois da raid
         if raid_rank[ctx.author.id] <= 0:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
                 color=0x000000
             )
@@ -543,7 +543,7 @@ class Raid(commands.Cog):
         else:
             answer_ = await self.bot.db.add_money(ctx, money[ctx.author.id], True)
             msg = f"`{ctx.author.name.upper()} GANHOU!` {answer_}"
-            embed = disnake.Embed(description=msg, color=0x000000)
+            embed = discord.Embed(description=msg, color=0x000000)
             img = "https://media1.tenor.com/images/a39aa52e78dfdc01934dd2b00c1b2a6e/tenor.gif?itemid=12772532"
             embed.set_thumbnail(url=f"{img}")
             embed.set_author(name=f"{self.db_monster[ctx.author.id]['name']}",
@@ -598,7 +598,7 @@ class Raid(commands.Cog):
 
             response = await self.bot.db.add_reward(ctx, _reward, False, True)
             desc = "<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ITENS DO RPG** ✨"
-            embed = disnake.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
+            embed = discord.Embed(color=self.bot.color, title="RECOMPENSAS", description=desc)
             for texts in response:
                 if texts is not None:
                     if len(texts) > 1:
@@ -648,7 +648,7 @@ class Raid(commands.Cog):
 
         if len(equips) > 0:
             img = choice(git)
-            embed = disnake.Embed(color=self.bot.color)
+            embed = discord.Embed(color=self.bot.color)
             embed.set_thumbnail(url=img)
             await ctx.send(embed=embed)
             await ctx.send(msg_final)
@@ -669,7 +669,7 @@ class Raid(commands.Cog):
 
             if rew is not None:
                 img = choice(git)
-                embed = disnake.Embed(color=self.bot.color)
+                embed = discord.Embed(color=self.bot.color)
                 embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed)
                 await ctx.send(f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n'
@@ -739,7 +739,7 @@ class Raid(commands.Cog):
         else:
             new_xp = f"{_db_class['xp'] - percent[2]} / {percent[1] - percent[2]} | {percent[0] * 2} / 100%"
         text = f"**XP:** {new_xp}\n`{'█' * percent[0]}{'-' * (50 - percent[0])}`"
-        embed = disnake.Embed(color=self.bot.color, description=text)
+        embed = discord.Embed(color=self.bot.color, description=text)
         await ctx.send(embed=embed, delete_after=5.0)
 
         if p_raid[ctx.author.id].status['hp'] <= 0:  # jogador 1 ganhou
@@ -751,6 +751,6 @@ class Raid(commands.Cog):
             self.bot.recovery.remove(ctx.author.id)
 
 
-def setup(bot):
-    bot.add_cog(Raid(bot))
+async def setup(bot):
+    await bot.add_cog(Raid(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mWAVE\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from asyncio import TimeoutError
@@ -90,7 +90,7 @@ ITEMS:
 <I: {}/{}>
 <C: {}/{}>
 <SIZE: {}/{}>```'''.format(rarity, status, s, l_s, ur, l_ur, sr, l_sr, r, l_r, i, l_i, c, l_c, size_now, size_full)
-                box = disnake.Embed(
+                box = discord.Embed(
                     title="{}'s box:\n"
                           "`PARA ABRIR SUA BOX USE O COMANDO`\n"
                           "**ASH BOX BOOSTER**".format(ctx.author.name),
@@ -330,6 +330,6 @@ ITEMS:
         await self.bot.data.add_sts(ctx.author, "boosters", amount)
 
 
-def setup(bot):
-    bot.add_cog(BoxClass(bot))
+async def setup(bot):
+    await bot.add_cog(BoxClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mBOXCLASS\033[1;32m foi carregado com sucesso!\33[m')

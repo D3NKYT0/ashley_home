@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class OnMessageEdit(commands.Cog):
@@ -32,7 +32,7 @@ class OnMessageEdit(commands.Cog):
             if not canal:
                 return
 
-            embed = disnake.Embed(color=self.color, title=f":pencil: {after.author} **editou uma mensagem de texto**",
+            embed = discord.Embed(color=self.color, title=f":pencil: {after.author} **editou uma mensagem de texto**",
                                   description=f"**Canal de texto:** {after.channel.mention}")
 
             embed.add_field(name="**Antiga mensagem:**",
@@ -55,6 +55,6 @@ class OnMessageEdit(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(OnMessageEdit(bot))
+async def setup(bot):
+    await bot.add_cog(OnMessageEdit(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_EDIT\033[1;33m foi carregado com sucesso!\33[m')

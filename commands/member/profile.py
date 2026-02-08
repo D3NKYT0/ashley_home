@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from datetime import datetime as dt
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import parse_duration
@@ -27,7 +27,7 @@ class ProfileSystem(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='profile', aliases=['perfil'])
-    async def profile(self, ctx, member: disnake.Member = None):
+    async def profile(self, ctx, member: discord.Member = None):
         """Comando usado pra ver o seu perfil da ashley
         Use ash profile <@usuario em questão se não colocar vera seu proprio perfil>"""
         if member is None:
@@ -124,7 +124,7 @@ class ProfileSystem(commands.Cog):
         }
 
         await profile(data_profile)
-        await ctx.send(file=disnake.File('profile.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
+        await ctx.send(file=discord.File('profile.png'), content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
 
     @check_it(no_pm=True)
     @commands.cooldown(1, 5.0, commands.BucketType.user)
@@ -155,6 +155,6 @@ class ProfileSystem(commands.Cog):
             return await ctx.send("<:alert:739251822920728708>│`TEXTO MUITO GRANDE`")
 
 
-def setup(bot):
-    bot.add_cog(ProfileSystem(bot))
+async def setup(bot):
+    await bot.add_cog(ProfileSystem(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mPROFILE_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

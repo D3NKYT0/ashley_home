@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from random import choice
 from asyncio import TimeoutError
 from resources.check import check_it
@@ -27,7 +27,7 @@ class CharadeClass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -49,7 +49,7 @@ class CharadeClass(commands.Cog):
             charade_list = list(self.charade.keys())
             charade = choice(charade_list)
 
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 title='A CHARADA É...',
                 description=f'```{charade}```',
                 color=self.color,
@@ -107,6 +107,6 @@ class CharadeClass(commands.Cog):
                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
 
 
-def setup(bot):
-    bot.add_cog(CharadeClass(bot))
+async def setup(bot):
+    await bot.add_cog(CharadeClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCHARADECLASS\033[1;32m foi carregado com sucesso!\33[m')

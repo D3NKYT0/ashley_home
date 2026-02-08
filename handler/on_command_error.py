@@ -1,9 +1,9 @@
 import sys
-import disnake
+import discord
 import traceback
 import aiohttp
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.utility import ERRORS
 
 cor = {
@@ -23,8 +23,8 @@ class CommandErrorHandler(commands.Cog):
         self.bot = bot
         self.color = self.bot.color
         self.read = ["read letter", "read assemble", "read aungen", "read soul", "read nw", "read waffen"]
-        self.errors = [aiohttp.ClientOSError, ConnectionResetError, disnake.errors.DiscordServerError,
-                       disnake.errors.HTTPException]
+        self.errors = [aiohttp.ClientOSError, ConnectionResetError, discord.DiscordServerError,
+                       discord.HTTPException]
         self.errors_str = [
             "Command raised an exception: HTTPException: 504 Gateway Time-out (error code: 0): <!DOCTYPE html>",
             "Command raised an exception: discordServerError: 500 Internal Server Error (error code: 0): 500: "
@@ -36,7 +36,7 @@ class CommandErrorHandler(commands.Cog):
             "connect error or disconnect/reset before headers. reset reason: connection failure",
             "aiohttp.client_exceptions.ClientOSError: [Errno 32] Broken pipe",
             "Command raised an exception: ClientOSError: [Errno 104] Connection reset by peer",
-            "disnake.errors.DiscordServerError: 500 Internal Server Error (error code: 0): 500: Internal Server Error"
+            "discord.DiscordServerError: 500 Internal Server Error (error code: 0): 500: Internal Server Error"
         ]
 
     def error_check(self, error):
@@ -68,12 +68,12 @@ class CommandErrorHandler(commands.Cog):
             if self.bot.maintenance and ctx.author.id not in self.bot.testers:
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:
-                    embed = disnake.Embed(color=self.color, description=self.bot.maintenance_msg)
+                    embed = discord.Embed(color=self.color, description=self.bot.maintenance_msg)
                     return await ctx.send(embed=embed)
             return
 
         # Qualquer interação vazia nao gera erro no terminal
-        if isinstance(error, disnake.errors.NotFound):
+        if isinstance(error, discord.NotFound):
             return
 
         # Qualquer comando desabilitado retornará uma mensagem de aviso
@@ -144,9 +144,9 @@ class CommandErrorHandler(commands.Cog):
         # e como nao quero print de comando mal executado pelo usuario faço a outra exceção
         if not isinstance(error, commands.CommandOnCooldown) and not isinstance(error, commands.CheckFailure):
             # nao quero mostrar os erros de API e desconexão
-            if not isinstance(error, disnake.errors.DiscordServerError) or self.error_check(error):
+            if not isinstance(error, discord.DiscordServerError) or self.error_check(error):
                 # aqui quando um erro nao é tratado eu registro sua ocorrencia para averiguar sua origem
-                # PRINT INTERNO (disnake LOG)
+                # PRINT INTERNO (discord LOG)
                 channel = self.bot.get_channel(530419409311760394)
                 perms = ctx.channel.permissions_for(ctx.me)
                 if perms.send_messages and perms.read_messages:
@@ -176,6 +176,6 @@ class CommandErrorHandler(commands.Cog):
                 traceback.print_exception(type(_error), _error, _error.__traceback__, file=sys.stderr)
 
 
-def setup(bot):
-    bot.add_cog(CommandErrorHandler(bot))
+async def setup(bot):
+    await bot.add_cog(CommandErrorHandler(bot))
     print('\033[1;36m( 🔶 ) | O Handler \033[1;31mON_COMMAND_ERROR\033[1;36m foi carregado com sucesso!\33[m')

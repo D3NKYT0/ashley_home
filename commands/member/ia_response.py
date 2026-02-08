@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -22,19 +22,19 @@ class IaResponseClass(commands.Cog):
         response = update['user']['ia_response']
         await self.bot.db.update_data(data, update, "users")
         if response:
-            embed = disnake.Embed(
-                color=disnake.Color.green(),
+            embed = discord.Embed(
+                color=discord.Color.green(),
                 description=f'<:confirmed:721581574461587496>│`Interação com a Inteligencia Artificial '
                             f'habilitada com sucesso!`')
             await ctx.send(embed=embed)
         else:
-            embed = disnake.Embed(
-                color=disnake.Color.red(),
+            embed = discord.Embed(
+                color=discord.Color.red(),
                 description=f'<:negate:721581573396496464>│`Interação com a Inteligencia Artificial '
                             f'desabilitada com sucesso!`')
             await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(IaResponseClass(bot))
+async def setup(bot):
+    await bot.add_cog(IaResponseClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mIA_RESPONSE\033[1;32m foi carregado com sucesso!\33[m')

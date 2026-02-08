@@ -1,8 +1,8 @@
-import disnake
+import discord
 import json
 
 from asyncio import TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -42,7 +42,7 @@ class ResearchClass(commands.Cog):
         """Sistema de Pesquisa da Ashley"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = disnake.Embed(color=self.color)
+            top = discord.Embed(color=self.color)
             top.add_field(name="Research Commands:",
                           value=f"{self.st[67]} `p s` Faça uma pesquisa de satisfação sobre a ASHLEY!\n"
                                 f"{self.st[67]} `p f` Faça uma pesquisa de feedback sobre a ASHLEY!")
@@ -62,7 +62,7 @@ class ResearchClass(commands.Cog):
         if "satisfaction" in data["research"].keys():
             try:
                 return await ctx.author.send(_RESEARCH["-4"])
-            except disnake.errors.Forbidden:
+            except discord.Forbidden:
                 return await ctx.send(_RESEARCH["-4"])
 
         def check(m):
@@ -78,7 +78,7 @@ class ResearchClass(commands.Cog):
         # ----------------------------------------------------------------------------------
         try:
             await ctx.author.send(_RESEARCH["1"] + _RESEARCH["-3"])
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
@@ -152,7 +152,7 @@ class ResearchClass(commands.Cog):
             _SCORE[ctx.author.id] += self.verify_answer(_ANSWERS[ctx.author.id][k].content)
 
         desc = f"`Pesquisa de:` **{ctx.author}**\n`ID:` **{ctx.author.id}**\n`Score:` **{_SCORE[ctx.author.id]}**"
-        embed = disnake.Embed(colour=self.color, description=desc)
+        embed = discord.Embed(colour=self.color, description=desc)
         for k in _ANSWERS[ctx.author.id].keys():
             embed.add_field(name=_RESEARCH[k], value=f"**{_ANSWERS[ctx.author.id][k].content}**", inline=False)
         embed.set_thumbnail(url=ctx.author.display_avatar)
@@ -180,7 +180,7 @@ class ResearchClass(commands.Cog):
         if "feedback" in data["research"].keys():
             try:
                 return await ctx.author.send(_RESEARCH_2["-4"])
-            except disnake.errors.Forbidden:
+            except discord.Forbidden:
                 return await ctx.send(_RESEARCH_2["-4"])
 
         def check(m):
@@ -196,7 +196,7 @@ class ResearchClass(commands.Cog):
         # ----------------------------------------------------------------------------------
         try:
             await ctx.author.send(_RESEARCH_2["1"] + _RESEARCH_2["-3"])
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             return await ctx.send("<:negate:721581573396496464>│`Desculpe, a pesquisa precisa ser feita no privado!`")
         try:
             _ANSWERS_2[ctx.author.id]["1"] = await self.bot.wait_for('message', check=check, timeout=120.0)
@@ -270,7 +270,7 @@ class ResearchClass(commands.Cog):
             _SCORE_2[ctx.author.id] += self.verify_answer(_ANSWERS_2[ctx.author.id][k].content)
 
         desc = f"`Pesquisa de:` **{ctx.author}**\n`ID:` **{ctx.author.id}**\n`Score:` **{_SCORE_2[ctx.author.id]}**"
-        embed = disnake.Embed(colour=self.color, description=desc)
+        embed = discord.Embed(colour=self.color, description=desc)
         for k in _ANSWERS_2[ctx.author.id].keys():
             embed.add_field(name=_RESEARCH_2[k], value=f"**{_ANSWERS_2[ctx.author.id][k].content}**", inline=False)
         embed.set_thumbnail(url=ctx.author.display_avatar)
@@ -288,6 +288,6 @@ class ResearchClass(commands.Cog):
         await ctx.author.send(_RESEARCH_2["-2"] + f"\n`SEU SCORE:` **{_SCORE_2[ctx.author.id]}**{extra}")
 
 
-def setup(bot):
-    bot.add_cog(ResearchClass(bot))
+async def setup(bot):
+    await bot.add_cog(ResearchClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mREGISTERCLASS\033[1;32m foi carregado com sucesso!\33[m')

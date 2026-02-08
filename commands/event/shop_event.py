@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 import copy
 
 from asyncio import TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import paginator
@@ -100,7 +100,7 @@ class ShopEvent(commands.Cog):
                                '\n▶ **Craftar** `1`\n⏩ **Craftar** `2+`' \
                                '\n⏭ **Craftar o Maximo**\n❌ **Fechar**'.format(maximo)
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     title='🎊 **CRAFT EV** 🎊\n(Custo/Quantidade no inventario)',
                     color=self.bot.color,
                     description=description)
@@ -261,6 +261,6 @@ class ShopEvent(commands.Cog):
         self.bot.comprando.remove(ctx.author.id)
 
 
-def setup(bot):
-    bot.add_cog(ShopEvent(bot))
+async def setup(bot):
+    await bot.add_cog(ShopEvent(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSHOP_EVENT\033[1;32m foi carregado com sucesso!\33[m')

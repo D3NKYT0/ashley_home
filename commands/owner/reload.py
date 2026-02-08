@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,14 +19,14 @@ class ReloadCog(commands.Cog):
         try:
             self.bot.reload_extension(cog)
             msg = f'<:confirmed:721581574461587496>│Extenção **{cog}**, recarregada com sucesso!'
-            embed = disnake.Embed(color=self.color, description=msg)
+            embed = discord.Embed(color=self.color, description=msg)
             await ctx.send(embed=embed)
         except ModuleNotFoundError as e:
             msg = f'<:negate:721581573396496464>│Falha ao recarregar a extenção **{cog}**. \n```{e}```'
-            embed = disnake.Embed(color=disnake.Color.red(), description=msg)
+            embed = discord.Embed(color=discord.Color.red(), description=msg)
             await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(ReloadCog(bot))
+async def setup(bot):
+    await bot.add_cog(ReloadCog(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mRELOAD\033[1;32m foi carregado com sucesso!\33[m')

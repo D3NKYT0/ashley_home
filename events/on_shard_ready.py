@@ -1,7 +1,7 @@
-import json
+﻿import json
 from resources.color import random_color
-from disnake import Embed
-from disnake.ext import commands
+from discord import Embed
+from discord.ext import commands
 from resources.webhook import Webhook
 from datetime import datetime
 
@@ -37,6 +37,6 @@ class Shards(commands.Cog):
             await self.webhook.send()
 
 
-def setup(bot):
-    bot.add_cog(Shards(bot))
+async def setup(bot):
+    await bot.add_cog(Shards(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mON_SHARD_READY\033[1;33m foi carregado com sucesso!\33[m')

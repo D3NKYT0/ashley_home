@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from random import randint
 from resources.check import check_it
 from resources.db import Database
@@ -27,7 +27,7 @@ class CardsClass(commands.Cog):
             if data['inventory']['coins']:
                 pass
         except KeyError:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.bot.color,
                 description='<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`')
             return await ctx.send(embed=embed)
@@ -48,7 +48,7 @@ class CardsClass(commands.Cog):
 
             cards = self.bot.config['cards']['list']
             card = cards[randint(0, 399)]
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 title='QUAL O NOME DESSA CARTA?',
                 color=self.color,
             )
@@ -95,6 +95,6 @@ class CardsClass(commands.Cog):
                                f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`')
 
 
-def setup(bot):
-    bot.add_cog(CardsClass(bot))
+async def setup(bot):
+    await bot.add_cog(CardsClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCARDSCLASS\033[1;32m foi carregado com sucesso!\33[m')

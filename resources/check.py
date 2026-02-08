@@ -1,8 +1,8 @@
-import re
-import disnake.utils
+﻿import re
+import discord.utils
 
 from config import data
-from disnake.ext import commands
+from discord.ext import commands
 
 
 def ash_perms(perms):
@@ -33,7 +33,7 @@ def check_it(**kwargs):
             raise commands.CheckFailure('<:alert:739251822920728708>│`Você não pode mandar comandos em '
                                         'mensagens privadas!`')
 
-        if not (isinstance(ctx.channel, (disnake.DMChannel, disnake.GroupChannel))) and kwargs.get('is_nsfw', False):
+        if not (isinstance(ctx.channel, (discord.DMChannel, discord.GroupChannel))) and kwargs.get('is_nsfw', False):
             if ctx.channel.is_nsfw() is False:
                 raise commands.CheckFailure("<:alert:739251822920728708>│`Esse comando apenas pode ser usado"
                                             " em um canal` **nsfw!!**")
@@ -46,7 +46,7 @@ def check_it(**kwargs):
             raise commands.CheckFailure("<:alert:739251822920728708>│`Apenas meus devs podem usar esse comando!`")
 
         if kwargs.get("check_role", False):
-            role = disnake.utils.find(lambda r: r.name in kwargs.get("roles", []), ctx.author.roles)
+            role = discord.utils.find(lambda r: r.name in kwargs.get("roles", []), ctx.author.roles)
             if role is None:
                 raise commands.CheckFailure("<:alert:739251822920728708>│`Você precisa de um cargo "
                                             "específico para usar esse comando!`")

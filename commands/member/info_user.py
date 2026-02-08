@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -14,7 +14,7 @@ class UserInfo(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='userinfo', aliases=['infouser', 'ui', 'iu'])
-    async def userinfo(self, ctx, member: disnake.Member = None):
+    async def userinfo(self, ctx, member: discord.Member = None):
         """comando que da uma lista de informações sobre o usuario
         Use ash userinfo <@usuario em questão>"""
         if member is None:
@@ -32,7 +32,7 @@ class UserInfo(commands.Cog):
         userjoinedat = member.joined_at
         usercreatedat = member.created_at
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title=":pushpin:Informações pessoais de:",
             color=self.color,
             description=member.name
@@ -48,6 +48,6 @@ class UserInfo(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(UserInfo(bot))
+async def setup(bot):
+    await bot.add_cog(UserInfo(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mUSERINFO\033[1;32m foi carregado com sucesso!\33[m')

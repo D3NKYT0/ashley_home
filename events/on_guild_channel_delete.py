@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class ChannelDelete(commands.Cog):
@@ -22,7 +22,7 @@ class ChannelDelete(commands.Cog):
             if not canal:
                 return
 
-            embed = disnake.Embed(color=self.bot.color,
+            embed = discord.Embed(color=self.bot.color,
                                   title=":put_litter_in_its_place: **Canal de texto deletado**",
                                   description=f"**Canal de texto:** `{channel.name}`")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -38,6 +38,6 @@ class ChannelDelete(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(ChannelDelete(bot))
+async def setup(bot):
+    await bot.add_cog(ChannelDelete(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mCHANNEL_DELETE\033[1;33m foi carregado com sucesso!\33[m')

@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from resources.check import check_it
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 
 
@@ -22,7 +22,7 @@ class Avatar(commands.Cog):
         except IndexError:
             user = ctx.author
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="Avatar de: {}".format(user.name),
             color=self.color)
         embed.set_image(url=user.display_avatar)
@@ -30,6 +30,6 @@ class Avatar(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Avatar(bot))
+async def setup(bot):
+    await bot.add_cog(Avatar(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mAVATAR\033[1;32m foi carregado com sucesso!\33[m')

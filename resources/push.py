@@ -1,4 +1,4 @@
-import json
+﻿import json
 from onesignal import OneSignal as OneClient, SegmentNotification
 
 with open("data/auth.json") as auth:

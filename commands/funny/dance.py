@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from random import choice
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class DanceClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='dance', aliases=['dançar'])
-    async def dance(self, ctx, member: disnake.Member = None):
+    async def dance(self, ctx, member: discord.Member = None):
         """Comando de gifs de dança
         Use ash dance <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         try:
             dance_img = ['https://media1.tenor.com/images/56350dfdcd3a5fa4fd66e9e87f9574bb/tenor.gif?itemid=4718162',
@@ -31,7 +31,7 @@ class DanceClass(commands.Cog):
                          'https://media1.tenor.com/images/dc24029de47091555c2ecd8ac91d2069/tenor.gif?itemid=13048072',
                          'https://media1.tenor.com/images/42803ed59f21b034f440243557ff2736/tenor.gif?itemid=11049076']
             dance = choice(dance_img)
-            dance_embed = disnake.Embed(title='Dance <a:dyno:541775159460102167>',
+            dance_embed = discord.Embed(title='Dance <a:dyno:541775159460102167>',
                                         description='**{}** Ele(a) esta dançando com **{}**! Alguem tira foto! EU '
                                                     'SHIPPO! :heart_eyes: '.format(member.name, ctx.author.name),
                                         color=self.color)
@@ -52,6 +52,6 @@ class DanceClass(commands.Cog):
                            'dançar!`')
 
 
-def setup(bot):
-    bot.add_cog(DanceClass(bot))
+async def setup(bot):
+    await bot.add_cog(DanceClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mDANCE\033[1;32m foi carregado com sucesso!\33[m')

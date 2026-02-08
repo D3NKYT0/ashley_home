@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -66,7 +66,7 @@ class CreateClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in _COST.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE DEVE USAR OS COMANDOS` **ASH RECIPE** `E` **ASH CRAFT**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE CRIAR UM ENCANTAMENTO:",
             color=self.bot.color,
             description=msg)
@@ -154,7 +154,7 @@ class CreateClass(commands.Cog):
                                f"`adicionado ao seu inventario de equipamentos com sucesso...`")
 
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
@@ -186,6 +186,6 @@ class CreateClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "create", 1)
 
 
-def setup(bot):
-    bot.add_cog(CreateClass(bot))
+async def setup(bot):
+    await bot.add_cog(CreateClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCREATE\033[1;32m foi carregado com sucesso!\33[m')

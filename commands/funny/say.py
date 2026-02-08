@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -18,7 +18,7 @@ class SaySomething(commands.Cog):
         Use ash say <mensagem desejada>"""
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         if ctx.invoked_subcommand is None:
             if msg is None:
@@ -35,12 +35,12 @@ class SaySomething(commands.Cog):
             return await ctx.send('<:negate:721581573396496464>│`DIGITE ALGO PARA EU FALAR`')
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         finally:
             await channel.send('```{}```'.format(text.upper()))
 
 
-def setup(bot):
-    bot.add_cog(SaySomething(bot))
+async def setup(bot):
+    await bot.add_cog(SaySomething(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mDIGA\033[1;32m foi carregado com sucesso!\33[m')

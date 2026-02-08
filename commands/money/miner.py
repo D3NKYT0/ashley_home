@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice, randint
@@ -17,7 +17,7 @@ git = ["https://media1.tenor.com/images/adda1e4a118be9fcff6e82148b51cade/tenor.g
        "https://media1.tenor.com/images/39c363015f2ae22f212f9cd8df2a1063/tenor.gif?itemid=15894886"]
 
 
-class ViewDefault(disnake.ui.View):
+class ViewDefault(discord.ui.View):
     def __init__(self, author):
         self.author = author
         super().__init__()
@@ -29,7 +29,7 @@ class ViewDefault(disnake.ui.View):
             return True
 
 
-class SelectProvinces(disnake.ui.Select):
+class SelectProvinces(discord.ui.Select):
     def __init__(self, provinces, bot, amount):
         self.provinces = provinces
         self.bot = bot
@@ -37,7 +37,7 @@ class SelectProvinces(disnake.ui.Select):
         self.i = self.bot.items
         super().__init__(
             placeholder="Selecione uma provincia",
-            options=[disnake.SelectOption(label=province, value=province) for province in self.provinces],
+            options=[discord.SelectOption(label=province, value=province) for province in self.provinces],
             min_values=1, max_values=1)
 
     async def callback(self, inter):
@@ -47,7 +47,7 @@ class SelectProvinces(disnake.ui.Select):
                       f"Provincia selecionada: {exchange}" \
                       f"```"
 
-        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        embed = discord.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
         tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
@@ -76,11 +76,11 @@ class SelectProvinces(disnake.ui.Select):
 
         try:
             await inter.response.edit_message(embed=embed, view=ProvinceExchange(self.bot, exchange, self.amount))
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
 
-class ProvinceExchange(disnake.ui.View):
+class ProvinceExchange(discord.ui.View):
     def __init__(self, bot, exchange, amount):
         self.bot = bot
         self.amount = amount
@@ -88,7 +88,7 @@ class ProvinceExchange(disnake.ui.View):
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy", style=disnake.ButtonStyle.green)
+    @discord.ui.button(emoji="<:buy:933202206218416160>", label="Buy", style=discord.ButtonStyle.green)
     async def _buy(self, button, inter):
 
         if button:
@@ -103,7 +103,7 @@ class ProvinceExchange(disnake.ui.View):
                       f"Provincia selecionada: {exchange}" \
                       f"```"
 
-        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        embed = discord.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
         tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
@@ -137,10 +137,10 @@ class ProvinceExchange(disnake.ui.View):
 
         try:
             await inter.response.edit_message(embed=embed, view=BuyAndSell(self.bot, self.exchange, self.amount))
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
-    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell", style=disnake.ButtonStyle.primary)
+    @discord.ui.button(emoji="<:sell:933202206029672498>", label="Sell", style=discord.ButtonStyle.primary)
     async def _sell(self, button, inter):
 
         if button:
@@ -151,7 +151,7 @@ class ProvinceExchange(disnake.ui.View):
                       f"Provincia selecionada: {exchange}" \
                       f"```"
 
-        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        embed = discord.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
         tot, emo = 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
 
@@ -181,10 +181,10 @@ class ProvinceExchange(disnake.ui.View):
 
         try:
             await inter.response.edit_message(embed=embed, view=SellAndBuy(self.bot, self.exchange, self.amount))
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
-    @disnake.ui.button(emoji="<:back:933204477492744252>", label="Back", style=disnake.ButtonStyle.gray)
+    @discord.ui.button(emoji="<:back:933204477492744252>", label="Back", style=discord.ButtonStyle.gray)
     async def _back(self, button, inter):
 
         if button:
@@ -206,7 +206,7 @@ class ProvinceExchange(disnake.ui.View):
                           "Vermelho: Nenhuma ação disponivel" \
                           "```"
 
-            embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+            embed = discord.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
             cd = await self.bot.db.cd("exchanges")
             all_data = [d async for d in cd.find()]
             tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
@@ -237,31 +237,31 @@ class ProvinceExchange(disnake.ui.View):
 
             await inter.edit_original_message(embed=embed, view=view)
 
-        except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
+        except (discord.NotFound, discord.HTTPException):
             pass
 
-    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
+    @discord.ui.button(emoji="❌", label="Exit", style=discord.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
             pass
 
         msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         try:
             await inter.response.edit_message(embed=embed, view=None)
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
 
-class BuyAndSell(disnake.ui.View):
+class BuyAndSell(discord.ui.View):
     def __init__(self, bot, exchange, amount):
         self.bot = bot
         self.amount = amount
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy 1", style=disnake.ButtonStyle.green)
+    @discord.ui.button(emoji="<:buy:933202206218416160>", label="Buy 1", style=discord.ButtonStyle.green)
     async def _buy_one(self, button, inter):
 
         if button:
@@ -276,7 +276,7 @@ class BuyAndSell(disnake.ui.View):
 
         if bitash - float(be.replace(",", ".")) < 0:
             msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         cdc = await self.bot.db.cd("exchanges")
@@ -284,12 +284,12 @@ class BuyAndSell(disnake.ui.View):
 
         if len(list(assets['assets'].keys())) <= 0:
             msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         if len(list(assets['assets'].keys())) - 1 < 0:
             msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
@@ -302,13 +302,13 @@ class BuyAndSell(disnake.ui.View):
                                                       "$set": {f"sold.{asset}": assets['sold'][asset]}})
 
         msg = f"<:confirmed:721581574461587496>│`Você comprou` **1** `ação da provincia de:` **{self.exchange}**"
-        embed = disnake.Embed(description=msg)
+        embed = discord.Embed(description=msg)
         try:
             await inter.response.edit_message(embed=embed, view=None)
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
-    @disnake.ui.button(emoji="<:buy:933202206218416160>", label="Buy All", style=disnake.ButtonStyle.green)
+    @discord.ui.button(emoji="<:buy:933202206218416160>", label="Buy All", style=discord.ButtonStyle.green)
     async def _buy_all(self, button, inter):
 
         if button:
@@ -336,17 +336,17 @@ class BuyAndSell(disnake.ui.View):
 
         if bitash - (float(be.replace(",", ".")) * tot_buy) < 0:
             msg = "<:negate:721581573396496464>│`Você nao tem` **bitash** `suficiente para essa operação!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         if len(list(assets['assets'].keys())) <= 0:
             msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui mais ações a venda!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         if len(list(assets['assets'].keys())) - tot_buy < 0:
             msg = f"<:negate:721581573396496464>│`A provincia de` **{self.exchange}** `não possui {tot_buy} ações!`"
-            embed = disnake.Embed(description=msg)
+            embed = discord.Embed(description=msg)
             return await inter.response.edit_message(embed=embed, view=None)
 
         await cd.update_one({"user_id": inter.user.id}, {"$inc": {f"true_money.bitash": charged}})
@@ -362,31 +362,31 @@ class BuyAndSell(disnake.ui.View):
         await cdc.update_one({"_id": self.exchange}, query)
 
         msg = f"<:confirmed:721581574461587496>│`Você comprou` **{tot_buy}** `ações da provincia:` **{self.exchange}**"
-        embed = disnake.Embed(description=msg)
+        embed = discord.Embed(description=msg)
         try:
             await inter.response.edit_message(embed=embed, view=None)
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
-    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
+    @discord.ui.button(emoji="❌", label="Exit", style=discord.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
             pass
 
         msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
 
-class SellAndBuy(disnake.ui.View):
+class SellAndBuy(discord.ui.View):
     def __init__(self, bot, exchange, amount):
         self.bot = bot
         self.amount = amount
         self.exchange = exchange
         super().__init__()
 
-    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell 1", style=disnake.ButtonStyle.primary)
+    @discord.ui.button(emoji="<:sell:933202206029672498>", label="Sell 1", style=discord.ButtonStyle.primary)
     async def _sell_one(self, button, inter):
 
         if button:
@@ -415,7 +415,7 @@ class SellAndBuy(disnake.ui.View):
                 if amount == 0:
                     msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
                           f"`suficiente para essa operação!`"
-                    embed = disnake.Embed(description=msg)
+                    embed = discord.Embed(description=msg)
                     await _MSG.delete()
                     return await inter.edit_original_message(embed=embed, view=None)
 
@@ -438,19 +438,19 @@ class SellAndBuy(disnake.ui.View):
 
                 msg = f"✅│`Você vendeu` **1** `ação da provincia de:` " \
                       f"**{self.exchange}**"
-                embed = disnake.Embed(description=msg)
+                embed = discord.Embed(description=msg)
                 await _MSG.delete()
                 await inter.edit_original_message(embed=embed, view=None)
 
-            except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
+            except (discord.NotFound, discord.HTTPException):
                 pass
 
         else:
             msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(emoji="<:sell:933202206029672498>", label="Sell All", style=disnake.ButtonStyle.primary)
+    @discord.ui.button(emoji="<:sell:933202206029672498>", label="Sell All", style=discord.ButtonStyle.primary)
     async def _sell_all(self, button, inter):
 
         if button:
@@ -478,7 +478,7 @@ class SellAndBuy(disnake.ui.View):
                 if amount == 0:
                     msg = f"<:negate:721581573396496464>│`Você não tem ações de` **{self.exchange}** " \
                           f"`suficiente para essa operação!`"
-                    embed = disnake.Embed(description=msg)
+                    embed = discord.Embed(description=msg)
                     await _MSG.delete()
                     return await inter.edit_original_message(embed=embed, view=None)
 
@@ -494,7 +494,7 @@ class SellAndBuy(disnake.ui.View):
                     if self.amount > amount:
                         msg = f"<:negate:721581573396496464>│`Você não tem {self.amount} ações de` " \
                               f"**{self.exchange}** `para essa operação!`"
-                        embed = disnake.Embed(description=msg)
+                        embed = discord.Embed(description=msg)
                         await _MSG.delete()
                         return await inter.edit_original_message(embed=embed, view=None)
 
@@ -517,26 +517,26 @@ class SellAndBuy(disnake.ui.View):
 
                 msg = f"✅│`Você vendeu` **{amount}** `ação da provincia de:` " \
                       f"**{self.exchange}**"
-                embed = disnake.Embed(description=msg)
+                embed = discord.Embed(description=msg)
                 await _MSG.delete()
                 await inter.edit_original_message(embed=embed, view=None)
 
-            except (disnake.errors.NotFound, disnake.errors.InteractionNotResponded):
+            except (discord.NotFound, discord.HTTPException):
                 pass
 
         else:
             msg = "<:negate:721581573396496464>│`Você esta em cooldown...`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await inter.response.edit_message(embed=embed, view=None)
 
-    @disnake.ui.button(emoji="❌", label="Exit", style=disnake.ButtonStyle.danger)
+    @discord.ui.button(emoji="❌", label="Exit", style=discord.ButtonStyle.danger)
     async def _exit(self, button, inter):
 
         if button:
             pass
 
         msg = "<:confirmed:721581574461587496>│`Voce fechou a corretora!`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await inter.response.edit_message(embed=embed, view=None)
 
 
@@ -608,7 +608,7 @@ class Miner(commands.Cog):
                       "Vermelho: Nenhuma ação disponivel" \
                       "```"
 
-        embed = disnake.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
+        embed = discord.Embed(color=self.bot.color, title="BITASH CORRETORA", description=description)
         cd = await self.bot.db.cd("exchanges")
         all_data = [d async for d in cd.find()]
         tot_global, tot, emo = 0, 1000, ['🟢', '🔴', '🟠', '⚪']  # verde / vermelho / laranja / branco
@@ -684,7 +684,7 @@ class Miner(commands.Cog):
         asset = '\n'.join([f"{self.i[_][0]} `{self.i[_][1]}`" for _ in _assets])
         prov = '\n'.join([f"`{x}:` **{provincias[x]}**`/1000` **{perc(provincias[x])}%**" for x in provincias.keys()])
         description = f"```\nInformações da sua Wallet```"
-        embed = disnake.Embed(color=self.bot.color, title="BITASH WALLET", description=description)
+        embed = discord.Embed(color=self.bot.color, title="BITASH WALLET", description=description)
         wallet = f"`Total in Exchanges:` **{self.bot.broker.format_bitash(be_tot)}** `BTA`\n" \
                  f"`Total in Your Wallet:` **{self.bot.broker.format_bitash(bitash)}** `BTA`"
 
@@ -707,7 +707,7 @@ class Miner(commands.Cog):
     async def miner(self, ctx):
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = disnake.Embed(color=self.color)
+            embed = discord.Embed(color=self.color)
             embed.add_field(name="Miner Commands:",
                             value=f"{self.st[117]} `miner create`\n"
                                   f"{self.st[117]} `miner start`\n"
@@ -728,25 +728,25 @@ class Miner(commands.Cog):
 
         if "miner" not in update.keys():
             msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if f"{ctx.author.id}" in self.bot.minelist.keys():
             if self.bot.minelist[f"{ctx.author.id}"]["active"]:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             else:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
         miner = update["miner"]
 
         if len(miner["inventory"].keys()) == 0 and miner["bitash"] == 0.0 and miner["fragment"] == 0:
             msg = "<:negate:721581573396496464>│`Você não tem recompensas mineradas!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if miner["bitash"] > 0:
@@ -755,7 +755,7 @@ class Miner(commands.Cog):
             miner["bitash"] = 0.0
 
             msg = f"<:confirmed:721581574461587496>│`Você obteve` **{self.b.format_bitash(bitash)} BTA** `mineradas!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
         if miner["fragment"] > 0:
@@ -765,7 +765,7 @@ class Miner(commands.Cog):
 
             ct = "Fragmentos de Blessed Ethernya"
             msg = f"<:confirmed:721581574461587496>│`Você obteve` **{fragment} {ct}** `minerados!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
         if len(miner["inventory"].keys()) > 0:
@@ -779,7 +779,7 @@ class Miner(commands.Cog):
 
             asset = '\n'.join([f"{self.i[_][0]} **{items[_]}** `{self.i[_][1]}`" for _ in items])
             msg = f"<:confirmed:721581574461587496>│`Você obteve os seguintes items:\n`{asset}"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             await ctx.send(embed=embed)
 
         update["miner"] = miner
@@ -795,13 +795,13 @@ class Miner(commands.Cog):
 
         if "miner" in update.keys():
             msg = "<:negate:721581573396496464>│`Você ja criou o minerador!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE CRIAR UM MINERADOR:",
             color=self.bot.color,
             description=msg)
@@ -904,7 +904,7 @@ class Miner(commands.Cog):
                                f" sucesso...`")
 
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
 
@@ -917,12 +917,12 @@ class Miner(commands.Cog):
     async def _start(self, ctx, limit: int = None, uptime: str = None):
         if limit is None:
             msg = "<:negate:721581573396496464>│`Voce precisa dizer um limite de mineração`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if limit > 25:
             msg = "<:negate:721581573396496464>│`O limite de mineração nao pode ser maior que 25`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         data = await self.bot.db.get_data("user_id", ctx.author.id, "users")
@@ -930,18 +930,18 @@ class Miner(commands.Cog):
 
         if "miner" not in update.keys():
             msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if f"{ctx.author.id}" in self.bot.minelist.keys():
             if self.bot.minelist[f"{ctx.author.id}"]["active"]:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador ativo`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             else:
                 msg = "<:negate:721581573396496464>│`Você ja tem um minerador esperando para iniciar`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
         _uptime = update["inventory"].get("uptime", 0)
@@ -955,7 +955,7 @@ class Miner(commands.Cog):
             if uptime == "uptime":
                 if _uptime < 1:
                     msg = f"<:negate:721581573396496464>│`Você não tem` **1 Uptime** `disponivel!`"
-                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    embed = discord.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
                 update["inventory"]["uptime"] -= 1
@@ -966,7 +966,7 @@ class Miner(commands.Cog):
 
             if adamantium < limit:
                 msg = f"<:negate:721581573396496464>│`Você não tem` **{limit} Adamantium** `disponiveis!`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             update["inventory"]["adamantium"] -= limit
@@ -975,7 +975,7 @@ class Miner(commands.Cog):
 
             if energy < limit * 500:
                 msg = f"<:negate:721581573396496464>│`Você não tem` **{limit * 500} Energy** `disponiveis!`"
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             update["inventory"]["Energy"] -= limit * 500
@@ -1015,13 +1015,13 @@ class Miner(commands.Cog):
         if len(provincias.keys()) == 0:
             await mensagem.delete()
             msg = "<:negate:721581573396496464>│`Você não tem ações pra minerar!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if len(assets) == 0:
             await mensagem.delete()
             msg = "<:negate:721581573396496464>│`Você não tem ativos pra minerar!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         percent = 0.0
@@ -1044,7 +1044,7 @@ class Miner(commands.Cog):
         miner = {"active": False, "user_id": ctx.author.id, "limit": limit, "data": miner, "uptime": max_time}
         self.bot.minelist[f"{ctx.author.id}"] = miner
         msg = f"<:confirmed:721581574461587496>│`Seu minerador esta esperando para iniciar!` {msg_return}"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await mensagem.delete()
         await ctx.send(embed=embed)
 
@@ -1058,12 +1058,12 @@ class Miner(commands.Cog):
 
         if "miner" not in update.keys():
             msg = "<:negate:721581573396496464>│`Você ainda não tem um minerador!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if str(ctx.author.id) not in self.bot.minelist.keys():
             msg = "<:negate:721581573396496464>│`Você nao tem um minerador ativo no momento!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         miner = update["miner"]
@@ -1076,10 +1076,10 @@ class Miner(commands.Cog):
 
         self.bot.minelist[f"{ctx.author.id}"]["status"] = False
         msg = "<:confirmed:721581574461587496>│`Minerador esta esperando para ser parado com sucesso`"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Miner(bot))
+async def setup(bot):
+    await bot.add_cog(Miner(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mMINER_GROUP\033[1;32m foi carregado com sucesso!\33[m')

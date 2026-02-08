@@ -1,4 +1,4 @@
-from disnake.ext import commands
+﻿from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -133,6 +133,6 @@ class ChannelClass(commands.Cog):
             await ctx.send(f'{self.em["negate"]}│`Você não tem permissão para usar esse comando!`')
 
 
-def setup(bot):
-    bot.add_cog(ChannelClass(bot))
+async def setup(bot):
+    await bot.add_cog(ChannelClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mCHANNEL_LOCKER\033[1;32m foi carregado com sucesso!\33[m')

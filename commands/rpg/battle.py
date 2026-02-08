@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from asyncio import sleep, TimeoutError
-from disnake.ext import commands
+from discord.ext import commands
 from random import randint, choice
 from resources.fight import Entity, Ext
 from resources.check import check_it
@@ -64,7 +64,7 @@ class Battle(commands.Cog):
                 if dungeon not in update["dungeons"].keys():
                     msg = '<:negate:721581573396496464>│`VOCE NÃO ATIVOU ESSA DUNGEON AINDA!`\n' \
                           '**Obs:** `use o comando (ash dg) para ver as dungeons disponiveis!`'
-                    embed = disnake.Embed(color=self.bot.color, description=msg)
+                    embed = discord.Embed(color=self.bot.color, description=msg)
                     return await ctx.send(embed=embed)
 
                 if not update["dungeons"][dungeon]["active"]:
@@ -102,27 +102,27 @@ class Battle(commands.Cog):
 
         if ctx.author.id in self.bot.desafiado:
             msg = "<:alert:739251822920728708>│`Você está sendo desafiado/desafiando para um PVP!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.explorando:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ NUMA DUNGEON!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.jogando:
             msg = "<:alert:739251822920728708>│`Você está jogando, aguarde para quando você estiver livre!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if not data['rpg']['active']:
             msg = '<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         ct = 50
@@ -137,12 +137,12 @@ class Battle(commands.Cog):
             if data['inventory']['coins'] < ct:
                 msg = f'<:negate:721581573396496464>│`VOCE PRECISA DE + DE {ct} FICHAS PARA BATALHAR!`\n' \
                       f'**OBS:** `USE O COMANDO` **ASH SHOP** `PARA COMPRAR FICHAS!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
         except KeyError:
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FICHA!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         update['inventory']['coins'] -= ct
@@ -152,7 +152,7 @@ class Battle(commands.Cog):
         if mini_boss:
             if "stone_of_moon" not in update['inventory'].keys():
                 msg = '<:negate:721581573396496464>│`VOCE NÃO TEM STONE OF MOON NO SEU INVENTARIO!`'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 return await ctx.send(embed=embed)
 
             update['inventory']['stone_of_moon'] -= 1
@@ -294,7 +294,7 @@ class Battle(commands.Cog):
             else:
                 monster[ctx.author.id].evasion += 1
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     description=f"`{monster[ctx.author.id].name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -374,7 +374,7 @@ class Battle(commands.Cog):
             else:
                 player[ctx.author.id].evasion += 1
 
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     description=f"`{ctx.author.name.upper()} EVADIU`",
                     color=0x000000
                 )
@@ -435,7 +435,7 @@ class Battle(commands.Cog):
                         await self.bot.data.add_xp(ctx, xp_reward[2])
                 else:
                     await self.bot.data.add_xp(ctx, xp_reward[2])
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 description=f"`{ctx.author.name.upper()} PERDEU!`",
                 color=0x000000
             )
@@ -456,7 +456,7 @@ class Battle(commands.Cog):
 
             answer_ = await self.bot.db.add_money(ctx, money, True)
             _text_es = "`**DA BATALHA ESPECIAL!**"
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 description=f"`{ctx.author.name.upper()} GANHOU {_text_es if battle_special else '!`'} {answer_}",
                 color=0x000000)
 
@@ -523,8 +523,8 @@ class Battle(commands.Cog):
                     icon, name = self.bot.items[item_event][0], self.bot.items[item_event][1]
                     awards = choice(['images/elements/medallion.gif', 'images/elements/trophy.gif'])
                     msg = f"`VOCÊ GANHOU` {icon} `{name.upper()}` ✨ **DO EVENTO DE: {self.bot.event_now}!** ✨"
-                    file = disnake.File(awards, filename="reward.gif")
-                    embed = disnake.Embed(title=msg, color=self.bot.color)
+                    file = discord.File(awards, filename="reward.gif")
+                    embed = discord.Embed(title=msg, color=self.bot.color)
                     embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                     embed.set_thumbnail(url="attachment://reward.gif")
 
@@ -570,7 +570,7 @@ class Battle(commands.Cog):
                 img = choice(git)
                 msg = f'<a:fofo:524950742487007233>│`VOCÊ TAMBEM GANHOU` ✨ **ESPADA/ESCUDO** ✨\n' \
                       f'{rew["icon"]} `1 {rew["name"]}` **{rew["rarity"]}**'
-                embed = disnake.Embed(color=self.bot.color, description=msg)
+                embed = discord.Embed(color=self.bot.color, description=msg)
                 embed.set_thumbnail(url=img)
                 await ctx.send(embed=embed, delete_after=30.0)
 
@@ -668,8 +668,8 @@ class Battle(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
@@ -742,8 +742,8 @@ class Battle(commands.Cog):
                     map_name = self.bot.config['attribute']['list_pyramid'][floor]
                 msg = f"`VOCÊ GANHOU O MAPA DA DUNGEON` **{dungeon.upper()}** ✨ **ANDAR: {map_name.upper()}!** ✨\n" \
                       f"**Obs:** `use o comando` **ash dg {dungeon} map** `para ver o mapa novamente!`"
-                file = disnake.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
-                embed = disnake.Embed(title=msg, color=self.bot.color)
+                file = discord.File(f"dungeon/maps/{map_name}.png", filename="map.gif")
+                embed = discord.Embed(title=msg, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://map.gif")
                 await ctx.send(file=file, embed=embed)
@@ -796,7 +796,7 @@ class Battle(commands.Cog):
         else:
             new_xp = f"{_db_class['xp'] - percent[2]} / {percent[1] - percent[2]} | {percent[0] * 2} / 100%"
         text = f"**XP:** {new_xp}\n`{'█' * percent[0]}{'-' * (50 - percent[0])}`"
-        embed = disnake.Embed(color=self.bot.color, description=text)
+        embed = discord.Embed(color=self.bot.color, description=text)
         await ctx.send(embed=embed, delete_after=5.0)
 
         if player[ctx.author.id].status['hp'] <= 0:  # jogador 1 ganhou
@@ -811,7 +811,7 @@ class Battle(commands.Cog):
         if "the_seven_lost_souls" in update['rpg']['quests'].keys() and player[ctx.author.id].status['hp'] > 0:
             _QUEST = update['rpg']['quests']["the_seven_lost_souls"]
             if _QUEST["status"] == "completed" and data['config']['provinces'] is not None:
-                embed = disnake.Embed(description=f"`{monster[ctx.author.id].name.upper()} MORTO!`", color=0x000000)
+                embed = discord.Embed(description=f"`{monster[ctx.author.id].name.upper()} MORTO!`", color=0x000000)
                 embed.set_thumbnail(url=db_monster['img'])
                 embed.set_author(name=db_player['name'], icon_url=db_player['img'])
                 msg = await ctx.send(embed=embed)
@@ -834,7 +834,7 @@ class Battle(commands.Cog):
                 except TimeoutError:
                     try:
                         return await msg.delete()
-                    except (disnake.errors.NotFound, disnake.errors.Forbidden):
+                    except (discord.NotFound, discord.Forbidden):
                         return
 
                 try:
@@ -845,7 +845,7 @@ class Battle(commands.Cog):
                 if _reaction == emoji and reaction[0].message.id == msg.id:
                     try:
                         await msg.delete()
-                    except disnake.errors.NotFound:
+                    except discord.NotFound:
                         pass
                     quest_item = choice(["assassin_gem", "necromancer_gem", "paladin_gem", "priest_gem",
                                          "warlock_gem", "warrior_gem", "wizard_gem"])
@@ -858,11 +858,11 @@ class Battle(commands.Cog):
                 else:
                     try:
                         await msg.delete()
-                    except disnake.errors.NotFound:
+                    except discord.NotFound:
                         pass
                     await ctx.send("<:alert:739251822920728708>│`SPOIL FAIL!`", delete_after=5.0)
 
 
-def setup(bot):
-    bot.add_cog(Battle(bot))
+async def setup(bot):
+    await bot.add_cog(Battle(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mBATTLE\033[1;32m foi carregado com sucesso!\33[m')

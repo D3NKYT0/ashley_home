@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from resources.img_edit import welcome
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class OnMemberRemove(commands.Cog):
@@ -30,14 +30,14 @@ class OnMemberRemove(commands.Cog):
 
                         await welcome(data_goodbye)
 
-                        file = disnake.File('goodbye.png')
+                        file = discord.File('goodbye.png')
                         if file is not None:
                             try:
                                 await canal.send(file=file, content="> `CLIQUE NA IMAGEM PARA MAIORES DETALHES`")
-                            except disnake.errors.HTTPException:
+                            except discord.HTTPException:
                                 pass
                         else:
-                            embed = disnake.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
+                            embed = discord.Embed(title=f"{member.name.upper()} Saiu!", color=self.bot.color)
                             userjoinedat = str(member.joined_at).split('.', 1)[0]
                             usercreatedat = str(member.created_at).split('.', 1)[0]
                             embed.add_field(name="Entrou no server em:", value=userjoinedat, inline=True)
@@ -56,9 +56,9 @@ class OnMemberRemove(commands.Cog):
 
             except AttributeError:
                 pass
-            except disnake.errors.Forbidden:
+            except discord.Forbidden:
                 pass
-            except disnake.errors.NotFound:
+            except discord.NotFound:
                 pass
 
             try:
@@ -84,12 +84,12 @@ class OnMemberRemove(commands.Cog):
                                              " CORRETAMENTE!**")
                         else:
                             await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-            except disnake.Forbidden:
+            except discord.Forbidden:
                 pass
-            except disnake.errors.NotFound:
+            except discord.NotFound:
                 pass
 
 
-def setup(bot):
-    bot.add_cog(OnMemberRemove(bot))
+async def setup(bot):
+    await bot.add_cog(OnMemberRemove(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_REMOVE\033[1;33m foi carregado com sucesso!\33[m')

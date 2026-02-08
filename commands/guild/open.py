@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 import copy
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice, randint
@@ -94,7 +94,7 @@ class OpenClass(commands.Cog):
         """apenas para DEVs verificarem a posição real da lua"""
         data = get_moon()
         msg = f"<:confirmed:721581574461587496>│`Moon Phase:` **{data[0]}** -  `Moon Position:` **{data[1]}**"
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
     @check_it(no_pm=True)
@@ -145,7 +145,7 @@ class OpenClass(commands.Cog):
         if randint(1, 100) + amount_test + bonus > 95:  # 5% + bonus + amount
 
             msg = f"{self.bot.items[reward][0]} `{1}` `{self.bot.items[reward][1]}`"
-            embed = disnake.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
+            embed = discord.Embed(title='🎊 **PARABENS** 🎉 VOCÊ DROPOU', color=self.bot.color, description=msg)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             await ctx.send(embed=embed)
 
@@ -197,7 +197,7 @@ class OpenClass(commands.Cog):
             msg += f"\n`BONUS ESPECIAL:` **+15%** `({self.bot.event_now})`"
 
         title = f"ESTAMOS NA FASE DA: {data[0].upper() if 'lua' not in data[0].upper() else f'LUA {data[0].upper()}'}"
-        embed = disnake.Embed(title=title, color=self.bot.color, description=msg)
+        embed = discord.Embed(title=title, color=self.bot.color, description=msg)
         embed.set_author(name=self.bot.user, icon_url=self.bot.user.display_avatar)
         embed.set_thumbnail(url="{}".format(ctx.author.display_avatar))
         embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -231,8 +231,8 @@ class OpenClass(commands.Cog):
                 await ctx.send(f">>> <a:blue:525032762256785409> `VOCE TIROU UMA FIGURINHA REPETIDA!` "
                                f"**{_NAME.upper()}**")
             else:
-                file = disnake.File(f"images/stickers/{_TYPE}/{_STICKER}.jpg", filename="reward.png")
-                embed = disnake.Embed(description=_TITLE, color=self.bot.color)
+                file = discord.File(f"images/stickers/{_TYPE}/{_STICKER}.jpg", filename="reward.png")
+                embed = discord.Embed(description=_TITLE, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://reward.png")
                 await ctx.send(file=file, embed=embed)
@@ -273,9 +273,9 @@ class OpenClass(commands.Cog):
                 await ctx.send(f"> 🎊 **PARABENS** 🎉 `VOCÊ GANHOU UM GIFT`\n"
                                f"`USE O COMANDO:` **ASH GIFT** `PARA RECEBER SEU PRÊMIO!!`")
                 gt(gift, f"{time} SEGUNDOS")
-                if disnake.File('giftcard.png') is None:
+                if discord.File('giftcard.png') is None:
                     return await ctx.send("<:negate:721581573396496464>│`ERRO!`")
-                await ctx.send(file=disnake.File('giftcard.png'))
+                await ctx.send(file=discord.File('giftcard.png'))
             else:
                 if not data['security']['status']:
                     return await ctx.send("<:negate:721581573396496464>│'`USUARIO DE MACRO / OU USANDO COMANDOS "
@@ -551,7 +551,7 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         item_name = self.bot.items[item_key][1]
@@ -724,7 +724,7 @@ class OpenClass(commands.Cog):
         """Esse comando mostra a lista de comandos do sistema de READ da ashley."""
         if ctx.invoked_subcommand is None:
             self.status()
-            embed = disnake.Embed(color=self.bot.color)
+            embed = discord.Embed(color=self.bot.color)
             embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
             embed.set_thumbnail(url=self.bot.user.display_avatar)
             embed.add_field(name="Read Commands:",
@@ -748,17 +748,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -782,7 +782,7 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        embed = disnake.Embed(color=self.bot.color, description=text)
+        embed = discord.Embed(color=self.bot.color, description=text)
         msg = await ctx.send(embed=embed)
         await sleep(seconds * amount)
         await msg.delete()
@@ -799,7 +799,7 @@ class OpenClass(commands.Cog):
         else:
             new_xp = f"{_db_class['xp'] - percent[2]} / {percent[1] - percent[2]} | {percent[0] * 2} / 100%"
         text = f"**XP:** {new_xp}\n`{'█' * percent[0]}{'-' * (50 - percent[0])}`"
-        embed = disnake.Embed(color=self.bot.color, description=text)
+        embed = discord.Embed(color=self.bot.color, description=text)
         await ctx.send(embed=embed, delete_after=5.0)
 
     @check_it(no_pm=True)
@@ -813,17 +813,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         recipes = ["potion_of_life", "potion_of_love", "celestial_cover_boots_divine",
@@ -831,14 +831,14 @@ class OpenClass(commands.Cog):
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _INT = 50 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -864,8 +864,8 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = disnake.File('images/grimorios/Assemble Guide of Spells.jpg', filename="grimorio.jpg")
-        embed = disnake.Embed(title=text, color=self.bot.color)
+        file = discord.File('images/grimorios/Assemble Guide of Spells.jpg', filename="grimorio.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
@@ -880,8 +880,8 @@ class OpenClass(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
@@ -897,17 +897,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         recipes = ["potion_of_death", "celestial_cover_gloves_divine",
@@ -915,14 +915,14 @@ class OpenClass(commands.Cog):
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _INT = 75 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -948,8 +948,8 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = disnake.File('images/grimorios/Aungens Book.jpg', filename="grimorio.jpg")
-        embed = disnake.Embed(title=text, color=self.bot.color)
+        file = discord.File('images/grimorios/Aungens Book.jpg', filename="grimorio.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
@@ -964,8 +964,8 @@ class OpenClass(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
@@ -981,17 +981,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         recipes = ["potion_of_soul", "potion_of_rejuvenation", "celestial_cover_helmet_divine",
@@ -999,14 +999,14 @@ class OpenClass(commands.Cog):
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _INT = 25 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -1032,8 +1032,8 @@ class OpenClass(commands.Cog):
 
         seconds = 10 - (amount // 2)
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = disnake.File('images/grimorios/Book of Soul.jpg', filename="grimorio.jpg")
-        embed = disnake.Embed(title=text, color=self.bot.color)
+        file = discord.File('images/grimorios/Book of Soul.jpg', filename="grimorio.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
@@ -1048,8 +1048,8 @@ class OpenClass(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
@@ -1065,17 +1065,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         recipes = ["potion_of_weakening", "celestial_cover_leggings_divine",
@@ -1084,14 +1084,14 @@ class OpenClass(commands.Cog):
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _INT = 100 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -1117,8 +1117,8 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = disnake.File('images/grimorios/Neverwinter Book.jpg', filename="grimorio.jpg")
-        embed = disnake.Embed(title=text, color=self.bot.color)
+        file = discord.File('images/grimorios/Neverwinter Book.jpg', filename="grimorio.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
@@ -1133,8 +1133,8 @@ class OpenClass(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
@@ -1150,17 +1150,17 @@ class OpenClass(commands.Cog):
 
         if ctx.author.id in self.bot.lendo:
             msg = '<:negate:721581573396496464>│`VOCE JÁ ESTÁ LENDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if "frozen_letter" not in data["inventory"].keys():
             msg = '<:negate:721581573396496464>│`VOCE NÃO TEM FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if amount > data["inventory"]["frozen_letter"]:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM {amount} FROZEN LETTER NO SEU INVENTARIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         recipes = ["celestial_necklace_sealed", "celestial_earring_sealed", "salvation", "celestial_ring_sealed",
@@ -1169,14 +1169,14 @@ class OpenClass(commands.Cog):
 
         if include(recipes, update["recipes"]):
             msg = f'<:alert:739251822920728708>│`VOCE JÁ TERMINOU DE LER ESSE GRIMORIO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         _INT = 150 - (amount // 2)
         if data['rpg']['intelligence'] < _INT:
             msg = f'<:negate:721581573396496464>│`VOCE NÃO TEM` **{_INT}** `pontos de inteligencia para ler ' \
                   f'esse grimorio`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         self.bot.lendo.append(ctx.author.id)
@@ -1202,8 +1202,8 @@ class OpenClass(commands.Cog):
 
         seconds = 10
         text = f"<a:loading:520418506567843860>|`A leitura termina em` **{seconds * amount}** `segundos...`"
-        file = disnake.File('images/grimorios/Waffens Book.jpg', filename="grimorio.jpg")
-        embed = disnake.Embed(title=text, color=self.bot.color)
+        file = discord.File('images/grimorios/Waffens Book.jpg', filename="grimorio.jpg")
+        embed = discord.Embed(title=text, color=self.bot.color)
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
         embed.set_image(url="attachment://grimorio.jpg")
         msg = await ctx.send(file=file, embed=embed)
@@ -1218,13 +1218,13 @@ class OpenClass(commands.Cog):
             if msg_return:
                 craft = craft.replace("_", " ").upper()
                 text = f"<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 `Voce liberou o craft:`\n**{craft}**"
-                file = disnake.File('images/elements/success.jpg', filename="success.jpg")
-                embed = disnake.Embed(title=text, color=self.bot.color)
+                file = discord.File('images/elements/success.jpg', filename="success.jpg")
+                embed = discord.Embed(title=text, color=self.bot.color)
                 embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar)
                 embed.set_image(url="attachment://success.jpg")
                 await ctx.send(file=file, embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(OpenClass(bot))
+async def setup(bot):
+    await bot.add_cog(OpenClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mOPEN\033[1;32m foi carregado com sucesso!\33[m')

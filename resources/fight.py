@@ -1,5 +1,5 @@
 import copy
-import disnake
+import discord
 
 from asyncio import TimeoutError
 from resources.utility import embed_creator
@@ -191,7 +191,7 @@ class Entity(object):
             # classe nao definida
             self._class = None
 
-    class View(disnake.ui.View):
+    class View(discord.ui.View):
         def __init__(self, author):
             self.author_id = author
             super().__init__()
@@ -204,18 +204,18 @@ class Entity(object):
             else:
                 return True
 
-    class SelectSkill(disnake.ui.Select):
+    class SelectSkill(discord.ui.Select):
         def __init__(self, options):
             self.value = 0
             self.options_param = options
             super().__init__(placeholder='Escolha uma skill', min_values=1, max_values=1, options=self.options_param)
 
-        async def callback(self, interaction: disnake.Interaction):
+        async def callback(self, interaction: discord.Interaction):
             self.value = self.values[0]
             self.disabled = True
             try:
                 await interaction.response.edit_message(view=None)
-            except disnake.errors.NotFound:
+            except discord.NotFound:
                 return
 
     @property
@@ -325,7 +325,7 @@ class Entity(object):
         if not passive_skill and not self.is_passive:
 
             self.OPTIONS.append(
-                disnake.SelectOption(
+                discord.SelectOption(
                     emoji="<:skill_base:912134358813523989>",
                     label="0 - SKILL BASE | COMUM",
                     description="Dano: Base | Mana: 0 | Efeito(s): sem efeito",
@@ -349,7 +349,7 @@ class Entity(object):
 
                 text_passive += f"Progress: {progress_now}/{passive_amount}"
 
-                selection = disnake.SelectOption(
+                selection = discord.SelectOption(
                     emoji=passive_icon,
                     label=f"0 - {passive_name.upper()} | PASSIVE",
                     description=f"Dano: base | Mana: 0 | {text_passive}",
@@ -361,7 +361,7 @@ class Entity(object):
             passive_name = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.type_skill_passive}"]['icon']
             text_passive = "veneno, fraquesa" if self.type_skill_passive == 0 else "curse, queimadura"
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | DH MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
@@ -372,7 +372,7 @@ class Entity(object):
         if self.is_passive and self.passive == "assassin":
             passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | MIRAGE MODE",
                 description=f"Dano: base | Mana: 0 | Efeito(s): gelo",
@@ -392,7 +392,7 @@ class Entity(object):
             else:
                 text_passive = "silencio, fraquesa, strike, skull"
 
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | SOD MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
@@ -412,7 +412,7 @@ class Entity(object):
             else:
                 text_passive = "looping"
 
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | SF MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
@@ -425,7 +425,7 @@ class Entity(object):
             passive_icon = CLS[self.data['class_now']]["passive"][f"{self.passive_mode}"]['icon']
             text_passive = "impulse" if self.passive_mode == 0 else "impulse"
             _mode = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | {_mode} MODE",
                 description=f"Dano: base | Mana: 0 | {text_passive}",
@@ -436,7 +436,7 @@ class Entity(object):
         if self.is_passive and self.passive == "necromancer":
             passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | SDM MODE",
                 description=f"Dano: base | Mana: 0 | Efeito(s): detached",
@@ -447,7 +447,7 @@ class Entity(object):
         if self.is_passive and self.passive == "paladin":
             passive_name = CLS[self.data['class_now']]["passive"]["0"]['name']
             passive_icon = CLS[self.data['class_now']]["passive"]["0"]['icon']
-            selection = disnake.SelectOption(
+            selection = discord.SelectOption(
                 emoji=passive_icon,
                 label=f"0 - {passive_name.upper()} | RESPLENDENT MODE",
                 description=f"Dano: base | Mana: 0 | Efeito(s): mirror",
@@ -492,7 +492,7 @@ class Entity(object):
                 _mana = _mana // 2
 
             self.OPTIONS.append(
-                disnake.SelectOption(
+                discord.SelectOption(
                     emoji=icon,
                     label=f"{_ + 1} - {c2.upper()} +{lvs} | {skill_type.lower()} Lv: {lvn}",
                     description=f"Dano: {damage} | Mana: {_mana} | Efeito(s): {effect_skill}",
@@ -504,7 +504,7 @@ class Entity(object):
         pl = 3 if not self.is_wave else 3 + (wave_now // 2)
 
         self.OPTIONS.append(
-            disnake.SelectOption(
+            discord.SelectOption(
                 emoji="<:MP:774699585620672534>",
                 label=f'{tot + 1} - {"Pass turn MP".upper()}',
                 description=f"MP Recovery: +{regen} de Mana",
@@ -513,7 +513,7 @@ class Entity(object):
             )
 
         self.OPTIONS.append(
-            disnake.SelectOption(
+            discord.SelectOption(
                 emoji="<:HP:774699585070825503>",
                 label=f'{tot + 2} - {"Pass turn hp".upper()}',
                 description=f"HP Recovery: 25-35% de HP ({self.potion}/{pl})",
@@ -522,7 +522,7 @@ class Entity(object):
             )
 
         self.OPTIONS.append(
-            disnake.SelectOption(
+            discord.SelectOption(
                 emoji="<:fechar:749090949413732352>",
                 label=f'{tot + 3} - Finalizar batalha',
                 value=str(tot + 3)
@@ -534,7 +534,7 @@ class Entity(object):
                 passive_combo_name = CLS[self.data['class_now']]["passive"]['combo_name']
                 passive_combo_icon = CLS[self.data['class_now']]["passive"]['combo_icon']
                 self.OPTIONS.append(
-                    disnake.SelectOption(
+                    discord.SelectOption(
                         emoji=passive_combo_icon,
                         label=f'{tot + 4} - [{passive_combo_name}] | COMBO',
                         description=f"Dano: 75% | Mana: 100% | Efeito(s): fraquesa, silencio",
@@ -543,7 +543,7 @@ class Entity(object):
                 )
             else:
                 self.OPTIONS.append(
-                    disnake.SelectOption(
+                    discord.SelectOption(
                         emoji="<a:combo:834236942295891969>",
                         label=f'{tot + 4} - [Combo] - Half Life | COMBO',
                         description=f"Dano: 50% | Mana: 100% | Efeito(s): Sem Efeito",
@@ -561,7 +561,7 @@ class Entity(object):
         if self.passive == "paladin" and self.devotion > 0:
             description += f"\n`Devotion:` **{self.devotion}**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title=title,
             description=description,
             color=0x000000
@@ -1022,7 +1022,7 @@ class Entity(object):
 
                     # proteção contra interação vazia
                     if answer.values is None:
-                        view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                        view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                         view.add_item(select)
                         await ctx.send(embed=embed, view=view)
                         continue
@@ -1057,11 +1057,11 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embedd = disnake.Embed(description=description, color=0x000000)
+                            embedd = discord.Embed(description=description, color=0x000000)
                             embedd.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embedd)
 
-                            view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                            view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                             view.add_item(select)
                             await ctx.send(embed=embed, view=view)
 
@@ -1094,11 +1094,11 @@ class Entity(object):
                         else:
                             description = f"**{user.name.upper()}** `VOCÊ NAO PODE USAR POÇÕES, POIS ESTA SOB O " \
                                           f"EFEITO DE` **PRESAS**"
-                            embedd = disnake.Embed(description=description, color=0x000000)
+                            embedd = discord.Embed(description=description, color=0x000000)
                             embedd.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embedd)
 
-                            view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                            view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                             view.add_item(select)
                             await ctx.send(embed=embed, view=view)
 
@@ -1148,7 +1148,7 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://c.tenor.com/Nx0mPkS00KcAAAAM/algoz.gif"
@@ -1179,7 +1179,7 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = CLS[self._class]['passive']["gif"]
@@ -1204,7 +1204,7 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = CLS[self._class]['passive']["gif"]
@@ -1229,7 +1229,7 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     self.is_ignition = False
@@ -1255,7 +1255,7 @@ class Entity(object):
                                     self.is_passive, especial, not_is_now = True, True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = CLS[self._class]['passive']["gif"]
@@ -1280,7 +1280,7 @@ class Entity(object):
                                     self.is_passive, especial = True, True
                                     if "self_passive" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_passive"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://i.gifer.com/DRps.gif"
@@ -1305,7 +1305,7 @@ class Entity(object):
                                     self.is_passive, especial = True, True
                                     if "self_drain" in self.effects.keys():  # desabilita a passiva da skill 0
                                         del self.effects["self_drain"]
-                                embeds = disnake.Embed(description=description, color=0x000000)
+                                embeds = discord.Embed(description=description, color=0x000000)
                                 embeds.set_author(name=user.name, icon_url=user.display_avatar)
                                 if self.is_passive and especial:
                                     _url = "https://c.tenor.com/77pxCbsNbKIAAAAC/necromancer-diablo-iii.gif"
@@ -1322,7 +1322,7 @@ class Entity(object):
                                 self.TITAN_WALL = True
                             _MODE = "IRON FISTS" if self.passive_mode == 0 else "TITAN WALL"
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **{_MODE}!**"
-                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds = discord.Embed(description=description, color=0x000000)
                             embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
@@ -1330,7 +1330,7 @@ class Entity(object):
                             self.is_passive, self.progress = False, 0
                             self.CLAWS_STUCK = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **CLAWS STUCK!**"
-                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds = discord.Embed(description=description, color=0x000000)
                             embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
@@ -1338,7 +1338,7 @@ class Entity(object):
                             self.is_passive, self.progress, self.stack = False, 0, 1
                             self.SPEAR_OF_DESTINY = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **SPEAR OF DESTINY!**"
-                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds = discord.Embed(description=description, color=0x000000)
                             embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
@@ -1346,7 +1346,7 @@ class Entity(object):
                             self.is_passive, self.progress, self.stack = False, 0, 1
                             self.SPELLCASTER_FIRER = True
                             description = f"**{user.name.upper()}** `VOCÊ USOU O MODO` **SPELLCASTER FIRER!**"
-                            embeds = disnake.Embed(description=description, color=0x000000)
+                            embeds = discord.Embed(description=description, color=0x000000)
                             embeds.set_author(name=user.name, icon_url=user.display_avatar)
                             await ctx.send(embed=embeds)
 
@@ -1407,12 +1407,12 @@ class Entity(object):
 
                                 description = f"**{user.name.upper()}** `VOCÊ JA ATINGIU O LIMITE DE POÇÃO DE VIDA!`" \
                                               f"\n{msg}"
-                                embedhp = disnake.Embed(description=description, color=0x000000)
+                                embedhp = discord.Embed(description=description, color=0x000000)
                                 embedhp.set_author(name=user.name, icon_url=user.display_avatar)
 
                                 if not potion_msg:
                                     await ctx.send(embed=embedhp)
-                                    view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                    view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                                     view.add_item(select)
                                     await ctx.send(embed=embed, view=view)
                                     potion_msg = True
@@ -1425,7 +1425,7 @@ class Entity(object):
                                         return "BATALHA-CANCELADA"
 
                             elif limit_now:
-                                embedh = disnake.Embed(
+                                embedh = discord.Embed(
                                     description=f"**{user.name.upper()}** `VOCÊ ATINGIU O LIMITE DESSA HABILDIADE!`\n"
                                                 f"`ENTÃO ESCOLHA OUTRA SKILL OU PASSE A VEZ...`\n"
                                                 f"**Obs:** Passar a vez regenera a mana ou vida!",
@@ -1433,7 +1433,7 @@ class Entity(object):
                                 )
                                 embedh.set_author(name=user.name, icon_url=user.display_avatar)
                                 await ctx.send(embed=embedh)
-                                view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                                 view.add_item(select)
                                 await ctx.send(embed=embed, view=view)
                                 hate_no_limit += 1
@@ -1489,7 +1489,7 @@ class Entity(object):
                                 break
 
                             else:
-                                embedm = disnake.Embed(
+                                embedm = discord.Embed(
                                     description=f"**{user.name.upper()}** `VOCÊ NÃO TEM MANA O SUFICIENTE!`\n"
                                                 f"`ENTÃO ESCOLHA OUTRA SKILL OU PASSE A VEZ...`\n"
                                                 f"**Obs:** Passar a vez regenera a mana ou vida!",
@@ -1497,7 +1497,7 @@ class Entity(object):
                                 )
                                 embedm.set_author(name=user.name, icon_url=user.display_avatar)
                                 await ctx.send(embed=embedm)
-                                view, select = disnake.ui.View(), self.SelectSkill(_OPTIONS_LAST)
+                                view, select = discord.ui.View(), self.SelectSkill(_OPTIONS_LAST)
                                 view.add_item(select)
                                 await ctx.send(embed=embed, view=view)
                                 self.next = 0
@@ -2044,8 +2044,8 @@ class Entity(object):
         if critical:
             _cd = randint(int(critical_damage / 2), critical_damage)
             damage = int(damage + (damage / 100 * _cd))  # adiciona a % do critical
-            embed = disnake.Embed(title="CRITICAL", color=0x38105e)
-            file = disnake.File("images/elements/critical.gif", filename="critical.gif")
+            embed = discord.Embed(title="CRITICAL", color=0x38105e)
+            file = discord.File("images/elements/critical.gif", filename="critical.gif")
             embed.set_thumbnail(url="attachment://critical.gif")
             await ctx.send(file=file, embed=embed)
 

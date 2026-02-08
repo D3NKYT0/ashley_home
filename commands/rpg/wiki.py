@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -51,7 +51,7 @@ class WikiClass(commands.Cog):
                               f'**Raridade**: {rare}\n' \
                               f'**Como adquirir**: {how}\n' \
                               f'{f"**Como usar**: {why}" if why is not None else ""}'
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     title=f"Wikipedia",
                     color=self.bot.color,
                     description=description
@@ -59,7 +59,7 @@ class WikiClass(commands.Cog):
                 embed.set_thumbnail(url="http://sisadm2.pjf.mg.gov.br/imagem/ajuda.png")
                 embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                 if img:
-                    file = disnake.File(img, filename="image.png")
+                    file = discord.File(img, filename="image.png")
                     embed.set_image(url=f'attachment://image.png')
                 await ctx.send(embed=embed, file=file)
             elif item in [i[1]["name"] for i in equips_list]:
@@ -102,7 +102,7 @@ class WikiClass(commands.Cog):
                               f'{"="*5} Status {"="*5}\n' \
                               f'ACC: {prec}\nCON: {con}\n' \
                               f'ATK: {atk}\nDEX: {agi}```'
-                embed = disnake.Embed(
+                embed = discord.Embed(
                     title=f"Wikipedia Equips",
                     color=self.bot.color,
                     description=description
@@ -116,6 +116,6 @@ class WikiClass(commands.Cog):
             await ctx.send('<:negate:721581573396496464>|`Digite um nome de um item ou equipamento.`')
 
 
-def setup(bot):
-    bot.add_cog(WikiClass(bot))
+async def setup(bot):
+    await bot.add_cog(WikiClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mWIKI_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

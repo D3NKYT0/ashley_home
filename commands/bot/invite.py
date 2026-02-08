@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,7 +19,7 @@ class InviteClass(commands.Cog):
         """comando usado pra gerar um convite pro server da ashley
         Use ash invite"""
         try:
-            embed = disnake.Embed(
+            embed = discord.Embed(
                 color=self.color,
                 description=f'<:safada:530029764061298699>│[CLIQUE AQUI PARA ME ADICIONAR NO SEU '
                             f'SERVIDOR]({self.url})')
@@ -29,11 +29,11 @@ class InviteClass(commands.Cog):
             await ctx.send("<:send:519896817320591385>│`Obrigado por querer participar da` "
                            "**MINHA COMUNIDADE** `enviei para seu privado um convite "
                            "para que você possa entrar!`")
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             await ctx.send('<:negate:721581573396496464>│`INFELIZMENTE NÃO FOI POSSIVEL ENVIAR A MENSAGEM PRA VOCÊ '
                            'SEU PRIVADO ESTA SEM ACESSO.`')
 
 
-def setup(bot):
-    bot.add_cog(InviteClass(bot))
+async def setup(bot):
+    await bot.add_cog(InviteClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mINVITE\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from random import choice
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,8 +19,8 @@ class DrawUsers(commands.Cog):
         """Comando de sorteio pro server inteiro
         Use ash draw"""
         draw_member = choice(list(ctx.guild.members))
-        member = disnake.utils.get(ctx.guild.members, name="{}".format(draw_member.name))
-        embed = disnake.Embed(
+        member = discord.utils.get(ctx.guild.members, name="{}".format(draw_member.name))
+        embed = discord.Embed(
             title="`Fiz o sorteio de um membro`",
             colour=self.color,
             description="Membro sorteado foi **{}**\n <a:palmas:520418512011788309>│`Parabens!!`".format(member)
@@ -31,6 +31,6 @@ class DrawUsers(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(DrawUsers(bot))
+async def setup(bot):
+    await bot.add_cog(DrawUsers(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSORTEIO\033[1;32m foi carregado com sucesso!\33[m')

@@ -1,7 +1,7 @@
-import copy
-import disnake
+﻿import copy
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class Helper(commands.Cog):
@@ -14,7 +14,7 @@ class Helper(commands.Cog):
     async def help(self, ctx, *, command_help=None):
         """há fala serio!"""
         if command_help is None:
-            embed = disnake.Embed(title="-==Artigo de Ajuda==-\nPara detalhar o comando use: ash help <command>",
+            embed = discord.Embed(title="-==Artigo de Ajuda==-\nPara detalhar o comando use: ash help <command>",
                                   color=self.color, description=f"Olá {ctx.author.name}, eu sou a **Ashley**, um bot "
                                                                 f"de diversão e jogos, incluindo RPG de turnos e "
                                                                 f"sistemas de economia completo!")
@@ -88,6 +88,6 @@ class Helper(commands.Cog):
                 await ctx.send("<:alert:739251822920728708>│`Comando Inválido`")
 
 
-def setup(bot):
-    bot.add_cog(Helper(bot))
+async def setup(bot):
+    await bot.add_cog(Helper(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mAJUDA\033[1;32m foi carregado com sucesso!\33[m')

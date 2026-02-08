@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -94,10 +94,10 @@ class Trivias(commands.Cog):
 [25]: Para mais informações use:
 <Comandos: ash help ; ash wiki nome_do_item>
 ```"""
-        embed = disnake.Embed(color=self.bot.color, description=msg)
+        embed = discord.Embed(color=self.bot.color, description=msg)
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Trivias(bot))
+async def setup(bot):
+    await bot.add_cog(Trivias(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTRIVIAS\033[1;32m foi carregado com sucesso!\33[m')

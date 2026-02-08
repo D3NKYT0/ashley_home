@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import randint, choice
@@ -35,7 +35,7 @@ class MineClass(commands.Cog):
 
         if "Energy" not in data['inventory'].keys():
             _text = '<:negate:721581573396496464>│`VOCE NÃO TEM ENERGIA!`'
-            embed = disnake.Embed(color=self.bot.color, description=_text)
+            embed = discord.Embed(color=self.bot.color, description=_text)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.minerando:
@@ -60,7 +60,7 @@ class MineClass(commands.Cog):
         quant = 0
 
         text = "<a:loading:520418506567843860>|`Minerando...`"
-        embed = disnake.Embed(color=self.bot.color, description=text)
+        embed = discord.Embed(color=self.bot.color, description=text)
         msg = await ctx.send(embed=embed)
 
         _items = dict()
@@ -325,6 +325,6 @@ class MineClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "mine", 1)
 
 
-def setup(bot):
-    bot.add_cog(MineClass(bot))
+async def setup(bot):
+    await bot.add_cog(MineClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mMINE_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

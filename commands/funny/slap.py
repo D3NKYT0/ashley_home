@@ -1,7 +1,7 @@
-import disnake
+import discord
 
 from random import choice, randint
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 
@@ -15,14 +15,14 @@ class SlapClass(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx))
     @commands.command(name='slap', aliases=['tapa', 'tapão', 'tapao'])
-    async def slap(self, ctx, member: disnake.Member = None):
+    async def slap(self, ctx, member: discord.Member = None):
         """Comando de gifs de tapa
         Use ash slap <@usuario a sua escolha>"""
         if member is None:
             return await ctx.send("<:alert:739251822920728708>│`Você precisa mencionar alguem!`")
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
         try:
             slapimg = ['https://media1.tenor.com/images/9ea4fb41d066737c0e3f2d626c13f230/tenor.gif?itemid=7355956',
@@ -58,7 +58,7 @@ class SlapClass(commands.Cog):
                 end = 'QUE ACABOU COM A VIDA DELE(A)! **DEPOIS DESSA VAI PRECISAR NASCER DE NOVO!**'
                 slap = 'https://media1.tenor.com/images/b8ff9e6e9cb5a8652f18cc388c4028b0/tenor.gif?itemid=5389796'
 
-            slapemb = disnake.Embed(title='Tapa :wave:',
+            slapemb = discord.Embed(title='Tapa :wave:',
                                     description='**{}** {} **{}**! {}'.format(member.name, text,
                                                                               ctx.author.name, end),
                                     color=self.color)
@@ -79,6 +79,6 @@ class SlapClass(commands.Cog):
                            'dar um tapa!`')
 
 
-def setup(bot):
-    bot.add_cog(SlapClass(bot))
+async def setup(bot):
+    await bot.add_cog(SlapClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mSLAPCLASS\033[1;32m foi carregado com sucesso!\33[m')

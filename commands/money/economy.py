@@ -1,4 +1,4 @@
-from disnake.ext import commands
+﻿from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from resources.utility import convert_item_name
@@ -104,6 +104,6 @@ class Economy(commands.Cog):
         await ctx.send(f"<:confirmed:721581574461587496>│`Atualmente existem` **{balance}** `{item.upper()} no RPG!`")
 
 
-def setup(bot):
-    bot.add_cog(Economy(bot))
+async def setup(bot):
+    await bot.add_cog(Economy(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mECONOMY\033[1;32m foi carregado com sucesso!\33[m')

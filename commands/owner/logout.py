@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -19,13 +19,13 @@ class LogoutCog(commands.Cog):
         if reason is None:
             return await ctx.send('<:alert:739251822920728708>│`DIGA UM MOTIVO PARA ME DESLIGAR!`')
         await self.bot.shutdown(reason)
-        embed = disnake.Embed(
+        embed = discord.Embed(
             color=self.color,
             description=f'<:confirmed:721581574461587496>│**Logging out...**')
         await ctx.send(embed=embed)
         await self.bot.close()
 
 
-def setup(bot):
-    bot.add_cog(LogoutCog(bot))
+async def setup(bot):
+    await bot.add_cog(LogoutCog(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mLOGOUT\033[1;32m foi carregado com sucesso!\33[m')

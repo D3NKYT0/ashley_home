@@ -1,8 +1,8 @@
-import disnake
+﻿import discord
 
 from resources.color import random_color
-from disnake import Embed
-from disnake.ext import commands
+from discord import Embed
+from discord.ext import commands
 from resources.webhook import Webhook
 from datetime import datetime
 from resources.check import check_it
@@ -56,11 +56,11 @@ class Pet(commands.Cog):
             ).to_dict()
             await webhook.send()
             await _webhook.delete()
-        except disnake.Forbidden:
+        except discord.Forbidden:
             await ctx.send("<:alert:739251822920728708>│`Não tenho permissão de gerenciar WEBHOOKS nesse "
                            "servidor.`")
 
 
-def setup(bot):
-    bot.add_cog(Pet(bot))
+async def setup(bot):
+    await bot.add_cog(Pet(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mPET\033[1;32m foi carregado com sucesso!\33[m')

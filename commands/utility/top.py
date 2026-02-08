@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -24,7 +24,7 @@ class TopClass(commands.Cog):
         Use ash top"""
         if ctx.invoked_subcommand is None:
             self.status()
-            top = disnake.Embed(color=self.color)
+            top = discord.Embed(color=self.color)
             top.add_field(name="Top Commands:",
                           value=f"{self.st[67]} `top level` Top 20 dos usuarios com maiores LEVEIS.\n"
                                 f"{self.st[67]} `top money` Top 20 dos usuarios com mais ETHERNYAS.\n"
@@ -236,6 +236,6 @@ class TopClass(commands.Cog):
         await msg.delete()
 
 
-def setup(bot):
-    bot.add_cog(TopClass(bot))
+async def setup(bot):
+    await bot.add_cog(TopClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mTOPCLASS\033[1;32m foi carregado com sucesso!\33[m')

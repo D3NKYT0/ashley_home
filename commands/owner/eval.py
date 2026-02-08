@@ -1,19 +1,19 @@
-import ast
-import disnake
+﻿import ast
+import discord
 import traceback
 import import_expression
 
 from io import BytesIO
-from disnake.ext import commands
+from discord.ext import commands
 from resources.db import Database
 from resources.check import check_it
 from resources.utility import pretty
 
 with open("data/auth.json") as security:
-    _auth = disnake.utils.json.loads(security.read())
+    _auth = discord.utils.json.loads(security.read())
 
 
-class View(disnake.ui.View):
+class View(discord.ui.View):
     def __init__(self, author):
         super().__init__()
         self.author = author
@@ -64,7 +64,7 @@ class EvalCog(commands.Cog):
         """Apenas Devs"""
         function = "_eval_function"
         view = View(ctx.author)
-        button = disnake.ui.Button(emoji="<:negate:721581573396496464>", style=disnake.ButtonStyle.danger)
+        button = discord.ui.Button(emoji="<:negate:721581573396496464>", style=discord.ButtonStyle.danger)
         button.callback = view.close
         view.add_item(button)
 
@@ -82,7 +82,7 @@ class EvalCog(commands.Cog):
         env = {
             'bot': self.bot,
             'ctx': ctx,
-            'disnake': disnake,
+            'discord': discord,
             'commands': commands,
             'author': ctx.author,
             'channel': ctx.channel,
@@ -95,20 +95,20 @@ class EvalCog(commands.Cog):
         except Exception:
             error = str(traceback.format_exc())
             if len(error) > 2000:
-                file = disnake.file(filename="error.py", fp=BytesIO(error.encode('utf-8')))
+                file = discord.file(filename="error.py", fp=BytesIO(error.encode('utf-8')))
                 await ctx.send(content="Error:", file=file, view=view, delete_after=120)
             else:
-                embed = disnake.Embed(title="Error:", description=f"```py\n{error}```", colour=disnake.Colour.red())
+                embed = discord.Embed(title="Error:", description=f"```py\n{error}```", colour=discord.Colour.red())
                 await ctx.send(embed=embed, view=view, delete_after=120)
         else:
             if result:
                 result = pretty(result, auth=_auth)
                 if len(result) > 2000:
-                    await ctx.send(file=disnake.File(filename='result.py', fp=BytesIO(result.encode('utf-8'))),
+                    await ctx.send(file=discord.File(filename='result.py', fp=BytesIO(result.encode('utf-8'))),
                                    view=view, delete_after=120)
                 else:
                     await ctx.send(f"```py\n{result}```", view=view, delete_after=120)
 
 
-def setup(bot):
-    bot.add_cog(EvalCog(bot))
+async def setup(bot):
+    await bot.add_cog(EvalCog(bot))

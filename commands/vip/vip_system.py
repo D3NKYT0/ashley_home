@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 
 from random import choice
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -32,7 +32,7 @@ class VipSystem(commands.Cog):
         Use ash vip"""
         if ctx.invoked_subcommand is None:
             self.status()
-            vip = disnake.Embed(color=self.color)
+            vip = discord.Embed(color=self.color)
             vip.add_field(name="Vip Commands:",
                           value=f"{self.st[66]} `vip member` Compre seu vip de membro.\n"
                                 f"{self.st[66]} `vip guild` Compre seu vip de servidor.\n")
@@ -99,7 +99,7 @@ class VipSystem(commands.Cog):
         update_['rpg']['vip'] = True
         await self.bot.db.update_data(data_, update_, 'users')
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
         await ctx.send(f'<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `ACABOU DE COMPRAR '
@@ -109,7 +109,7 @@ class VipSystem(commands.Cog):
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     @commands.check(lambda ctx: Database.is_registered(ctx, ctx, cooldown=True, time=2592000))
     @vip.group(name='guild', aliases=['servidor', 'guilda', 'server'])
-    async def _guild(self, ctx, guild: disnake.Guild = None):
+    async def _guild(self, ctx, guild: discord.Guild = None):
         """Comando usado pra comprar vip guild da ashley (usavel somente no server da Ashley)
         Use ash vip guild"""
         if guild is None:
@@ -206,7 +206,7 @@ class VipSystem(commands.Cog):
         await self.bot.db.update_data(data_, update_, 'users')
         await self.bot.db.update_data(data_guild, update_guild, 'guilds')
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
         await ctx.send(f'<:confirmed:721581574461587496>│🎊 **PARABENS** 🎉 {ctx.author.mention} `ACABOU DE COMPRAR'
@@ -214,6 +214,6 @@ class VipSystem(commands.Cog):
                        f'`ALEM DE LIBERAR 15.000 FRAGMENTOS DE BLESSEDS ETERNYAS PARA SEUS MEMBROS!`')
 
 
-def setup(bot):
-    bot.add_cog(VipSystem(bot))
+async def setup(bot):
+    await bot.add_cog(VipSystem(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mVIP_SYSTEM\033[1;32m foi carregado com sucesso!\33[m')

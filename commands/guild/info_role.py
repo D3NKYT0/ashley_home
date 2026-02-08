@@ -1,7 +1,7 @@
-import disnake
+﻿import discord
 import asyncio
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -87,10 +87,10 @@ class RoleInfo(commands.Cog):
 
         def embed_content():
             if index:
-                embed_msg = disnake.Embed(description=f'membros com o cargo {role.mention}\n{members_list[index]}',
+                embed_msg = discord.Embed(description=f'membros com o cargo {role.mention}\n{members_list[index]}',
                                           color=role.colour)
             else:
-                embed_msg = disnake.Embed(
+                embed_msg = discord.Embed(
                     description=f"__**Informações do cargo:**__ **{role.mention}**\n\n{members_list[0]}",
                     color=role.colour)
             embed_msg.set_author(name=f"Página {index + 1}/{len(members_list)}", icon_url=ctx.guild.icon)
@@ -139,17 +139,17 @@ class RoleInfo(commands.Cog):
                 else:
                     try:
                         await msg.remove_reaction(reaction.emoji, member=user)
-                    except disnake.Forbidden:
+                    except discord.Forbidden:
                         pass
-                    except disnake.NotFound:
+                    except discord.NotFound:
                         pass
-                    except disnake.HTTPException:
+                    except discord.HTTPException:
                         pass
         except asyncio.TimeoutError:
             return await ctx.send('<:negate:721581573396496464>│`Desculpe, você demorou muito:` **COMANDO'
                                   ' CANCELADO**')
 
 
-def setup(bot):
-    bot.add_cog(RoleInfo(bot))
+async def setup(bot):
+    await bot.add_cog(RoleInfo(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mROLEINFO\033[1;32m foi carregado com sucesso!\33[m')

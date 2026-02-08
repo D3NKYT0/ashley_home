@@ -1,7 +1,7 @@
 # ARQUIVO PRINCIPAL DE INICIALIZAÇÃO DO BOT: ASHLEY PARA DISCORD.
 # CRIADO POR: DANIEL AMARAL -> denkyto
 # SEGUE ABAIXO OS IMPORTS COMPLETOS
-import disnake
+import discord
 import aiohttp
 import psutil
 import json
@@ -13,9 +13,9 @@ import platform
 # SEGUE ABAIXO OS IMPORTS PARCIAIS
 import time as date
 from random import choice, randint
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone
 from collections import Counter
-from disnake.ext import commands
+from discord.ext import commands
 from resources.color import random_color
 from bson.json_util import dumps
 from resources.utility import date_format, patent_calculator, guild_info, rank_definition, CreateCaptcha
@@ -27,7 +27,7 @@ from resources.verify_cooldown import verify_cooldown
 from resources.boosters import Booster
 from resources.push import OneSignal
 from config import data as config
-from disnake import Webhook
+from discord import Webhook
 from resources.check import validate_url
 from shortio.api import ShortioLinkGenerator
 
@@ -35,13 +35,13 @@ with open("data/auth.json") as auth:
     _auth = json.loads(auth.read())
 
 
-# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA DISNAKE
+# CLASSE PRINCIPAL SENDO SUBCLASSE DA BIBLIOTECA discord.py
 class Ashley(commands.AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, shard_count=_auth["shard"], **kwargs)
         self.owner_ids = [1002003843330084946, 416606375498481686]
         self.msg_cont = 0
-        self.start_time = dt.utcnow()
+        self.start_time = dt.now(timezone.utc)
         self.commands_used = Counter()
         self.guilds_commands = Counter()
         self.guilds_messages = Counter()
@@ -71,7 +71,7 @@ class Ashley(commands.AutoShardedBot):
         self.explorando = list()  # status de um jogador (OK)
         # -----------================------------
 
-        self.session = self.loop.run_until_complete(self.create_session())
+        self.session = None  # inicializado em setup_hook()
 
         # haw_data
         self.config = config
@@ -148,7 +148,7 @@ class Ashley(commands.AutoShardedBot):
         self.progress = f"V.2 -> {_auth['version']}"
         self.python_version = platform.python_version()
         self.version_str = f"2.7.1"  # LAST UPDATE: 01/10/2023
-        self.version = f"API: {disnake.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
+        self.version = f"API: {discord.__version__} | BOT: {self.version_str} | VERSION: {self.progress}"
 
         # sub classes
         self.db: Database = Database(self)
@@ -195,8 +195,69 @@ class Ashley(commands.AutoShardedBot):
     async def create_session():
         return aiohttp.ClientSession()
 
+    async def setup_hook(self):
+        self.session = await self.create_session()
+        await self._load_all_extensions()
+
+    async def _load_all_extensions(self):
+        emojis = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}
+        cont = 0
+        print("\033[1;35m( >> ) | Iniciando a ASHLEY!\033[m\n")
+        print("\033[1;35m( >> ) | Iniciando o carregamento de extensões comuns...\033[m")
+        modulos_file = "maintenance.txt" if self.maintenance else "modulos.txt"
+        with open(modulos_file, "r", encoding="utf-8") as f:
+            for name in f.readlines():
+                if len(name.strip()) == 0:
+                    continue
+                try:
+                    if "@" not in name.strip() and "#" not in name.strip():
+                        await self.load_extension(name.strip())
+                        self.data_cog[name.strip()] = emojis["VIP"] if name.strip() in self.vip_cog else emojis["ON"]
+                        cont += 1
+                    else:
+                        if "#" not in name.strip():
+                            print(f'\033[1;36m( ☢️ ) | Cog: \033[1;34m{name.strip()}\033[1;36m não foi carregada!\33[m')
+                        self.data_cog[name.strip()] = emojis["OFF"]
+                except Exception as e:
+                    if "#" not in name.strip():
+                        print(f"\033[1;31m( ❌ ) | Cog: \033[1;34m{name}\033[1;31m teve um [Erro] : \033[1;35m{e}\33[m")
+                        traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
+                    self.data_cog[name.strip()] = emojis["IDLE"]
+        print("\033[1;35m( >> ) | Finalizado o carregamento de extensões comuns...\033[m")
+        print("\033[1;35m( >> ) | Iniciando o carregamento de extensões SLASHS...\033[m")
+        with open("slashs.txt", "r", encoding="utf-8") as f:
+            for name in f.readlines():
+                if len(name.strip()) == 0:
+                    continue
+                try:
+                    if "@" not in name.strip() and "#" not in name.strip():
+                        await self.load_extension(name.strip())
+                        self.data_cog[name.strip()] = emojis["VIP"] if name.strip() in self.vip_cog else emojis["ON"]
+                        cont += 1
+                    else:
+                        if "#" not in name.strip():
+                            print(f'\033[1;36m( ☢️ ) | Cog: \033[1;34m{name.strip()}\033[1;36m não foi carregada!\33[m')
+                        self.data_cog[name.strip()] = emojis["OFF"]
+                except Exception as e:
+                    if "#" not in name.strip():
+                        print(f"\033[1;31m( ❌ ) | Cog: \033[1;34m{name}\033[1;31m teve um [Erro] : \033[1;35m{e}\33[m")
+                        traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
+                    self.data_cog[name.strip()] = emojis["IDLE"]
+        print("\033[1;35m( >> ) | Finalizado o carregamento de extensões SLASH...\033[m")
+        print("\033[1;35m( >> ) | Iniciando o carregamento de extensões EXTRAS...\033[m")
+        try:
+            await self.load_extension("jishaku")
+            print('\033[1;33m( 🔶 ) | A cog \033[1;34mJISHAKU\033[1;33m foi carregada com sucesso!\33[m')
+            cont += 1
+        except Exception as e:
+            print(f"\033[1;31m( ❌ ) | JISHAKU teve um [Erro] : \033[1;35m{e}\33[m")
+            traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
+        print("\033[1;35m( >> ) | Finalizado o carregamento de extensões EXTRAS...\033[m")
+        print(f"\033[1;35m( ✔ ) | {cont}/{len(self.data_cog) + 1} extensões foram carregadas!\033[m")
+
     async def close(self):
-        await self.session.close()
+        if self.session:
+            await self.session.close()
         await super().close()
 
     async def atr_initialize(self):
@@ -225,13 +286,13 @@ class Ashley(commands.AutoShardedBot):
         print('\033[1;32m( 🔶 ) | Inicialização do atributo \033[1;34mGUILDS_VIP\033[1;32m foi feita sucesso!\33[m')
 
     async def shutdown(self, reason):
-        date_ = dt(*dt.utcnow().timetuple()[:6])
+        date_ = dt(*dt.now(timezone.utc).timetuple()[:6])
         data = {"_id": date_, "reason": reason}
         await self.db.push_data(data, "shutdown")
         self.shutdowns = dumps(await self.db.get_all_data("shutdown"))
 
     async def ban_(self, id_, reason: str):
-        date_ = dt(*dt.utcnow().timetuple()[:6])
+        date_ = dt(*dt.now(timezone.utc).timetuple()[:6])
         data = {"_id": id_, str(date_): reason}
         if str(id_) not in self.blacklist:
             await self.db.push_data(data, "blacklist")
@@ -261,7 +322,7 @@ class Ashley(commands.AutoShardedBot):
                         if data['data']['status']:
                             self.announcements.append(data["data"]["announce"])
                     announce = choice(self.announcements)
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         color=0x000000,
                         description=f'<:confirmed:721581574461587496>│**ANUNCIO**\n '
                                     f'```{announce}```')
@@ -275,7 +336,7 @@ class Ashley(commands.AutoShardedBot):
                                            delete_after=5.0)
             try:
                 _g = await ctx.guild.invites()
-            except disnake.errors.Forbidden:
+            except discord.Forbidden:
                 _g = list()
             _l = "" if len(_g) == 0 else f"{_g[0]}\n"
             commands_log = self.get_channel(575688812068339717)
@@ -417,7 +478,7 @@ class Ashley(commands.AutoShardedBot):
                         self.chests_users[ctx.author.id]['quant'] += 1
                         self.chests_users[ctx.author.id]['chests'].append(chest_type)
 
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         title="**Baú de Evento Liberado**",
                         colour=self.color,
                         description=f"{ctx.author.mention} foi gratificado com 1 "
@@ -429,7 +490,7 @@ class Ashley(commands.AutoShardedBot):
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
 
                     awards = 'images/elements/chest.gif'
-                    file = disnake.File(awards, filename="reward_chest.gif")
+                    file = discord.File(awards, filename="reward_chest.gif")
                     embed.set_thumbnail(url="attachment://reward_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -454,7 +515,7 @@ class Ashley(commands.AutoShardedBot):
                             self.box[ctx.guild.id]['quant'] += 1
                             self.box[ctx.guild.id]['boxes'].append(box_type)
 
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         title="**Presente Liberado**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com {box_type + 1} presente(s) "
@@ -481,7 +542,7 @@ class Ashley(commands.AutoShardedBot):
                     else:
                         self.ash_sticker[ctx.guild.id] += amount
 
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         title="**Figurinha Liberada**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com {amount} figurinhas "
@@ -507,7 +568,7 @@ class Ashley(commands.AutoShardedBot):
                     else:
                         self.moon_bag[ctx.guild.id] += amount
 
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         title="**Moon Bag Liberada**",
                         colour=self.color,
                         description=f"Esse servidor foi gratificado com **{amount} moon bag!**\n"
@@ -545,7 +606,7 @@ class Ashley(commands.AutoShardedBot):
                         self.chests_marry[ctx.author.id]['quant'] += 1
                         self.chests_marry[ctx.author.id]['chests'].append(chest_type)
 
-                    embed = disnake.Embed(
+                    embed = discord.Embed(
                         title="**Baú de Casamento Liberado**",
                         colour=self.color,
                         description=f"{ctx.author.mention} foi gratificado com 1 "
@@ -556,7 +617,7 @@ class Ashley(commands.AutoShardedBot):
                     embed.set_author(name=self.user.name, icon_url=self.user.avatar.url)
                     embed.set_footer(text="Ashley ® Todos os direitos reservados.")
                     awards = 'images/elements/love.gif'
-                    file = disnake.File(awards, filename="love_chest.gif")
+                    file = discord.File(awards, filename="love_chest.gif")
                     embed.set_thumbnail(url="attachment://love_chest.gif")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -629,9 +690,9 @@ class Ashley(commands.AutoShardedBot):
                 patent = patent_calculator(data_user['inventory']['rank_point'], data_user['inventory']['medal'])
                 if patent > data_user['user']['patent']:
                     query_user["$set"]["user.patent"] = patent
-                    file = disnake.File(f'images/patente/{patent}.png', filename="patent.png")
-                    embed = disnake.Embed(title='🎊 **PARABENS** 🎉\n`VOCE SUBIU DE PATENTE`', color=self.color)
-                    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url)
+                    file = discord.File(f'images/patente/{patent}.png', filename="patent.png")
+                    embed = discord.Embed(title='🎊 **PARABENS** 🎉\n`VOCE SUBIU DE PATENTE`', color=self.color)
+                    embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
                     embed.set_image(url="attachment://patent.png")
                     perms = ctx.channel.permissions_for(ctx.me)
                     if perms.send_messages and perms.read_messages:
@@ -645,7 +706,7 @@ class Ashley(commands.AutoShardedBot):
                     try:
                         epoch = dt.utcfromtimestamp(0)
                         cooldown = data_user["cooldown"]["vip member"]
-                        time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
+                        time_diff = (dt.now(timezone.utc) - epoch).total_seconds() - cooldown
                         if time_diff >= 2592000:  # um mes de diferença
                             if data_user['config']['vip']:
                                 query_user["$set"]["config.vip"] = False
@@ -670,7 +731,7 @@ class Ashley(commands.AutoShardedBot):
                         cooldown = du["cooldown"]["vip guild"]
 
                         epoch = dt.utcfromtimestamp(0)
-                        time_diff = (dt.utcnow() - epoch).total_seconds() - cooldown
+                        time_diff = (dt.now(timezone.utc) - epoch).total_seconds() - cooldown
                         if time_diff >= 2592000:  # um mes de diferença
                             if data_guild['vip']:
                                 if "$set" not in query_guild.keys():
@@ -774,8 +835,8 @@ class Ashley(commands.AutoShardedBot):
                     if data_user['security']['strikes_to_ban'] > 10:
                         answer = await self.ban_(data_user['user_id'], "BANIDO POR USAR MACRO!")
                         if answer:
-                            embed = disnake.Embed(
-                                color=disnake.Color.red(),
+                            embed = discord.Embed(
+                                color=discord.Color.red(),
                                 description=f'<:cry:530735037243719687>│`VOCE FOI BANIDO POR USAR MACRO!`'
                                             f' **SE QUISER CONTESTAR ENTRE NO MEU SERVIDOR DE SUPORTE!**')
                             await ctx.send(embed=embed)
@@ -952,7 +1013,7 @@ class Ashley(commands.AutoShardedBot):
                                     _value = f"**R$ {flash_event['value']},00**"
                                     await ctx.author.send(f"EVENT: **{self.flash_event_now.upper()}**\n"
                                                           f"GIFT: {_gift}\nVALOR: {_value}")
-                                except disnake.errors.Forbidden:
+                                except discord.Forbidden:
                                     await ctx.send("<a:blue:525032762256785409>|`PEÇA SEU PREMIO A STAFF!`")
 
                             else:
@@ -1050,7 +1111,7 @@ class Ashley(commands.AutoShardedBot):
                     return await ctx.send("<:negate:721581573396496464>│`PRECISO DA PERMISSÃO DE:` **ADICIONAR "
                                           "LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR CORRETAMENTE!**")
                 if message.author.id not in self.testers and self.maintenance:
-                    embed = disnake.Embed(color=self.color, description=self.maintenance_msg)
+                    embed = discord.Embed(color=self.color, description=self.maintenance_msg)
                     return await message.channel.send(embed=embed)
 
             self.msg_cont += 1
@@ -1082,7 +1143,7 @@ class Ashley(commands.AutoShardedBot):
                     run_command = True
                     if (self.msg_cont % 10) == 0:
                         if await verify_cooldown(self, f"{message.guild.id}_no_register", 86400):
-                            embed = disnake.Embed(
+                            embed = discord.Embed(
                                 color=self.color,
                                 description="<a:blue:525032762256785409>│`SEU SERVIDOR AINDA NAO ESTA CADASTRADO USE`"
                                             " **ASH REGISTER GUILD** `PARA QUE EU POSSA PARTICIPAR DAS ATIVIDADES DE "
@@ -1097,7 +1158,7 @@ class Ashley(commands.AutoShardedBot):
                                     try:
                                         if message.guild.id not in self.protect_msg.keys():
                                             await message.guild.owner.send(embed=embed)
-                                    except disnake.Forbidden:
+                                    except discord.Forbidden:
                                         self.protect_msg[message.guild.id] = False
 
                 if str(ctx.command) in ['channel']:  # exceção dos comandos
@@ -1181,8 +1242,8 @@ class Ashley(commands.AutoShardedBot):
 
         pet = f"{pet_name} do {ctx.author.name} disse:\n```{content}```"
         msg = f"{pet if pet_name != 'Ashley' else content}"
-        embed = disnake.Embed(colour=random_color(), description=msg, timestamp=dt.utcnow())
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        embed = discord.Embed(colour=random_color(), description=msg, timestamp=dt.now(timezone.utc))
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
         embed.set_thumbnail(url=link)
 
         webhook = Webhook.from_url(data_guild['webhook'], session=self.session)
@@ -1203,73 +1264,9 @@ def main_bot():
            f"**Adicione para seu servidor:**: {config['config']['default_link']}\n" \
            f"**Servidor de Origem**: {config['config']['default_invite']}\n"
 
-    intents = disnake.Intents.all()
+    intents = discord.Intents.all()
     bot = Ashley(command_prefix=_auth['prefix'], description=desc, intents=intents)
     bot.remove_command('help')
-    emojis, cont = {"ON": "🟢", "IDLE": "🟡", "OFF": "🔴", "VIP": "🟣"}, 0
-
-    print("\033[1;35m( >> ) | Iniciando a ASHLEY!\033[m\n")
-    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões comuns...\033[m")
-
-    if bot.maintenance:
-        f = open("maintenance.txt", "r")
-    else:
-        f = open("modulos.txt", "r")
-
-    for name in f.readlines():
-        if len(name.strip()) > 0:
-            try:
-                if '@' not in name.strip() and '#' not in name.strip():
-                    bot.load_extension(name.strip())
-                    if name.strip() not in bot.vip_cog:
-                        bot.data_cog[name.strip()] = emojis['ON']
-                    else:
-                        bot.data_cog[name.strip()] = emojis['VIP']
-                    cont += 1
-                else:
-                    if '#' not in name.strip():
-                        print(f'\033[1;36m( ☢️ ) | Cog: \033[1;34m{name.strip()}\033[1;36m não foi carregada!\33[m')
-                        bot.data_cog[name.strip()] = emojis['OFF']
-            except Exception as e:
-                if '#' not in name.strip():
-                    print(f"\033[1;31m( ❌ ) | Cog: \033[1;34m{name}\033[1;31m teve um [Erro] : \033[1;35m{e}\33[m")
-                    bot.data_cog[name.strip()] = emojis['IDLE']
-                    traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
-                continue
-    f.close()
-
-    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões comuns...\033[m")
-    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões SLASHS...\033[m")
-
-    f = open("slashs.txt", "r")
-    for name in f.readlines():
-        if len(name.strip()) > 0:
-            try:
-                if '@' not in name.strip() and '#' not in name.strip():
-                    bot.load_extension(name.strip())
-                    if name.strip() not in bot.vip_cog:
-                        bot.data_cog[name.strip()] = emojis['ON']
-                    else:
-                        bot.data_cog[name.strip()] = emojis['VIP']
-                    cont += 1
-                else:
-                    if '#' not in name.strip():
-                        print(f'\033[1;36m( ☢️ ) | Cog: \033[1;34m{name.strip()}\033[1;36m não foi carregada!\33[m')
-                        bot.data_cog[name.strip()] = emojis['OFF']
-            except Exception as e:
-                if '#' not in name.strip():
-                    print(f"\033[1;31m( ❌ ) | Cog: \033[1;34m{name}\033[1;31m teve um [Erro] : \033[1;35m{e}\33[m")
-                    bot.data_cog[name.strip()] = emojis['IDLE']
-                    traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
-                continue
-    f.close()
-
-    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões SLASH...\033[m")
-    print("\033[1;35m( >> ) | Iniciando o carregamento de extensões EXTRAS...\033[m")
-    bot.load_extension("jishaku")  # load extenção JISHAKU
-    print('\033[1;33m( 🔶 ) | A cog \033[1;34mJISHAKU\033[1;33m foi carregada com sucesso!\33[m')
-    print("\033[1;35m( >> ) | Finalizado o carregamento de extensões EXTRAS...\033[m")
-    print(f"\033[1;35m( ✔ ) | {cont + 1}/{len(bot.data_cog.keys()) + 1} extensões foram carregadas!\033[m")
     return bot, _auth['_t__ashley']
 
 

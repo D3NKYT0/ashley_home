@@ -1,6 +1,6 @@
-import random
+﻿import random
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 
@@ -37,6 +37,6 @@ class DadoClass(commands.Cog):
         await ctx.send(f'```{result[:-1]}```')
 
 
-def setup(bot):
-    bot.add_cog(DadoClass(bot))
+async def setup(bot):
+    await bot.add_cog(DadoClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mROLARDADO\033[1;32m foi carregado com sucesso!\33[m')

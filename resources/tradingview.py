@@ -1,4 +1,4 @@
-import json
+﻿import json
 
 from tradingview_ta import TA_Handler, Interval, Exchange
 

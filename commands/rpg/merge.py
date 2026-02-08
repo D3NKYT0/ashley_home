@@ -1,6 +1,6 @@
-import disnake
+﻿import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from resources.check import check_it
 from resources.db import Database
 from random import choice
@@ -50,12 +50,12 @@ class MergeClass(commands.Cog):
 
         if not update['rpg']['active']:
             msg = "<:negate:721581573396496464>│`USE O COMANDO` **ASH RPG** `ANTES!`"
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if ctx.author.id in self.bot.batalhando:
             msg = '<:negate:721581573396496464>│`VOCE ESTÁ BATALHANDO!`'
-            embed = disnake.Embed(color=self.bot.color, description=msg)
+            embed = discord.Embed(color=self.bot.color, description=msg)
             return await ctx.send(embed=embed)
 
         if item is None:
@@ -99,7 +99,7 @@ class MergeClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE FUNDIR UM EQUIPAMENTO:",
             color=self.bot.color,
             description=msg)
@@ -184,7 +184,7 @@ class MergeClass(commands.Cog):
         await ctx.send(f"<:confirmed:721581574461587496>│`O ITEM {item.upper()} FOI FUNDIDO COM SUCESSO, "
                        f"OLHE O SEU INVENTARIO DE ITENS E VEJA SEU NOVO ITEM!`")
         img = choice(git)
-        embed = disnake.Embed(color=self.bot.color)
+        embed = discord.Embed(color=self.bot.color)
         embed.set_image(url=img)
         await ctx.send(embed=embed)
         await self.bot.data.add_sts(ctx.author, "merge", 1)
@@ -217,7 +217,7 @@ class MergeClass(commands.Cog):
         msg = f"\n".join([f"{self.i[k][0]} `{v}` `{self.i[k][1]}`" for k, v in self.cost_convert.items()])
         msg += "\n\n**OBS:** `PARA CONSEGUIR OS ITENS VOCE PRECISA USAR O COMANDO` **ASH BOX**"
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             title="O CUSTO PARA VOCE CONVERTER UM EQUIPAMENTO SELADO:",
             color=self.bot.color,
             description=msg)
@@ -302,6 +302,6 @@ class MergeClass(commands.Cog):
         await self.bot.data.add_sts(ctx.author, "convert", 1)
 
 
-def setup(bot):
-    bot.add_cog(MergeClass(bot))
+async def setup(bot):
+    await bot.add_cog(MergeClass(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mMERGE_ITEM\033[1;32m foi carregado com sucesso!\33[m')

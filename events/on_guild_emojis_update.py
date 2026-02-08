@@ -1,8 +1,8 @@
-import io
-import disnake
+﻿import io
+import discord
 import asyncio
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class EmojiUpdate(commands.Cog):
@@ -46,12 +46,12 @@ class EmojiUpdate(commands.Cog):
                                                  "**ADICIONAR LINKS E DE ADICIONAR IMAGENS, PARA PODER FUNCIONAR"
                                                  " CORRETAMENTE!**")
                             else:
-                                await canal.send(_.name, file=disnake.File(data, f'{_.name}.png'))
+                                await canal.send(_.name, file=discord.File(data, f'{_.name}.png'))
                             await asyncio.sleep(1)
                 except TypeError:
                     continue
 
 
-def setup(bot):
-    bot.add_cog(EmojiUpdate(bot))
+async def setup(bot):
+    await bot.add_cog(EmojiUpdate(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mEMOJI_UPDATE\033[1;33m foi carregado com sucesso!\33[m')

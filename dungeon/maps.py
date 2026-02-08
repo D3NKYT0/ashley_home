@@ -1,4 +1,4 @@
-import disnake
+﻿import discord
 
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
@@ -245,7 +245,7 @@ class Map:
         return image
 
 
-class MovePlayer(disnake.ui.View):
+class MovePlayer(discord.ui.View):
     def __init__(self, author):
         self.author = author
         super().__init__()
@@ -303,7 +303,7 @@ class Player:
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
-                    return disnake.File(file, 'map.png')
+                    return discord.File(file, 'map.png')
 
         elif direction == 'down':
 
@@ -337,7 +337,7 @@ class Player:
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
-                    return disnake.File(file, 'map.png')
+                    return discord.File(file, 'map.png')
 
         elif direction == 'left':
 
@@ -371,7 +371,7 @@ class Player:
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
-                    return disnake.File(file, 'map.png')
+                    return discord.File(file, 'map.png')
 
         elif direction == 'right':
 
@@ -406,4 +406,4 @@ class Player:
                 with BytesIO() as file:
                     _map.save(file, 'PNG')
                     file.seek(0)
-                    return disnake.File(file, 'map.png')
+                    return discord.File(file, 'map.png')

@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 
 
 class MemberBanClass(commands.Cog):
@@ -38,9 +38,9 @@ class MemberBanClass(commands.Cog):
                                          " CORRETAMENTE!**")
                     else:
                         await canal.edit(topic="<a:caralho:525105064873033764> **Membros:**  " + list_)
-        except disnake.Forbidden:
+        except discord.Forbidden:
             pass
-        except disnake.errors.NotFound:
+        except discord.NotFound:
             pass
 
         data = data["log_config"]
@@ -51,7 +51,7 @@ class MemberBanClass(commands.Cog):
             if not canal:
                 return
 
-            embed = disnake.Embed(color=self.color,
+            embed = discord.Embed(color=self.color,
                                   title=":star2: **Membro Banido**",
                                   description=f"**Membro:** {user.name}")
             embed.set_footer(text="Ashley ® Todos os direitos reservados.")
@@ -67,6 +67,6 @@ class MemberBanClass(commands.Cog):
                     await canal.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(MemberBanClass(bot))
+async def setup(bot):
+    await bot.add_cog(MemberBanClass(bot))
     print('\033[1;33m( 🔶 ) | O evento \033[1;34mMEMBER_BAN\033[1;33m foi carregado com sucesso!\33[m')

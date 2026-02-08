@@ -1,6 +1,6 @@
-import disnake
+import discord
 
-from disnake.ext import commands
+from discord.ext import commands
 from random import choice
 from resources.db import Database
 from resources.check import check_it
@@ -19,7 +19,7 @@ class Thinkers(commands.Cog):
         Use ash thinker"""
         try:
             await ctx.message.delete()
-        except disnake.errors.Forbidden:
+        except discord.Forbidden:
             pass
 
         thinker = self.bot.config['thinker']['list']
@@ -29,12 +29,12 @@ class Thinkers(commands.Cog):
                 '`OUVIR FALAR QUE`', '`UMA PESSOA ME FALOU ASSIM`', '`UM DIA OUVIR ENQUANTO ANDAVA`']
         msg = choice(msgs)
 
-        embed = disnake.Embed(
+        embed = discord.Embed(
             color=self.bot.color,
             description=f'<:confirmed:721581574461587496>│{msg}\n`{answer.upper()}`')
         await ctx.send(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(Thinkers(bot))
+async def setup(bot):
+    await bot.add_cog(Thinkers(bot))
     print('\033[1;32m( 🔶 ) | O comando \033[1;34mPENSADOR\033[1;32m foi carregado com sucesso!\33[m')

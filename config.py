@@ -1,4 +1,4 @@
-import json
+﻿import json
 
 with open("data/achievements.json", encoding="utf-8") as achievements:
     achievements = json.load(achievements)
